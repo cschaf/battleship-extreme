@@ -1,4 +1,10 @@
 # Battleship-Extrem
+This is a project for the semester "Programming 2" at the ["Hochschule Bremen"](http://www.hs-bremen.de/).
+Contributors are:
+* mueller-jan
+* lschoenawa
+* cschaf
+
 ## What is Battleship?
 Battleship (or Battleships) is a game for two players where you try to guess the location of five ships your opponent has hidden on a grid. Players take turns calling out a row and column, attempting to name a square containing enemy ships. Originally published as Broadsides by Milton Bradley in 1931, the game was eventually reprinted as Battleship.
 ## Goal
@@ -14,3 +20,5 @@ We added a few rules which will make the game more interesting and more difficul
 * As soon as all of one player's ships have been sunk, the game ends.
 
 ## Our added or updated Rules
+* comming soon
+* ...
