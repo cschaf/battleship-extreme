@@ -21,5 +21,20 @@ We added a few rules which will make the game more interesting and more difficul
 * As soon as all of one player's ships have been sunk, the game ends.
 
 ## Our added or updated Rules
-* comming soon
-* ...
+* Determining how many players play. 2-6
+* Definition of the square field.
+* Determining how many destroyers, frigates, corvettes and submarines be used (no cruiser allowed)
+* Players place their ships in succession. Destroyers take 5, frigates 4, corvettes 3 and submarines 2 Fields. The Ships may only be placed horizontally or vertically in the field, overlaps
+are not allowed, also the ships must not abut each other there must always be at least
+be an empty field between two ships.
+* Players can shoot one after the other. There are the following sequence
+
+  1.  Choose one of the available ship.
+  2.  Selection of an opponent.
+  3.  Select the coordinate on the pitch.
+  4.  The opponent says that the shot went into the water hits a ship, or if a ship was sunk.
+
+* A destroyer shoot with big guns. It will be taken 3 boxes next to each other. though
+the destroyer must always download 3 laps and is not available in time. a frigate
+2 hits fields side by side. She has a recharge time of 2 rounds. A Corvette hits 1 field. She has a recharge time of 1 round. A submarine hits 1 field and also has a recharge time of 1 round. It can of course only non-sunken ships shoot.
+* When all the ships of a player were sunk, he is out. The game ends when only one player remains.
