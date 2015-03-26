@@ -7,7 +7,7 @@ Contributors are:
 * [cschaf](https://github.com/cschaf/)
 
 ## Setup
-* Install ["Maven"](http://maven.apache.org/guides/getting-started/maven-in-five-minutes.html), JDK and JRE
+* Install [Maven](http://maven.apache.org/guides/getting-started/maven-in-five-minutes.html), JDK and JRE
 * Clone repo via IDE or manually (git clone https://username:password@github.com/cschaf/battleship-extreme.git)
 * For Intellij: Go to Project structure and set JDK
 * For Intellij: Add Run/Debug Configuration (Type Application) with main.class (de.hsbremen.battleshipextreme.App)
