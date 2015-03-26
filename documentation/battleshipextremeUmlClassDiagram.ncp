@@ -3,7 +3,48 @@
   <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
     <Name>all</Name>
     <Language>CSharp</Language>
-    <Entities />
-    <Relationships />
+    <Entities>
+      <Entity type="Class">
+        <Name>Player</Name>
+        <Access>Public</Access>
+        <Location left="363" top="89" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>Abstract</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Ship</Name>
+        <Access>Public</Access>
+        <Location left="678" top="89" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">int size</Member>
+        <Member type="Field">Point position</Member>
+        <Member type="Field">Orientation orientation</Member>
+        <Member type="Field">int shootingRange</Member>
+        <Member type="Method">public boolean isDestroyed()</Member>
+        <Member type="Method">public void shoot(Player player, Position position, Orientation orientation)</Member>
+        <Modifier>Abstract</Modifier>
+      </Entity>
+      <Entity type="Enum">
+        <Name>Orientation</Name>
+        <Access>Public</Access>
+        <Location left="678" top="403" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Value>Horizontal</Value>
+        <Value>Vertical</Value>
+      </Entity>
+    </Entities>
+    <Relationships>
+      <Relationship type="Association" first="1" second="2">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+    </Relationships>
   </ProjectItem>
 </Project>
