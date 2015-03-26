@@ -1,0 +1,32 @@
+[user]
+	
+	email = yourEmail	
+	name = Firstname Lastname
+[core]
+	
+	autocrlf = true
+[color]
+	
+	ui = true
+
+[help]
+	
+	autocorrec = 1
+
+[push]
+	
+	default = simple
+
+[pull]
+	
+	rebase = true
+
+[rerere]
+
+	enabled = true
+
+[alias]
+
+	s = status -s
+	
+	lg = log --oneline --decorate --all --graph
