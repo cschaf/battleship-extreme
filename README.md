@@ -2,9 +2,16 @@
 This is a project for the semester "Programming 2" at the ["Hochschule Bremen"](http://www.hs-bremen.de/).
 
 Contributors are:
-* mueller-jan
-* lschoenawa
-* cschaf
+* [mueller-jan](https://github.com/mueller-jan/)
+* [lschoenawa](https://github.com/lschoenawa/)
+* [cschaf](https://github.com/cschaf/)
+
+## Setup
+* Install [Maven](http://maven.apache.org/guides/getting-started/maven-in-five-minutes.html), JDK and JRE
+* Clone repo via IDE or manually (git clone https://username:password@github.com/cschaf/battleship-extreme.git)
+* For Intellij: Go to Project structure and set JDK
+* For Intellij: Add Run/Debug Configuration (Type Application) with main.class (de.hsbremen.battleshipextreme.App)
+
 
 ## What is Battleship?
 Battleship (or Battleships) is a game for two players where you try to guess the location of five ships your opponent has hidden on a grid. Players take turns calling out a row and column, attempting to name a square containing enemy ships. Originally published as Broadsides by Milton Bradley in 1931, the game was eventually reprinted as Battleship.
