@@ -7,7 +7,7 @@
       <Entity type="Class">
         <Name>Player</Name>
         <Access>Public</Access>
-        <Location left="363" top="89" />
+        <Location left="394" top="355" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>Abstract</Modifier>
@@ -15,7 +15,7 @@
       <Entity type="Class">
         <Name>Ship</Name>
         <Access>Public</Access>
-        <Location left="678" top="89" />
+        <Location left="654" top="355" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">int size</Member>
@@ -29,11 +29,67 @@
       <Entity type="Enum">
         <Name>Orientation</Name>
         <Access>Public</Access>
-        <Location left="678" top="403" />
+        <Location left="654" top="38" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Value>Horizontal</Value>
         <Value>Vertical</Value>
+      </Entity>
+      <Entity type="Class">
+        <Name>HumanPlayer</Name>
+        <Access>Public</Access>
+        <Location left="394" top="648" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Destroyer</Name>
+        <Access>Public</Access>
+        <Location left="1182" top="180" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Frigate</Name>
+        <Access>Public</Access>
+        <Location left="968" top="485" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Corvette</Name>
+        <Access>Public</Access>
+        <Location left="1182" top="485" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Submarine</Name>
+        <Access>Public</Access>
+        <Location left="968" top="180" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Game</Name>
+        <Access>Public</Access>
+        <Location left="169" top="355" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Board</Name>
+        <Access>Public</Access>
+        <Location left="169" top="105" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
       </Entity>
     </Entities>
     <Relationships>
@@ -42,6 +98,10 @@
         </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>729</X>
+          <Y>327</Y>
+        </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
       </Relationship>
