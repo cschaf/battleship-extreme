@@ -7,17 +7,22 @@
       <Entity type="Class">
         <Name>Board</Name>
         <Access>Public</Access>
-        <Location left="55" top="324" />
+        <Location left="615" top="50" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
+        <Member type="Constructor">public Board(int size)</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>Player</Name>
         <Access>Public</Access>
         <Location left="307" top="50" />
-        <Size width="162" height="216" />
+        <Size width="239" height="216" />
         <Collapsed>False</Collapsed>
+        <Member type="Field">protected String name</Member>
+        <Member type="Field">protected static int id</Member>
+        <Member type="Method">public void placeShip(Ship ship, Field[] field)</Member>
+        <Member type="Constructor">public Player(int boardSize)</Member>
         <Modifier>Abstract</Modifier>
       </Entity>
       <Entity type="Class">
@@ -26,6 +31,7 @@
         <Location left="55" top="50" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
+        <Member type="Constructor">public Game(Player[] players, int boardSize)</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
@@ -39,15 +45,15 @@
       <Entity type="Class">
         <Name>Ship</Name>
         <Access>Public</Access>
-        <Location left="856" top="50" />
-        <Size width="162" height="216" />
+        <Location left="1093" top="50" />
+        <Size width="482" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">protected int size</Member>
-        <Member type="Field">protected Point position</Member>
         <Member type="Field">protected int shootingRange</Member>
         <Member type="Field">protected Orientation orientation</Member>
+        <Member type="Field">protected int reloadTime</Member>
         <Member type="Method">public boolean isDestroyed()</Member>
-        <Member type="Method">public void shoot(Player player, Point position, Orientation orientation)</Member>
+        <Member type="Method">public void shoot(Player player, Field field, Orientation orientation)</Member>
         <Modifier>Abstract</Modifier>
       </Entity>
       <Entity type="Enum">
@@ -62,7 +68,7 @@
       <Entity type="Class">
         <Name>Submarine</Name>
         <Access>Public</Access>
-        <Location left="517" top="325" />
+        <Location left="913" top="325" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -70,7 +76,7 @@
       <Entity type="Class">
         <Name>Destroyer</Name>
         <Access>Public</Access>
-        <Location left="740" top="325" />
+        <Location left="1136" top="325" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -78,7 +84,7 @@
       <Entity type="Class">
         <Name>Frigate</Name>
         <Access>Public</Access>
-        <Location left="979" top="325" />
+        <Location left="1375" top="325" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -86,10 +92,31 @@
       <Entity type="Class">
         <Name>Corvette</Name>
         <Access>Public</Access>
-        <Location left="1211" top="325" />
+        <Location left="1607" top="325" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Field</Name>
+        <Access>Public</Access>
+        <Location left="860" top="50" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private int xPos</Member>
+        <Member type="Field">private int yPos</Member>
+        <Member type="Field">private boolean isHit</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Enum">
+        <Name>State</Name>
+        <Access>Public</Access>
+        <Location left="290" top="592" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Value>Empty</Value>
+        <Value>Occupied</Value>
+        <Value>Hit</Value>
       </Entity>
     </Entities>
     <Relationships>
@@ -114,6 +141,31 @@
         <EndOrientation>Vertical</EndOrientation>
       </Relationship>
       <Relationship type="Association" first="2" second="1">
+        <Label>hat</Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartMultiplicity>1</StartMultiplicity>
+        <EndMultiplicity>2..6</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="1" second="0">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartMultiplicity>1</StartMultiplicity>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="10" second="4">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartMultiplicity>1</StartMultiplicity>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="0" second="10">
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
