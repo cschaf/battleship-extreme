@@ -1,44 +1,68 @@
 <Project>
-  <Name>battleshipextreme</Name>
+  <Name>BattleshipExtreme</Name>
   <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
     <Name>all</Name>
-    <Language>CSharp</Language>
+    <Language>Java</Language>
     <Entities>
+      <Entity type="Class">
+        <Name>Board</Name>
+        <Access>Public</Access>
+        <Location left="55" top="324" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
       <Entity type="Class">
         <Name>Player</Name>
         <Access>Public</Access>
-        <Location left="394" top="355" />
+        <Location left="307" top="50" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>Abstract</Modifier>
       </Entity>
       <Entity type="Class">
-        <Name>Ship</Name>
+        <Name>Game</Name>
         <Access>Public</Access>
-        <Location left="654" top="355" />
+        <Location left="55" top="50" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
-        <Member type="Field">int size</Member>
-        <Member type="Field">Point position</Member>
-        <Member type="Field">Orientation orientation</Member>
-        <Member type="Field">int shootingRange</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>HumanPlayer</Name>
+        <Access>Public</Access>
+        <Location left="307" top="324" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Ship</Name>
+        <Access>Public</Access>
+        <Location left="856" top="50" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">protected int size</Member>
+        <Member type="Field">protected Point position</Member>
+        <Member type="Field">protected int shootingRange</Member>
+        <Member type="Field">protected Orientation orientation</Member>
         <Member type="Method">public boolean isDestroyed()</Member>
-        <Member type="Method">public void shoot(Player player, Position position, Orientation orientation)</Member>
+        <Member type="Method">public void shoot(Player player, Point position, Orientation orientation)</Member>
         <Modifier>Abstract</Modifier>
       </Entity>
       <Entity type="Enum">
         <Name>Orientation</Name>
         <Access>Public</Access>
-        <Location left="654" top="38" />
+        <Location left="55" top="592" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Value>Horizontal</Value>
         <Value>Vertical</Value>
       </Entity>
       <Entity type="Class">
-        <Name>HumanPlayer</Name>
+        <Name>Submarine</Name>
         <Access>Public</Access>
-        <Location left="394" top="648" />
+        <Location left="517" top="325" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -46,7 +70,7 @@
       <Entity type="Class">
         <Name>Destroyer</Name>
         <Access>Public</Access>
-        <Location left="1182" top="180" />
+        <Location left="740" top="325" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -54,7 +78,7 @@
       <Entity type="Class">
         <Name>Frigate</Name>
         <Access>Public</Access>
-        <Location left="968" top="485" />
+        <Location left="979" top="325" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -62,48 +86,40 @@
       <Entity type="Class">
         <Name>Corvette</Name>
         <Access>Public</Access>
-        <Location left="1182" top="485" />
-        <Size width="162" height="216" />
-        <Collapsed>False</Collapsed>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>Submarine</Name>
-        <Access>Public</Access>
-        <Location left="968" top="180" />
-        <Size width="162" height="216" />
-        <Collapsed>False</Collapsed>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>Game</Name>
-        <Access>Public</Access>
-        <Location left="169" top="355" />
-        <Size width="162" height="216" />
-        <Collapsed>False</Collapsed>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>Board</Name>
-        <Access>Public</Access>
-        <Location left="169" top="105" />
+        <Location left="1211" top="325" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
       </Entity>
     </Entities>
     <Relationships>
-      <Relationship type="Association" first="1" second="2">
-        <Label>
-        </Label>
+      <Relationship type="Generalization" first="3" second="1">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
-        <BendPoint relativeToStartShape="True">
-          <X>729</X>
-          <Y>327</Y>
-        </BendPoint>
+      </Relationship>
+      <Relationship type="Generalization" first="6" second="4">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Generalization" first="7" second="4">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Generalization" first="8" second="4">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Generalization" first="9" second="4">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Association" first="2" second="1">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
+        <StartMultiplicity>1</StartMultiplicity>
+        <EndMultiplicity>1..*</EndMultiplicity>
       </Relationship>
     </Relationships>
   </ProjectItem>
