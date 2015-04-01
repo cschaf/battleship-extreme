@@ -7,7 +7,7 @@
       <Entity type="Class">
         <Name>Board</Name>
         <Access>Public</Access>
-        <Location left="615" top="50" />
+        <Location left="705" top="52" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Constructor">public Board(int size)</Member>
@@ -16,28 +16,33 @@
       <Entity type="Class">
         <Name>Player</Name>
         <Access>Public</Access>
-        <Location left="307" top="50" />
+        <Location left="397" top="52" />
         <Size width="239" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">protected String name</Member>
         <Member type="Field">protected static int id</Member>
+        <Member type="Field">protected Ship[] ships</Member>
         <Member type="Method">public void placeShip(Ship ship, Field[] field)</Member>
-        <Member type="Constructor">public Player(int boardSize)</Member>
+        <Member type="Constructor">public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines)</Member>
+        <Member type="Method">public void makeTurn(Ship ship, Player player, Field field, Orientation orientation)</Member>
         <Modifier>Abstract</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>Game</Name>
         <Access>Public</Access>
-        <Location left="55" top="50" />
-        <Size width="162" height="216" />
+        <Location left="55" top="52" />
+        <Size width="226" height="216" />
         <Collapsed>False</Collapsed>
-        <Member type="Constructor">public Game(Player[] players, int boardSize)</Member>
+        <Member type="Field">private Player currentPlayer</Member>
+        <Member type="Constructor">public Game(Setup setup)</Member>
+        <Member type="Method">public void setPlayerName(int id, String name)</Member>
+        <Member type="Method">private void placeShips()</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>HumanPlayer</Name>
         <Access>Public</Access>
-        <Location left="307" top="324" />
+        <Location left="399" top="324" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -45,7 +50,7 @@
       <Entity type="Class">
         <Name>Ship</Name>
         <Access>Public</Access>
-        <Location left="1093" top="50" />
+        <Location left="1183" top="52" />
         <Size width="482" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">protected int size</Member>
@@ -68,7 +73,7 @@
       <Entity type="Class">
         <Name>Submarine</Name>
         <Access>Public</Access>
-        <Location left="913" top="325" />
+        <Location left="1005" top="325" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -76,7 +81,7 @@
       <Entity type="Class">
         <Name>Destroyer</Name>
         <Access>Public</Access>
-        <Location left="1136" top="325" />
+        <Location left="1228" top="325" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -84,7 +89,7 @@
       <Entity type="Class">
         <Name>Frigate</Name>
         <Access>Public</Access>
-        <Location left="1375" top="325" />
+        <Location left="1467" top="325" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -92,7 +97,7 @@
       <Entity type="Class">
         <Name>Corvette</Name>
         <Access>Public</Access>
-        <Location left="1607" top="325" />
+        <Location left="1699" top="325" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -100,7 +105,7 @@
       <Entity type="Class">
         <Name>Field</Name>
         <Access>Public</Access>
-        <Location left="860" top="50" />
+        <Location left="950" top="52" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private int xPos</Member>
@@ -117,6 +122,21 @@
         <Value>Empty</Value>
         <Value>Occupied</Value>
         <Value>Hit</Value>
+      </Entity>
+      <Entity type="Class">
+        <Name>Setup</Name>
+        <Access>Public</Access>
+        <Location left="55" top="324" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private int players</Member>
+        <Member type="Field">private int boardSize</Member>
+        <Member type="Field">private int destroyers</Member>
+        <Member type="Field">private int frigates</Member>
+        <Member type="Field">private int corvettes</Member>
+        <Member type="Field">private int submarines</Member>
+        <Member type="Constructor">public Setup(int players, int boardSize, int destroyers, int frigates, int corvettes, int submarines)</Member>
+        <Modifier>None</Modifier>
       </Entity>
     </Entities>
     <Relationships>
@@ -150,6 +170,8 @@
         <EndMultiplicity>2..6</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="1" second="0">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -158,6 +180,8 @@
         <EndMultiplicity>1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="10" second="4">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -166,6 +190,8 @@
         <EndMultiplicity>1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="0" second="10">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
