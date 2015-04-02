@@ -34,9 +34,9 @@
         <Size width="226" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private Player currentPlayer</Member>
-        <Member type="Constructor">public Game(Setup setup)</Member>
+        <Member type="Constructor">public Game(Settings settings)</Member>
         <Member type="Method">public void setPlayerName(int id, String name)</Member>
-        <Member type="Method">private void placeShips()</Member>
+        <Member type="Method">public void nextPlayer()</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
@@ -124,7 +124,7 @@
         <Value>Hit</Value>
       </Entity>
       <Entity type="Class">
-        <Name>Setup</Name>
+        <Name>Settings</Name>
         <Access>Public</Access>
         <Location left="55" top="324" />
         <Size width="162" height="216" />
@@ -135,7 +135,7 @@
         <Member type="Field">private int frigates</Member>
         <Member type="Field">private int corvettes</Member>
         <Member type="Field">private int submarines</Member>
-        <Member type="Constructor">public Setup(int players, int boardSize, int destroyers, int frigates, int corvettes, int submarines)</Member>
+        <Member type="Constructor">public Settings(int players, int boardSize, int destroyers, int frigates, int corvettes, int submarines)</Member>
         <Modifier>None</Modifier>
       </Entity>
     </Entities>
@@ -170,8 +170,6 @@
         <EndMultiplicity>2..6</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="1" second="0">
-        <Label>
-        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -180,8 +178,6 @@
         <EndMultiplicity>1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="10" second="4">
-        <Label>
-        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -190,8 +186,6 @@
         <EndMultiplicity>1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="0" second="10">
-        <Label>
-        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
