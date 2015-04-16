@@ -17,12 +17,12 @@
         <Name>Player</Name>
         <Access>Public</Access>
         <Location left="397" top="52" />
-        <Size width="239" height="216" />
+        <Size width="285" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">protected String name</Member>
         <Member type="Field">protected static int id</Member>
         <Member type="Field">protected Ship[] ships</Member>
-        <Member type="Method">public void placeShip(Ship ship, Field[] field)</Member>
+        <Member type="Method">public void placeShip(Ship ship, Field field)</Member>
         <Member type="Constructor">public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines)</Member>
         <Member type="Method">public void makeTurn(Ship ship, Player player, Field field, Orientation orientation)</Member>
         <Modifier>Abstract</Modifier>
@@ -37,6 +37,7 @@
         <Member type="Constructor">public Game(Settings settings)</Member>
         <Member type="Method">public void setPlayerName(int id, String name)</Member>
         <Member type="Method">public void nextPlayer()</Member>
+        <Member type="Method">public Player getPlayer(int id)</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
@@ -51,14 +52,17 @@
         <Name>Ship</Name>
         <Access>Public</Access>
         <Location left="1183" top="52" />
-        <Size width="482" height="216" />
+        <Size width="482" height="247" />
         <Collapsed>False</Collapsed>
         <Member type="Field">protected int size</Member>
         <Member type="Field">protected int shootingRange</Member>
         <Member type="Field">protected Orientation orientation</Member>
-        <Member type="Field">protected int reloadTime</Member>
+        <Member type="Field">protected int maxReloadTime</Member>
+        <Member type="Field">protected int currentReloadTime</Member>
         <Member type="Method">public boolean isDestroyed()</Member>
         <Member type="Method">public void shoot(Player player, Field field, Orientation orientation)</Member>
+        <Member type="Method">public boolean isReloading()</Member>
+        <Member type="Method">public void decreaseCurrentReloadTime()</Member>
         <Modifier>Abstract</Modifier>
       </Entity>
       <Entity type="Enum">
@@ -73,33 +77,37 @@
       <Entity type="Class">
         <Name>Submarine</Name>
         <Access>Public</Access>
-        <Location left="1005" top="325" />
+        <Location left="985" top="459" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
+        <Member type="Constructor">public Submarine()</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>Destroyer</Name>
         <Access>Public</Access>
-        <Location left="1228" top="325" />
+        <Location left="1205" top="459" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
+        <Member type="Constructor">public Destroyer()</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>Frigate</Name>
         <Access>Public</Access>
-        <Location left="1467" top="325" />
+        <Location left="1447" top="459" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
+        <Member type="Constructor">public Frigate()</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>Corvette</Name>
         <Access>Public</Access>
-        <Location left="1699" top="325" />
+        <Location left="1679" top="459" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
+        <Member type="Constructor">public Corvette()</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
@@ -112,16 +120,6 @@
         <Member type="Field">private int yPos</Member>
         <Member type="Field">private boolean isHit</Member>
         <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Enum">
-        <Name>State</Name>
-        <Access>Public</Access>
-        <Location left="290" top="592" />
-        <Size width="162" height="216" />
-        <Collapsed>False</Collapsed>
-        <Value>Empty</Value>
-        <Value>Occupied</Value>
-        <Value>Hit</Value>
       </Entity>
       <Entity type="Class">
         <Name>Settings</Name>
@@ -136,6 +134,17 @@
         <Member type="Field">private int corvettes</Member>
         <Member type="Field">private int submarines</Member>
         <Member type="Constructor">public Settings(int players, int boardSize, int destroyers, int frigates, int corvettes, int submarines)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Controller</Name>
+        <Access>Public</Access>
+        <Location left="692" top="324" />
+        <Size width="213" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private Game game</Member>
+        <Member type="Field">private View view</Member>
+        <Member type="Constructor">public Controller(Game game, View view)</Member>
         <Modifier>None</Modifier>
       </Entity>
     </Entities>
@@ -178,20 +187,30 @@
         <EndMultiplicity>1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="10" second="4">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
         <StartMultiplicity>1</StartMultiplicity>
-        <EndMultiplicity>1</EndMultiplicity>
+        <EndMultiplicity>0..1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="0" second="10">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
         <StartMultiplicity>1</StartMultiplicity>
-        <EndMultiplicity>1..*</EndMultiplicity>
+        <EndMultiplicity>25..*</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="2" second="11">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
       </Relationship>
     </Relationships>
   </ProjectItem>
