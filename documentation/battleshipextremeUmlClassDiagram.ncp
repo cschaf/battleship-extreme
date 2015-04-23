@@ -191,8 +191,6 @@
         <EndMultiplicity>2..6</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="1" second="0">
-        <Label>
-        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -201,6 +199,8 @@
         <EndMultiplicity>1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="10" second="4">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -209,6 +209,8 @@
         <EndMultiplicity>0..1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="0" second="10">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -217,13 +219,88 @@
         <EndMultiplicity>25..*</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="2" second="11">
-        <Label>
-        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
       </Relationship>
     </Relationships>
+  </ProjectItem>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>packages</Name>
+    <Language>Java</Language>
+    <Entities>
+      <Entity type="Comment">
+        <Text>de.hsbremen.battleshipextreme.core
+
+Conatins:
+-Ship
+-ShipType
+-Orientation
+-Settings
+-Player
+-Field</Text>
+        <Location left="293" top="101" />
+        <Size width="206" height="151" />
+      </Entity>
+      <Entity type="Comment">
+        <Text>de.hsbremen.battleshipextreme.ships
+
+Contains:
+-Submarine
+-Corvette
+-Frigate
+-Destroyer</Text>
+        <Location left="293" top="282" />
+        <Size width="206" height="111" />
+      </Entity>
+      <Entity type="Comment">
+        <Text>de.hsbremen.battleshipextreme.logic
+
+Conatins:
+-Board
+-Game</Text>
+        <Location left="549" top="101" />
+        <Size width="206" height="117" />
+      </Entity>
+      <Entity type="Comment">
+        <Text>de.hsbremen.battleshipextreme.players
+
+Contains:
+-HumanPlayer
+-AiPlayer</Text>
+        <Location left="293" top="408" />
+        <Size width="219" height="111" />
+      </Entity>
+      <Entity type="Comment">
+        <Text>de.hsbremen.battleshipextreme.client
+-Controller</Text>
+        <Location left="884" top="101" />
+        <Size width="210" height="104" />
+      </Entity>
+      <Entity type="Comment">
+        <Text>de.hsbremen.battleshipextreme.server
+-Controller</Text>
+        <Location left="884" top="262" />
+        <Size width="226" height="104" />
+      </Entity>
+      <Entity type="Comment">
+        <Text>de.hsbremen.battleshipextreme.network
+</Text>
+        <Location left="884" top="408" />
+        <Size width="226" height="104" />
+      </Entity>
+      <Entity type="Comment">
+        <Text>de.hsbremen.battleshipextreme.excepions</Text>
+        <Location left="549" top="282" />
+        <Size width="232" height="104" />
+      </Entity>
+      <Entity type="Comment">
+        <Text>de.hsbremen.battleshipextreme.eventhandling</Text>
+        <Location left="549" top="408" />
+        <Size width="248" height="104" />
+      </Entity>
+    </Entities>
+    <Relationships />
   </ProjectItem>
 </Project>
