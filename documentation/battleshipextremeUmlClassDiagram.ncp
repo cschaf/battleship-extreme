@@ -16,7 +16,7 @@
       <Entity type="Class">
         <Name>Player</Name>
         <Access>Public</Access>
-        <Location left="397" top="52" />
+        <Location left="399" top="52" />
         <Size width="285" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">protected String name</Member>
@@ -54,7 +54,7 @@
         <Location left="1183" top="52" />
         <Size width="482" height="247" />
         <Collapsed>False</Collapsed>
-        <Member type="Field">protected int size</Member>
+        <Member type="Field">protected boolean isPlaced</Member>
         <Member type="Field">protected int shootingRange</Member>
         <Member type="Field">protected Orientation orientation</Member>
         <Member type="Field">protected int maxReloadTime</Member>
@@ -63,6 +63,7 @@
         <Member type="Method">public void shoot(Player player, Field field, Orientation orientation)</Member>
         <Member type="Method">public boolean isReloading()</Member>
         <Member type="Method">public void decreaseCurrentReloadTime()</Member>
+        <Member type="Method">public boolean isPlaced()</Member>
         <Modifier>Abstract</Modifier>
       </Entity>
       <Entity type="Enum">
@@ -147,6 +148,17 @@
         <Member type="Constructor">public Controller(Game game, View view)</Member>
         <Modifier>None</Modifier>
       </Entity>
+      <Entity type="Enum">
+        <Name>ShipType</Name>
+        <Access>Public</Access>
+        <Location left="746" top="571" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Value>Destroyer</Value>
+        <Value>Frigate</Value>
+        <Value>Submarine</Value>
+        <Value>Corvette</Value>
+      </Entity>
     </Entities>
     <Relationships>
       <Relationship type="Generalization" first="3" second="1">
@@ -179,6 +191,8 @@
         <EndMultiplicity>2..6</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="1" second="0">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -187,8 +201,6 @@
         <EndMultiplicity>1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="10" second="4">
-        <Label>
-        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -197,8 +209,6 @@
         <EndMultiplicity>0..1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="0" second="10">
-        <Label>
-        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -207,6 +217,8 @@
         <EndMultiplicity>25..*</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="2" second="11">
+        <Label>
+        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <Direction>Unidirectional</Direction>
