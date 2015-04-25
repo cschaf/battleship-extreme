@@ -254,8 +254,6 @@
         <EndMultiplicity>2..6</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="1" second="0">
-        <Label>
-        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -264,6 +262,8 @@
         <EndMultiplicity>1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="10" second="4">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -272,6 +272,8 @@
         <EndMultiplicity>0..1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="0" second="10">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -280,8 +282,6 @@
         <EndMultiplicity>25..*</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="2" second="11">
-        <Label>
-        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -365,5 +365,143 @@ Contains:
       </Entity>
     </Entities>
     <Relationships />
+  </ProjectItem>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>networking</Name>
+    <Language>Java</Language>
+    <Entities>
+      <Entity type="Interface">
+        <Name>ITransfarable</Name>
+        <Access>Public</Access>
+        <Location left="166" top="55" />
+        <Size width="193" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public TransferableType getType()</Member>
+      </Entity>
+      <Entity type="Enum">
+        <Name>TransferableType</Name>
+        <Access>Public</Access>
+        <Location left="495" top="55" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Value>TransferInfo</Value>
+        <Value>ClientInfo</Value>
+        <Value>Message</Value>
+        <Value>ClientMessage</Value>
+      </Entity>
+      <Entity type="Enum">
+        <Name>InfoSendingReason</Name>
+        <Access>Public</Access>
+        <Location left="200" top="1147" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Value>Info</Value>
+        <Value>Connect</Value>
+        <Value>Disconnect</Value>
+      </Entity>
+      <Entity type="Class">
+        <Name>TransferableObject</Name>
+        <Access>Public</Access>
+        <Location left="166" top="414" />
+        <Size width="245" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">protected TransferableObject()</Member>
+        <Member type="Method">public Timestamp getCreatedAt()</Member>
+        <Member type="Method">public void setCreatedAt(Timestamp createdAt)</Member>
+        <Modifier>Abstract</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>TransferInfo</Name>
+        <Access>Public</Access>
+        <Location left="200" top="773" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private String ip</Member>
+        <Member type="Field">private int port</Member>
+        <Member type="Field">private TransferableType reason</Member>
+        <Member type="Method">public TransferableType getType()</Member>
+        <Modifier>Abstract</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ClientInfo</Name>
+        <Access>Public</Access>
+        <Location left="495" top="773" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private String username</Member>
+        <Member type="Constructor">public ClientInfo(String username, String ip, int port)</Member>
+        <Member type="Constructor">public ClientInfo(String username, String ip, int port, InfoSendingReason reason)</Member>
+        <Member type="Method">public TransferableType getType()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Message</Name>
+        <Access>Public</Access>
+        <Location left="495" top="414" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private String message</Member>
+        <Member type="Constructor">public Message(String message)</Member>
+        <Member type="Method">public TransferableType getType()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ClientMessage</Name>
+        <Access>Public</Access>
+        <Location left="745" top="414" />
+        <Size width="282" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private ITransfarable info</Member>
+        <Member type="Constructor">public ClientMessage(String message, ITransferable info)</Member>
+        <Member type="Method">public TransferableType getType()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+    </Entities>
+    <Relationships>
+      <Relationship type="Association" first="0" second="1">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Realization" first="3" second="0">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Generalization" first="4" second="3">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>282</X>
+          <Y>748</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>282</X>
+          <Y>655</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Association" first="4" second="2">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Generalization" first="5" second="4">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+      </Relationship>
+      <Relationship type="Generalization" first="6" second="3">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+      </Relationship>
+      <Relationship type="Generalization" first="7" second="6">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+      </Relationship>
+    </Relationships>
   </ProjectItem>
 </Project>
