@@ -20,15 +20,16 @@
         <Location left="399" top="52" />
         <Size width="285" height="247" />
         <Collapsed>False</Collapsed>
-        <Member type="Field">protected String name</Member>
+        <Member type="Field">protected String Player</Member>
         <Member type="Field">protected static int currentId</Member>
         <Member type="Field">protected Ship[] ships</Member>
         <Member type="Field">protected int id</Member>
         <Member type="Method">public void resetCurrentId()</Member>
         <Member type="Method">public void placeShip(Ship ship, int xPos, int yPos, Orientation orientation)</Member>
         <Member type="Constructor">public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines)</Member>
-        <Member type="Method">public void makeTurn(Ship ship, Player player, Field field, Orientation orientation)</Member>
+        <Member type="Method">public boolean shoot(Ship ship, Player player, Field field, Orientation orientation)</Member>
         <Member type="Method">public boolean hasPlacedAllShips()</Member>
+        <Member type="Method">public boolean AreAllShipsPlaced()</Member>
         <Modifier>Abstract</Modifier>
       </Entity>
       <Entity type="Class">
@@ -68,7 +69,7 @@
         <Member type="Field">protected int currentReloadTime</Member>
         <Member type="Field">protected ShipType type</Member>
         <Member type="Method">public boolean isDestroyed()</Member>
-        <Member type="Method">public void shoot(Player player, Field field, Orientation orientation)</Member>
+        <Member type="Method">public boolean shoot(Player player, Field field, Orientation orientation)</Member>
         <Member type="Method">public boolean isReloading()</Member>
         <Member type="Method">public void decreaseCurrentReloadTime()</Member>
         <Member type="Method">public boolean isPlaced()</Member>
@@ -254,8 +255,6 @@
         <EndMultiplicity>2..6</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="1" second="0">
-        <Label>
-        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -264,6 +263,8 @@
         <EndMultiplicity>1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="10" second="4">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -272,6 +273,8 @@
         <EndMultiplicity>0..1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="0" second="10">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -280,8 +283,6 @@
         <EndMultiplicity>25..*</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="2" second="11">
-        <Label>
-        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <Direction>Unidirectional</Direction>
