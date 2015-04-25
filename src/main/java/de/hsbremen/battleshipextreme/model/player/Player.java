@@ -1,10 +1,14 @@
 package de.hsbremen.battleshipextreme.model.player;
 
+import java.util.HashMap;
+
 import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.FieldOccupiedException;
+import de.hsbremen.battleshipextreme.model.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.ShipAlreadyPlacedException;
+import de.hsbremen.battleshipextreme.model.ShipOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.ship.Corvette;
 import de.hsbremen.battleshipextreme.model.ship.Destroyer;
 import de.hsbremen.battleshipextreme.model.ship.Frigate;
@@ -17,13 +21,13 @@ public class Player {
 	private String name;
 	private Board board;
 	private Ship[] ships;
-	
+
 	public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 		this.id = this.currentId++;
 		this.name = "Player " + this.id;
 		this.board = new Board(boardSize);
 		this.ships = new Ship[destroyers + frigates + corvettes + submarines];
-		
+
 		for (int i = 0; i < ships.length; i++) {
 			if (i < destroyers)
 				ships[i] = new Destroyer();
@@ -31,73 +35,73 @@ public class Player {
 				ships[i] = new Frigate();
 			else if (i < destroyers + frigates + corvettes)
 				ships[i] = new Corvette();
-			else 
+			else
 				ships[i] = new Submarine();
 		}
 	}
-	
-	public void placeShip(Ship ship, Orientation orientation, Field field) throws Exception, ShipAlreadyPlacedException {
-		
-//		if (ship.isPlaced()) {
-//			// Schiff bereits gesetzt Exception
-//			throw new ShipAlreadyPlacedException(ship);
-//		}
+
+	public void placeShip(Ship ship, int xPos, int yPos, Orientation orientation) throws Exception, ShipAlreadyPlacedException, FieldOutOfBoardException {
 		
 		Field[][] fields = this.board.getFields();
-		int x = field.getXPos();
-		int y = field.getYPos();
 		
-		switch (orientation) {
-		case Horizontal:
-			
-			break;
-		case Vertical:
-			break;
-		default:
-			break;
-		}
-		
-		if (orientation == Orientation.Horizontal) {
+		// Schiff bereits gesetzt
+		if (ship.isPlaced())
+			throw new ShipAlreadyPlacedException(ship);
 
-			for (int row = y - 1; row <= y + 1; row++) { // Zeile (y)
-				for (int column = x - 1; column <= x + ship.getSize(); column++){ // Spalte (x)
-					if (((row < 0 || row >= fields.length) && row != y) || ((column < 0 || column >= fields.length) && column != x)) {
-						// Feld auﬂerhalb des Spielfeldes Exception
-					} else if (fields[row][column].getShip() != null) {
-						// Feld hat bereits ein Schiff Exception
-						throw new FieldOccupiedException(field);
-					}
-				}
-			}
+		// Feld auﬂerhalb des Spielfeldes
+		if (!(xPos >= 0 && yPos >= 0 && xPos < fields.length && yPos < fields.length)) 
+			throw new FieldOutOfBoardException(new Field(xPos, yPos));
+		
+		// Orientation Horizontal
+		if (orientation == Orientation.Horizontal) {
 			
-			for (int column = x; column < x + ship.getSize(); column++)
-				fields[y][column].setShip(ship);
+			// Teil des Schiffes auﬂerhalb des Spielfeldes
+			if (!(xPos + ship.getSize() - 1 < fields.length))
+				throw new ShipOutOfBoardException(ship); // Schiff auﬂerhalb Exception
+
+			// Felder pr¸fen ob bereits belegt
+			for (int y = yPos - 1; y <= yPos + 1; y++)
+				for (int x = xPos - 1; x <= xPos + ship.getSize(); x++)
+					if (x >= 0 && y >= 0 && x < fields.length && y < fields.length) // x und y innerhalb des Spielfeldes
+						if (fields[y][x].getShip() != null) // Feld hat Schiff
+							throw new FieldOccupiedException(fields[y][x]); // Feld belegt Exception
 			
-		} else if (orientation == Orientation.Vertical) {
-			
-			for (int row = y - 1; row <= y + ship.getSize(); row++) { // Zeile (y)
-				for (int column = x - 1; column <= x + 1; column++){ // Spalte (x)
-					if (row < 0 || column < 0 || row >= fields.length || column >= fields.length) {
-						// Feld auﬂerhalb des Spielfeldes Exception
-					} else if (fields[row][column].getShip() != null) {
-						// Feld hat bereits ein Schiff Exception
-						throw new FieldOccupiedException(field);
-					}
-				}
-			}
-			
-			for (int row = y; row < y + ship.getSize(); row++)
-				fields[row][x].setShip(ship);
-			
+			for (int x = xPos; x < xPos + ship.getSize(); x++)
+				fields[yPos][x].setShip(ship);
 		}
+		
+		// Orientation Vertical
+		if (orientation == Orientation.Vertical) {
+			
+			// Teil des Schiffes auﬂerhalb des Spielfeldes
+			if (!(yPos + ship.getSize() - 1 < fields.length))
+				throw new ShipOutOfBoardException(ship); // Schiff auﬂerhalb Exception
+
+			// Felder pr¸fen ob bereits belegt
+			for (int y = yPos - 1; y <= yPos + ship.getSize(); y++)
+				for (int x = xPos - 1; x <= xPos + 1; x++)
+					if (x >= 0 && y >= 0 && x < fields.length && y < fields.length) // x und y innerhalb des Spielfeldes
+						if (fields[y][x].getShip() != null) // Feld hat Schiff
+							throw new FieldOccupiedException(fields[y][x]); // Feld belegt Exception
+			
+			for (int y = xPos; y < yPos + ship.getSize(); y++)
+				fields[y][xPos].setShip(ship);
+		}
+		
+		ship.setPlaced();
 	}
-	
-	private boolean isPositionOK(Orientation orientation) {
-		boolean isOK = true;
-		
-		
-		
-		return isOK;
+
+	public boolean hasPlacedAllShips() {
+		boolean arePlaced = true;
+
+		for (Ship ship : this.ships) {
+			if (ship.isPlaced()) {
+				arePlaced = false;
+				break;
+			}
+		}
+
+		return arePlaced;
 	}
 
 	public String getName() {
@@ -107,7 +111,7 @@ public class Player {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public int getId() {
 		return this.id;
 	}
@@ -119,13 +123,13 @@ public class Player {
 	public Ship[] getShips() {
 		return ships;
 	}
-	
+
 	public static void resetCurrentId() {
 		currentId = 1;
 	}
-	
+
 	public String toString() {
 		return this.name;
 	}
-	
+
 }

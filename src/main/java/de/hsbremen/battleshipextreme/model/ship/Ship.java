@@ -8,6 +8,15 @@ public abstract class Ship {
 	protected int maxReloadTime;
 	protected int currentReloadTime;
 	protected ShipType type;
+	protected boolean isPlaced;
+	
+	public void setPlaced() {
+		this.isPlaced = true;
+	}
+	
+	public boolean isPlaced() {
+		return isPlaced;
+	}
 	
 	public boolean isDestroyed() {
 		return size <= 0;
