@@ -1,59 +1,60 @@
 package de.hsbremen.battleshipextreme;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.util.Scanner;
 
 import de.hsbremen.battleshipextreme.model.*;
 import de.hsbremen.battleshipextreme.model.player.*;
 import de.hsbremen.battleshipextreme.model.ship.*;
 
 public class Main {
+	
 	public static void main(String[] args) throws Exception {
-		// Eingabeobjekt erzeugen
-		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-		
+
 		Game game = new Game(generateSettings());
-		setPlayerNames(game.getPlayers());
+		//setPlayerNames(game.getPlayers());
 		placeShips(game.getPlayers());
+		game.setCurrentPlayerRandom();
 		
 		if (game.isReady()) {
 			
+			System.out.println(game.getCurrentPlayer());
 		}
+		
 	}
 	
-	private static Settings generateSettings() throws Exception {
-		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+	private static Settings generateSettings() {
+		Scanner input = new Scanner(System.in);
 
 		System.out.println("Einstellungen:");
 		System.out.print("Anzahl der Spieler (2-6): ");
-		int players = Integer.parseInt(input.readLine());
+		int players = input.nextInt();
 		System.out.print("Groesse des Spielfeldes: ");
-		int boardSize = Integer.parseInt(input.readLine());
+		int boardSize = input.nextInt();
 		System.out.print("Zerstoerer: ");
-		int destroyers = Integer.parseInt(input.readLine());
+		int destroyers = input.nextInt();
 		System.out.print("Fregatten: ");
-		int frigates = Integer.parseInt(input.readLine());
+		int frigates = input.nextInt();
 		System.out.print("Korvetten: ");
-		int corvettes = Integer.parseInt(input.readLine());
+		int corvettes = input.nextInt();
 		System.out.print("U-Boote: ");
-		int submarines = Integer.parseInt(input.readLine());
+		int submarines = input.nextInt();
 		
 		return new Settings(players, boardSize, destroyers, frigates, corvettes, submarines);
 	}
 	
-	private static void setPlayerNames(Player[] players) throws Exception {
-		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+	private static void setPlayerNames(Player[] players) {
+		Scanner input = new Scanner(System.in);
 
 		System.out.println("\nSpielernamen:");
 
 		for (Player player : players) {
 			System.out.print("Name für " + player + " : ");
-			player.setName(input.readLine());
+			player.setName(input.nextLine());
 		}
 	}
 	
 	private static void placeShips(Player[] players) throws Exception {
-		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+		Scanner input = new Scanner(System.in);
 		
 		for (Player player : players) {
 			System.out.println("\nPlatziere Schiffe fuer " + player + ":");
@@ -62,16 +63,14 @@ public class Main {
 				System.out.println("\nPlatziere " + ship + ":");
 
 				System.out.print("Zeile (1-" + player.getBoard().getSize() + "): ");
-				int row = Integer.parseInt(input.readLine()) - 1;
+				int row = input.nextInt() - 1;
 				System.out.print("Spalte (1-" + player.getBoard().getSize() + "): ");
-				int column = Integer.parseInt(input.readLine()) - 1;
-				
-				Field field = player.getBoard().getField(column, row);
+				int column = input.nextInt() - 1;
 				
 				System.out.print("Orientierung (H/V): ");
-				Orientation orientation = input.readLine().toUpperCase().charAt(0) == 'V' ? Orientation.Vertical : Orientation.Horizontal;
+				Orientation orientation = input.next().toUpperCase().charAt(0) == 'V' ? Orientation.Vertical : Orientation.Horizontal;
 				
-				player.placeShip(ship, orientation, field);
+				player.placeShip(ship, column, row, orientation);
 				
 				System.out.println();
 				printBoard(player.getBoard());
