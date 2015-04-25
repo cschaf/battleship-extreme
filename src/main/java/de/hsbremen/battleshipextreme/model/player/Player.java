@@ -1,6 +1,6 @@
 package de.hsbremen.battleshipextreme.model.player;
 
-import java.util.HashMap;
+import java.util.Arrays;
 
 import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Field;
@@ -104,8 +104,26 @@ public class Player {
 		return arePlaced;
 	}
 	
-	public void makeTurn(Ship ship, Player player, int xPos, int yPos, Orientation orientation) {
-		
+	public boolean shoot(Ship ship, Player player, int xPos, int yPos, Orientation orientation) throws Exception {
+		//besitzt der Player das übergebene Schiff?
+		if (!Arrays.asList(this.getShips()).contains(ship)) {
+			throw new Exception("The player does not possess the ship that has been handed over!");
+		}
+		//greift der Player sich selbst an?
+		if (this.equals(player)) {
+			throw new Exception("The player can't attack himself!");
+		}
+		return ship.shoot(player, xPos, yPos, orientation);	
+
+	}
+	
+	public boolean AreAllShipsReloading() {
+		for (Ship ship : this.ships) {
+			if (!ship.isReloading()) {
+				return false;
+			}
+		}
+		return true;		
 	}
 
 	public String getName() {

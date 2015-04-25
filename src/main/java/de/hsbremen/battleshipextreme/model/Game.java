@@ -4,7 +4,6 @@ import java.util.Random;
 
 import de.hsbremen.battleshipextreme.model.exception.NotAllShipsPlacedException;
 import de.hsbremen.battleshipextreme.model.player.Player;
-import de.hsbremen.battleshipextreme.model.ship.Ship;
 
 public class Game {
 	Player[] players;

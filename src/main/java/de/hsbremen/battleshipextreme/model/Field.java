@@ -7,6 +7,7 @@ public class Field {
 	private int xPos;
 	private int yPos;
 	private Ship ship;
+	private boolean isHit;
 	
 	public Field(int xPos, int yPos) {
 		this.xPos = xPos;
@@ -29,6 +30,14 @@ public class Field {
 		return ship;
 	}
 	
+	public boolean isHit() {
+		return isHit;
+	}
+
+	public void setHit(boolean isHit) {
+		this.isHit = isHit;
+	}
+
 	public void setShip(Ship ship) throws FieldOccupiedException {
 		if (this.hasShip()) {
 			throw new FieldOccupiedException(this); // hat Schiff Exception
