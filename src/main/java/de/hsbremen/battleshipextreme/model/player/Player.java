@@ -95,13 +95,17 @@ public class Player {
 		boolean arePlaced = true;
 
 		for (Ship ship : this.ships) {
-			if (ship.isPlaced()) {
+			if (!ship.isPlaced()) {
 				arePlaced = false;
 				break;
 			}
 		}
-
+		
 		return arePlaced;
+	}
+	
+	public void makeTurn(Ship ship, Player player, int xPos, int yPos, Orientation orientation) {
+		
 	}
 
 	public String getName() {
