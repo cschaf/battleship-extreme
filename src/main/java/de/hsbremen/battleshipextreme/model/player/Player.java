@@ -1,5 +1,7 @@
 package de.hsbremen.battleshipextreme.model.player;
 
+import java.util.Arrays;
+
 import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.Orientation;
@@ -55,8 +57,37 @@ public class Player extends TransferableObject {
             throw new FieldOutOfBoardException(new Field(xPos, yPos));
         }
 
-        // Orientation Horizontal
-        if (orientation == Orientation.Horizontal) {
+		for (Ship ship : this.ships) {
+			if (!ship.isPlaced()) {
+				arePlaced = false;
+				break;
+			}
+		}
+		
+		return arePlaced;
+	}
+	
+	public boolean shoot(Ship ship, Player player, int xPos, int yPos, Orientation orientation) throws Exception {
+		//besitzt der Player das übergebene Schiff?
+		if (!Arrays.asList(this.getShips()).contains(ship)) {
+			throw new Exception("The player does not possess the ship that has been handed over!");
+		}
+		//greift der Player sich selbst an?
+		if (this.equals(player)) {
+			throw new Exception("The player can't attack himself!");
+		}
+		return ship.shoot(player, xPos, yPos, orientation);	
+
+	}
+	
+	public boolean AreAllShipsReloading() {
+		for (Ship ship : this.ships) {
+			if (!ship.isReloading()) {
+				return false;
+			}
+		}
+		return true;		
+	}
 
             // Teil des Schiffes außerhalb des Spielfeldes
             if (!(xPos + ship.getSize() - 1 < fields.length)) {
