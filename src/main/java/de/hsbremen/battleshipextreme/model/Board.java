@@ -1,5 +1,7 @@
 package de.hsbremen.battleshipextreme.model;
 
+import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
+
 public class Board {
 	private Field[][] fields;
 	private int size;
@@ -18,7 +20,9 @@ public class Board {
 		return fields;
 	}
 	
-	public Field getField(int x, int y) {
+	public Field getField(int x, int y) throws FieldOutOfBoardException {
+		if (x < 0 || y < 0 || x >= this.size || y >= this.size)
+			throw new FieldOutOfBoardException(new Field(x, y));
 		return this.fields[y][x];
 	}
 	

@@ -13,7 +13,7 @@ public class Main {
 		Game game = new Game(generateSettings());
 		//setPlayerNames(game.getPlayers());
 		placeShips(game.getPlayers());
-		game.setCurrentPlayerRandom();
+		game.setBeginningPlayerRandomly();
 		
 		if (game.isReady()) {
 			

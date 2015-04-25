@@ -1,5 +1,6 @@
 package de.hsbremen.battleshipextreme.model;
 
+import de.hsbremen.battleshipextreme.model.exception.FieldOccupiedException;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 
 public class Field {
@@ -28,9 +29,9 @@ public class Field {
 		return ship;
 	}
 	
-	public void setShip(Ship ship) {
+	public void setShip(Ship ship) throws FieldOccupiedException {
 		if (this.hasShip()) {
-			// hat Schiff Exception
+			throw new FieldOccupiedException(this); // hat Schiff Exception
 		}
 		this.ship = ship;
 	}

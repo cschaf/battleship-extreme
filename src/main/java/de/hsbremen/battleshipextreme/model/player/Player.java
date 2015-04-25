@@ -4,11 +4,11 @@ import java.util.HashMap;
 
 import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Field;
-import de.hsbremen.battleshipextreme.model.FieldOccupiedException;
-import de.hsbremen.battleshipextreme.model.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.Orientation;
-import de.hsbremen.battleshipextreme.model.ShipAlreadyPlacedException;
-import de.hsbremen.battleshipextreme.model.ShipOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.exception.FieldOccupiedException;
+import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
+import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.ship.Corvette;
 import de.hsbremen.battleshipextreme.model.ship.Destroyer;
 import de.hsbremen.battleshipextreme.model.ship.Frigate;
@@ -16,11 +16,11 @@ import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.model.ship.Submarine;
 
 public class Player {
-	private static int currentId = 1;
-	private int id;
-	private String name;
-	private Board board;
-	private Ship[] ships;
+	protected static int currentId = 1;
+	protected int id;
+	protected String name;
+	protected Board board;
+	protected Ship[] ships;
 
 	public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 		this.id = this.currentId++;

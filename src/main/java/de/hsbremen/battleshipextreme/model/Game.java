@@ -2,6 +2,7 @@ package de.hsbremen.battleshipextreme.model;
 
 import java.util.Random;
 
+import de.hsbremen.battleshipextreme.model.exception.NotAllShipsPlacedException;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 
@@ -34,12 +35,25 @@ public class Game {
 		return true;
 	}
 	
-	public void setCurrentPlayer(int playerId) {
-		if (this.currentPlayer == null)
-			this.currentPlayer = this.players[playerId];
+	/**
+	 * Set beginning player by valid id or randomly.
+	 * @param playerId
+	 */
+	public void setBeginningPlayer(int playerId) {
+		if (this.currentPlayer == null) {
+			boolean isIdOk = false;
+			for (Player player : this.players) {
+				if (player.getId() == playerId) {
+					this.currentPlayer = player;
+					isIdOk = true;
+					break;
+				}
+			}
+			if (!isIdOk) this.setBeginningPlayerRandomly();
+		}
 	}
 	
-	public void setCurrentPlayerRandom() {
+	public void setBeginningPlayerRandomly() {
 		Random rand = new Random();
 		if (this.currentPlayer == null)
 			this.currentPlayer = this.players[rand.nextInt(this.players.length)];
