@@ -20,7 +20,7 @@
         <Location left="399" top="52" />
         <Size width="285" height="247" />
         <Collapsed>False</Collapsed>
-        <Member type="Field">protected String Player</Member>
+        <Member type="Field">protected boolean hasLost</Member>
         <Member type="Field">protected static int currentId</Member>
         <Member type="Field">protected Ship[] ships</Member>
         <Member type="Field">protected int id</Member>
@@ -36,7 +36,7 @@
         <Name>Game</Name>
         <Access>Public</Access>
         <Location left="55" top="52" />
-        <Size width="226" height="216" />
+        <Size width="226" height="247" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private Player currentPlayer</Member>
         <Member type="Constructor">public Game(Settings settings)</Member>
@@ -46,6 +46,8 @@
         <Member type="Method">public boolean isReady()</Member>
         <Member type="Method">public void setBeginningPlayerRandomly()</Member>
         <Member type="Method">public void setBeginningPlayer(int playerId)</Member>
+        <Member type="Method">public boolean isGameover()</Member>
+        <Member type="Method">public Player determineWinner()</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
