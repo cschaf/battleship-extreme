@@ -26,7 +26,6 @@ public class Game {
 		for (Player player : this.players)
 			if (!player.hasPlacedAllShips())
 				throw new NotAllShipsPlacedException(player);
-
 		return true;
 	}
 
