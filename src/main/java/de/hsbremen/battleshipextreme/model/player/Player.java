@@ -83,7 +83,7 @@ public class Player extends TransferableObject {
 					if (x >= 0 && y >= 0 && x < fields.length && y < fields.length)
 						if (fields[y][x].getShip() != null) // Feld hat Schiff
 							throw new FieldOccupiedException(fields[y][x]);
-			for (int y = xPos; y < yPos + ship.getSize(); y++)
+			for (int y = yPos; y < yPos + ship.getSize(); y++)
 				fields[y][xPos].setShip(ship);
 		}
 
