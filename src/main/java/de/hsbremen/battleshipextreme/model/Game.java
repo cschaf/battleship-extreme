@@ -39,6 +39,19 @@ public class Game {
 		return numberOfPlayersLeft <= 1;
 	}
 
+	public Player determineWinner() throws Exception {
+		if (!isGameover()) {
+			throw new Exception("The game is not over yet!");
+		}
+		Player winner = null;
+		for (Player player : players) {
+			if (!player.hasLost()) {
+				winner = player;
+			}
+		}
+		return winner;
+	}
+
 	/**
 	 * Set beginning player by valid id or randomly.
 	 * 

@@ -11,6 +11,8 @@ import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 
 public class Main {
+	static Scanner input = new Scanner(System.in);
+
 	public static void main(String[] args) throws Exception {
 
 		// Game game = new Game(generateSettings());
@@ -23,15 +25,15 @@ public class Main {
 		game.setBeginningPlayer(1);
 		if (game.isReady()) {
 			do {
-				shootAtShips(game, players);
+				shootLoop(game, players);
 			} while (!game.isGameover());
 			System.out.println("Spiel zu Ende");
+			System.out.println(game.determineWinner() + " hat gewonnen!");
 		}
+		input.close();
 	}
 
 	private static Settings generateSettings() {
-		Scanner input = new Scanner(System.in);
-
 		System.out.println("Einstellungen:");
 		System.out.print("Anzahl der Spieler (2-6): ");
 		int players = input.nextInt();
@@ -51,8 +53,6 @@ public class Main {
 	}
 
 	private static void setPlayerNames(Player[] players) {
-		Scanner input = new Scanner(System.in);
-
 		System.out.println("\nSpielernamen:");
 
 		for (Player player : players) {
@@ -62,8 +62,6 @@ public class Main {
 	}
 
 	private static void placeShips(Player[] players) throws Exception {
-		Scanner input = new Scanner(System.in);
-
 		for (Player player : players) {
 			System.out.println("\nPlatziere Schiffe fuer " + player + ":");
 
@@ -106,69 +104,17 @@ public class Main {
 		}
 	}
 
-	private static void shootAtShips(Game game, Player[] players)
-			throws Exception {
-		Scanner input = new Scanner(System.in);
+	private static void shootLoop(Game game, Player[] players) throws Exception {
 		Ship ship;
+		Player enemy;
 		for (Player player : players) {
 			if (!game.isGameover()) {
 				if (!player.hasLost()) {
 					if (!player.AreAllShipsReloading()) {
-						System.out.println(player + " ist an der Reihe");
-						System.out.println("Welches Schiff soll schieﬂen?");
-						Ship[] ships = player.getShips();
-						do {
-							for (int i = 0; i < ships.length; i++) {
-								System.out.println("(" + i + ")" + "(reload:"
-										+ ships[i].getCurrentReloadTime() + ")"
-										+ "(health:" + ships[i].getSize() + ")"
-										+ ships[i].getType());
-							}
-
-							int shipIndex = input.nextInt();
-							ship = ships[shipIndex];
-							if (ship.isReloading()) {
-								System.out.println("Schiff l‰dt gerade nach");
-							}
-							if (ship.isDestroyed()) {
-								System.out.println("Schiff ist kaputt");
-							}
-							System.out.println();
-						} while (ship.isReloading() || (ship.isDestroyed()));
-
-						System.out.println("Auf welchen Spieler?");
-						for (int i = 0; i < players.length; i++) {
-							if (!players[i].hasLost()) {
-								if (!player.equals(players[i])) {
-									System.out.println("(" + i + ")"
-											+ players[i].getName());
-								}
-							}
-						}
-						int playerIndex = input.nextInt();
-						Player playerShotAt = players[playerIndex];
-
-						boolean wasShotFired = false;
-						do {
-							System.out.print("Zeile (1-"
-									+ player.getBoard().getSize() + "): ");
-							int row = input.nextInt() - 1;
-							System.out.print("Spalte (1-"
-									+ player.getBoard().getSize() + "): ");
-							int column = input.nextInt() - 1;
-
-							System.out.print("Orientierung (H/V): ");
-							Orientation orientation = input.next()
-									.toUpperCase().charAt(0) == 'V' ? Orientation.Vertical
-									: Orientation.Horizontal;
-							System.out.println(orientation);
-							wasShotFired = player.shoot(ship, playerShotAt,
-									column, row, orientation);
-							if (!wasShotFired)
-								System.out.println("\nSchuss nicht im Feld\n");
-						} while (!wasShotFired);
-
-						printBoards(player.getBoard(), playerShotAt.getBoard());
+						ship = selectOwnShip(player);
+						enemy = selectEnemy(player, players);
+						fireShot(player, ship, enemy);
+						printBoards(player.getBoard(), enemy.getBoard());
 					} else {
 						System.out
 								.println(player
@@ -181,6 +127,65 @@ public class Main {
 			}
 		}
 
+	}
+
+	private static Ship selectOwnShip(Player player) {
+		Ship ship;
+		System.out.println(player + " ist an der Reihe");
+		System.out.println("Welches Schiff soll schieﬂen?");
+		Ship[] ships = player.getShips();
+		do {
+			for (int i = 0; i < ships.length; i++) {
+				System.out.println("(" + i + ")" + "(reload:"
+						+ ships[i].getCurrentReloadTime() + ")" + "(health:"
+						+ ships[i].getSize() + ")" + ships[i].getType());
+			}
+
+			int shipIndex = input.nextInt();
+			ship = ships[shipIndex];
+			if (ship.isReloading()) {
+				System.out.println("Schiff l‰dt gerade nach");
+			}
+			if (ship.isDestroyed()) {
+				System.out.println("Schiff ist kaputt");
+			}
+			System.out.println();
+		} while (ship.isReloading() || (ship.isDestroyed()));
+		return ship;
+	}
+
+	private static Player selectEnemy(Player player, Player[] players) {
+		System.out.println("Auf welchen Spieler?");
+		for (int i = 0; i < players.length; i++) {
+			if (!players[i].hasLost()) {
+				if (!player.equals(players[i])) {
+					System.out.println("(" + i + ")" + players[i].getName());
+				}
+			}
+		}
+		int playerIndex = input.nextInt();
+		Player playerShotAt = players[playerIndex];
+		return playerShotAt;
+	}
+
+	private static void fireShot(Player player, Ship ship, Player enemy)
+			throws Exception {
+		boolean wasShotFired = false;
+		do {
+			System.out.print("Zeile (1-" + player.getBoard().getSize() + "): ");
+			int row = input.nextInt() - 1;
+			System.out
+					.print("Spalte (1-" + player.getBoard().getSize() + "): ");
+			int column = input.nextInt() - 1;
+
+			System.out.print("Orientierung (H/V): ");
+			Orientation orientation = input.next().toUpperCase().charAt(0) == 'V' ? Orientation.Vertical
+					: Orientation.Horizontal;
+			System.out.println(orientation);
+			wasShotFired = player.shoot(ship, enemy, column, row, orientation);
+			if (!wasShotFired)
+				System.out.println("\nSchuss nicht im Feld\n");
+		} while (!wasShotFired);
 	}
 
 	private static void printBoards(Board ownBoard, Board enemyBoard) {
