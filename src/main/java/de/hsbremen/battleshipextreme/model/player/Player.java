@@ -22,8 +22,7 @@ public class Player {
 	protected Board board;
 	protected Ship[] ships;
 
-	public Player(int boardSize, int destroyers, int frigates, int corvettes,
-			int submarines) {
+	public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 		this.id = this.currentId++;
 		this.name = "Player " + this.id;
 		this.board = new Board(boardSize);
@@ -41,9 +40,7 @@ public class Player {
 		}
 	}
 
-	public void placeShip(Ship ship, int xPos, int yPos, Orientation orientation)
-			throws Exception, ShipAlreadyPlacedException,
-			FieldOutOfBoardException {
+	public void placeShip(Ship ship, int xPos, int yPos, Orientation orientation) throws Exception, ShipAlreadyPlacedException, FieldOutOfBoardException {
 
 		Field[][] fields = this.board.getFields();
 
@@ -60,19 +57,15 @@ public class Player {
 
 			// Teil des Schiffes auﬂerhalb des Spielfeldes
 			if (!(xPos + ship.getSize() - 1 < fields.length))
-				throw new ShipOutOfBoardException(ship); // Schiff auﬂerhalb
-															// Exception
+				throw new ShipOutOfBoardException(ship);
 
 			// Felder pr¸fen ob bereits belegt
 			for (int y = yPos - 1; y <= yPos + 1; y++)
 				for (int x = xPos - 1; x <= xPos + ship.getSize(); x++)
-					if (x >= 0 && y >= 0 && x < fields.length
-							&& y < fields.length) // x und y innerhalb des
-													// Spielfeldes
-						if (fields[y][x].getShip() != null) // Feld hat Schiff
-							throw new FieldOccupiedException(fields[y][x]); // Feld
-																			// belegt
-																			// Exception
+					// x und y innerhalb des Spielfeldes
+					if (x >= 0 && y >= 0 && x < fields.length && y < fields.length)
+						if (fields[y][x].getShip() != null)
+							throw new FieldOccupiedException(fields[y][x]);
 
 			for (int x = xPos; x < xPos + ship.getSize(); x++)
 				fields[yPos][x].setShip(ship);
@@ -83,20 +76,14 @@ public class Player {
 
 			// Teil des Schiffes auﬂerhalb des Spielfeldes
 			if (!(yPos + ship.getSize() - 1 < fields.length))
-				throw new ShipOutOfBoardException(ship); // Schiff auﬂerhalb
-															// Exception
-
+				throw new ShipOutOfBoardException(ship);
 			// Felder pr¸fen ob bereits belegt
 			for (int y = yPos - 1; y <= yPos + ship.getSize(); y++)
 				for (int x = xPos - 1; x <= xPos + 1; x++)
-					if (x >= 0 && y >= 0 && x < fields.length
-							&& y < fields.length) // x und y innerhalb des
-													// Spielfeldes
+					// x und y innerhalb des Spielfeldes
+					if (x >= 0 && y >= 0 && x < fields.length && y < fields.length)
 						if (fields[y][x].getShip() != null) // Feld hat Schiff
-							throw new FieldOccupiedException(fields[y][x]); // Feld
-																			// belegt
-																			// Exception
-
+							throw new FieldOccupiedException(fields[y][x]);
 			for (int y = xPos; y < yPos + ship.getSize(); y++)
 				fields[y][xPos].setShip(ship);
 		}
@@ -117,12 +104,10 @@ public class Player {
 		return arePlaced;
 	}
 
-	public boolean shoot(Ship ship, Player player, int xPos, int yPos,
-			Orientation orientation) throws Exception {
+	public boolean shoot(Ship ship, Player player, int xPos, int yPos, Orientation orientation) throws Exception {
 		// besitzt der Player das ¸bergebene Schiff?
 		if (!Arrays.asList(this.getShips()).contains(ship)) {
-			throw new Exception(
-					"The player does not possess the ship that has been handed over!");
+			throw new Exception("The player does not possess the ship that has been handed over!");
 		}
 		// greift der Player sich selbst an?
 		if (this.equals(player)) {
