@@ -20,4 +20,9 @@ public class Message extends TransferableObject {
     public TransferableType getType() {
         return TransferableType.Message;
     }
+
+    @Override
+    public String toString() {
+        return this.getMessage() + " - " + String.format("%1$TT", this.getCreatedAt());
+    }
 }

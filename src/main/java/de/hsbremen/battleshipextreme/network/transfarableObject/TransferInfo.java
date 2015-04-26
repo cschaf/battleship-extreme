@@ -14,7 +14,7 @@ public abstract class TransferInfo extends TransferableObject {
     public TransferInfo(String ip, int port) {
         this.ip = ip;
         this.port = port;
-        this.reason = InfoSendingReason.Info;
+        this.reason = InfoSendingReason.Default;
     }
 
     public TransferInfo(String ip, int port, InfoSendingReason reason) {

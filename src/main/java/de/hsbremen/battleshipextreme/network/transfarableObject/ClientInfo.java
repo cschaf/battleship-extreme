@@ -11,14 +11,13 @@ public class ClientInfo extends TransferInfo {
     private String username = null;
 
     public ClientInfo(String username, String ip, int port) {
-        super(ip, port);
+        super(ip, port, InfoSendingReason.Default);
         this.username = username;
-        this.reason = InfoSendingReason.Info;
     }
 
     public ClientInfo(String username, String ip, int port, InfoSendingReason reason) {
-        this(username, ip, port);
-        this.reason = reason;
+        super(ip, port, reason);
+        this.username = username;
     }
 
     public String getUsername() {
