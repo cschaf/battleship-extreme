@@ -373,7 +373,7 @@ Contains:
       <Entity type="Interface">
         <Name>ITransfarable</Name>
         <Access>Public</Access>
-        <Location left="166" top="55" />
+        <Location left="41" top="47" />
         <Size width="193" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Method">public TransferableType getType()</Member>
@@ -381,7 +381,7 @@ Contains:
       <Entity type="Enum">
         <Name>TransferableType</Name>
         <Access>Public</Access>
-        <Location left="495" top="55" />
+        <Location left="370" top="47" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Value>TransferInfo</Value>
@@ -395,7 +395,7 @@ Contains:
         <Location left="200" top="1147" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
-        <Value>Info</Value>
+        <Value>Default</Value>
         <Value>Connect</Value>
         <Value>Disconnect</Value>
       </Entity>
@@ -456,6 +456,48 @@ Contains:
         <Member type="Method">public TransferableType getType()</Member>
         <Modifier>None</Modifier>
       </Entity>
+      <Entity type="Class">
+        <Name>EventArgs</Name>
+        <Access>Public</Access>
+        <Location left="812" top="683" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private T item</Member>
+        <Member type="Method">public T getItem()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ErrorHandler</Name>
+        <Access>Public</Access>
+        <Location left="861" top="959" />
+        <Size width="344" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private EventListenerList listeners</Member>
+        <Member type="Method">public void addErrorListender(IErrorListener listener)</Member>
+        <Member type="Method">public void removeErrorListener(IErrorListener listener)</Member>
+        <Member type="Method">public void errorHasOccurred(EventArgs&lt;ITransferable&gt; eventArgs)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Interface">
+        <Name>IErrorListener</Name>
+        <Access>Public</Access>
+        <Location left="1034" top="683" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">void onError(EventArgs&lt;ITransferable&gt; eventArgs)</Member>
+      </Entity>
+      <Entity type="Class">
+        <Name>TransferableObjectFactory</Name>
+        <Access>Public</Access>
+        <Location left="561" top="47" />
+        <Size width="512" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public static ITransferable CreateClientMessage(String message, ITransferable sender)</Member>
+        <Member type="Method">public static ITransferable CreateClientInfo(String username, String ip, int port)</Member>
+        <Member type="Method">public static ITransferable CreateClientInfo(String username, String ip, int port, InfoSendingReason reason)</Member>
+        <Member type="Method">public static ITransferable CreateMessage(String message)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
     </Entities>
     <Relationships>
       <Relationship type="Association" first="0" second="1">
@@ -501,6 +543,287 @@ Contains:
       <Relationship type="Generalization" first="7" second="6">
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
+      </Relationship>
+      <Relationship type="Association" first="9" second="8">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="9" second="10">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="11" second="3">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>328</X>
+          <Y>389</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+    </Relationships>
+  </ProjectItem>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>server</Name>
+    <Language>Java</Language>
+    <Entities>
+      <Entity type="Class">
+        <Name>ClientConnectionConsoleListener</Name>
+        <Access>Public</Access>
+        <Location left="62" top="21" />
+        <Size width="381" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Interface">
+        <Name>IClientConnectionListener</Name>
+        <Access>Public</Access>
+        <Location left="939" top="21" />
+        <Size width="377" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">void onClientHasConnected(EventArgs&lt;ITransferable&gt; eventArgs)</Member>
+        <Member type="Method">void onClientHasSetName(EventArgs&lt;ITransferable&gt; eventArgs)</Member>
+        <Member type="Method">void onClientHasDisconnected(EventArgs&lt;ITransferable&gt; eventArgs)</Member>
+        <Member type="Method">void onClientHasSignedIn(EventArgs&lt;ITransferable&gt; eventArgs)</Member>
+      </Entity>
+      <Entity type="Interface">
+        <Name>IClientObjectReceivedListener</Name>
+        <Access>Public</Access>
+        <Location left="1334" top="21" />
+        <Size width="340" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">void onObjectReceived(EventArgs&lt;ITransferable&gt; eventArgs)</Member>
+      </Entity>
+      <Entity type="Interface">
+        <Name>IServerListener</Name>
+        <Access>Public</Access>
+        <Location left="1692" top="21" />
+        <Size width="301" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">void onInfo(EventArgs&lt;ITransferable&gt; eventArgs)</Member>
+      </Entity>
+      <Entity type="Class">
+        <Name>ClientAccepter</Name>
+        <Access>Public</Access>
+        <Location left="10" top="564" />
+        <Size width="217" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private ServerSocket serverSocket</Member>
+        <Member type="Field">private ServerDispatcher serverDispatcher</Member>
+        <Member type="Field">private boolean disposed</Member>
+        <Member type="Method">public void run()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ClientHandler</Name>
+        <Access>Public</Access>
+        <Location left="263" top="564" />
+        <Size width="216" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private Socket socket</Member>
+        <Member type="Field">private ClientSender clientSender</Member>
+        <Member type="Field">private ClientListener clientListener</Member>
+        <Member type="Field">private String username</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ClientListener</Name>
+        <Access>Public</Access>
+        <Location left="499" top="564" />
+        <Size width="209" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private ServerDispatcher serverDispatcher</Member>
+        <Member type="Field">private ClientHandler clientHandler</Member>
+        <Member type="Field">private ObjectInputStream in</Member>
+        <Member type="Field">private boolean disposed</Member>
+        <Member type="Method">public void run()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ClientSender</Name>
+        <Access>Public</Access>
+        <Location left="726" top="564" />
+        <Size width="324" height="230" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private ClientHandler clientHandler</Member>
+        <Member type="Field">private boolean disposed</Member>
+        <Member type="Field">private Vector&lt;ITransferable&gt; objectQueue</Member>
+        <Member type="Field">private ObjectOutputStream out</Member>
+        <Member type="Field">private ServerDispatcher serverDispatcher</Member>
+        <Member type="Method">public void addObjectToQueue(ITransferable transferableObject)</Member>
+        <Member type="Method">public void run()</Member>
+        <Member type="Method">private ITransferable getNextObjectFromQueue()</Member>
+        <Member type="Method">private void send(ITransferable transferableObject)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>CommandLineInterface</Name>
+        <Access>Public</Access>
+        <Location left="23" top="832" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Server</Name>
+        <Access>Public</Access>
+        <Location left="1589" top="564" />
+        <Size width="435" height="451" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">public int port</Member>
+        <Member type="Field">protected EventListenerList listeners</Member>
+        <Member type="Field">private ServerSocket serverSocket</Member>
+        <Member type="Field">private ServerDispatcher serverDispatcher</Member>
+        <Member type="Field">private ClientAccepter clientAccepter</Member>
+        <Member type="Field">private ArrayList&lt;IClientConnectionListener&gt; tempClientConnectionListeners</Member>
+        <Member type="Field">private ArrayList&lt;IClientObjectReceivedListener&gt; tempClientObjectReceivedListeners</Member>
+        <Member type="Field">private ErrorHandler errorHandler</Member>
+        <Member type="Constructor">public Server(int port)</Member>
+        <Member type="Method">public void start()</Member>
+        <Member type="Method">public void stop()</Member>
+        <Member type="Method">public void addClientObjectReceivedListener(IClientObjectReceivedListener listener)</Member>
+        <Member type="Method">public void removeClientObjectReceivedListener(IClientObjectReceivedListener listener)</Member>
+        <Member type="Method">public void addClientConnectionListener(IClientConnectionListener listener)</Member>
+        <Member type="Method">public void removeClientConnectionListener(IClientConnectionListener listener)</Member>
+        <Member type="Method">public void addServerListener(IServerListener listener)</Member>
+        <Member type="Method">public void removeServerListener(IServerListener listener)</Member>
+        <Member type="Method">public void addErrorListener(IErrorListener listener)</Member>
+        <Member type="Method">public void removeErrorListener(IErrorListener listener)</Member>
+        <Member type="Method">private void printInfo(EventArgs&lt;ITransferable&gt; eventArgs)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ServerDispatcher</Name>
+        <Access>Public</Access>
+        <Location left="1083" top="564" />
+        <Size width="462" height="451" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">protected EventListenerList listeners</Member>
+        <Member type="Field">private Vector&lt;ClientHandler&gt; clients</Member>
+        <Member type="Field">private boolean disposed</Member>
+        <Member type="Field">private ErrorHandler errorHandler</Member>
+        <Member type="Field">private Vector&lt;ITransferable&gt; objectQueue</Member>
+        <Member type="Method">public void addClient(ClientHandler clientHandler)</Member>
+        <Member type="Method">public void addClientConnectionListener(IClientConnectionListener listener)</Member>
+        <Member type="Method">public void addClientObjectReceivedListener(IClientObjectReceivedListener listener)</Member>
+        <Member type="Method">public void broadcast(ITransferable transferableObject, ClientHandler excludedClient)</Member>
+        <Member type="Method">public void clientHasSetName(EventArgs&lt;ITransferable&gt; eventArgs)</Member>
+        <Member type="Method">public void clientHasSignedIn(EventArgs&lt;ITransferable&gt; eventArgs)</Member>
+        <Member type="Method">public void deleteClient(ClientHandler clientHandler)</Member>
+        <Member type="Method">public void dispatchObject(ITransferable transferableObject)</Member>
+        <Member type="Method">public void multicast(ITransferable transferableObject, List&lt;ClientHandler&gt; excludedClients)</Member>
+        <Member type="Method">public void removeClientConnectionListener(IClientConnectionListener listener)</Member>
+        <Member type="Method">public void removeClientObjectReceivedListener(IClientObjectReceivedListener listener)</Member>
+        <Member type="Method">public void run()</Member>
+        <Member type="Method">public void unicast(ITransferable transferableObject, ClientHandler client)</Member>
+        <Member type="Method">private void clientHasConnected(EventArgs&lt;ITransferable&gt; eventArgs)</Member>
+        <Member type="Method">private void clientHasDisconnected(EventArgs&lt;ITransferable&gt; eventArgs)</Member>
+        <Member type="Method">private ITransferable getNextObjectFromQueue()</Member>
+        <Member type="Method">private void objectReceived(EventArgs&lt;ITransferable&gt; eventArgs)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Interface">
+        <Name>IDisposable</Name>
+        <Access>Public</Access>
+        <Location left="522" top="263" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">void dispose()</Member>
+      </Entity>
+    </Entities>
+    <Relationships>
+      <Relationship type="Realization" first="0" second="1">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+      </Relationship>
+      <Relationship type="Realization" first="6" second="11">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>625</X>
+          <Y>504</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Realization" first="7" second="11">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>804</X>
+          <Y>539</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>625</X>
+          <Y>504</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Realization" first="5" second="11">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>625</X>
+          <Y>505</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Realization" first="4" second="11">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>625</X>
+          <Y>506</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Realization" first="10" second="11">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>625</X>
+          <Y>504</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Realization" first="9" second="11">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>625</X>
+          <Y>504</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Association" first="9" second="3">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="9" second="2">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1842</X>
+          <Y>538</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="9" second="1">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1842</X>
+          <Y>538</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
       </Relationship>
     </Relationships>
   </ProjectItem>
