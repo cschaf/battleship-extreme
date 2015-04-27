@@ -36,7 +36,7 @@ public class Main {
 			placeShips(game.getPlayers());
 			break;
 		case 2:
-			game = new Game(new Settings(3, 10, 0, 0, 0, 1));
+			game = new Game(new Settings(3, 10, 2, 1, 1, 1));
 			placeShipsWithoutInput(game.getPlayers());
 			break;
 		}
@@ -130,7 +130,6 @@ public class Main {
 				player.decreaseCurrentReloadTimeOfAllShips();
 			}
 		}
-
 	}
 
 	private static Ship selectOwnShip(Player player) {
@@ -140,9 +139,8 @@ public class Main {
 		Ship[] ships = player.getShips();
 		do {
 			for (int i = 0; i < ships.length; i++) {
-				System.out.println("(" + i + ")" + "(reload:" + ships[i].getCurrentReloadTime() + ")" + "(health:" + ships[i].getSize() + ")" + ships[i].getType());
+				System.out.println("(" + i + ")" + ships[i].getType() + "(reload:" + ships[i].getCurrentReloadTime() + "," + " health:" + ships[i].getSize() + ")");
 			}
-
 			int shipIndex = input.nextInt();
 			ship = ships[shipIndex];
 			if (ship.isReloading()) {
@@ -166,8 +164,7 @@ public class Main {
 			}
 		}
 		int playerIndex = input.nextInt();
-		Player playerShotAt = players[playerIndex];
-		return playerShotAt;
+		return players[playerIndex];
 	}
 
 	private static void fireShot(Player player, Ship ship, Player enemy) throws Exception {
@@ -180,7 +177,6 @@ public class Main {
 
 			System.out.print("Orientierung (H/V): ");
 			Orientation orientation = input.next().toUpperCase().charAt(0) == 'V' ? Orientation.Vertical : Orientation.Horizontal;
-			System.out.println(orientation);
 			wasShotFired = player.shoot(ship, enemy, column, row, orientation);
 			if (!wasShotFired)
 				System.out.println("\nSchuss nicht im Feld\n");
@@ -194,6 +190,7 @@ public class Main {
 	}
 
 	private static void printOwnBoard(Board board) {
+		System.out.println("\nEigenes Board");
 		Field[][] fields = board.getFields();
 		for (int row = 0; row < fields.length; row++) {
 			for (int column = 0; column < fields[row].length; column++) {
@@ -214,7 +211,6 @@ public class Main {
 					} else {
 						System.out.print("-"); // leer
 					}
-
 				}
 			}
 			System.out.println();
@@ -223,7 +219,7 @@ public class Main {
 	}
 
 	private static void printEnemyBoard(Board board) {
-		System.out.println("Gegnerisches Board");
+		System.out.println("\nBeschossenes Board");
 		Field[][] fields = board.getFields();
 		for (int row = 0; row < fields.length; row++) {
 			for (int column = 0; column < fields[row].length; column++) {
@@ -239,7 +235,7 @@ public class Main {
 						System.out.print("X"); // daneben
 					}
 				} else {
-					System.out.print("U"); // unbekannt
+					System.out.print("?"); // unbekannt
 				}
 			}
 			System.out.println();
