@@ -20,15 +20,16 @@ import java.util.ArrayList;
  */
 public class Server implements IDisposable {
     public int port;
-    protected EventListenerList listeners = new EventListenerList();
-    private ServerSocket serverSocket = null;
-    private ServerDispatcher serverDispatcher = null;
-    private ClientAccepter clientAccepter = null;
+    protected EventListenerList listeners;
+    private ServerSocket serverSocket;
+    private ServerDispatcher serverDispatcher;
+    private ClientAccepter clientAccepter;
     private ArrayList<IClientConnectionListener> tempClientConnectionListeners;
     private ArrayList<IClientObjectReceivedListener> tempClientObjectReceivedListeners;
-    private ErrorHandler errorHandler = null;
+    private ErrorHandler errorHandler;
 
     public Server(int port) {
+        this.listeners = new EventListenerList();
         this.errorHandler = new ErrorHandler();
         this.tempClientObjectReceivedListeners = new ArrayList<IClientObjectReceivedListener>();
         this.tempClientConnectionListeners = new ArrayList<IClientConnectionListener>();

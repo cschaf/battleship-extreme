@@ -18,25 +18,22 @@ import java.util.Vector;
  * Created by cschaf on 25.04.2015.
  */
 public class ServerDispatcher extends Thread implements IDisposable {
-    protected EventListenerList listeners = new EventListenerList();
+    protected EventListenerList listeners;
     private Vector<ClientHandler> clients;
     private Vector<ITransferable> objectQueue;
     private boolean disposed;
     private ErrorHandler errorHandler;
 
     public ServerDispatcher(ErrorHandler errorHandler) {
+        this.listeners = new EventListenerList();
         this.errorHandler = errorHandler;
         this.disposed = false;
         this.clients = new Vector<ClientHandler>();
         this.objectQueue = new Vector<ITransferable>();
     }
 
-    public ArrayList<ClientHandler> getUsers() {
-        ArrayList<ClientHandler> result = new ArrayList<ClientHandler>();
-        for (ClientHandler handler : this.clients) {
-            result.add(handler);
-        }
-        return result;
+    public Vector<ClientHandler> getClients() {
+        return this.clients;
     }
 
     public ErrorHandler getErrorHandler() {

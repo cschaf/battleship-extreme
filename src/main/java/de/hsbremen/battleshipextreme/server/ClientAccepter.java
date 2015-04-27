@@ -13,8 +13,8 @@ import java.net.Socket;
  * Created by cschaf on 25.04.2015.
  */
 public class ClientAccepter extends Thread implements IDisposable {
-    ServerSocket serverSocket;
-    ServerDispatcher serverDispatcher;
+    private ServerSocket serverSocket;
+    private ServerDispatcher serverDispatcher;
     private boolean disposed;
 
     public ClientAccepter(ServerSocket serverSocket, ServerDispatcher serverDispatcher){
