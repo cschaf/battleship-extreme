@@ -69,6 +69,7 @@ public class Settings extends TransferableObject{
 		this.submarines = submarines;
 	}
 
+	@Override
 	public TransferableType getType() {
 		return TransferableType.Settings;
 	}
