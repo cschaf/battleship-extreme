@@ -143,11 +143,12 @@ public class Main {
 			}
 			int shipIndex = input.nextInt();
 			ship = ships[shipIndex];
-			if (ship.isReloading()) {
-				System.out.println("Schiff lädt gerade nach");
-			}
 			if (ship.isDestroyed()) {
 				System.out.println("Schiff ist kaputt");
+			}else {
+				if (ship.isReloading()) {
+					System.out.println("Schiff lädt gerade nach");
+				}			
 			}
 			System.out.println();
 		} while (ship.isReloading() || (ship.isDestroyed()));
@@ -179,7 +180,7 @@ public class Main {
 			Orientation orientation = input.next().toUpperCase().charAt(0) == 'V' ? Orientation.Vertical : Orientation.Horizontal;
 			wasShotFired = player.shoot(ship, enemy, column, row, orientation);
 			if (!wasShotFired)
-				System.out.println("\nFeld wurde bereits beschossen\n");
+				System.out.println("\nSchuss nicht möglich\n");
 		} while (!wasShotFired);
 	}
 
