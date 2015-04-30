@@ -48,7 +48,7 @@ public class Player extends TransferableObject {
 			throw new ShipAlreadyPlacedException(ship);
 
 		// Feld außerhalb des Spielfeldes
-		if (!(xPos >= 0 && yPos >= 0 && xPos < fields.length && yPos < fields.length))
+		if (!isFieldWithinBoard(xPos, yPos))
 			throw new FieldOutOfBoardException(new Field(xPos, yPos));
 
 		// Orientation Horizontal
