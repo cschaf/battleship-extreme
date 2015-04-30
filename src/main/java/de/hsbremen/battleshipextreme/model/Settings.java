@@ -1,6 +1,9 @@
 package de.hsbremen.battleshipextreme.model;
 
-public class Settings {
+import de.hsbremen.battleshipextreme.network.TransferableType;
+import de.hsbremen.battleshipextreme.network.transfarableObject.TransferableObject;
+
+public class Settings extends TransferableObject{
 	private int players;
 	private int boardSize;
 	private int destroyers;
@@ -64,5 +67,9 @@ public class Settings {
 
 	public void setSubmarines(int submarines) {
 		this.submarines = submarines;
+	}
+
+	public TransferableType getType() {
+		return TransferableType.Settings;
 	}
 }
