@@ -22,42 +22,42 @@ public abstract class Ship extends TransferableObject{
 		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
 		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
 		Board boardShotAt = player.getBoard();
-		if (isShotPossible(startX, startY, xDirection, yDirection, boardShotAt)) {
+		if (isShotPossible(startX, startY, boardShotAt)) {
 			fireShot(startX, startY, xDirection, yDirection, boardShotAt);
 			return true;
 		}
 		return false;
 	}
 
-	private boolean isShotPossible(int startX, int startY, int xDirection,
-			int yDirection, Board boardShotAt) {
+	private boolean isShotPossible(int x, int y, Board boardShotAt) throws FieldOutOfBoardException {
+			return isFieldWithinBoard(x, y, boardShotAt) && (!boardShotAt.getField(x, y).isHit());
+
+	}
+	
+	private boolean isFieldWithinBoard(int x, int y, Board boardShotAt) {
+		return ((x < boardShotAt.getSize()) && (y < boardShotAt.getSize())
+				&& (x > 0) && (y > 0));
+	}
+
+	private void fireShot(int startX, int startY, int xDirection,
+			int yDirection, Board boardShotAt) throws FieldOutOfBoardException {
 		int x;
 		int y;
 		for (int i = 0; i < this.shootingRange; i++) {
 			x = startX + i * xDirection;
 			y = startY + i * yDirection;
-			if ((x >= boardShotAt.getSize()) || (y >= boardShotAt.getSize())
-					|| (x < 0) || (y < 0)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private void fireShot(int startX, int startY, int xDirection,
-			int yDirection, Board boardShotAt) throws FieldOutOfBoardException {
-		for (int i = 0; i < this.shootingRange; i++) {
-			Field fieldShotAt = boardShotAt.getField(startX + i * xDirection,
-					startY + i * yDirection);
-			if (!fieldShotAt.isHit()) {
-				if (fieldShotAt.hasShip()) {
-					Ship ship = fieldShotAt.getShip();
-					ship.setSize(ship.getSize() - 1);
+			if (isFieldWithinBoard(x, y, boardShotAt)) {
+				Field fieldShotAt = boardShotAt.getField(x, y);
+				if (!fieldShotAt.isHit()) {
+					if (fieldShotAt.hasShip()) {
+						Ship ship = fieldShotAt.getShip();
+						ship.setSize(ship.getSize() - 1);
+					}
+					fieldShotAt.setHit(true);
 				}
-				fieldShotAt.setHit(true);
+				this.currentReloadTime = this.maxReloadTime;
 			}
-			this.currentReloadTime = this.maxReloadTime;
-		}
+		}//Schuss ignorieren, wenn er nicht im Feld liegt
 	}
 
 	public void decreaseCurrentReloadTime() {

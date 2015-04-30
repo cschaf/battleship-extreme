@@ -179,7 +179,7 @@ public class Main {
 			Orientation orientation = input.next().toUpperCase().charAt(0) == 'V' ? Orientation.Vertical : Orientation.Horizontal;
 			wasShotFired = player.shoot(ship, enemy, column, row, orientation);
 			if (!wasShotFired)
-				System.out.println("\nSchuss nicht im Feld\n");
+				System.out.println("\nFeld wurde bereits beschossen\n");
 		} while (!wasShotFired);
 	}
 
