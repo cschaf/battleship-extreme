@@ -34,7 +34,7 @@ public abstract class Ship {
 	
 	private boolean isFieldWithinBoard(int x, int y, Board boardShotAt) {
 		return ((x < boardShotAt.getSize()) && (y < boardShotAt.getSize())
-				&& (x > 0) && (y > 0));
+				&& (x >= 0) && (y >= 0));
 	}
 
 	private void fireShot(int startX, int startY, int xDirection,
