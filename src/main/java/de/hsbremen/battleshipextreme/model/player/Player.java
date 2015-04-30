@@ -49,7 +49,7 @@ public class Player {
 			throw new ShipAlreadyPlacedException(ship);
 
 		// Feld außerhalb des Spielfeldes
-		if (!(xPos >= 0 && yPos >= 0 && xPos < fields.length && yPos < fields.length))
+		if (!isFieldWithinBoard(xPos, yPos))
 			throw new FieldOutOfBoardException(new Field(xPos, yPos));
 
 		// Orientation Horizontal
@@ -91,6 +91,11 @@ public class Player {
 		ship.setPlaced();
 	}
 
+	private boolean isFieldWithinBoard(int x, int y) {
+		return ((x < this.board.getSize()) && (y < this.board.getSize())
+				&& (x >= 0) && (y >= 0));
+	}
+	
 	public boolean hasPlacedAllShips() {
 		boolean arePlaced = true;
 
