@@ -1,9 +1,11 @@
 package de.hsbremen.battleshipextreme;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Field;
+import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Game;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.Settings;
@@ -15,17 +17,14 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 		Game game = createGame();
-		if (game.isReady()) {
-			do {
-				shootLoop(game, game.getPlayers());
-			} while (!game.isGameover());
-			System.out.println("Spiel zu Ende");
-			System.out.println(game.determineWinner() + " hat gewonnen!");
-		}
+		gameLoop(game);
+		System.out.println("Spiel zu Ende");
+		System.out.println(game.getWinner() + " hat gewonnen!");
 		input.close();
 	}
 
 	private static Game createGame() throws Exception {
+		// bietet zwei Wege ein Spiel zu erstellen
 		Game game = null;
 		System.out.println("(1) Erzeuge Spiel manuell");
 		System.out.println("(2) Erzeuge Spiel automatisch");
@@ -33,11 +32,13 @@ public class Main {
 		switch (choice) {
 		case 1:
 			game = new Game(generateSettings());
-			placeShips(game.getPlayers());
+			game.setBeginningPlayer(1);
+			placeShips(game);
 			break;
 		case 2:
 			game = new Game(new Settings(3, 10, 2, 1, 1, 1));
-			placeShipsWithoutInput(game.getPlayers());
+			game.setBeginningPlayer(1);
+			placeShipsWithoutInput(game);
 			break;
 		}
 		game.setBeginningPlayer(1);
@@ -71,8 +72,11 @@ public class Main {
 		}
 	}
 
-	private static void placeShips(Player[] players) throws Exception {
-		for (Player player : players) {
+	private static void placeShips(Game game) throws Exception {
+		// Schiffe manuell setzen
+		Player player;
+		do {
+			player = game.getCurrentPlayer();
 			System.out.println("\nPlatziere Schiffe fuer " + player + ":");
 
 			for (Ship ship : player.getShips()) {
@@ -90,13 +94,17 @@ public class Main {
 
 				System.out.println();
 				System.out.println("Board von " + player);
-				printOwnBoard(player.getBoard());
+				printBoard(player.getBoard(), true);
 			}
-		}
+			game.nextPlayer();
+		} while (!game.isReady());
 	}
 
-	private static void placeShipsWithoutInput(Player[] players) throws Exception {
-		for (Player player : players) {
+	private static void placeShipsWithoutInput(Game game) throws Exception {
+		// schnell Schiffe ohne Eingabe setzen
+		Player player;
+		do {
+			player = game.getCurrentPlayer();
 			for (int i = 0; i < player.getShips().length; i++) {
 				Ship ship = player.getShips()[i];
 				int row = 2 * i;
@@ -106,141 +114,124 @@ public class Main {
 			}
 			System.out.println();
 			System.out.println("Board von " + player);
-			printOwnBoard(player.getBoard());
-		}
+			printBoard(player.getBoard(), true);
+			game.nextPlayer();
+		} while (!game.isReady());
 	}
 
-	private static void shootLoop(Game game, Player[] players) throws Exception {
+	private static void gameLoop(Game game) throws Exception {
 		Ship ship;
 		Player enemy;
-		for (Player player : players) {
-			if (!game.isGameover()) {
-				if (!player.hasLost()) {
-					if (!player.AreAllShipsReloading()) {
-						ship = selectOwnShip(player);
-						enemy = selectEnemy(player, players);
-						fireShot(player, ship, enemy);
-						printBoards(player.getBoard(), enemy.getBoard());
-					} else {
-						System.out.println(player + " kann nicht schießen, da alle Schiffe nachladen");
-					}
-				} else {
-					System.out.println(player + " ist tot.");
-				}
-				player.decreaseCurrentReloadTimeOfAllShips();
-			}
-		}
+		Player player;
+		do {
+			player = game.getCurrentPlayer();
+			System.out.println(player + " ist an der Reihe.");
+
+			// Auswahl des zu schießenden Schiffs
+			System.out.println("Welches Schiff soll schießen?");
+			ship = selectShip(player);
+
+			// Auswahl des Gegners, auf den geschossen werden soll
+			System.out.println("Auf welchen Spieler?");
+			enemy = selectEnemy(game.getEnemiesOfCurrentPlayer());
+
+			// Zug mit ausgewähltem Schiff und Gegner ausführen
+			makeTurn(player, ship, enemy);
+
+			printBoards(player.getBoard(), enemy.getBoard());
+			game.nextPlayer();
+		} while (!game.isGameover());
 	}
 
-	private static Ship selectOwnShip(Player player) {
+	private static Ship selectShip(Player player) {
 		Ship ship;
-		System.out.println(player + " ist an der Reihe");
-		System.out.println("Welches Schiff soll schießen?");
 		Ship[] ships = player.getShips();
+		boolean isShipSelected = false;
 		do {
-			for (int i = 0; i < ships.length; i++) {
-				System.out.println("(" + i + ")" + ships[i].getType() + "(reload:" + ships[i].getCurrentReloadTime() + "," + " health:" + ships[i].getSize() + ")");
-			}
-			int shipIndex = input.nextInt();
-			ship = ships[shipIndex];
-			if (ship.isDestroyed()) {
-				System.out.println("Schiff ist kaputt");
-			}else {
-				if (ship.isReloading()) {
-					System.out.println("Schiff lädt gerade nach");
-				}			
-			}
-			System.out.println();
-		} while (ship.isReloading() || (ship.isDestroyed()));
+			// Eingabe wiederholen bis Schiff gewählt wurde, das schießen kann
+			printShips(ships);
+			ship = ships[input.nextInt()];
+			isShipSelected = player.selectShip(ship);
+			if (!isShipSelected)
+				System.out.println("Schiff lädt nach oder ist kaputt");
+
+		} while (!isShipSelected);
 		return ship;
 	}
 
-	private static Player selectEnemy(Player player, Player[] players) {
-		System.out.println("Auf welchen Spieler?");
-		for (int i = 0; i < players.length; i++) {
-			if (!players[i].hasLost()) {
-				if (!player.equals(players[i])) {
-					System.out.println("(" + i + ")" + players[i].getName());
-				}
-			}
+	private static void printShips(Ship[] ships) {
+		// Schiffe des Spielers und deren Munition/Leben anzeigen
+		for (int i = 0; i < ships.length; i++) {
+			System.out.println("(" + i + ")" + ships[i].getType() + "(reload:" + ships[i].getCurrentReloadTime() + "," + " health:" + ships[i].getSize() + ")");
 		}
-		int playerIndex = input.nextInt();
-		return players[playerIndex];
 	}
 
-	private static void fireShot(Player player, Ship ship, Player enemy) throws Exception {
-		boolean wasShotFired = false;
+	private static Player selectEnemy(ArrayList<Player> enemies) {
+		// angreifbare Gegner anzeigen
+		for (int i = 0; i < enemies.size(); i++) {
+			System.out.println("(" + i + ")" + enemies.get(i));
+		}
+		return enemies.get(input.nextInt());
+	}
+
+	private static void makeTurn(Player player, Ship ship, Player enemy) throws Exception {
+		boolean hasTurnBeenMade;
 		do {
+			// Koordinaten einlesen, bis Schuss erfolgreich ausgeführt werden
+			// kann
 			System.out.print("Zeile (1-" + player.getBoard().getSize() + "): ");
 			int row = input.nextInt() - 1;
 			System.out.print("Spalte (1-" + player.getBoard().getSize() + "): ");
 			int column = input.nextInt() - 1;
-
 			System.out.print("Orientierung (H/V): ");
 			Orientation orientation = input.next().toUpperCase().charAt(0) == 'V' ? Orientation.Vertical : Orientation.Horizontal;
-			wasShotFired = player.shoot(ship, enemy, column, row, orientation);
-			if (!wasShotFired)
-				System.out.println("\nSchuss nicht möglich\n");
-		} while (!wasShotFired);
+			hasTurnBeenMade = player.makeTurn(enemy, column, row, orientation);
+			if (!hasTurnBeenMade) {
+				System.out.println("Zug nicht möglich");
+			}
+		} while (!hasTurnBeenMade);
 	}
 
 	private static void printBoards(Board ownBoard, Board enemyBoard) {
-		printOwnBoard(ownBoard);
-		printEnemyBoard(enemyBoard);
+		printBoard(ownBoard, true);
+		printBoard(enemyBoard, false);
 		System.out.println("O = getroffenes Schiff\nX = daneben\n+ = eigenes Schiff\n- = leer \nU = unbekannt\n! = zerstörtes Schiff\n");
 	}
 
-	private static void printOwnBoard(Board board) {
-		System.out.println("\nEigenes Board");
+	private static void printBoard(Board board, boolean isOwnBoard) {
+		String s = isOwnBoard ? "\nEigenes Board" : "\nGegnerisches Board";
+		System.out.println(s);
 		Field[][] fields = board.getFields();
 		for (int row = 0; row < fields.length; row++) {
 			for (int column = 0; column < fields[row].length; column++) {
 				Field field = fields[row][column];
-				if (field.isHit()) {
-					if (field.hasShip()) {
-						if (field.getShip().isDestroyed()) {
-							System.out.print("!"); // zerstörtes Schiff
-						} else {
-							System.out.print("O"); // getroffenes Schiff
-						}
-					} else {
-						System.out.print("X"); // daneben
-					}
-				} else {
-					if (field.hasShip()) {
-						System.out.print("+"); // hat Schiff
-					} else {
-						System.out.print("-"); // leer
-					}
-				}
-			}
-			System.out.println();
-		}
-
-	}
-
-	private static void printEnemyBoard(Board board) {
-		System.out.println("\nBeschossenes Board");
-		Field[][] fields = board.getFields();
-		for (int row = 0; row < fields.length; row++) {
-			for (int column = 0; column < fields[row].length; column++) {
-				Field field = fields[row][column];
-				if (field.isHit()) {
-					if (field.hasShip()) {
-						if (field.getShip().isDestroyed()) {
-							System.out.print("!"); // zerstörtes Schiff
-						} else {
-							System.out.print("O"); // getroffenes Schiff
-						}
-					} else {
-						System.out.print("X"); // daneben
-					}
-				} else {
-					System.out.print("?"); // unbekannt
-				}
+				printState(field.getState(), isOwnBoard);
 			}
 			System.out.println();
 		}
 	}
 
+	private static void printState(FieldState fieldState, boolean isOwnBoard) {
+		String s = "";
+		switch (fieldState) {
+		case Destroyed:
+			s = "!";
+			break;
+		case Hit:
+			s = "O";
+			break;
+		case Missed:
+			s = "X";
+			break;
+		case HasShip:
+			s = isOwnBoard ? "+" : "?";
+			break;
+		case IsEmpty:
+			s = isOwnBoard ? "-" : "?";
+			break;
+		default:
+			break;
+		}
+		System.out.print(s);
+	}
 }

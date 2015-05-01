@@ -19,6 +19,7 @@ public class Player extends TransferableObject {
     protected String name;
     protected Board board;
     protected Ship[] ships;
+	protected Ship selectedShip;
 
     public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
         this.id = this.currentId++;
@@ -39,6 +40,7 @@ public class Player extends TransferableObject {
         }
     }
 
+	// TODO Javadoc comments, refactoring (private methods)
 	public void placeShip(Ship ship, int xPos, int yPos, Orientation orientation) throws Exception, ShipAlreadyPlacedException, FieldOutOfBoardException {
 
 		Field[][] fields = this.board.getFields();
@@ -105,33 +107,59 @@ public class Player extends TransferableObject {
 		return arePlaced;
 	}
 
-	public boolean shoot(Ship ship, Player player, int xPos, int yPos, Orientation orientation) throws Exception {
-		// besitzt der Player das übergebene Schiff?
-		if (!Arrays.asList(this.getShips()).contains(ship)) {
-			throw new Exception("The player does not possess the ship that has been handed over!");
+	public boolean hasToSkip() {
+		return (this.hasLost() || this.areAllShipsReloading());
+	}
+
+	private boolean doesPlayerPossessShip(Ship ship) {
+		return Arrays.asList(this.getShips()).contains(ship);
+	}
+
+	/**
+	 * Tries to set the selected ship of the player.
+	 * 
+	 * @param ship
+	 *            the ship the player tries to select
+	 * @return true if the ship was selected, false if not
+	 */
+	public boolean selectShip(Ship ship) {
+		if (ship.canShipBeSelected() && (doesPlayerPossessShip(ship))) {
+			this.selectedShip = ship;
+			return true;
 		}
-		// greift der Player sich selbst an?
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param player
+	 *            the player to attack
+	 * @param xPos
+	 *            the x-coordinate the attacked players' board.
+	 * @param yPos
+	 *            the y-coordinate the attacked players' board.
+	 * @param orientation
+	 *            the orientation of the shot (vertical / horizontal).
+	 * 
+	 * @return true if the turn has been made, false if the turn was not
+	 *         possible
+	 * @throws Exception
+	 *             if the player tries to attack himself or if the player is
+	 *             already dead.
+	 */
+	public boolean makeTurn(Player player, int xPos, int yPos, Orientation orientation) throws Exception {
+		boolean hasTurnBeenMade = true;
 		if (this.equals(player)) {
 			throw new Exception("The player can't attack himself!");
 		}
-		// Schiff hat keine Munition
-		if (ship.isReloading()) {
-			throw new Exception("The chosen ship is currently reloading!");
-		}
-
-		if (ship.isDestroyed()) {
-			throw new Exception("Ship is already destroyed!");
-		}
-
 		if (player.hasLost()) {
 			throw new Exception("Player is already dead!");
 		}
-
-		return ship.shoot(player, xPos, yPos, orientation);
-
+		hasTurnBeenMade = this.selectedShip.shoot(player, xPos, yPos, orientation);
+		return hasTurnBeenMade;
 	}
 
-	public boolean AreAllShipsReloading() {
+	public boolean areAllShipsReloading() {
 		for (Ship ship : this.ships) {
 			if (!ship.isReloading()) {
 				return false;
@@ -140,10 +168,16 @@ public class Player extends TransferableObject {
 		return true;
 	}
 
-	public void decreaseCurrentReloadTimeOfAllShips() {
+	/**
+	 * Decreases the reload time of the ships, except for the ship that just
+	 * shot.
+	 */
+	public void decreaseCurrentReloadTimeOfShips() {
 		for (Ship ship : this.ships) {
-			ship.decreaseCurrentReloadTime();
+			if (!ship.equals(this.selectedShip))
+				ship.decreaseCurrentReloadTime();
 		}
+		this.selectedShip = null;
 	}
 
 	public String getName() {
