@@ -29,7 +29,6 @@ public class ClientHandler implements IDisposable {
 
     /**
      * Sets the socket object of the client
-     * @param socket
      */
     public void setSocket(Socket socket) {
         this.socket = socket;
@@ -45,7 +44,6 @@ public class ClientHandler implements IDisposable {
 
     /**
      * Sets the ClientSender for sending data to the client
-     * @param sender
      */
     public void setClientSender(ClientSender sender) {
         this.clientSender = sender;
@@ -61,7 +59,6 @@ public class ClientHandler implements IDisposable {
 
     /**
      * Sets the ClientListener for receive data from the client
-     * @param listener
      */
     public void setClientListener(ClientListener listener) {
         this.clientListener = listener;

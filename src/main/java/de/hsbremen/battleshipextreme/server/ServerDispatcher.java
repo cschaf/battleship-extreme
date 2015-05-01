@@ -1,16 +1,13 @@
 package de.hsbremen.battleshipextreme.server;
 
-import de.hsbremen.battleshipextreme.network.IDisposable;
-import de.hsbremen.battleshipextreme.network.ITransferable;
-import de.hsbremen.battleshipextreme.network.InfoSendingReason;
-import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
+import de.hsbremen.battleshipextreme.network.*;
 import de.hsbremen.battleshipextreme.network.eventhandling.ErrorHandler;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
+import de.hsbremen.battleshipextreme.network.transfarableObject.Game;
 import de.hsbremen.battleshipextreme.server.listener.IClientConnectionListener;
 import de.hsbremen.battleshipextreme.server.listener.IClientObjectReceivedListener;
 
 import javax.swing.event.EventListenerList;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -21,6 +18,7 @@ public class ServerDispatcher extends Thread implements IDisposable {
     protected EventListenerList listeners;
     private Vector<ClientHandler> clients;
     private Vector<ITransferable> objectQueue;
+    private Vector<Game> games;
     private boolean disposed;
     private ErrorHandler errorHandler;
 
@@ -175,6 +173,31 @@ public class ServerDispatcher extends Thread implements IDisposable {
         this.disposed = true;
         for (ClientHandler clients : this.clients) {
             clients.dispose();
+        }
+    }
+
+    public synchronized void addGame(ITransferable receivedObject) {
+        if (receivedObject.getType() != TransferableType.Game){
+            this.errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Couldn't create new game!")));
+            return;
+        }
+        Game game = (Game) receivedObject;
+        this.games.add(game);
+        // TODO: hier noch alle clients benachichigen
+
+
+    }
+
+    public synchronized void deleteGame(ITransferable receivedObject) {
+        if (receivedObject.getType() != TransferableType.Game){
+            this.errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Couldn't create new game!")));
+            return;
+        }
+
+        int gameIndex = this.games.indexOf(receivedObject);
+        if (gameIndex != -1) {
+            this.games.removeElementAt(gameIndex);
+            // TODO: hier noch alle clients benachichigen
         }
     }
 }
