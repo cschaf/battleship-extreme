@@ -15,8 +15,21 @@ public abstract class Ship {
 	protected ShipType type;
 	protected boolean isPlaced;
 
-	public boolean shoot(Player player, int startX, int startY,
-			Orientation orientation) throws FieldOutOfBoardException {
+	/**
+	 * 
+	 * @param player
+	 *            the player to attack
+	 * @param startX
+	 *            the x-coordinate the attacked players' board.
+	 * @param startY
+	 *            the y-coordinate the attacked players' board.
+	 * @param orientation
+	 *            the orientation of the shot (vertical / horizontal).
+	 * @return true if the shot was successfully fired, else false.
+	 * @throws FieldOutOfBoardException
+	 *             if the shot does not start within the field.
+	 */
+	public boolean shoot(Player player, int startX, int startY, Orientation orientation) throws FieldOutOfBoardException {
 		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
 		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
 		Board boardShotAt = player.getBoard();
@@ -27,26 +40,54 @@ public abstract class Ship {
 		return false;
 	}
 
+	/**
+	 * Checks if the starting position of the shot is within the board. Also
+	 * checks if the field was already shot at.
+	 * 
+	 * @param x
+	 *            the x-coordinate of the shot.
+	 * @param y
+	 *            the y-coordinate of the shot.
+	 * @param boardShotAt
+	 *            the board to shoot at.
+	 * @return true if the shot is possible, else false
+	 * @throws FieldOutOfBoardException
+	 */
 	private boolean isShotPossible(int x, int y, Board boardShotAt) throws FieldOutOfBoardException {
-			return isFieldWithinBoard(x, y, boardShotAt) && (!boardShotAt.getField(x, y).isHit());
-
+		return isFieldWithinBoard(x, y, boardShotAt) && (!boardShotAt.getField(x, y).isHit());
 	}
-	
+
 	private boolean isFieldWithinBoard(int x, int y, Board boardShotAt) {
-		return ((x < boardShotAt.getSize()) && (y < boardShotAt.getSize())
-				&& (x >= 0) && (y >= 0));
+		return (x < boardShotAt.getSize()) && (y < boardShotAt.getSize()) && (x >= 0) && (y >= 0);
 	}
 
-	private void fireShot(int startX, int startY, int xDirection,
-			int yDirection, Board boardShotAt) throws FieldOutOfBoardException {
+	/**
+	 * 
+	 * @param startX
+	 *            the start x-coordinate of the shot.
+	 * @param startY
+	 *            the start y-coordinate of the shot.
+	 * @param xDirection
+	 *            the horizontal direction of the shot.
+	 * @param yDirection
+	 *            the vertical direction of the shot.
+	 * @param boardShotAt
+	 *            the board to shoot at.
+	 * @throws FieldOutOfBoardException
+	 */
+	private void fireShot(int startX, int startY, int xDirection, int yDirection, Board boardShotAt) throws FieldOutOfBoardException {
 		int x;
 		int y;
 		for (int i = 0; i < this.shootingRange; i++) {
 			x = startX + i * xDirection;
 			y = startY + i * yDirection;
+			// Schüsse ignorieren, die außerhalb des Feldes liegen
 			if (isFieldWithinBoard(x, y, boardShotAt)) {
 				Field fieldShotAt = boardShotAt.getField(x, y);
+				// wenn Board schon beschossen wurde, dann Schuss ignorieren
 				if (!fieldShotAt.isHit()) {
+					// wenn das Feld auf das geschossen wurde ein Schiff hat,
+					// dann ein Leben vom Schiff abziehen
 					if (fieldShotAt.hasShip()) {
 						Ship ship = fieldShotAt.getShip();
 						ship.setSize(ship.getSize() - 1);
@@ -55,7 +96,11 @@ public abstract class Ship {
 				}
 				this.currentReloadTime = this.maxReloadTime;
 			}
-		}//Schuss ignorieren, wenn er nicht im Feld liegt
+		}
+	}
+
+	public boolean canShipBeSelected() {
+		return !(this.isReloading() || this.isDestroyed());
 	}
 
 	public void decreaseCurrentReloadTime() {
