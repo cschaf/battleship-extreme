@@ -29,41 +29,4 @@ public class Board {
 	public int getSize() {
 		return size;
 	}
-
-	public void printBoard(boolean isOwnBoard) {
-		String s = isOwnBoard ? "\nEigenes Board" : "\nGegnerisches Board";
-		System.out.println(s);
-		Field[][] fields = this.getFields();
-		for (int row = 0; row < fields.length; row++) {
-			for (int column = 0; column < fields[row].length; column++) {
-				Field field = fields[row][column];
-				printState(field.getState(), isOwnBoard);
-			}
-			System.out.println();
-		}
-	}
-
-	private void printState(FieldState fieldState, boolean isOwnBoard) {
-		String s = "";
-		switch (fieldState) {
-		case Destroyed:
-			s = "!";
-			break;
-		case Hit:
-			s = "O";
-			break;
-		case Missed:
-			s = "X";
-			break;
-		case HasShip:
-			s = isOwnBoard ? "+" : "?";
-			break;
-		case IsEmpty:
-			s = isOwnBoard ? "-" : "?";
-			break;
-		default:
-			break;
-		}
-		System.out.print(s);
-	}
 }

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import de.hsbremen.battleshipextreme.model.Board;
+import de.hsbremen.battleshipextreme.model.Field;
+import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Game;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.Settings;
@@ -92,7 +94,7 @@ public class Main {
 
 				System.out.println();
 				System.out.println("Board von " + player);
-				player.getBoard().printBoard(true);
+				printBoard(player.getBoard(), true);
 			}
 			game.nextPlayer();
 		} while (!game.isReady());
@@ -112,7 +114,7 @@ public class Main {
 			}
 			System.out.println();
 			System.out.println("Board von " + player);
-			player.getBoard().printBoard(true);
+			printBoard(player.getBoard(), true);
 			game.nextPlayer();
 		} while (!game.isReady());
 	}
@@ -191,9 +193,46 @@ public class Main {
 	}
 
 	private static void printBoards(Board ownBoard, Board enemyBoard) {
-		ownBoard.printBoard(true);
-		enemyBoard.printBoard(false);
+		printBoard(ownBoard, true);
+		printBoard(enemyBoard, false);
 		System.out.println("O = getroffenes Schiff\nX = daneben\n+ = eigenes Schiff\n- = leer \nU = unbekannt\n! = zerstörtes Schiff\n");
+	}
+
+	private static void printBoard(Board board, boolean isOwnBoard) {
+		String s = isOwnBoard ? "\nEigenes Board" : "\nGegnerisches Board";
+		System.out.println(s);
+		Field[][] fields = board.getFields();
+		for (int row = 0; row < fields.length; row++) {
+			for (int column = 0; column < fields[row].length; column++) {
+				Field field = fields[row][column];
+				printState(field.getState(), isOwnBoard);
+			}
+			System.out.println();
+		}
+	}
+
+	private static void printState(FieldState fieldState, boolean isOwnBoard) {
+		String s = "";
+		switch (fieldState) {
+		case Destroyed:
+			s = "!";
+			break;
+		case Hit:
+			s = "O";
+			break;
+		case Missed:
+			s = "X";
+			break;
+		case HasShip:
+			s = isOwnBoard ? "+" : "?";
+			break;
+		case IsEmpty:
+			s = isOwnBoard ? "-" : "?";
+			break;
+		default:
+			break;
+		}
+		System.out.print(s);
 	}
 
 }
