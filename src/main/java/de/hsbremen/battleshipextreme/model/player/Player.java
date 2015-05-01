@@ -1,10 +1,9 @@
 package de.hsbremen.battleshipextreme.model.player;
 
-import java.util.HashMap;
-
 import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.Orientation;
+import de.hsbremen.battleshipextreme.model.ShipType;
 import de.hsbremen.battleshipextreme.model.exception.FieldOccupiedException;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
@@ -14,8 +13,10 @@ import de.hsbremen.battleshipextreme.model.ship.Destroyer;
 import de.hsbremen.battleshipextreme.model.ship.Frigate;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.model.ship.Submarine;
+import de.hsbremen.battleshipextreme.network.TransferableType;
+import de.hsbremen.battleshipextreme.network.transfarableObject.TransferableObject;
 
-public class Player {
+public class Player extends TransferableObject{
 	protected static int currentId = 1;
 	protected int id;
 	protected String name;
@@ -136,4 +137,8 @@ public class Player {
 		return this.name;
 	}
 
+	@Override
+	public TransferableType getType() {
+		return TransferableType.Player;
+	}
 }
