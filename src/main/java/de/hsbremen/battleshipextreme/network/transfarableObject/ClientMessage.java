@@ -13,6 +13,7 @@ public class ClientMessage extends Message {
         super(message);
         this.info = (ClientInfo) sender;
     }
+
     @Override
     public TransferableType getType() {
         return TransferableType.ClientMessage;

@@ -42,6 +42,7 @@ public abstract class TransferInfo extends TransferableObject {
     public InfoSendingReason getReason() {
         return reason;
     }
+
     public TransferableType getType() {
         return TransferableType.TransferInfo;
     }
