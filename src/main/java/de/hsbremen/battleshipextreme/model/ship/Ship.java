@@ -1,13 +1,15 @@
 package de.hsbremen.battleshipextreme.model.ship;
 
 import de.hsbremen.battleshipextreme.model.ShipType;
+import de.hsbremen.battleshipextreme.network.TransferableType;
+import de.hsbremen.battleshipextreme.network.transfarableObject.TransferableObject;
 
-public abstract class Ship {
+public abstract class Ship extends TransferableObject{
 	protected int size;
 	protected int shootingRange;
 	protected int maxReloadTime;
 	protected int currentReloadTime;
-	protected ShipType type;
+	protected ShipType shipType;
 	protected boolean isPlaced;
 	
 	public void setPlaced() {
@@ -38,11 +40,16 @@ public abstract class Ship {
 		return currentReloadTime;
 	}
 	
-	public ShipType getType() {
-		return type;
+	public ShipType getShipType() {
+		return shipType;
+	}
+
+	@Override
+	public TransferableType getType() {
+		return TransferableType.Ship;
 	}
 	
 	public String toString() {
-		return type.toString();
+		return shipType.toString();
 	}
 }

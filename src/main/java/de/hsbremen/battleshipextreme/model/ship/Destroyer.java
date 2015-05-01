@@ -8,6 +8,6 @@ public class Destroyer extends Ship {
 		this.size = 5;
 		this.shootingRange = 3;
 		this.maxReloadTime = 3;
-		this.type = ShipType.Destroyer;
+		this.shipType = ShipType.Destroyer;
 	}
 }

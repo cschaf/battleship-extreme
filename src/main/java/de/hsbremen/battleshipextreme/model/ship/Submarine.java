@@ -8,6 +8,6 @@ public class Submarine extends Ship {
 		this.size = 2;
 		this.shootingRange = 1;
 		this.maxReloadTime = 1;
-		this.type = ShipType.Submarine;
+		this.shipType = ShipType.Submarine;
 	}
 }
