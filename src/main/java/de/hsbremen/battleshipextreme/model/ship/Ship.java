@@ -8,6 +8,8 @@ import de.hsbremen.battleshipextreme.network.TransferableType;
 import de.hsbremen.battleshipextreme.network.transfarableObject.TransferableObject;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.player.Player;
+import de.hsbremen.battleshipextreme.network.TransferableType;
+import de.hsbremen.battleshipextreme.network.transfarableObject.TransferableObject;
 
 public abstract class Ship extends TransferableObject{
 	protected int size;
@@ -157,5 +159,9 @@ public abstract class Ship extends TransferableObject{
 	
 	public String toString() {
 		return shipType.toString();
+	}
+	@Override
+	public TransferableType getType() {
+		return TransferableType.Ship;
 	}
 }
