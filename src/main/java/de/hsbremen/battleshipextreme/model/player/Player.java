@@ -1,6 +1,5 @@
 package de.hsbremen.battleshipextreme.model.player;
 
-import java.util.Arrays;
 import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.Orientation;
@@ -41,149 +40,159 @@ public class Player extends TransferableObject {
         }
     }
 
-	// TODO Javadoc comments, refactoring (private methods)
-	public void placeShip(Ship ship, int xPos, int yPos, Orientation orientation) throws Exception, ShipAlreadyPlacedException, FieldOutOfBoardException {
+        for (int i = 0; i < ships.length; i++) {
+            if (i < destroyers) {
+                ships[i] = new Destroyer();
+            } else if (i < destroyers + frigates) {
+                ships[i] = new Frigate();
+            } else if (i < destroyers + frigates + corvettes) {
+                ships[i] = new Corvette();
+            } else {
+                ships[i] = new Submarine();
+            }
+        }
+    }
 
-		Field[][] fields = this.board.getFields();
+    // TODO Javadoc comments, refactoring (private methods)
+    public void placeShip(Ship ship, int xPos, int yPos, Orientation orientation) throws Exception, ShipAlreadyPlacedException, FieldOutOfBoardException {
 
-		// Schiff bereits gesetzt
-		if (ship.isPlaced())
-			throw new ShipAlreadyPlacedException(ship);
+        Field[][] fields = this.board.getFields();
 
-		// Feld außerhalb des Spielfeldes
-		if (!isFieldWithinBoard(xPos, yPos))
-			throw new FieldOutOfBoardException(new Field(xPos, yPos));
+        // Schiff bereits gesetzt
+        if (ship.isPlaced()) {
+            throw new ShipAlreadyPlacedException(ship);
+        }
 
-		// Orientation Horizontal
-		if (orientation == Orientation.Horizontal) {
+        // Feld außerhalb des Spielfeldes
+        if (!isFieldWithinBoard(xPos, yPos)) {
+            throw new FieldOutOfBoardException(new Field(xPos, yPos));
+        }
 
-			// Teil des Schiffes außerhalb des Spielfeldes
-			if (!(xPos + ship.getSize() - 1 < fields.length))
-				throw new ShipOutOfBoardException(ship);
+        // Orientation Horizontal
+        if (orientation == Orientation.Horizontal) {
 
-			// Felder prüfen ob bereits belegt
-			for (int y = yPos - 1; y <= yPos + 1; y++)
-				for (int x = xPos - 1; x <= xPos + ship.getSize(); x++)
-					// x und y innerhalb des Spielfeldes
-					if (x >= 0 && y >= 0 && x < fields.length && y < fields.length)
-						if (fields[y][x].getShip() != null)
-							throw new FieldOccupiedException(fields[y][x]);
+            // Teil des Schiffes außerhalb des Spielfeldes
+            if (!(xPos + ship.getSize() - 1 < fields.length)) {
+                throw new ShipOutOfBoardException(ship);
+            }
 
-			for (int x = xPos; x < xPos + ship.getSize(); x++)
-				fields[yPos][x].setShip(ship);
-		}
+            // Felder prüfen ob bereits belegt
+            for (int y = yPos - 1; y <= yPos + 1; y++)
+                for (int x = xPos - 1; x <= xPos + ship.getSize(); x++)
+                    // x und y innerhalb des Spielfeldes
+                    if (x >= 0 && y >= 0 && x < fields.length && y < fields.length) {
+                        if (fields[y][x].getShip() != null) {
+                            throw new FieldOccupiedException(fields[y][x]);
+                        }
+                    }
 
-		// Orientation Vertical
-		if (orientation == Orientation.Vertical) {
+            for (int x = xPos; x < xPos + ship.getSize(); x++)
+                fields[yPos][x].setShip(ship);
+        }
 
-			// Teil des Schiffes außerhalb des Spielfeldes
-			if (!(yPos + ship.getSize() - 1 < fields.length))
-				throw new ShipOutOfBoardException(ship);
-			// Felder prüfen ob bereits belegt
-			for (int y = yPos - 1; y <= yPos + ship.getSize(); y++)
-				for (int x = xPos - 1; x <= xPos + 1; x++)
-					// x und y innerhalb des Spielfeldes
-					if (x >= 0 && y >= 0 && x < fields.length && y < fields.length)
-						if (fields[y][x].getShip() != null) // Feld hat Schiff
-							throw new FieldOccupiedException(fields[y][x]);
-			for (int y = yPos; y < yPos + ship.getSize(); y++)
-				fields[y][xPos].setShip(ship);
-		}
+        // Orientation Vertical
+        if (orientation == Orientation.Vertical) {
 
-		ship.setPlaced();
-	}
+            // Teil des Schiffes außerhalb des Spielfeldes
+            if (!(yPos + ship.getSize() - 1 < fields.length)) {
+                throw new ShipOutOfBoardException(ship);
+            }
+            // Felder prüfen ob bereits belegt
+            for (int y = yPos - 1; y <= yPos + ship.getSize(); y++)
+                for (int x = xPos - 1; x <= xPos + 1; x++)
+                    // x und y innerhalb des Spielfeldes
+                    if (x >= 0 && y >= 0 && x < fields.length && y < fields.length) {
+                        if (fields[y][x].getShip() != null) // Feld hat Schiff
+                        {
+                            throw new FieldOccupiedException(fields[y][x]);
+                        }
+                    }
+            for (int y = yPos; y < yPos + ship.getSize(); y++)
+                fields[y][xPos].setShip(ship);
+        }
 
         // Feld außerhalb des Spielfeldes
         if (!(xPos >= 0 && yPos >= 0 && xPos < fields.length && yPos < fields.length)) {
             throw new FieldOutOfBoardException(new Field(xPos, yPos));
         }
 
-		for (Ship ship : this.ships) {
-			if (!ship.isPlaced()) {
-				arePlaced = false;
-				break;
-			}
-		}
+    public boolean hasPlacedAllShips() {
+        boolean arePlaced = true;
 
-		return arePlaced;
-	}
+        for (Ship ship : this.ships) {
+            if (!ship.isPlaced()) {
+                arePlaced = false;
+                break;
+            }
+        }
 
-	public boolean hasToSkip() {
-		return (this.hasLost() || this.areAllShipsReloading());
-	}
+        return arePlaced;
+    }
 
-	private boolean doesPlayerPossessShip(Ship ship) {
-		return Arrays.asList(this.getShips()).contains(ship);
-	}
+    public boolean hasToSkip() {
+        return (this.hasLost() || this.areAllShipsReloading());
+    }
 
-	/**
-	 * Tries to set the selected ship of the player.
-	 * 
-	 * @param ship
-	 *            the ship the player tries to select
-	 * @return true if the ship was selected, false if not
-	 */
-	public boolean selectShip(Ship ship) {
-		if (ship.canShipBeSelected() && (doesPlayerPossessShip(ship))) {
-			this.selectedShip = ship;
-			return true;
-		}
-		return false;
-	}
+    private boolean doesPlayerPossessShip(Ship ship) {
+        return Arrays.asList(this.getShips()).contains(ship);
+    }
 
-	/**
-	 * 
-	 * @param player
-	 *            the player to attack
-	 * @param xPos
-	 *            the x-coordinate the attacked players' board.
-	 * @param yPos
-	 *            the y-coordinate the attacked players' board.
-	 * @param orientation
-	 *            the orientation of the shot (vertical / horizontal).
-	 * 
-	 * @return true if the turn has been made, false if the turn was not
-	 *         possible
-	 * @throws Exception
-	 *             if the player tries to attack himself or if the player is
-	 *             already dead.
-	 */
-	public boolean makeTurn(Player player, int xPos, int yPos, Orientation orientation) throws Exception {
-		boolean hasTurnBeenMade = true;
-		if (this.equals(player)) {
-			throw new Exception("The player can't attack himself!");
-		}
-		if (player.hasLost()) {
-			throw new Exception("Player is already dead!");
-		}
-		hasTurnBeenMade = this.selectedShip.shoot(player, xPos, yPos, orientation);
-		return hasTurnBeenMade;
-	}
+    /**
+     * Tries to set the selected ship of the player.
+     * @param ship the ship the player tries to select
+     * @return true if the ship was selected, false if not
+     */
+    public boolean selectShip(Ship ship) {
+        if (ship.canShipBeSelected() && (doesPlayerPossessShip(ship))) {
+            this.selectedShip = ship;
+            return true;
+        }
+        return false;
+    }
 
-	public boolean areAllShipsReloading() {
-		for (Ship ship : this.ships) {
-			if (!ship.isReloading()) {
-				return false;
-			}
-		}
-		return true;
-	}
+    /**
+     * @param player the player to attack
+     * @param xPos the x-coordinate the attacked players' board.
+     * @param yPos the y-coordinate the attacked players' board.
+     * @param orientation the orientation of the shot (vertical / horizontal).
+     * @return true if the turn has been made, false if the turn was not
+     * possible
+     * @throws Exception if the player tries to attack himself or if the player is
+     * already dead.
+     */
+    public boolean makeTurn(Player player, int xPos, int yPos, Orientation orientation) throws Exception {
+        boolean hasTurnBeenMade = true;
+        if (this.equals(player)) {
+            throw new Exception("The player can't attack himself!");
+        }
+        if (player.hasLost()) {
+            throw new Exception("Player is already dead!");
+        }
+        hasTurnBeenMade = this.selectedShip.shoot(player, xPos, yPos, orientation);
+        return hasTurnBeenMade;
+    }
 
-	/**
-	 * Decreases the reload time of the ships, except for the ship that just
-	 * shot.
-	 */
-	public void decreaseCurrentReloadTimeOfShips() {
-		for (Ship ship : this.ships) {
-			if (!ship.equals(this.selectedShip))
-				ship.decreaseCurrentReloadTime();
-		}
-		this.selectedShip = null;
-	}
+    public boolean areAllShipsReloading() {
+        for (Ship ship : this.ships) {
+            if (!ship.isReloading()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	public String getName() {
-		return name;
-	}
+    /**
+     * Decreases the reload time of the ships, except for the ship that just
+     * shot.
+     */
+    public void decreaseCurrentReloadTimeOfShips() {
+        for (Ship ship : this.ships) {
+            if (!ship.equals(this.selectedShip)) {
+                ship.decreaseCurrentReloadTime();
+            }
+        }
+        this.selectedShip = null;
+    }
 
             // Felder prüfen ob bereits belegt
             for (int y = yPos - 1; y <= yPos + 1; y++)
