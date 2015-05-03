@@ -2,6 +2,7 @@ package de.hsbremen.battleshipextreme.network.transfarableObject;
 
 import de.hsbremen.battleshipextreme.model.Settings;
 import de.hsbremen.battleshipextreme.network.TransferableType;
+import de.hsbremen.battleshipextreme.server.ClientHandler;
 
 import java.util.ArrayList;
 
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 public class Game extends TransferableObject {
     private String name;
     private Settings settings;
-    private int joinedPlayers;
+    private ArrayList<ClientHandler> joinedPlayers;
     private int maxPlayers;
     private String password;
     private boolean isPrivate;
@@ -20,7 +21,7 @@ public class Game extends TransferableObject {
     public Game(String name, Settings settings) {
         this.name = name;
         this.settings = settings;
-        this.joinedPlayers = 0;
+        this.joinedPlayers = new ArrayList<ClientHandler>();
         this.maxPlayers = 6;
         this.password = null;
         this.isPrivate = false;
@@ -32,17 +33,34 @@ public class Game extends TransferableObject {
         return TransferableType.Game;
     }
 
-    public void addTurn(Turn turn){
+    public void addTurn(Turn turn) {
         this.turns.add(turn);
     }
 
-    public int getJoinedPlayers() {
+    public ArrayList<ClientHandler> getJoinedPlayers() {
         return joinedPlayers;
     }
 
-    public void setJoinedPlayers(int joinedPlayers) {
-        this.joinedPlayers = joinedPlayers;
+    public void addPlayer(ClientHandler player) {
+        if (this.joinedPlayers.size() < this.maxPlayers) {
+            this.joinedPlayers.add(player);
+        }
     }
+
+    public void removePlayer(ClientHandler player) {
+        ClientHandler removeClient = null;
+        for(ClientHandler each : this.joinedPlayers){
+            if(each == player){
+                removeClient = each;
+                break;
+            }
+        }
+        if (removeClient != null){
+            this.joinedPlayers.remove(removeClient);
+        }
+
+    }
+
 
     public Settings getSettings() {
         return settings;
