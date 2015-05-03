@@ -159,7 +159,7 @@ public class Player {
 		if (player.hasLost()) {
 			throw new Exception("Player is already dead!");
 		}
-		hasTurnBeenMade = this.selectedShip.shoot(player.getBoard(), xPos, yPos, orientation);
+		hasTurnBeenMade = this.selectedShip.shoot(player.getBoard(), new Field(xPos, yPos), orientation);
 		return hasTurnBeenMade;
 	}
 

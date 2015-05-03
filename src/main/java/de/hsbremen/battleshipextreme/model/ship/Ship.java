@@ -28,9 +28,11 @@ public abstract class Ship {
 	 * @throws FieldOutOfBoardException
 	 *             if the shot does not start within the field.
 	 */
-	public boolean shoot(Board boardShotAt, int startX, int startY, Orientation orientation) throws FieldOutOfBoardException {
+	public boolean shoot(Board boardShotAt, Field field, Orientation orientation) throws FieldOutOfBoardException {
 		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
 		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
+		int startX = field.getXPos();
+		int startY = field.getYPos();
 		if (isShotPossible(startX, startY, boardShotAt)) {
 			fireShot(startX, startY, xDirection, yDirection, boardShotAt);
 			return true;
