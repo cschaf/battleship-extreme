@@ -52,7 +52,7 @@ public class Player {
 			throw new ShipAlreadyPlacedException(ship);
 
 		// Feld auﬂerhalb des Spielfeldes
-		if (!isFieldWithinBoard(xPos, yPos))
+		if (!this.board.containsFieldAtPosition(xPos, yPos))
 			throw new FieldOutOfBoardException(new Field(xPos, yPos));
 
 		// Orientation Horizontal
@@ -92,10 +92,6 @@ public class Player {
 		}
 
 		ship.setPlaced();
-	}
-
-	private boolean isFieldWithinBoard(int x, int y) {
-		return ((x < this.board.getSize()) && (y < this.board.getSize()) && (x >= 0) && (y >= 0));
 	}
 
 	public boolean hasPlacedAllShips() {
@@ -159,7 +155,9 @@ public class Player {
 		if (player.hasLost()) {
 			throw new Exception("Player is already dead!");
 		}
-		hasTurnBeenMade = this.selectedShip.shoot(player.getBoard(), new Field(xPos, yPos), orientation);
+		Board board = player.getBoard();
+		Field field = board.getField(xPos, yPos);
+		hasTurnBeenMade = this.selectedShip.shoot(board, field, orientation);
 		return hasTurnBeenMade;
 	}
 

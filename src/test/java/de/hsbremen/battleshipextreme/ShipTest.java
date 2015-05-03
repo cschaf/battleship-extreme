@@ -36,6 +36,7 @@ public class ShipTest {
 	public void setUp() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, FieldOutOfBoardException {
 
 		int size = 10;
+
 		Field[][] fields = new Field[size][size];
 		for (int y = 0; y < fields.length; y++) {
 			for (int x = 0; x < fields.length; x++) {
@@ -73,21 +74,11 @@ public class ShipTest {
 	}
 
 	@Test
-	public void testShootOutsideBoard() throws FieldOutOfBoardException {
-		Field field = mock(Field.class);
-		when(field.getXPos()).thenReturn(10);
-		when(field.getYPos()).thenReturn(0);
-		Orientation orientation = Orientation.Horizontal;
-		boolean wasShotSuccessFul = this.destroyer.shoot(this.board, field, orientation);
-		assertFalse(wasShotSuccessFul);
-	}
-
-	@Test
 	public void testShootAtFieldThatWasAlreadyHit() throws FieldOutOfBoardException {
 		Field field = mock(Field.class);
 		when(field.getXPos()).thenReturn(9);
 		when(field.getYPos()).thenReturn(0);
-		when(this.board.getField(0, 9).isHit()).thenReturn(true);
+		when(field.isHit()).thenReturn(true);
 		Orientation orientation = Orientation.Horizontal;
 		boolean wasShotSuccessFul = this.destroyer.shoot(this.board, field, orientation);
 		assertFalse(wasShotSuccessFul);

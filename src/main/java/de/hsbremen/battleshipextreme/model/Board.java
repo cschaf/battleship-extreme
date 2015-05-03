@@ -21,9 +21,13 @@ public class Board {
 	}
 
 	public Field getField(int x, int y) throws FieldOutOfBoardException {
-		if (x < 0 || y < 0 || x >= this.size || y >= this.size)
+		if (!this.containsFieldAtPosition(x, y))
 			throw new FieldOutOfBoardException(new Field(x, y));
 		return this.fields[y][x];
+	}
+
+	public boolean containsFieldAtPosition(int x, int y) {
+		return (x < this.size) && (y < this.size) && (x >= 0) && (y >= 0);
 	}
 
 	public int getSize() {
