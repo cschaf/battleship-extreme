@@ -18,51 +18,12 @@ public abstract class Ship extends TransferableObject{
 	protected ShipType shipType;
 	protected boolean isPlaced;
 
-	/**
-	 * 
-	 * @param player
-	 *            the player to attack
-	 * @param startX
-	 *            the x-coordinate the attacked players' board.
-	 * @param startY
-	 *            the y-coordinate the attacked players' board.
-	 * @param orientation
-	 *            the orientation of the shot (vertical / horizontal).
-	 * @return true if the shot was successfully fired, else false.
-	 * @throws FieldOutOfBoardException
-	 *             if the shot does not start within the field.
-	 */
 	public boolean shoot(Board boardShotAt, Field field, Orientation orientation) throws FieldOutOfBoardException {
-		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
-		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
-		int startX = field.getXPos();
-		int startY = field.getYPos();
-		if (isShotPossible(startX, startY, boardShotAt)) {
-			fireShot(startX, startY, xDirection, yDirection, boardShotAt);
+		if (!field.isHit()) {
+			fireShot(field, orientation, boardShotAt);
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Checks if the starting position of the shot is within the board. Also
-	 * checks if the field was already shot at.
-	 * 
-	 * @param x
-	 *            the x-coordinate of the shot.
-	 * @param y
-	 *            the y-coordinate of the shot.
-	 * @param boardShotAt
-	 *            the board to shoot at.
-	 * @return true if the shot is possible, else false
-	 * @throws FieldOutOfBoardException
-	 */
-	private boolean isShotPossible(int x, int y, Board boardShotAt) throws FieldOutOfBoardException {
-		return isFieldWithinBoard(x, y, boardShotAt) && (!boardShotAt.getField(x, y).isHit());
-	}
-
-	private boolean isFieldWithinBoard(int x, int y, Board boardShotAt) {
-		return (x < boardShotAt.getSize()) && (y < boardShotAt.getSize()) && (x >= 0) && (y >= 0);
 	}
 
 	/**
@@ -79,14 +40,16 @@ public abstract class Ship extends TransferableObject{
 	 *            the board to shoot at.
 	 * @throws FieldOutOfBoardException
 	 */
-	private void fireShot(int startX, int startY, int xDirection, int yDirection, Board boardShotAt) throws FieldOutOfBoardException {
+	private void fireShot(Field field, Orientation orientation, Board boardShotAt) throws FieldOutOfBoardException {
+		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
+		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
 		int x;
 		int y;
 		for (int i = 0; i < this.shootingRange; i++) {
-			x = startX + i * xDirection;
-			y = startY + i * yDirection;
+			x = field.getXPos() + i * xDirection;
+			y = field.getYPos() + i * yDirection;
 			// Schüsse ignorieren, die außerhalb des Feldes liegen
-			if (isFieldWithinBoard(x, y, boardShotAt)) {
+			if (boardShotAt.containsFieldAtPosition(x, y)) {
 				Field fieldShotAt = boardShotAt.getField(x, y);
 				// wenn Board schon beschossen wurde, dann Schuss ignorieren
 				if (!fieldShotAt.isHit()) {

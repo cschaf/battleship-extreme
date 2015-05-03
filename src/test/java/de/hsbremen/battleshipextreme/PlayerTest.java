@@ -19,6 +19,8 @@ import de.hsbremen.battleshipextreme.model.ship.Ship;
 /**
  * Tests the Player class
  * 
+ * TODO: Mock ship object
+ * 
  */
 
 public class PlayerTest {
