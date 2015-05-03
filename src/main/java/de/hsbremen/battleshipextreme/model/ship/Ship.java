@@ -5,7 +5,6 @@ import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.ShipType;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
-import de.hsbremen.battleshipextreme.model.player.Player;
 
 public abstract class Ship {
 	protected int size;
@@ -29,10 +28,9 @@ public abstract class Ship {
 	 * @throws FieldOutOfBoardException
 	 *             if the shot does not start within the field.
 	 */
-	public boolean shoot(Player player, int startX, int startY, Orientation orientation) throws FieldOutOfBoardException {
+	public boolean shoot(Board boardShotAt, int startX, int startY, Orientation orientation) throws FieldOutOfBoardException {
 		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
 		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
-		Board boardShotAt = player.getBoard();
 		if (isShotPossible(startX, startY, boardShotAt)) {
 			fireShot(startX, startY, xDirection, yDirection, boardShotAt);
 			return true;
