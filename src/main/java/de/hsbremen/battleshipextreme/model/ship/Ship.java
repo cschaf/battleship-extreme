@@ -24,10 +24,8 @@ public abstract class Ship {
 
 	/**
 	 * 
-	 * @param startX
-	 *            the start x-coordinate of the shot.
-	 * @param startY
-	 *            the start y-coordinate of the shot.
+	 * @param field
+	 *            the targeted field.
 	 * @param xDirection
 	 *            the horizontal direction of the shot.
 	 * @param yDirection
