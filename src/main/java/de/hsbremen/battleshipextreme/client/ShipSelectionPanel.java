@@ -23,7 +23,6 @@ public class ShipSelectionPanel extends JPanel {
 	public ShipSelectionPanel() {
 		this.setLayout(new GridBagLayout());
 		this.setBorder(BorderFactory.createTitledBorder("Your Ships"));
-		this.setBackground(Color.YELLOW);
 		
 		// GridBagLayout Einschränkungen
 		GridBagConstraints c = new GridBagConstraints();
