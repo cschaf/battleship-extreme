@@ -6,7 +6,9 @@ import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.ShipType;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 
-public abstract class Ship {
+import java.io.Serializable;
+
+public abstract class Ship implements Serializable {
 	protected int size;
 	protected int shootingRange;
 	protected int maxReloadTime;
@@ -23,17 +25,10 @@ public abstract class Ship {
 	}
 
 	/**
-	 * 
-	 * @param startX
-	 *            the start x-coordinate of the shot.
-	 * @param startY
-	 *            the start y-coordinate of the shot.
-	 * @param xDirection
-	 *            the horizontal direction of the shot.
-	 * @param yDirection
-	 *            the vertical direction of the shot.
+	 *
+	 * @param field
+	 * @param orientation
 	 * @param boardShotAt
-	 *            the board to shoot at.
 	 * @throws FieldOutOfBoardException
 	 */
 	private void fireShot(Field field, Orientation orientation, Board boardShotAt) throws FieldOutOfBoardException {

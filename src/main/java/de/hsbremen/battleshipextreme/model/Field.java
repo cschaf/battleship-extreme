@@ -3,7 +3,9 @@ package de.hsbremen.battleshipextreme.model;
 import de.hsbremen.battleshipextreme.model.exception.FieldOccupiedException;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 
-public class Field {
+import java.io.Serializable;
+
+public class Field implements Serializable {
 	private int xPos;
 	private int yPos;
 	private Ship ship;

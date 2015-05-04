@@ -2,7 +2,9 @@ package de.hsbremen.battleshipextreme.model;
 
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 
-public class Board {
+import java.io.Serializable;
+
+public class Board implements Serializable {
 	private Field[][] fields;
 	private int size;
 

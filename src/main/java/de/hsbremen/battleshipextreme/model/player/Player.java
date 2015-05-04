@@ -1,5 +1,6 @@
 package de.hsbremen.battleshipextreme.model.player;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 import de.hsbremen.battleshipextreme.model.Board;
@@ -15,7 +16,7 @@ import de.hsbremen.battleshipextreme.model.ship.Frigate;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.model.ship.Submarine;
 
-public class Player {
+public class Player implements Serializable {
 	protected static int currentId = 1;
 	protected int id;
 	protected String name;
