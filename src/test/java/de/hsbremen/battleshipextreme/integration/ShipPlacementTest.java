@@ -23,21 +23,41 @@ public class ShipPlacementTest extends GameTest {
 	@Test
 	public void testPlaceShipsHorizontally() throws Exception {
 		// links oben
+		Orientation orientation = Orientation.Horizontal;
+		int x = 0;
+		int y = 0;
 		Destroyer destroyer = (Destroyer) player.getShips()[0];
-		testPlaceShipAtPosition(destroyer, 0, 0, Orientation.Horizontal);
+		this.player.placeShip(destroyer, x, y, orientation);
+		checkFieldsForState(this.player.getBoard(), destroyer.getSize(), x, y,
+				orientation, FieldState.HasShip);
 
+		x = 5;
+		y = 9;
 		// rechts unten
 		destroyer = (Destroyer) player.getShips()[1];
-		testPlaceShipAtPosition(destroyer, 5, 9, Orientation.Horizontal);
+		this.player.placeShip(destroyer, x, y, orientation);
+		checkFieldsForState(this.player.getBoard(), destroyer.getSize(), x, y,
+				orientation, FieldState.HasShip);
 	}
 
 	@Test
 	public void testPlaceShipsVertically() throws Exception {
+		// links oben
+		Orientation orientation = Orientation.Vertical;
+		int x = 0;
+		int y = 0;
 		Destroyer destroyer = (Destroyer) player.getShips()[0];
-		testPlaceShipAtPosition(destroyer, 0, 0, Orientation.Vertical);
+		this.player.placeShip(destroyer, x, y, orientation);
+		checkFieldsForState(this.player.getBoard(), destroyer.getSize(), x, y,
+				orientation, FieldState.HasShip);
 
+		orientation = Orientation.Vertical;
+		x = 9;
+		y = 5;
 		destroyer = (Destroyer) player.getShips()[1];
-		testPlaceShipAtPosition(destroyer, 9, 5, Orientation.Vertical);
+		this.player.placeShip(destroyer, x, y, orientation);
+		checkFieldsForState(this.player.getBoard(), destroyer.getSize(), x, y,
+				orientation, FieldState.HasShip);
 	}
 
 	@Test(expected = ShipAlreadyPlacedException.class)
@@ -56,7 +76,9 @@ public class ShipPlacementTest extends GameTest {
 	}
 
 	@Test(expected = FieldOccupiedException.class)
-	public void testPlaceShipsNextToEachOther() throws ShipAlreadyPlacedException, FieldOutOfBoardException, Exception {
+	public void testPlaceShipsNextToEachOther()
+			throws ShipAlreadyPlacedException, FieldOutOfBoardException,
+			Exception {
 		Ship ship = player.getShips()[0];
 		this.player.placeShip(ship, 0, 8, Orientation.Horizontal);
 		ship = player.getShips()[1];
@@ -65,23 +87,22 @@ public class ShipPlacementTest extends GameTest {
 
 	@Test(expected = FieldOutOfBoardException.class)
 	public void testFieldOutOfBoardException() throws Exception {
-		player.placeShip(player.getShips()[0], 1000, 10000, Orientation.Horizontal);
+		player.placeShip(player.getShips()[0], 1000, 10000,
+				Orientation.Horizontal);
 	}
 
 	@Test(expected = ShipOutOfBoardException.class)
-	public void testShipOutOfBoardException() throws ShipAlreadyPlacedException, FieldOutOfBoardException, Exception {
+	public void testShipOutOfBoardException()
+			throws ShipAlreadyPlacedException, FieldOutOfBoardException,
+			Exception {
 		player.placeShip(player.getShips()[0], 8, 8, Orientation.Horizontal);
 	}
 
 	@Test
-	public void testHasPlacedAllShips() throws ShipAlreadyPlacedException, FieldOutOfBoardException, Exception {
+	public void testHasPlacedAllShips() throws ShipAlreadyPlacedException,
+			FieldOutOfBoardException, Exception {
 		placeAllShipsRandomly(this.player);
 		boolean actual = player.hasPlacedAllShips();
 		assertTrue(actual);
-	}
-
-	private void testPlaceShipAtPosition(Ship ship, int startX, int startY, Orientation orientation) throws ShipAlreadyPlacedException, FieldOutOfBoardException, Exception {
-		this.player.placeShip(ship, startX, startY, orientation);
-		checkFieldsForState(this.player.getBoard(), ship.getSize(), startX, startY, orientation, FieldState.HasShip);
 	}
 }
