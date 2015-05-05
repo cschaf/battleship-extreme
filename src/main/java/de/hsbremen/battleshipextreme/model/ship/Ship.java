@@ -26,10 +26,8 @@ public abstract class Ship {
 	 * 
 	 * @param field
 	 *            the targeted field.
-	 * @param xDirection
-	 *            the horizontal direction of the shot.
-	 * @param yDirection
-	 *            the vertical direction of the shot.
+	 * @param orientation
+	 *            the orientation of the shot (horizontal/vertical)
 	 * @param boardShotAt
 	 *            the board to shoot at.
 	 * @throws FieldOutOfBoardException
@@ -43,14 +41,17 @@ public abstract class Ship {
 			x = field.getXPos() + i * xDirection;
 			y = field.getYPos() + i * yDirection;
 			// Schüsse ignorieren, die außerhalb des Feldes liegen
+			System.out.println(boardShotAt.containsFieldAtPosition(x, y));
 			if (boardShotAt.containsFieldAtPosition(x, y)) {
 				Field fieldShotAt = boardShotAt.getField(x, y);
 				// wenn Board schon beschossen wurde, dann Schuss ignorieren
+				System.out.println("field isy hit" + fieldShotAt.isHit());
 				if (!fieldShotAt.isHit()) {
+
 					// wenn das Feld auf das geschossen wurde ein Schiff hat,
 					// dann ein Leben vom Schiff abziehen
 					if (fieldShotAt.hasShip()) {
-						Ship ship = fieldShotAt.getShip();
+						Ship ship = field.getShip();
 						ship.setSize(ship.getSize() - 1);
 					}
 					fieldShotAt.setHit(true);
