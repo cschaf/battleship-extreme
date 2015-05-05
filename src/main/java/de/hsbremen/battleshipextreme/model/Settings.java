@@ -1,76 +1,70 @@
 package de.hsbremen.battleshipextreme.model;
 
-import de.hsbremen.battleshipextreme.network.TransferableType;
-import de.hsbremen.battleshipextreme.network.transfarableObject.TransferableObject;
+import java.io.Serializable;
 
-public class Settings extends TransferableObject{
-	private int players;
-	private int boardSize;
-	private int destroyers;
-	private int frigates;
-	private int corvettes;
-	private int submarines;
-	
-	public Settings(int players, int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
-		this.setPlayers(players); // evtl. Exception bei zu wenig oder zu vielen Players
-		this.setBoardSize(boardSize); // evtl. Exception bei zu kleinem Board
-		this.boardSize = boardSize;
-		this.destroyers = destroyers;
-		this.frigates = frigates;
-		this.corvettes = corvettes;
-		this.submarines = submarines;
-	}
+public class Settings implements Serializable{
+    private int players;
+    private int boardSize;
+    private int destroyers;
+    private int frigates;
+    private int corvettes;
+    private int submarines;
 
-	public int getPlayers() {
-		return players;
-	}
+    public Settings(int players, int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
+        this.setPlayers(players); // evtl. Exception bei zu wenig oder zu vielen Players
+        this.setBoardSize(boardSize); // evtl. Exception bei zu kleinem Board
+        this.boardSize = boardSize;
+        this.destroyers = destroyers;
+        this.frigates = frigates;
+        this.corvettes = corvettes;
+        this.submarines = submarines;
+    }
 
-	public void setPlayers(int players) {
-		this.players = players;
-	}
+    public int getPlayers() {
+        return players;
+    }
 
-	public int getBoardSize() {
-		return boardSize;
-	}
+    public void setPlayers(int players) {
+        this.players = players;
+    }
 
-	public void setBoardSize(int boardSize) {
-		this.boardSize = boardSize;
-	}
+    public int getBoardSize() {
+        return boardSize;
+    }
 
-	public int getDestroyers() {
-		return destroyers;
-	}
+    public void setBoardSize(int boardSize) {
+        this.boardSize = boardSize;
+    }
 
-	public void setDestroyers(int destroyers) {
-		this.destroyers = destroyers;
-	}
+    public int getDestroyers() {
+        return destroyers;
+    }
 
-	public int getFrigates() {
-		return frigates;
-	}
+    public void setDestroyers(int destroyers) {
+        this.destroyers = destroyers;
+    }
 
-	public void setFrigates(int frigates) {
-		this.frigates = frigates;
-	}
+    public int getFrigates() {
+        return frigates;
+    }
 
-	public int getCorvettes() {
-		return corvettes;
-	}
+    public void setFrigates(int frigates) {
+        this.frigates = frigates;
+    }
 
-	public void setCorvettes(int corvettes) {
-		this.corvettes = corvettes;
-	}
+    public int getCorvettes() {
+        return corvettes;
+    }
 
-	public int getSubmarines() {
-		return submarines;
-	}
+    public void setCorvettes(int corvettes) {
+        this.corvettes = corvettes;
+    }
 
-	public void setSubmarines(int submarines) {
-		this.submarines = submarines;
-	}
+    public int getSubmarines() {
+        return submarines;
+    }
 
-	@Override
-	public TransferableType getType() {
-		return TransferableType.Settings;
-	}
+    public void setSubmarines(int submarines) {
+        this.submarines = submarines;
+    }
 }

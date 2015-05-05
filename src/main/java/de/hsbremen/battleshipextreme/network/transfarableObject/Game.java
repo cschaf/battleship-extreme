@@ -49,18 +49,16 @@ public class Game extends TransferableObject {
 
     public void removePlayer(ClientHandler player) {
         ClientHandler removeClient = null;
-        for(ClientHandler each : this.joinedPlayers){
-            if(each == player){
+        for (ClientHandler each : this.joinedPlayers) {
+            if (each == player) {
                 removeClient = each;
                 break;
             }
         }
-        if (removeClient != null){
+        if (removeClient != null) {
             this.joinedPlayers.remove(removeClient);
         }
-
     }
-
 
     public Settings getSettings() {
         return settings;

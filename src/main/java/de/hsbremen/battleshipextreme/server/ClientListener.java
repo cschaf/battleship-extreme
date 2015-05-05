@@ -52,6 +52,10 @@ public class ClientListener extends Thread implements IDisposable {
                     case Game:
                         this.serverDispatcher.addGame(receivedObject);
                         break;
+                    case Turn:
+                        // Turn get Game
+                        // add Turn to game
+                        break;
                     default:
                         this.serverDispatcher.dispatchObject(receivedObject);
                 }

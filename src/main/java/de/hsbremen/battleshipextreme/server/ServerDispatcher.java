@@ -28,6 +28,7 @@ public class ServerDispatcher extends Thread implements IDisposable {
         this.disposed = false;
         this.clients = new Vector<ClientHandler>();
         this.objectQueue = new Vector<ITransferable>();
+        this.games = new Vector<Game>();
     }
 
     public Vector<ClientHandler> getClients() {
