@@ -1,49 +1,25 @@
-package de.hsbremen.battleshipextreme;
+package de.hsbremen.battleshipextreme.integration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.exception.FieldOccupiedException;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
 import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
-import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.ship.Destroyer;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 
 /**
- * Tests the Player class
- * 
- * TODO: Mock ship object
+ * This Test checks if the placement of ships works as expected. Classes that
+ * are combined and tested as a group: Board, Field, Player, Ship
  * 
  */
+public class ShipPlacementTest extends GameTest {
 
-public class PlayerTest {
-
-	private Player player;
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@Before
-	public void setUp() throws Exception {
-
-		// wird vor jedem Test ausgeführt
-		player = new Player(10, 2, 1, 1, 1);
-
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.hsbremen.battleshipextreme.model.player.Player#placeShip()} .
-	 * 
-	 * @throws Exception
-	 */
 	@Test
 	public void testPlaceShipsHorizontally() throws Exception {
 		// links oben
@@ -72,7 +48,7 @@ public class PlayerTest {
 	}
 
 	@Test(expected = FieldOccupiedException.class)
-	public void testPlaceShipsOnTheSameFieldHorizontally() throws Exception {
+	public void testPlaceShipsOnTheSameField() throws Exception {
 		Ship ship = this.player.getShips()[0];
 		this.player.placeShip(ship, 0, 9, Orientation.Horizontal);
 		ship = player.getShips()[1];
@@ -80,31 +56,11 @@ public class PlayerTest {
 	}
 
 	@Test(expected = FieldOccupiedException.class)
-	public void testPlaceShipsOnTheSameFieldVertically() throws Exception {
-		Ship ship = this.player.getShips()[0];
-		this.player.placeShip(ship, 0, 0, Orientation.Vertical);
-		ship = player.getShips()[1];
-		this.player.placeShip(ship, 0, 0, Orientation.Vertical);
-	}
-
-	@Test(expected = FieldOccupiedException.class)
-	public void testPlaceShipsNextToEachOtherHorizontally() throws ShipAlreadyPlacedException, FieldOutOfBoardException, Exception {
-		// Schiffe dürfen nicht ohne Freiraum nebeneinander stehen
-		// deshalb muss eine Exception geworfen werden
+	public void testPlaceShipsNextToEachOther() throws ShipAlreadyPlacedException, FieldOutOfBoardException, Exception {
 		Ship ship = player.getShips()[0];
 		this.player.placeShip(ship, 0, 8, Orientation.Horizontal);
 		ship = player.getShips()[1];
 		this.player.placeShip(ship, 0, 9, Orientation.Horizontal);
-	}
-
-	@Test(expected = FieldOccupiedException.class)
-	public void testPlaceShipsNextToEachOtherVertically() throws ShipAlreadyPlacedException, FieldOutOfBoardException, Exception {
-		// Schiffe dürfen nicht ohne Freiraum nebeneinander stehen
-		// deshalb muss eine Exception geworfen werden
-		Ship ship = player.getShips()[0];
-		this.player.placeShip(ship, 0, 0, Orientation.Vertical);
-		ship = player.getShips()[1];
-		this.player.placeShip(ship, 1, 0, Orientation.Vertical);
 	}
 
 	@Test(expected = FieldOutOfBoardException.class)
@@ -113,27 +69,19 @@ public class PlayerTest {
 	}
 
 	@Test(expected = ShipOutOfBoardException.class)
-	public void testPlaceShipOutOfBoardHorizontally() throws Exception {
+	public void testShipOutOfBoardException() throws ShipAlreadyPlacedException, FieldOutOfBoardException, Exception {
 		player.placeShip(player.getShips()[0], 8, 8, Orientation.Horizontal);
 	}
 
-	@Test(expected = ShipOutOfBoardException.class)
-	public void testPlaceShipOutOfBoardVertically() throws Exception {
-		player.placeShip(player.getShips()[0], 8, 8, Orientation.Vertical);
+	@Test
+	public void testHasPlacedAllShips() throws ShipAlreadyPlacedException, FieldOutOfBoardException, Exception {
+		placeAllShipsRandomly(this.player);
+		boolean actual = player.hasPlacedAllShips();
+		assertTrue(actual);
 	}
 
 	private void testPlaceShipAtPosition(Ship ship, int startX, int startY, Orientation orientation) throws ShipAlreadyPlacedException, FieldOutOfBoardException, Exception {
 		this.player.placeShip(ship, startX, startY, orientation);
 		checkFieldsForState(this.player.getBoard(), ship.getSize(), startX, startY, orientation, FieldState.HasShip);
-	}
-
-	private void checkFieldsForState(Board board, int range, int startX, int startY, Orientation orientation, FieldState expectedState) throws FieldOutOfBoardException {
-		// prüft ob mehrere Felder den erwarteten Feldstatus haben
-		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
-		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
-		for (int i = 0; i < range; i++) {
-			FieldState actual = board.getField(startX + xDirection * i, startY + yDirection * i).getState();
-			assertEquals(expectedState, actual);
-		}
 	}
 }

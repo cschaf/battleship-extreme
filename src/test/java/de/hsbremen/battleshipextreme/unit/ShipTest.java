@@ -1,8 +1,11 @@
-package de.hsbremen.battleshipextreme;
+package de.hsbremen.battleshipextreme.unit;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -27,8 +30,10 @@ public class ShipTest {
 	// zwangsläufig auch fehlschlagen. Deshalb werden für Objekte, die nicht
 	// Gegenstand des Tests sind, mithilfe des Mockito-Frameworks Dummy-Objekte
 	// (Mocks) erstellt.
+
 	@Mock
 	private Board board;
+
 	@Mock
 	private Field field;
 
@@ -36,6 +41,10 @@ public class ShipTest {
 	public void setUp() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, FieldOutOfBoardException {
 
 		int size = 10;
+
+		// Da es sich lediglich um Dummy-Objekte handelt, muss festgelegt
+		// werden, was die gemockten Objekte zurückgeben, wenn Methoden
+		// aufgerufen werden.
 
 		Field[][] fields = new Field[size][size];
 		for (int y = 0; y < fields.length; y++) {
@@ -45,10 +54,7 @@ public class ShipTest {
 			}
 		}
 
-		// Da es sich lediglich um Dummy-Objekte handelt, muss festgelegt
-		// werden, was die gemockten Objekte zurückgeben, wenn Methoden
-		// aufgerufen werden.
-		when(this.field.isHit()).thenReturn(false);
+		// when(this.field.isHit()).thenReturn(false);
 		when(this.board.getFields()).thenReturn(fields);
 		when(this.board.getSize()).thenReturn(size);
 
@@ -58,10 +64,19 @@ public class ShipTest {
 	@Test
 	public void testShootHorizontallyWithinBoard() throws FieldOutOfBoardException {
 		Field field = mock(Field.class);
-		when(field.getXPos()).thenReturn(0);
-		when(field.getYPos()).thenReturn(1);
+		int x = 0;
+		int y = 0;
+		int numberOfFieldsFiredAt = this.destroyer.getShootingRange();
+		when(field.getXPos()).thenReturn(x);
+		when(field.getYPos()).thenReturn(y);
+		when(this.board.containsFieldAtPosition(anyInt(), anyInt())).thenReturn(true);
 		Orientation orientation = Orientation.Horizontal;
-		assertTrue(this.destroyer.shoot(this.board, field, orientation));
+		boolean wasShotExecuted = this.destroyer.shoot(this.board, field, orientation);
+		assertTrue(wasShotExecuted);
+		// wird geprüft, ob das Feld schon beschossen wurde?
+		verify(field).isHit();
+		// wird mehrmals geprüft ob das Feld außerhalb des Boards liegt?
+		verify(this.board, times(numberOfFieldsFiredAt)).containsFieldAtPosition(anyInt(), anyInt());
 	}
 
 	@Test
@@ -76,7 +91,7 @@ public class ShipTest {
 	@Test
 	public void testShootAtFieldThatWasAlreadyHit() throws FieldOutOfBoardException {
 		Field field = mock(Field.class);
-		when(field.getXPos()).thenReturn(9);
+		when(field.getXPos()).thenReturn(0);
 		when(field.getYPos()).thenReturn(0);
 		when(field.isHit()).thenReturn(true);
 		Orientation orientation = Orientation.Horizontal;

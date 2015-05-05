@@ -41,11 +41,9 @@ public abstract class Ship {
 			x = field.getXPos() + i * xDirection;
 			y = field.getYPos() + i * yDirection;
 			// Schüsse ignorieren, die außerhalb des Feldes liegen
-			System.out.println(boardShotAt.containsFieldAtPosition(x, y));
 			if (boardShotAt.containsFieldAtPosition(x, y)) {
 				Field fieldShotAt = boardShotAt.getField(x, y);
 				// wenn Board schon beschossen wurde, dann Schuss ignorieren
-				System.out.println("field isy hit" + fieldShotAt.isHit());
 				if (!fieldShotAt.isHit()) {
 
 					// wenn das Feld auf das geschossen wurde ein Schiff hat,
