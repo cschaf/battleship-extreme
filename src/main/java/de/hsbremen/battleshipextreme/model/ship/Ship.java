@@ -4,18 +4,14 @@ import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.ShipType;
-import de.hsbremen.battleshipextreme.network.TransferableType;
-import de.hsbremen.battleshipextreme.network.transfarableObject.TransferableObject;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
-import de.hsbremen.battleshipextreme.network.TransferableType;
-import de.hsbremen.battleshipextreme.network.transfarableObject.TransferableObject;
 
-public abstract class Ship extends TransferableObject{
+public abstract class Ship {
 	protected int size;
 	protected int shootingRange;
 	protected int maxReloadTime;
 	protected int currentReloadTime;
-	protected ShipType shipType;
+	protected ShipType type;
 	protected boolean isPlaced;
 
 	public boolean shoot(Board boardShotAt, Field field, Orientation orientation) throws FieldOutOfBoardException {
@@ -26,20 +22,6 @@ public abstract class Ship extends TransferableObject{
 		return false;
 	}
 
-	/**
-	 * 
-	 * @param startX
-	 *            the start x-coordinate of the shot.
-	 * @param startY
-	 *            the start y-coordinate of the shot.
-	 * @param xDirection
-	 *            the horizontal direction of the shot.
-	 * @param yDirection
-	 *            the vertical direction of the shot.
-	 * @param boardShotAt
-	 *            the board to shoot at.
-	 * @throws FieldOutOfBoardException
-	 */
 	private void fireShot(Field field, Orientation orientation, Board boardShotAt) throws FieldOutOfBoardException {
 		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
 		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
@@ -53,10 +35,11 @@ public abstract class Ship extends TransferableObject{
 				Field fieldShotAt = boardShotAt.getField(x, y);
 				// wenn Board schon beschossen wurde, dann Schuss ignorieren
 				if (!fieldShotAt.isHit()) {
+
 					// wenn das Feld auf das geschossen wurde ein Schiff hat,
 					// dann ein Leben vom Schiff abziehen
 					if (fieldShotAt.hasShip()) {
-						Ship ship = fieldShotAt.getShip();
+						Ship ship = field.getShip();
 						ship.setSize(ship.getSize() - 1);
 					}
 					fieldShotAt.setHit(true);
@@ -111,20 +94,11 @@ public abstract class Ship extends TransferableObject{
 		return currentReloadTime;
 	}
 
-	public ShipType getShipType() {
-		return shipType;
+	public ShipType getType() {
+		return type;
 	}
 
-	@Override
-	public TransferableType getType() {
-		return TransferableType.Ship;
-	}
-	
 	public String toString() {
-		return shipType.toString();
-	}
-	@Override
-	public TransferableType getType() {
-		return TransferableType.Ship;
+		return type.toString();
 	}
 }

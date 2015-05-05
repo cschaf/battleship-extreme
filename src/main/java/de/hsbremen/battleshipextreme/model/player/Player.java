@@ -1,5 +1,8 @@
 package de.hsbremen.battleshipextreme.model.player;
 
+import java.io.Serializable;
+import java.util.Arrays;
+
 import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.Orientation;
@@ -7,20 +10,21 @@ import de.hsbremen.battleshipextreme.model.exception.FieldOccupiedException;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
 import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
-import de.hsbremen.battleshipextreme.model.ship.*;
-import de.hsbremen.battleshipextreme.network.TransferableType;
-import de.hsbremen.battleshipextreme.network.transfarableObject.TransferableObject;
-import de.hsbremen.battleshipextreme.network.TransferableType;
-import de.hsbremen.battleshipextreme.network.transfarableObject.TransferableObject;
+import de.hsbremen.battleshipextreme.model.ship.Corvette;
+import de.hsbremen.battleshipextreme.model.ship.Destroyer;
+import de.hsbremen.battleshipextreme.model.ship.Frigate;
+import de.hsbremen.battleshipextreme.model.ship.Ship;
+import de.hsbremen.battleshipextreme.model.ship.Submarine;
 
-public class Player extends TransferableObject {
+public class Player implements Serializable {
     protected static int currentId = 1;
     protected int id;
     protected String name;
     protected Board board;
     protected Ship[] ships;
-	protected Ship selectedShip;
+    protected Ship selectedShip;
 
+    // TODO Javadoc comments
     public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
         this.id = this.currentId++;
         this.name = "Player " + this.id;
@@ -28,28 +32,14 @@ public class Player extends TransferableObject {
         this.ships = new Ship[destroyers + frigates + corvettes + submarines];
 
         for (int i = 0; i < ships.length; i++) {
-            if (i < destroyers) {
+            if (i < destroyers)
                 ships[i] = new Destroyer();
-            } else if (i < destroyers + frigates) {
+            else if (i < destroyers + frigates)
                 ships[i] = new Frigate();
-            } else if (i < destroyers + frigates + corvettes) {
+            else if (i < destroyers + frigates + corvettes)
                 ships[i] = new Corvette();
-            } else {
+            else
                 ships[i] = new Submarine();
-            }
-        }
-    }
-
-        for (int i = 0; i < ships.length; i++) {
-            if (i < destroyers) {
-                ships[i] = new Destroyer();
-            } else if (i < destroyers + frigates) {
-                ships[i] = new Frigate();
-            } else if (i < destroyers + frigates + corvettes) {
-                ships[i] = new Corvette();
-            } else {
-                ships[i] = new Submarine();
-            }
         }
     }
 
@@ -59,32 +49,27 @@ public class Player extends TransferableObject {
         Field[][] fields = this.board.getFields();
 
         // Schiff bereits gesetzt
-        if (ship.isPlaced()) {
+        if (ship.isPlaced())
             throw new ShipAlreadyPlacedException(ship);
-        }
 
-        // Feld außerhalb des Spielfeldes
-        if (!isFieldWithinBoard(xPos, yPos)) {
+        // Feld au?erhalb des Spielfeldes
+        if (!this.board.containsFieldAtPosition(xPos, yPos))
             throw new FieldOutOfBoardException(new Field(xPos, yPos));
-        }
 
         // Orientation Horizontal
         if (orientation == Orientation.Horizontal) {
 
-            // Teil des Schiffes außerhalb des Spielfeldes
-            if (!(xPos + ship.getSize() - 1 < fields.length)) {
+            // Teil des Schiffes au?erhalb des Spielfeldes
+            if (!(xPos + ship.getSize() - 1 < fields.length))
                 throw new ShipOutOfBoardException(ship);
-            }
 
-            // Felder prüfen ob bereits belegt
+            // Felder pr?fen ob bereits belegt
             for (int y = yPos - 1; y <= yPos + 1; y++)
                 for (int x = xPos - 1; x <= xPos + ship.getSize(); x++)
                     // x und y innerhalb des Spielfeldes
-                    if (x >= 0 && y >= 0 && x < fields.length && y < fields.length) {
-                        if (fields[y][x].getShip() != null) {
+                    if (x >= 0 && y >= 0 && x < fields.length && y < fields.length)
+                        if (fields[y][x].getShip() != null)
                             throw new FieldOccupiedException(fields[y][x]);
-                        }
-                    }
 
             for (int x = xPos; x < xPos + ship.getSize(); x++)
                 fields[yPos][x].setShip(ship);
@@ -93,28 +78,22 @@ public class Player extends TransferableObject {
         // Orientation Vertical
         if (orientation == Orientation.Vertical) {
 
-            // Teil des Schiffes außerhalb des Spielfeldes
-            if (!(yPos + ship.getSize() - 1 < fields.length)) {
+            // Teil des Schiffes au?erhalb des Spielfeldes
+            if (!(yPos + ship.getSize() - 1 < fields.length))
                 throw new ShipOutOfBoardException(ship);
-            }
-            // Felder prüfen ob bereits belegt
+            // Felder pr?fen ob bereits belegt
             for (int y = yPos - 1; y <= yPos + ship.getSize(); y++)
                 for (int x = xPos - 1; x <= xPos + 1; x++)
                     // x und y innerhalb des Spielfeldes
-                    if (x >= 0 && y >= 0 && x < fields.length && y < fields.length) {
+                    if (x >= 0 && y >= 0 && x < fields.length && y < fields.length)
                         if (fields[y][x].getShip() != null) // Feld hat Schiff
-                        {
                             throw new FieldOccupiedException(fields[y][x]);
-                        }
-                    }
             for (int y = yPos; y < yPos + ship.getSize(); y++)
                 fields[y][xPos].setShip(ship);
         }
 
-        // Feld außerhalb des Spielfeldes
-        if (!(xPos >= 0 && yPos >= 0 && xPos < fields.length && yPos < fields.length)) {
-            throw new FieldOutOfBoardException(new Field(xPos, yPos));
-        }
+        ship.setPlaced();
+    }
 
     public boolean hasPlacedAllShips() {
         boolean arePlaced = true;
@@ -139,7 +118,9 @@ public class Player extends TransferableObject {
 
     /**
      * Tries to set the selected ship of the player.
-     * @param ship the ship the player tries to select
+     *
+     * @param ship
+     *            the ship the player tries to select
      * @return true if the ship was selected, false if not
      */
     public boolean selectShip(Ship ship) {
@@ -151,14 +132,21 @@ public class Player extends TransferableObject {
     }
 
     /**
-     * @param player the player to attack
-     * @param xPos the x-coordinate the attacked players' board.
-     * @param yPos the y-coordinate the attacked players' board.
-     * @param orientation the orientation of the shot (vertical / horizontal).
+     *
+     * @param player
+     *            the player to attack
+     * @param xPos
+     *            the x-coordinate the attacked players' board.
+     * @param yPos
+     *            the y-coordinate the attacked players' board.
+     * @param orientation
+     *            the orientation of the shot (vertical / horizontal).
+     *
      * @return true if the turn has been made, false if the turn was not
-     * possible
-     * @throws Exception if the player tries to attack himself or if the player is
-     * already dead.
+     *         possible
+     * @throws Exception
+     *             if the player tries to attack himself or if the player is
+     *             already dead.
      */
     public boolean makeTurn(Player player, int xPos, int yPos, Orientation orientation) throws Exception {
         boolean hasTurnBeenMade = true;
@@ -168,7 +156,9 @@ public class Player extends TransferableObject {
         if (player.hasLost()) {
             throw new Exception("Player is already dead!");
         }
-        hasTurnBeenMade = this.selectedShip.shoot(player, xPos, yPos, orientation);
+        Board board = player.getBoard();
+        Field field = board.getField(xPos, yPos);
+        hasTurnBeenMade = this.selectedShip.shoot(board, field, orientation);
         return hasTurnBeenMade;
     }
 
@@ -187,69 +177,10 @@ public class Player extends TransferableObject {
      */
     public void decreaseCurrentReloadTimeOfShips() {
         for (Ship ship : this.ships) {
-            if (!ship.equals(this.selectedShip)) {
+            if (!ship.equals(this.selectedShip))
                 ship.decreaseCurrentReloadTime();
-            }
         }
         this.selectedShip = null;
-    }
-
-            // Felder prüfen ob bereits belegt
-            for (int y = yPos - 1; y <= yPos + 1; y++)
-                for (int x = xPos - 1; x <= xPos + ship.getSize(); x++)
-                    if (x >= 0 && y >= 0 && x < fields.length && y < fields.length) // x und y innerhalb des Spielfeldes
-                    {
-                        if (fields[y][x].getShip() != null) // Feld hat Schiff
-                        {
-                            throw new FieldOccupiedException(fields[y][x]); // Feld belegt Exception
-                        }
-                    }
-
-            for (int x = xPos; x < xPos + ship.getSize(); x++)
-                fields[yPos][x].setShip(ship);
-        }
-
-        // Orientation Vertical
-        if (orientation == Orientation.Vertical) {
-
-            // Teil des Schiffes außerhalb des Spielfeldes
-            if (!(yPos + ship.getSize() - 1 < fields.length)) {
-                throw new ShipOutOfBoardException(ship); // Schiff außerhalb Exception
-            }
-
-            // Felder prüfen ob bereits belegt
-            for (int y = yPos - 1; y <= yPos + ship.getSize(); y++)
-                for (int x = xPos - 1; x <= xPos + 1; x++)
-                    if (x >= 0 && y >= 0 && x < fields.length && y < fields.length) // x und y innerhalb des Spielfeldes
-                    {
-                        if (fields[y][x].getShip() != null) // Feld hat Schiff
-                        {
-                            throw new FieldOccupiedException(fields[y][x]); // Feld belegt Exception
-                        }
-                    }
-
-            for (int y = xPos; y < yPos + ship.getSize(); y++)
-                fields[y][xPos].setShip(ship);
-        }
-
-        ship.setPlaced();
-    }
-
-    public boolean hasPlacedAllShips() {
-        boolean arePlaced = true;
-
-        for (Ship ship : this.ships) {
-            if (!ship.isPlaced()) {
-                arePlaced = false;
-                break;
-            }
-        }
-
-        return arePlaced;
-    }
-
-    public void makeTurn(Ship ship, Player player, int xPos, int yPos, Orientation orientation) {
-
     }
 
     public String getName() {
@@ -272,16 +203,19 @@ public class Player extends TransferableObject {
         return ships;
     }
 
+    public static void resetCurrentId() {
+        currentId = 1;
+    }
+
     public String toString() {
         return this.name;
     }
 
-    @Override
-    public TransferableType getType() {
-        return TransferableType.Player;
+    public boolean hasLost() {
+        for (Ship ship : ships) {
+            if (!ship.isDestroyed())
+                return false;
+        }
+        return true;
     }
-	@Override
-	public TransferableType getType() {
-		return TransferableType.Player;
-	}
 }
