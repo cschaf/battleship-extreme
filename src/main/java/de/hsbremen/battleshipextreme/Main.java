@@ -16,10 +16,7 @@ public class Main {
 	static Scanner input = new Scanner(System.in);
 
 	public static void main(String[] args) throws Exception {
-		//Game game = createGame();
-		//game.save("saveGame.sav");
-		Game game = new Game();
-		game.load("saveGame.sav");
+		Game game = createGame();
 		gameLoop(game);
 		System.out.println("Spiel zu Ende");
 		System.out.println(game.getWinner() + " hat gewonnen!");
@@ -27,10 +24,11 @@ public class Main {
 	}
 
 	private static Game createGame() throws Exception {
-		// bietet zwei Wege ein Spiel zu erstellen
+		// bietet mehrere Wege ein Spiel zu erstellen
 		Game game = null;
 		System.out.println("(1) Erzeuge Spiel manuell");
 		System.out.println("(2) Erzeuge Spiel automatisch");
+		System.out.println("(3) Letztes Spiel fortsetzen");
 		int choice = input.nextInt();
 		switch (choice) {
 		case 1:
@@ -43,8 +41,12 @@ public class Main {
 			game.setBeginningPlayer(1);
 			placeShipsWithoutInput(game);
 			break;
+		case 3:
+			game = new Game();
+			game.load("saveGame.sav");
+			break;
 		}
-		game.setBeginningPlayer(1);
+
 		return game;
 	}
 
@@ -143,6 +145,7 @@ public class Main {
 
 			printBoards(player.getBoard(), enemy.getBoard());
 			game.nextPlayer();
+			game.save("saveGame.sav");
 		} while (!game.isGameover());
 	}
 
