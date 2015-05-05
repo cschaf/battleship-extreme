@@ -16,7 +16,10 @@ public class Main {
 	static Scanner input = new Scanner(System.in);
 
 	public static void main(String[] args) throws Exception {
-		Game game = createGame();
+		//Game game = createGame();
+		//game.save("saveGame.sav");
+		Game game = new Game();
+		game.load("saveGame.sav");
 		gameLoop(game);
 		System.out.println("Spiel zu Ende");
 		System.out.println(game.getWinner() + " hat gewonnen!");

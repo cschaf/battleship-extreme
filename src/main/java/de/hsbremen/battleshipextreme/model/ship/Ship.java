@@ -22,16 +22,6 @@ public abstract class Ship {
 		return false;
 	}
 
-	/**
-	 * 
-	 * @param field
-	 *            the targeted field.
-	 * @param orientation
-	 *            the orientation of the shot (horizontal/vertical)
-	 * @param boardShotAt
-	 *            the board to shoot at.
-	 * @throws FieldOutOfBoardException
-	 */
 	private void fireShot(Field field, Orientation orientation, Board boardShotAt) throws FieldOutOfBoardException {
 		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
 		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
