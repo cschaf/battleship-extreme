@@ -59,9 +59,11 @@ public class GameplayPanel extends JPanel {
 		c.weighty = 0;
 		chatPanel = new ChatPanel();
 		this.add(chatPanel, c);
-		
 	}
 
+	//////////////////////////////////////////////////////////////////
+	// create Panels
+	
 	private JPanel createOrientationPanel() {
 		JPanel panel = new JPanel(new GridLayout(1, 2));
 		panel.setBorder(BorderFactory.createTitledBorder("Orientation"));
@@ -120,5 +122,30 @@ public class GameplayPanel extends JPanel {
 		return panel;
 	}
 
+
+	//////////////////////////////////////////////////////////////////
+	// get Components
+	
+	public JRadioButton getHorizontalOrientationRadioButton() {
+		return horizontalOrientationRadioButton;
+	}
+	
+	public JRadioButton getVerticalOrientationRadioButton() {
+		return verticalOrientationRadioButton;
+	}
+	
+	public JComboBox getEnemySelectionComboBox() {
+		return enemySelectionComboBox;
+	}
+	
+	public JButton getApplyEnemyButton() {
+		return applyEnemyButton;
+	}
+	
+	public JTextArea getGameLogTextArea() {
+		return gameLogTextArea;
+	}
+	
+	
 	
 }
