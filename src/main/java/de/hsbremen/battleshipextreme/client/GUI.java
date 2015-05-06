@@ -34,6 +34,7 @@ public class GUI {
 	public GUI() {
 		frame = new JFrame("Battleship-Extreme");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setResizable(false);
 		frame.setJMenuBar(createMenuBar());
 		
 		InitComponents();
@@ -47,6 +48,10 @@ public class GUI {
 		gamePanel = new GamePanel();
 		frame.add(gamePanel);
 	}
+	
+	//////////////////////////////////////////////////////////////////
+	// create Panels
+	//////////////////////////////////////////////////////////////////
 	
 	private JMenuBar createMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
@@ -72,4 +77,32 @@ public class GUI {
 		
 		return menuBar;
 	}
+
+	
+	//////////////////////////////////////////////////////////////////
+	// get Menue Buttons
+	//////////////////////////////////////////////////////////////////
+	
+	public JMenuItem getSaveGameItem() {
+		return saveGameItem;
+	}
+	
+	public JMenuItem getLoadGameItem() {
+		return loadGameItem;
+	}
+	
+	public JMenuItem getQuitGameItem() {
+		return quitGameItem;
+	}
+	
+	public JMenuItem getManualItem() {
+		return manualItem;
+	}
+	
+	//////////////////////////////////////////////////////////////////
+	// get Settings Panel Items
+	//////////////////////////////////////////////////////////////////
+	
+	
+	
 }
