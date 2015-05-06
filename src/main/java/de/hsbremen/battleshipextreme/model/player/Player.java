@@ -24,7 +24,6 @@ public class Player implements Serializable {
 	protected Ship[] ships;
 	protected Ship selectedShip;
 
-	// TODO Javadoc comments
 	public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 		this.id = this.currentId++;
 		this.name = "Player " + this.id;
@@ -43,25 +42,47 @@ public class Player implements Serializable {
 		}
 	}
 
-	// TODO Javadoc comments, refactoring (private methods)
-	public void placeShip(Ship ship, int xPos, int yPos, Orientation orientation) throws Exception, ShipAlreadyPlacedException, FieldOutOfBoardException {
+	/**
+	 * 
+	 * @param ship
+	 *            the ship to attack.
+	 * @param xPos
+	 *            the first x-coordinate of the field to place the ship on.
+	 * @param yPos
+	 *            the first y-coordinate of the field to place the ship on.
+	 * @param orientation
+	 *            the orientation of the ship (horizontal/vertical).
+	 * @throws ShipAlreadyPlacedException
+	 *             if the ship has already been placed.
+	 * @throws FieldOutOfBoardException
+	 *             if the players' board does not contain the field.
+	 * @throws ShipOutOfBoardException
+	 *             if the ships boundaries exceed the board.
+	 * @throws FieldOccupiedException
+	 *             if the ship or the ships' radius collides with another ship.
+	 */
+	public void placeShip(Ship ship, int xPos, int yPos, Orientation orientation) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException, FieldOccupiedException {
 
-		Field[][] fields = this.board.getFields();
-
-		// Schiff bereits gesetzt
 		if (ship.isPlaced())
 			throw new ShipAlreadyPlacedException(ship);
 
-		// Feld auﬂerhalb des Spielfeldes
 		if (!this.board.containsFieldAtPosition(xPos, yPos))
 			throw new FieldOutOfBoardException(new Field(xPos, yPos));
 
+		if (isShipPartiallyOutOfBoard(ship, xPos, yPos, orientation))
+			throw new ShipOutOfBoardException(ship);
+
+		Field field = findOccupiedField(ship, xPos, yPos, orientation);
+		if (field != null)
+			throw new FieldOccupiedException(field);
+
+		placeShipOnBoard(ship, xPos, yPos, orientation);
+	}
+
+	private Field findOccupiedField(Ship ship, int xPos, int yPos, Orientation orientation) {
+		Field[][] fields = this.board.getFields();
 		// Orientation Horizontal
 		if (orientation == Orientation.Horizontal) {
-
-			// Teil des Schiffes auﬂerhalb des Spielfeldes
-			if (!(xPos + ship.getSize() - 1 < fields.length))
-				throw new ShipOutOfBoardException(ship);
 
 			// Felder pr¸fen ob bereits belegt
 			for (int y = yPos - 1; y <= yPos + 1; y++)
@@ -69,29 +90,37 @@ public class Player implements Serializable {
 					// x und y innerhalb des Spielfeldes
 					if (x >= 0 && y >= 0 && x < fields.length && y < fields.length)
 						if (fields[y][x].getShip() != null)
-							throw new FieldOccupiedException(fields[y][x]);
-
-			for (int x = xPos; x < xPos + ship.getSize(); x++)
-				fields[yPos][x].setShip(ship);
+							return (fields[y][x]);
 		}
 
 		// Orientation Vertical
 		if (orientation == Orientation.Vertical) {
-
-			// Teil des Schiffes auﬂerhalb des Spielfeldes
-			if (!(yPos + ship.getSize() - 1 < fields.length))
-				throw new ShipOutOfBoardException(ship);
 			// Felder pr¸fen ob bereits belegt
 			for (int y = yPos - 1; y <= yPos + ship.getSize(); y++)
 				for (int x = xPos - 1; x <= xPos + 1; x++)
 					// x und y innerhalb des Spielfeldes
 					if (x >= 0 && y >= 0 && x < fields.length && y < fields.length)
 						if (fields[y][x].getShip() != null) // Feld hat Schiff
-							throw new FieldOccupiedException(fields[y][x]);
-			for (int y = yPos; y < yPos + ship.getSize(); y++)
-				fields[y][xPos].setShip(ship);
-		}
+							return (fields[y][x]);
 
+		}
+		return null;
+	}
+
+	private boolean isShipPartiallyOutOfBoard(Ship ship, int xPos, int yPos, Orientation orientation) {
+		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
+		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
+		int x = xPos + ship.getSize() * xDirection - 1;
+		int y = yPos + ship.getSize() * yDirection - 1;
+		return (x >= board.getSize()) || (y >= board.getSize());
+	}
+
+	private void placeShipOnBoard(Ship ship, int xPos, int yPos, Orientation orientation) throws FieldOccupiedException {
+		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
+		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
+		for (int i = 0; i < ship.getSize(); i++) {
+			this.board.getFields()[yPos + i * yDirection][xPos + i * xDirection].setShip(ship);
+		}
 		ship.setPlaced();
 	}
 
