@@ -18,6 +18,7 @@ import de.hsbremen.battleshipextreme.model.ship.Ship;
 
 public class Main {
 	static Scanner input = new Scanner(System.in);
+	private static final String SAVEGAME_FILENAME = "savegame.sav";
 
 	public static void main(String[] args) {
 		Game game = createGame();
@@ -51,7 +52,7 @@ public class Main {
 			case 3:
 				game = new Game();
 				try {
-					game.load("saveGame.sav");
+					game.load(SAVEGAME_FILENAME);
 				} catch (Exception e) {
 					System.out.println("Spiel konnte nicht geladen werden");
 					couldGameBeCreated = false;
@@ -167,36 +168,64 @@ public class Main {
 	}
 
 	private static void gameLoop(Game game) {
-		Ship ship;
-		Player enemy;
-		Player player;
+		Player currentPlayer;
 		do {
-			player = game.getCurrentPlayer();
-			System.out.println(player + " ist an der Reihe.");
+			currentPlayer = game.getCurrentPlayer();
 
-			// Auswahl des zu schießenden Schiffs
-			System.out.println("Welches Schiff soll schießen?");
-			ship = selectShip(player);
+			// mögliche Spieleraktionen auflisten
+			System.out.println(currentPlayer + " ist an der Reihe.");
+			System.out.println("Was möchtest du tun?");
+			System.out.println("(1) Gegner angreifen");
+			System.out.println("(2) Spiel speichern");
+			System.out.println("(3) Spiel beenden");
 
-			// Auswahl des Gegners, auf den geschossen werden soll
-			System.out.println("Auf welchen Spieler?");
-			enemy = selectEnemy(game.getEnemiesOfCurrentPlayer());
-
-			// Zug mit ausgewähltem Schiff und Gegner ausführen
-			makeTurn(player, ship, enemy);
-
-			printBoards(player.getBoard(), enemy.getBoard());
-			game.nextPlayer();
-			try {
-				game.save("saveGame.sav");
-			} catch (Exception e) {
-				System.err.print("Game could not be saved");
-				e.printStackTrace();
+			// Wahl einlesen
+			int choice = readIntegerWithMinMax(1, 3);
+			switch (choice) {
+			case 1:
+				attackPlayer(currentPlayer, game);
+				break;
+			case 2:
+				saveGame(game);
+				break;
+			case 3:
+				System.exit(0);
 			}
+
+			game.nextPlayer();
 		} while (!game.isGameover());
 	}
 
-	private static Ship selectShip(Player player) {
+	private static void attackPlayer(Player currentPlayer, Game game) {
+		Ship ship;
+		Player enemy;
+
+		// Auswahl des zu schießenden Schiffs
+		System.out.println("Welches Schiff soll schießen?");
+		ship = selectShipFromPlayer(currentPlayer);
+
+		// Auswahl des Gegners, auf den geschossen werden soll
+		System.out.println("Auf welchen Spieler?");
+		enemy = selectEnemy(game.getEnemiesOfCurrentPlayer());
+
+		// Zug mit ausgewähltem Schiff und Gegner ausführen
+		makeTurn(currentPlayer, ship, enemy);
+
+		// Boards ausgeben
+		printBoards(currentPlayer.getBoard(), enemy.getBoard());
+	}
+
+	private static void saveGame(Game game) {
+		try {
+			game.save("SAVEGAME_FILENAME");
+		} catch (Exception e) {
+			System.err.print("Das Spiel konnte nicht gespeichert werden.");
+			e.printStackTrace();
+		}
+		System.out.println("Spiel gespeichert.");
+	}
+
+	private static Ship selectShipFromPlayer(Player player) {
 		Ship ship;
 		Ship[] ships = player.getShips();
 		boolean isShipSelected = false;
