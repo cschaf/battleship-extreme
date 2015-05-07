@@ -9,13 +9,17 @@ import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Game;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.Settings;
+import de.hsbremen.battleshipextreme.model.exception.FieldOccupiedException;
+import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
+import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 
 public class Main {
 	static Scanner input = new Scanner(System.in);
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		Game game = createGame();
 		gameLoop(game);
 		System.out.println("Spiel zu Ende");
@@ -23,30 +27,38 @@ public class Main {
 		input.close();
 	}
 
-	private static Game createGame() throws Exception {
+	private static Game createGame() {
 		// bietet mehrere Wege ein Spiel zu erstellen
 		Game game = null;
 		System.out.println("(1) Erzeuge Spiel manuell");
 		System.out.println("(2) Erzeuge Spiel automatisch");
 		System.out.println("(3) Letztes Spiel fortsetzen");
-		int choice = readIntegerWithMinMax(1, 3);
-		switch (choice) {
-		case 1:
-			game = new Game(generateSettings());
-			game.setBeginningPlayer(1);
-			placeShips(game);
-			break;
-		case 2:
-			game = new Game(new Settings(3, 10, 2, 1, 1, 1));
-			game.setBeginningPlayer(1);
-			placeShipsWithoutInput(game);
-			break;
-		case 3:
-			game = new Game();
-			game.load("saveGame.sav");
-			break;
-		}
-
+		boolean couldGameBeCreated;
+		do {
+			couldGameBeCreated = true;
+			int choice = readIntegerWithMinMax(1, 3);
+			switch (choice) {
+			case 1:
+				game = new Game(generateSettings());
+				game.setBeginningPlayer(1);
+				placeShips(game);
+				break;
+			case 2:
+				game = new Game(new Settings(3, 10, 2, 1, 1, 1));
+				game.setBeginningPlayer(1);
+				placeShipsWithoutInput(game);
+				break;
+			case 3:
+				game = new Game();
+				try {
+					game.load("saveGame.sav");
+				} catch (Exception e) {
+					System.out.println("Spiel konnte nicht geladen werden");
+					couldGameBeCreated = false;
+				}
+				break;
+			}
+		} while (!couldGameBeCreated);
 		return game;
 	}
 
@@ -54,8 +66,8 @@ public class Main {
 		System.out.println("Einstellungen:");
 		System.out.print("Anzahl der Spieler (2-6): ");
 		int players = readIntegerWithMinMax(2, 6);
-		System.out.print("Groesse des Spielfeldes (10-1000): ");
-		int boardSize = readIntegerWithMinMax(10, 10000);
+		System.out.print("Groesse des Spielfeldes (10-20): ");
+		int boardSize = readIntegerWithMinMax(10, 20);
 		System.out.print("Zerstoerer: ");
 		int destroyers = readInteger();
 		System.out.print("Fregatten: ");
@@ -70,32 +82,51 @@ public class Main {
 
 	private static void setPlayerNames(Player[] players) {
 		System.out.println("\nSpielernamen:");
-
 		for (Player player : players) {
 			System.out.print("Name für " + player + " : ");
 			player.setName(input.nextLine());
 		}
 	}
 
-	private static void placeShips(Game game) throws Exception {
+	private static void placeShips(Game game) {
 		// Schiffe manuell setzen
+		boolean isItPossibleToPlaceShip;
 		Player player;
 		do {
 			player = game.getCurrentPlayer();
 			System.out.println("\nPlatziere Schiffe fuer " + player + ":");
-
 			for (Ship ship : player.getShips()) {
-				System.out.println("\nPlatziere " + ship + ":");
+				do {
+					// solange Schiffskoordinaten einlesen, bis keine Exception
+					// auftritt
+					System.out.println("\nPlatziere " + ship + ":");
 
-				System.out.print("Zeile (1-" + player.getBoard().getSize() + "): ");
-				int row = readIntegerWithMinMax(1, player.getBoard().getSize()) - 1;
-				System.out.print("Spalte (1-" + player.getBoard().getSize() + "): ");
-				int column = readIntegerWithMinMax(1, player.getBoard().getSize()) - 1;
+					// Zeile einlesen
+					System.out.print("Zeile (1-" + player.getBoard().getSize() + "): ");
+					int row = readIntegerWithMinMax(1, player.getBoard().getSize()) - 1;
 
-				System.out.print("Orientierung (H/V): ");
-				Orientation orientation = input.next().toUpperCase().charAt(0) == 'V' ? Orientation.Vertical : Orientation.Horizontal;
+					// Spalte einlesen
+					System.out.print("Spalte (1-" + player.getBoard().getSize() + "): ");
+					int column = readIntegerWithMinMax(1, player.getBoard().getSize()) - 1;
 
-				player.placeShip(ship, column, row, orientation);
+					// Ausrichtung einlesen
+					System.out.print("Orientierung (H/V): ");
+					Orientation orientation = input.next().toUpperCase().charAt(0) == 'V' ? Orientation.Vertical : Orientation.Horizontal;
+
+					isItPossibleToPlaceShip = false;
+					try {
+						player.placeShip(ship, column, row, orientation);
+						isItPossibleToPlaceShip = true;
+					} catch (ShipAlreadyPlacedException e) {
+						System.out.println("Schiff bereits gesetzt!");
+					} catch (FieldOutOfBoardException e) {
+						System.out.println("Feld nicht im Board!");
+					} catch (ShipOutOfBoardException e) {
+						System.out.println("Schiff (teilweise) nicht im Board!");
+					} catch (FieldOccupiedException e) {
+						System.out.println("Feld bereits belegt!");
+					}
+				} while (!isItPossibleToPlaceShip);
 
 				System.out.println();
 				System.out.println("Board von " + player);
@@ -103,9 +134,10 @@ public class Main {
 			}
 			game.nextPlayer();
 		} while (!game.isReady());
+
 	}
 
-	private static void placeShipsWithoutInput(Game game) throws Exception {
+	private static void placeShipsWithoutInput(Game game) {
 		// schnell Schiffe ohne Eingabe setzen
 		Player player;
 		do {
@@ -115,7 +147,17 @@ public class Main {
 				int row = 2 * i;
 				int column = 0;
 				Orientation orientation = Orientation.Horizontal;
-				player.placeShip(ship, column, row, orientation);
+				try {
+					player.placeShip(ship, column, row, orientation);
+				} catch (ShipAlreadyPlacedException e) {
+					e.printStackTrace();
+				} catch (FieldOutOfBoardException e) {
+					e.printStackTrace();
+				} catch (ShipOutOfBoardException e) {
+					e.printStackTrace();
+				} catch (FieldOccupiedException e) {
+					e.printStackTrace();
+				}
 			}
 			System.out.println();
 			System.out.println("Board von " + player);
@@ -124,7 +166,7 @@ public class Main {
 		} while (!game.isReady());
 	}
 
-	private static void gameLoop(Game game) throws Exception {
+	private static void gameLoop(Game game) {
 		Ship ship;
 		Player enemy;
 		Player player;
@@ -145,7 +187,12 @@ public class Main {
 
 			printBoards(player.getBoard(), enemy.getBoard());
 			game.nextPlayer();
-			game.save("saveGame.sav");
+			try {
+				game.save("saveGame.sav");
+			} catch (Exception e) {
+				System.err.print("Game could not be saved");
+				e.printStackTrace();
+			}
 		} while (!game.isGameover());
 	}
 
@@ -160,7 +207,6 @@ public class Main {
 			isShipSelected = player.selectShip(ship);
 			if (!isShipSelected)
 				System.out.println("Schiff lädt nach");
-
 		} while (!isShipSelected);
 		return ship;
 	}
@@ -180,8 +226,8 @@ public class Main {
 		return enemies.get(readIntegerWithMinMax(0, enemies.size() - 1));
 	}
 
-	private static void makeTurn(Player player, Ship ship, Player enemy) throws Exception {
-		boolean hasTurnBeenMade;
+	private static void makeTurn(Player player, Ship ship, Player enemy) {
+		boolean hasTurnBeenMade = false;
 		do {
 			// Koordinaten einlesen, bis Schuss erfolgreich ausgeführt werden
 			// kann
@@ -190,10 +236,15 @@ public class Main {
 			System.out.print("Spalte (1-" + player.getBoard().getSize() + "): ");
 			int column = readIntegerWithMinMax(1, player.getBoard().getSize()) - 1;
 			System.out.print("Orientierung (H/V): ");
+
 			Orientation orientation = input.next().toUpperCase().charAt(0) == 'V' ? Orientation.Vertical : Orientation.Horizontal;
-			hasTurnBeenMade = player.makeTurn(enemy, column, row, orientation);
+			try {
+				hasTurnBeenMade = player.makeTurn(enemy, column, row, orientation);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			if (!hasTurnBeenMade) {
-				System.out.println("Zug nicht möglich");
+				System.out.println("Feld wurde bereits beschossen");
 			}
 		} while (!hasTurnBeenMade);
 	}

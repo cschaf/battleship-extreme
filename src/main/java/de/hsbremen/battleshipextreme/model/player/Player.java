@@ -137,10 +137,6 @@ public class Player implements Serializable {
 		return arePlaced;
 	}
 
-	public boolean hasToSkip() {
-		return (this.hasLost() || this.areAllShipsReloading());
-	}
-
 	private boolean doesPlayerPossessShip(Ship ship) {
 		return Arrays.asList(this.getShips()).contains(ship);
 	}
