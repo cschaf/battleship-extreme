@@ -29,7 +29,7 @@ public class Main {
 		System.out.println("(1) Erzeuge Spiel manuell");
 		System.out.println("(2) Erzeuge Spiel automatisch");
 		System.out.println("(3) Letztes Spiel fortsetzen");
-		int choice = input.nextInt();
+		int choice = readIntegerWithMinMax(1, 3);
 		switch (choice) {
 		case 1:
 			game = new Game(generateSettings());
@@ -53,17 +53,17 @@ public class Main {
 	private static Settings generateSettings() {
 		System.out.println("Einstellungen:");
 		System.out.print("Anzahl der Spieler (2-6): ");
-		int players = input.nextInt();
-		System.out.print("Groesse des Spielfeldes: ");
-		int boardSize = input.nextInt();
+		int players = readIntegerWithMinMax(2, 6);
+		System.out.print("Groesse des Spielfeldes (10-1000): ");
+		int boardSize = readIntegerWithMinMax(10, 10000);
 		System.out.print("Zerstoerer: ");
-		int destroyers = input.nextInt();
+		int destroyers = readInteger();
 		System.out.print("Fregatten: ");
-		int frigates = input.nextInt();
+		int frigates = readInteger();
 		System.out.print("Korvetten: ");
-		int corvettes = input.nextInt();
+		int corvettes = readInteger();
 		System.out.print("U-Boote: ");
-		int submarines = input.nextInt();
+		int submarines = readInteger();
 
 		return new Settings(players, boardSize, destroyers, frigates, corvettes, submarines);
 	}
@@ -88,9 +88,9 @@ public class Main {
 				System.out.println("\nPlatziere " + ship + ":");
 
 				System.out.print("Zeile (1-" + player.getBoard().getSize() + "): ");
-				int row = input.nextInt() - 1;
+				int row = readIntegerWithMinMax(1, player.getBoard().getSize()) - 1;
 				System.out.print("Spalte (1-" + player.getBoard().getSize() + "): ");
-				int column = input.nextInt() - 1;
+				int column = readIntegerWithMinMax(1, player.getBoard().getSize()) - 1;
 
 				System.out.print("Orientierung (H/V): ");
 				Orientation orientation = input.next().toUpperCase().charAt(0) == 'V' ? Orientation.Vertical : Orientation.Horizontal;
@@ -156,10 +156,10 @@ public class Main {
 		do {
 			// Eingabe wiederholen bis Schiff gew‰hlt wurde, das schieﬂen kann
 			printShips(ships);
-			ship = ships[input.nextInt()];
+			ship = ships[readIntegerWithMinMax(0, ships.length - 1)];
 			isShipSelected = player.selectShip(ship);
 			if (!isShipSelected)
-				System.out.println("Schiff l‰dt nach oder ist kaputt");
+				System.out.println("Schiff l‰dt nach");
 
 		} while (!isShipSelected);
 		return ship;
@@ -168,7 +168,7 @@ public class Main {
 	private static void printShips(Ship[] ships) {
 		// Schiffe des Spielers und deren Munition/Leben anzeigen
 		for (int i = 0; i < ships.length; i++) {
-			System.out.println("(" + i + ")" + ships[i].getType() + "(reload:" + ships[i].getCurrentReloadTime() + "," + " health:" + ships[i].getSize() + ")");
+			System.out.println("(" + i + ") " + ships[i].getType() + "(reload:" + ships[i].getCurrentReloadTime() + "," + " health:" + ships[i].getSize() + ")");
 		}
 	}
 
@@ -177,7 +177,7 @@ public class Main {
 		for (int i = 0; i < enemies.size(); i++) {
 			System.out.println("(" + i + ")" + enemies.get(i));
 		}
-		return enemies.get(input.nextInt());
+		return enemies.get(readIntegerWithMinMax(0, enemies.size() - 1));
 	}
 
 	private static void makeTurn(Player player, Ship ship, Player enemy) throws Exception {
@@ -186,9 +186,9 @@ public class Main {
 			// Koordinaten einlesen, bis Schuss erfolgreich ausgef¸hrt werden
 			// kann
 			System.out.print("Zeile (1-" + player.getBoard().getSize() + "): ");
-			int row = input.nextInt() - 1;
+			int row = readIntegerWithMinMax(1, player.getBoard().getSize()) - 1;
 			System.out.print("Spalte (1-" + player.getBoard().getSize() + "): ");
-			int column = input.nextInt() - 1;
+			int column = readIntegerWithMinMax(1, player.getBoard().getSize()) - 1;
 			System.out.print("Orientierung (H/V): ");
 			Orientation orientation = input.next().toUpperCase().charAt(0) == 'V' ? Orientation.Vertical : Orientation.Horizontal;
 			hasTurnBeenMade = player.makeTurn(enemy, column, row, orientation);
@@ -241,4 +241,23 @@ public class Main {
 		System.out.print(s);
 	}
 
+	private static int readInteger() {
+		while (!input.hasNextInt()) {
+			System.out.println("Eine Zahl eingeben!");
+			input.next();
+		}
+		return input.nextInt();
+	}
+
+	private static int readIntegerWithMinMax(int min, int max) {
+		int i;
+		boolean isValid = false;
+		do {
+			i = readInteger();
+			isValid = (i >= min) && (i <= max);
+			if (!isValid)
+				System.out.println("Zahl zwischen min " + min + " und " + max + " eingeben!");
+		} while (!isValid);
+		return i;
+	}
 }
