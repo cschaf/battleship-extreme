@@ -1,6 +1,7 @@
 package de.hsbremen.battleshipextreme.model.player;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import de.hsbremen.battleshipextreme.model.Board;
@@ -22,7 +23,7 @@ public class Player implements Serializable {
 	protected String name;
 	protected Board board;
 	protected Ship[] ships;
-	protected Ship selectedShip;
+	protected Ship currentShip;
 
 	public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 		this.id = this.currentId++;
@@ -40,6 +41,8 @@ public class Player implements Serializable {
 			else
 				ships[i] = new Submarine();
 		}
+
+		this.currentShip = this.ships[0];
 	}
 
 	/**
@@ -72,9 +75,9 @@ public class Player implements Serializable {
 		if (isShipPartiallyOutOfBoard(ship, xPos, yPos, orientation))
 			throw new ShipOutOfBoardException(ship);
 
-		Field field = findOccupiedField(ship, xPos, yPos, orientation);
-		if (field != null)
-			throw new FieldOccupiedException(field);
+		Field occupiedField = findOccupiedField(ship, xPos, yPos, orientation);
+		if (occupiedField != null)
+			throw new FieldOccupiedException(occupiedField);
 
 		placeShipOnBoard(ship, xPos, yPos, orientation);
 	}
@@ -142,7 +145,31 @@ public class Player implements Serializable {
 	}
 
 	/**
-	 * Tries to set the selected ship of the player.
+	 * Set the currentShip to next ship in array of ships. Its purpose is to
+	 * keep track of the ship to place.
+	 */
+	public void nextShip() {
+		int currentShipIndex = Arrays.asList(this.ships).indexOf(this.currentShip);
+		currentShipIndex = (currentShipIndex >= this.ships.length - 1) ? currentShipIndex = 0 : currentShipIndex + 1;
+		this.currentShip = this.ships[currentShipIndex];
+	}
+
+	/**
+	 * Provides a way to retrieve all ships that are not destroyed.
+	 * 
+	 * @return a list of all ships that are not destroyed.
+	 */
+	public ArrayList<Ship> getAvailableShips() {
+		ArrayList<Ship> availableShips = new ArrayList<Ship>();
+		for (Ship ship : ships) {
+			if (!ship.isDestroyed())
+				availableShips.add(ship);
+		}
+		return availableShips;
+	}
+
+	/**
+	 * Tries to set the current ship of the player.
 	 * 
 	 * @param ship
 	 *            the ship the player tries to select
@@ -150,7 +177,7 @@ public class Player implements Serializable {
 	 */
 	public boolean selectShip(Ship ship) {
 		if (ship.canShipBeSelected() && (doesPlayerPossessShip(ship))) {
-			this.selectedShip = ship;
+			this.currentShip = ship;
 			return true;
 		}
 		return false;
@@ -183,12 +210,18 @@ public class Player implements Serializable {
 		}
 		Board board = player.getBoard();
 		Field field = board.getField(xPos, yPos);
-		hasTurnBeenMade = this.selectedShip.shoot(board, field, orientation);
+		hasTurnBeenMade = this.currentShip.shoot(board, field, orientation);
 		return hasTurnBeenMade;
 	}
 
+	/**
+	 * Checks if all ships (that are not destroyed) are reloading.
+	 * 
+	 * @return true if all available ships are reloading, else false.
+	 */
 	public boolean areAllShipsReloading() {
-		for (Ship ship : this.ships) {
+		ArrayList<Ship> availableShips = this.getAvailableShips();
+		for (Ship ship : availableShips) {
 			if (!ship.isReloading()) {
 				return false;
 			}
@@ -202,10 +235,14 @@ public class Player implements Serializable {
 	 */
 	public void decreaseCurrentReloadTimeOfShips() {
 		for (Ship ship : this.ships) {
-			if (!ship.equals(this.selectedShip))
+			if (!ship.equals(this.currentShip))
 				ship.decreaseCurrentReloadTime();
 		}
-		this.selectedShip = null;
+		this.currentShip = null;
+	}
+
+	public Ship getCurrentShip() {
+		return this.currentShip;
 	}
 
 	public String getName() {

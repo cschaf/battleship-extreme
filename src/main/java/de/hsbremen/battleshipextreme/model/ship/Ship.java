@@ -37,11 +37,10 @@ public abstract class Ship implements Serializable {
 				Field fieldShotAt = boardShotAt.getField(x, y);
 				// wenn Board schon beschossen wurde, dann Schuss ignorieren
 				if (!fieldShotAt.isHit()) {
-
 					// wenn das Feld auf das geschossen wurde ein Schiff hat,
 					// dann ein Leben vom Schiff abziehen
 					if (fieldShotAt.hasShip()) {
-						Ship ship = field.getShip();
+						Ship ship = fieldShotAt.getShip();
 						ship.setSize(ship.getSize() - 1);
 					}
 					fieldShotAt.setHit(true);

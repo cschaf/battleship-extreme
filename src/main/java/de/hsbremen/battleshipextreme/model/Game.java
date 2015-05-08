@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import de.hsbremen.battleshipextreme.model.player.Player;
@@ -76,13 +77,7 @@ public class Game implements Serializable {
 	 */
 	public void nextPlayer() {
 		this.currentPlayer.decreaseCurrentReloadTimeOfShips();
-		int currentPlayerIndex = 0;
-		// currentPlayerIndex ermitteln
-		for (int i = 0; i < this.players.length; i++) {
-			if (this.currentPlayer.equals(this.players[i])) {
-				currentPlayerIndex = i;
-			}
-		}
+		int currentPlayerIndex = Arrays.asList(players).indexOf(currentPlayer);
 		// wenn letzter Spieler im Array, dann Index wieder auf 0 setzen,
 		// ansonsten hochzählen
 		currentPlayerIndex = (currentPlayerIndex >= this.players.length - 1) ? currentPlayerIndex = 0 : currentPlayerIndex + 1;
@@ -117,16 +112,10 @@ public class Game implements Serializable {
 	 */
 	public void setBeginningPlayer(int playerId) {
 		if (this.currentPlayer == null) {
-			boolean isIdOk = false;
-			for (Player player : this.players) {
-				if (player.getId() == playerId) {
-					this.currentPlayer = player;
-					isIdOk = true;
-					break;
-				}
-			}
-			if (!isIdOk) {
-				this.setBeginningPlayerRandomly();
+			if ((playerId < this.players.length) || (playerId < 0)) {
+				this.currentPlayer = this.players[playerId];
+			} else {
+				setBeginningPlayerRandomly();
 			}
 		}
 	}
