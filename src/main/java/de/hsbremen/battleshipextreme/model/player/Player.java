@@ -47,6 +47,8 @@ public abstract class Player implements Serializable {
 	}
 
 	/**
+	 * Check if its possible to place the ship. If not, throw exception. If yes,
+	 * place the ship and call the nextShip-method.
 	 * 
 	 * @param ship
 	 *            the ship to attack.
@@ -81,6 +83,8 @@ public abstract class Player implements Serializable {
 			throw new FieldOccupiedException(occupiedField);
 
 		placeShipOnBoard(this.currentShip, xPos, yPos, orientation);
+
+		this.nextShip();
 	}
 
 	private Field findOccupiedField(Ship ship, int xPos, int yPos, Orientation orientation) {

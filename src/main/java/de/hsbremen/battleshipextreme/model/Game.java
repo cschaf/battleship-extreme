@@ -30,15 +30,19 @@ public class Game implements Serializable {
 		int numberOfAIPlayers = settings.getAiPlayers();
 		int numberOfPlayers = numberOfAIPlayers + numberOfHumanPlayers;
 		this.players = new Player[numberOfPlayers];
+		// menschliche Spieler erzeugen
 		for (int i = 0; i < numberOfHumanPlayers; i++)
 			this.players[i] = new HumanPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
-
+		// KI-Spieler erzeugen
 		for (int i = numberOfHumanPlayers; i < numberOfPlayers; i++)
 			this.players[i] = new AIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
 
 		this.currentPlayer = null;
 	}
 
+	/**
+	 * This constructor is used when a game is loaded.
+	 */
 	public Game() {
 		this.players = new Player[0];
 		this.currentPlayer = null;
@@ -46,7 +50,7 @@ public class Game implements Serializable {
 
 	/**
 	 * Returns true if the ships of all players have been placed. The method is
-	 * used to determine if a game may start.
+	 * used to determine if a game is ready to start.
 	 * 
 	 * @return true if all ships by all players are placed, else false
 	 */
@@ -79,12 +83,21 @@ public class Game implements Serializable {
 		return numberOfPlayersLeft <= 1;
 	}
 
+	/**
+	 * Call the placeShip-method of the current player. If the current player
+	 * has placed all of its ships, call the nextPlayer-method.
+	 * 
+	 * @param xPos
+	 * @param yPos
+	 * @param orientation
+	 * @throws ShipAlreadyPlacedException
+	 * @throws FieldOutOfBoardException
+	 * @throws ShipOutOfBoardException
+	 * @throws FieldOccupiedException
+	 */
 	public void placeShip(int xPos, int yPos, Orientation orientation) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException, FieldOccupiedException {
 		this.currentPlayer.placeShip(xPos, yPos, orientation);
-		if (!this.currentPlayer.hasPlacedAllShips()) {
-			this.currentPlayer.nextShip();
-		} else {
-
+		if (this.currentPlayer.hasPlacedAllShips()) {
 			this.nextPlayer();
 		}
 	}
@@ -94,14 +107,32 @@ public class Game implements Serializable {
 		this.nextPlayer();
 	}
 
-	public boolean makeTurn(Player enemy, int xPos, int yPos, Orientation orientation) throws Exception {
-		boolean hasTurnBeenMade;
-		hasTurnBeenMade = this.currentPlayer.makeTurn(enemy, xPos, yPos, orientation);
+	/**
+	 * Call the makeTurn method of the current player. If the turn was
+	 * successfully executed, call the nextPlayer-method.
+	 * 
+	 * @param enemy
+	 * @param xPos
+	 * @param yPos
+	 * @param orientation
+	 * @return
+	 */
+	public boolean makeTurn(Player enemy, int xPos, int yPos, Orientation orientation) {
+		boolean hasTurnBeenMade = false;
+		try {
+			hasTurnBeenMade = this.currentPlayer.makeTurn(enemy, xPos, yPos, orientation);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		if (hasTurnBeenMade)
 			this.nextPlayer();
 		return hasTurnBeenMade;
 	}
 
+	/**
+	 * This method is used for AI-Players. Call the makeTurnAutomatically-method
+	 * of the AI-Player. Then call the nextPlayer-method.
+	 */
 	public void makeTurnAutomatically() {
 		// AI soll Zug automatisch machen
 		AIPlayer ai = (AIPlayer) this.currentPlayer;

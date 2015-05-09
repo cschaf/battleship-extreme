@@ -40,7 +40,7 @@ public abstract class GameTest {
 			int row = 2 * i;
 			int column = 0;
 			Orientation orientation = Orientation.Horizontal;
-			player.placeShip(ship, column, row, orientation);
+			player.placeShip(column, row, orientation);
 		}
 	}
 

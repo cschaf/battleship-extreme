@@ -46,7 +46,7 @@ class ConsoleGame {
 		this.game = null;
 		do {
 			System.out.println("(1) Erzeuge Spiel manuell");
-			System.out.println("(2) Erzeuge Spiel automatisch");
+			System.out.println("(2) AI-Kampf");
 			System.out.println("(3) Zuletzt gespeichertes Spiel fortsetzen");
 			int choice = readIntegerWithMinMax(1, 3);
 			switch (choice) {
@@ -106,6 +106,7 @@ class ConsoleGame {
 	}
 
 	private Settings generateSettings() {
+		// Settings manuell einlesen
 		System.out.println("Einstellungen:");
 		System.out.print("Anzahl der menschlichen Spieler (0-4): ");
 		int players = readIntegerWithMinMax(0, 4);
@@ -149,8 +150,10 @@ class ConsoleGame {
 		do {
 			Player currentPlayer = game.getCurrentPlayer();
 			if (currentPlayer.getType() == PlayerType.AI) {
+				// automatisch setzen, wenn KI dran ist
 				game.placeShipsAutomatically();
 			} else {
+				// Koordinaten einlesen, wenn nicht
 				placeShipsManually();
 			}
 
@@ -189,17 +192,20 @@ class ConsoleGame {
 		Player currentPlayer;
 		do {
 			currentPlayer = game.getCurrentPlayer();
-			if (currentPlayer.getType() == PlayerType.AI) {
 
+			// ist der aktuelle Spieler eine KI
+			if (currentPlayer.getType() == PlayerType.AI) {
 				AIPlayer ai = (AIPlayer) currentPlayer;
 				game.makeTurnAutomatically();
 
 				// von AI beschossenes Board ausgeben
+				System.out.println(ai + " greift " + ai.getCurrentEnemy() + " an.");
+				System.out.println();
+				System.out.println("Board von " + ai.getCurrentEnemy());
 				System.out.println();
 				printBoard(ai.getCurrentEnemy().getBoard(), false);
 				System.out.println();
 			} else {
-
 				// mögliche Spieleraktionen auflisten
 				System.out.println();
 				System.out.println(currentPlayer + " ist an der Reihe.");
@@ -239,36 +245,22 @@ class ConsoleGame {
 		System.out.println("Auf welchen Spieler?");
 		enemy = selectEnemy(game.getEnemiesOfCurrentPlayer());
 		printBoard(enemy.getBoard(), false);
-
-		boolean hasTurnBeenMade = false;
+		boolean isShotPossible = false;
 		do {
-			// Koordinaten einlesen, bis Schuss erfolgreich ausgeführt werden
-			// kann
+			// Koordinaten einlesen, bis Schuss erfolgreich ausgeführt wurde
 			int[] coordinates = readCoordinates(currentPlayer.getBoard().getSize());
-
 			try {
-				hasTurnBeenMade = game.makeTurn(enemy, coordinates[1], coordinates[0], readOrientation());
+				isShotPossible = game.makeTurn(enemy, coordinates[1], coordinates[0], readOrientation());
+				if (!isShotPossible)
+					System.out.println("Feld wurde bereits beschossen!");
+				else
+					printBoards(currentPlayer.getBoard(), enemy.getBoard());
 			} catch (Exception e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			if (!hasTurnBeenMade) {
-				System.out.println("Feld wurde bereits beschossen");
-			}
-		} while (!hasTurnBeenMade);
+		} while (!isShotPossible);
 
-		printBoards(currentPlayer.getBoard(), enemy.getBoard());
-	}
-
-	private void saveGame() {
-		try {
-			game.save(SAVEGAME_FILENAME);
-		} catch (Exception e) {
-			System.err.print("Das Spiel konnte nicht gespeichert werden.");
-			e.printStackTrace();
-		}
-		System.out.println();
-		System.out.println("Spiel gespeichert.");
-		System.out.println();
 	}
 
 	private Ship selectShip() {
@@ -295,6 +287,18 @@ class ConsoleGame {
 			System.out.println("(" + i + ")" + enemies.get(i));
 		}
 		return enemies.get(readIntegerWithMinMax(0, enemies.size() - 1));
+	}
+
+	private void saveGame() {
+		try {
+			game.save(SAVEGAME_FILENAME);
+		} catch (Exception e) {
+			System.err.print("Das Spiel konnte nicht gespeichert werden.");
+			e.printStackTrace();
+		}
+		System.out.println();
+		System.out.println("Spiel gespeichert.");
+		System.out.println();
 	}
 
 	private void printBoards(Board ownBoard, Board enemyBoard) {
