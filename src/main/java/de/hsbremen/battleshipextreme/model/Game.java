@@ -12,17 +12,31 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+import de.hsbremen.battleshipextreme.model.exception.FieldOccupiedException;
+import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
+import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.player.AIPlayer;
+import de.hsbremen.battleshipextreme.model.player.HumanPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
 
 public class Game implements Serializable {
 	private Player[] players;
 	private Player currentPlayer;
 	private Player winner;
+	private ArrayList<String> log;
 
 	public Game(Settings settings) {
-		this.players = new Player[settings.getPlayers()];
-		for (int i = 0; i < this.players.length; i++)
-			this.players[i] = new Player(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
+		int numberOfHumanPlayers = settings.getPlayers();
+		int numberOfAIPlayers = settings.getAiPlayers();
+		int numberOfPlayers = numberOfAIPlayers + numberOfHumanPlayers;
+		this.players = new Player[numberOfPlayers];
+		for (int i = 0; i < numberOfHumanPlayers; i++)
+			this.players[i] = new HumanPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
+
+		for (int i = numberOfHumanPlayers; i < numberOfPlayers; i++)
+			this.players[i] = new AIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
+
 		this.currentPlayer = null;
 	}
 
@@ -66,14 +80,45 @@ public class Game implements Serializable {
 		return numberOfPlayersLeft <= 1;
 	}
 
+	public void placeShip(int xPos, int yPos, Orientation orientation) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException, FieldOccupiedException {
+		this.currentPlayer.placeShip(xPos, yPos, orientation);
+		if (!this.currentPlayer.hasPlacedAllShips()) {
+			this.currentPlayer.nextShip();
+		} else {
+			this.nextPlayer();
+		}
+	}
+
+	public void placeShipsAutomatically() {
+		((AIPlayer) this.currentPlayer).placeShipsAutomatically();
+		this.nextPlayer();
+	}
+
+	public boolean makeTurn(Player enemy, int xPos, int yPos, Orientation orientation) throws Exception {
+		boolean hasTurnBeenMade;
+		hasTurnBeenMade = this.currentPlayer.makeTurn(enemy, xPos, yPos, orientation);
+		if (hasTurnBeenMade)
+			this.nextPlayer();
+		return hasTurnBeenMade;
+	}
+
+	public void makeTurnAutomatically() {
+		// Zug automatisch
+		((AIPlayer) this.currentPlayer).makeTurnAutomatically(this.getEnemiesOfCurrentPlayer());
+		this.nextPlayer();
+	}
+
 	public Player getWinner() {
 		return this.winner;
 	}
 
 	/**
 	 * Set the currentPlayer to the next available player. If a player is not
-	 * able to make a turn, he will be skipped. Decrease the reload time of the
-	 * current players' ships.
+	 * able to make a turn, he will be skipped.
+	 * 
+	 * Decrease the reload time of the current players' ships.
+	 * 
+	 * Let AI make its turn automatically.
 	 */
 	public void nextPlayer() {
 		this.currentPlayer.decreaseCurrentReloadTimeOfShips();
@@ -82,10 +127,12 @@ public class Game implements Serializable {
 		// ansonsten hochzählen
 		currentPlayerIndex = (currentPlayerIndex >= this.players.length - 1) ? currentPlayerIndex = 0 : currentPlayerIndex + 1;
 		this.currentPlayer = this.players[currentPlayerIndex];
+
 		// Spieler überspringen, wenn alle Schiffe nachladen oder er tot ist
 		if (this.currentPlayer.areAllShipsReloading() || this.currentPlayer.hasLost()) {
 			this.nextPlayer();
 		}
+
 	}
 
 	/**
@@ -212,5 +259,9 @@ public class Game implements Serializable {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public ArrayList<String> getLog() {
+		return log;
 	}
 }

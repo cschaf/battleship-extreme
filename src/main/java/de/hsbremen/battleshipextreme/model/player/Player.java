@@ -17,13 +17,14 @@ import de.hsbremen.battleshipextreme.model.ship.Frigate;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.model.ship.Submarine;
 
-public class Player implements Serializable {
+public abstract class Player implements Serializable {
 	protected static int currentId = 1;
 	protected int id;
 	protected String name;
 	protected Board board;
 	protected Ship[] ships;
 	protected Ship currentShip;
+	protected PlayerType type;
 
 	public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 		this.id = this.currentId++;
@@ -64,22 +65,22 @@ public class Player implements Serializable {
 	 * @throws FieldOccupiedException
 	 *             if the ship or the ships' radius collides with another ship.
 	 */
-	public void placeShip(Ship ship, int xPos, int yPos, Orientation orientation) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException, FieldOccupiedException {
+	public void placeShip(int xPos, int yPos, Orientation orientation) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException, FieldOccupiedException {
 
-		if (ship.isPlaced())
-			throw new ShipAlreadyPlacedException(ship);
+		if (this.currentShip.isPlaced())
+			throw new ShipAlreadyPlacedException(this.currentShip);
 
 		if (!this.board.containsFieldAtPosition(xPos, yPos))
 			throw new FieldOutOfBoardException(new Field(xPos, yPos));
 
-		if (isShipPartiallyOutOfBoard(ship, xPos, yPos, orientation))
-			throw new ShipOutOfBoardException(ship);
+		if (isShipPartiallyOutOfBoard(this.currentShip, xPos, yPos, orientation))
+			throw new ShipOutOfBoardException(this.currentShip);
 
-		Field occupiedField = findOccupiedField(ship, xPos, yPos, orientation);
+		Field occupiedField = findOccupiedField(this.currentShip, xPos, yPos, orientation);
 		if (occupiedField != null)
 			throw new FieldOccupiedException(occupiedField);
 
-		placeShipOnBoard(ship, xPos, yPos, orientation);
+		placeShipOnBoard(this.currentShip, xPos, yPos, orientation);
 	}
 
 	private Field findOccupiedField(Ship ship, int xPos, int yPos, Orientation orientation) {
@@ -279,5 +280,13 @@ public class Player implements Serializable {
 				return false;
 		}
 		return true;
+	}
+
+	public PlayerType getType() {
+		return type;
+	}
+
+	public void setType(PlayerType type) {
+		this.type = type;
 	}
 }

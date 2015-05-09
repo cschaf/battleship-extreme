@@ -8,6 +8,7 @@ import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.player.HumanPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 
@@ -20,7 +21,7 @@ public abstract class GameTest {
 
 	@Before
 	public void setUp() throws Exception {
-		player = new Player(10, 2, 1, 1, 1);
+		player = new HumanPlayer(10, 2, 1, 1, 1);
 	}
 
 	protected void placeAllShipsRandomly(Player player) throws Exception {

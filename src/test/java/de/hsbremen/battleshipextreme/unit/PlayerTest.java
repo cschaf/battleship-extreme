@@ -13,6 +13,7 @@ import de.hsbremen.battleshipextreme.model.exception.FieldOccupiedException;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
 import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.player.HumanPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.ship.Destroyer;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
@@ -37,7 +38,7 @@ public class PlayerTest {
 	@Before
 	public void setUp() throws Exception {
 		// wird vor jedem Test ausgeführt
-		player = new Player(10, 2, 1, 1, 1);
+		player = new HumanPlayer(10, 2, 1, 1, 1);
 
 	}
 
