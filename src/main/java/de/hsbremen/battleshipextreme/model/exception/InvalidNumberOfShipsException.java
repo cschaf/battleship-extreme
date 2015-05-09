@@ -1,4 +1,4 @@
-package de.hsbremen.battleshipextreme.model;
+package de.hsbremen.battleshipextreme.model.exception;
 
 public class InvalidNumberOfShipsException extends Exception {
 	public InvalidNumberOfShipsException() {

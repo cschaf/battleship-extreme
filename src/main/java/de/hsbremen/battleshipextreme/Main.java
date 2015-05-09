@@ -7,15 +7,16 @@ import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Game;
-import de.hsbremen.battleshipextreme.model.InvalidNumberOfShipsException;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.Settings;
 import de.hsbremen.battleshipextreme.model.exception.BoardTooSmallException;
 import de.hsbremen.battleshipextreme.model.exception.FieldOccupiedException;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.exception.InvalidNumberOfShipsException;
 import de.hsbremen.battleshipextreme.model.exception.InvalidPlayerNumberException;
 import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
 import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.player.AIPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.player.PlayerType;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
@@ -88,12 +89,13 @@ class ConsoleGame {
 		if (settings != null) {
 			game = new Game(settings);
 			game.setBeginningPlayer(0);
+			placeShips();
 		}
 	}
 
 	private Game tryToLoadGame() {
 		// gespeichertes Spiel fortsetzen
-		Game game = new Game();
+		game = new Game();
 		try {
 			game.load(SAVEGAME_FILENAME);
 		} catch (Exception e) {
@@ -145,7 +147,6 @@ class ConsoleGame {
 	private void placeShips() {
 		// Schiffe setzen
 		do {
-			System.out.println("\nPlatziere Schiffe fuer currentplayer:");
 			Player currentPlayer = game.getCurrentPlayer();
 			if (currentPlayer.getType() == PlayerType.AI) {
 				game.placeShipsAutomatically();
@@ -154,7 +155,7 @@ class ConsoleGame {
 			}
 
 			System.out.println();
-			System.out.println("Board von");
+			System.out.println("Board von " + currentPlayer);
 			printBoard(currentPlayer.getBoard(), true);
 
 		} while (!game.isReady());
@@ -166,7 +167,6 @@ class ConsoleGame {
 		do {
 			// solange Schiffskoordinaten einlesen, bis keine Exception
 			// auftritt
-			System.out.println("\nPlatziere Schiff");
 			int[] coordinates = readCoordinates(game.getCurrentPlayer().getBoard().getSize());
 			Orientation orientation = readOrientation();
 			isItPossibleToPlaceShip = false;
@@ -189,19 +189,26 @@ class ConsoleGame {
 		Player currentPlayer;
 		do {
 			currentPlayer = game.getCurrentPlayer();
-
-			// mögliche Spieleraktionen auflisten
-			System.out.println();
-			System.out.println(currentPlayer + " ist an der Reihe.");
-			System.out.println();
-			System.out.println("Was möchtest du tun?");
-			System.out.println("(1) Gegner angreifen");
-			System.out.println("(2) Spiel speichern");
-			System.out.println("(3) Spiel beenden");
-
 			if (currentPlayer.getType() == PlayerType.AI) {
+
+				AIPlayer ai = (AIPlayer) currentPlayer;
 				game.makeTurnAutomatically();
+
+				// von AI beschossenes Board ausgeben
+				System.out.println();
+				printBoard(ai.getCurrentEnemy().getBoard(), false);
+				System.out.println();
 			} else {
+
+				// mögliche Spieleraktionen auflisten
+				System.out.println();
+				System.out.println(currentPlayer + " ist an der Reihe.");
+				System.out.println();
+				System.out.println("Was möchtest du tun?");
+				System.out.println("(1) Gegner angreifen");
+				System.out.println("(2) Spiel speichern");
+				System.out.println("(3) Spiel beenden");
+
 				// Wahl einlesen
 				int choice = readIntegerWithMinMax(1, 3);
 				switch (choice) {
@@ -215,7 +222,7 @@ class ConsoleGame {
 					System.exit(0);
 				}
 			}
-			printBoard(currentPlayer.getBoard(), true);
+
 		} while (!game.isGameover());
 	}
 
@@ -248,6 +255,8 @@ class ConsoleGame {
 				System.out.println("Feld wurde bereits beschossen");
 			}
 		} while (!hasTurnBeenMade);
+
+		printBoards(currentPlayer.getBoard(), enemy.getBoard());
 	}
 
 	private void saveGame() {

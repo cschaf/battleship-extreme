@@ -24,7 +24,6 @@ public class Game implements Serializable {
 	private Player[] players;
 	private Player currentPlayer;
 	private Player winner;
-	private ArrayList<String> log;
 
 	public Game(Settings settings) {
 		int numberOfHumanPlayers = settings.getPlayers();
@@ -85,6 +84,7 @@ public class Game implements Serializable {
 		if (!this.currentPlayer.hasPlacedAllShips()) {
 			this.currentPlayer.nextShip();
 		} else {
+
 			this.nextPlayer();
 		}
 	}
@@ -103,8 +103,9 @@ public class Game implements Serializable {
 	}
 
 	public void makeTurnAutomatically() {
-		// Zug automatisch
-		((AIPlayer) this.currentPlayer).makeTurnAutomatically(this.getEnemiesOfCurrentPlayer());
+		// AI soll Zug automatisch machen
+		AIPlayer ai = (AIPlayer) this.currentPlayer;
+		ai.makeTurnAutomatically(this.getEnemiesOfCurrentPlayer());
 		this.nextPlayer();
 	}
 
@@ -261,7 +262,4 @@ public class Game implements Serializable {
 		}
 	}
 
-	public ArrayList<String> getLog() {
-		return log;
-	}
 }

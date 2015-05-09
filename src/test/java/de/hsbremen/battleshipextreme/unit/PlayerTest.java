@@ -78,17 +78,17 @@ public class PlayerTest {
 	@Test(expected = FieldOccupiedException.class)
 	public void testPlaceShipsOnTheSameFieldHorizontally() throws Exception {
 		Ship ship = this.player.getShips()[0];
-		this.player.placeShip(ship, 0, 9, Orientation.Horizontal);
+		this.player.placeShip(0, 9, Orientation.Horizontal);
 		ship = player.getShips()[1];
-		this.player.placeShip(ship, 0, 9, Orientation.Horizontal);
+		this.player.placeShip(0, 9, Orientation.Horizontal);
 	}
 
 	@Test(expected = FieldOccupiedException.class)
 	public void testPlaceShipsOnTheSameFieldVertically() throws Exception {
 		Ship ship = this.player.getShips()[0];
-		this.player.placeShip(ship, 0, 0, Orientation.Vertical);
+		this.player.placeShip(0, 0, Orientation.Vertical);
 		ship = player.getShips()[1];
-		this.player.placeShip(ship, 0, 0, Orientation.Vertical);
+		this.player.placeShip(0, 0, Orientation.Vertical);
 	}
 
 	@Test(expected = FieldOccupiedException.class)

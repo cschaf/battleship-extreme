@@ -1,6 +1,7 @@
 package de.hsbremen.battleshipextreme.model;
 
 import de.hsbremen.battleshipextreme.model.exception.BoardTooSmallException;
+import de.hsbremen.battleshipextreme.model.exception.InvalidNumberOfShipsException;
 import de.hsbremen.battleshipextreme.model.exception.InvalidPlayerNumberException;
 
 public class Settings {
