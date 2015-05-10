@@ -10,12 +10,14 @@ import de.hsbremen.battleshipextreme.network.TransferableType;
  * Created by cschaf on 30.04.2015.
  */
 public class Turn extends TransferableObject{
+    private String gameId;
     private Player from;
     private Player to;
     private Ship ship;
     private Field field;
 
-    public Turn(Player from, Player to, Ship ship, Field field) {
+    public Turn(String gameId, Player from, Player to, Ship ship, Field field) {
+        this.gameId = gameId;
         this.from = from;
         this.to = to;
         this.ship = ship;
@@ -41,5 +43,9 @@ public class Turn extends TransferableObject{
 
     public Field getField() {
         return field;
+    }
+
+    public String getGameId() {
+        return gameId;
     }
 }

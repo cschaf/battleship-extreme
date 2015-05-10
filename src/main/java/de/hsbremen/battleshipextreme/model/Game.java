@@ -17,6 +17,7 @@ public class Game implements Serializable {
             this.players[i] = new Player(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
         this.currentPlayer = null;
     }
+
     public Game() {
         this.players = new Player[0];
         this.currentPlayer = null;
@@ -137,7 +138,6 @@ public class Game implements Serializable {
 
     /**
      * Saves the this Game to a File
-     * @param destinationPath
      */
     public void save(String destinationPath) {
         FileOutputStream saveFile = null;
@@ -157,7 +157,6 @@ public class Game implements Serializable {
 
     /**
      * Load a saved Game object
-     * @param destinationPath
      */
     public void load(String destinationPath) {
         FileInputStream saveFile = null;
@@ -180,7 +179,6 @@ public class Game implements Serializable {
 
     /**
      * Close a Stream quietly
-     * @param stream
      */
     private void closeQuietly(InputStream stream) {
         if (stream != null) {
@@ -194,7 +192,6 @@ public class Game implements Serializable {
 
     /**
      * Close a Stream quietly
-     * @param stream
      */
     private void closeQuietly(OutputStream stream) {
         if (stream != null) {

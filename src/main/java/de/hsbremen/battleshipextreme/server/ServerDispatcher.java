@@ -4,6 +4,8 @@ import de.hsbremen.battleshipextreme.network.*;
 import de.hsbremen.battleshipextreme.network.eventhandling.ErrorHandler;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Game;
+import de.hsbremen.battleshipextreme.network.transfarableObject.Join;
+import de.hsbremen.battleshipextreme.network.transfarableObject.Turn;
 import de.hsbremen.battleshipextreme.server.listener.IClientConnectionListener;
 import de.hsbremen.battleshipextreme.server.listener.IClientObjectReceivedListener;
 
@@ -42,7 +44,7 @@ public class ServerDispatcher extends Thread implements IDisposable {
     public synchronized void addClient(ClientHandler clientHandler) {
         this.clients.add(clientHandler);
         ITransferable serverMessage = TransferableObjectFactory.CreateMessage(clientHandler.getSocket().getInetAddress().getHostAddress() + ":" + clientHandler.getSocket().getPort() + " has connected");
-        notifyClientConnectionListeners(new EventArgs<ITransferable>(this, serverMessage));
+        clientHasConnected(new EventArgs<ITransferable>(this, serverMessage));
     }
 
     public synchronized void deleteClient(ClientHandler clientHandler) {
@@ -50,15 +52,13 @@ public class ServerDispatcher extends Thread implements IDisposable {
         if (clientIndex != -1) {
             this.clients.removeElementAt(clientIndex);
             ITransferable serverMessage = TransferableObjectFactory.CreateMessage(clientHandler.getSocket().getInetAddress().getHostAddress() + ":" + clientHandler.getSocket().getPort() + " (" + clientHandler.getUsername() + ")" + " has disconnected");
-            notifyClientConnectionListeners(new EventArgs<ITransferable>(this, serverMessage));
-            // addObjectToQueue to client the disconnected user info
-            this.broadcast(TransferableObjectFactory.CreateClientInfo(clientHandler.getUsername(), clientHandler.getSocket().getInetAddress().getHostAddress(), clientHandler.getSocket().getPort(), InfoSendingReason.Disconnect), clientHandler);
+            clientHasDisconnected(new EventArgs<ITransferable>(this, serverMessage));
         }
     }
 
     public synchronized void dispatchObject(ITransferable transferableObject) {
         this.objectQueue.add(transferableObject);
-        notifyClientObjectReceivedListener(new EventArgs<ITransferable>(this, transferableObject));
+        objectReceived(new EventArgs<ITransferable>(this, transferableObject));
         notify();
     }
 
@@ -125,7 +125,16 @@ public class ServerDispatcher extends Thread implements IDisposable {
         this.listeners.remove(IClientConnectionListener.class, listener);
     }
 
-    private void notifyClientConnectionListeners(EventArgs<ITransferable> eventArgs) {
+    private void clientHasDisconnected(EventArgs<ITransferable> eventArgs) {
+        Object[] listeners = this.listeners.getListenerList();
+        for (int i = 0; i < listeners.length; i = i + 2) {
+            if (listeners[i] == IClientConnectionListener.class) {
+                ((IClientConnectionListener) listeners[i + 1]).onClientHasDisconnected(eventArgs);
+            }
+        }
+    }
+
+    private void clientHasConnected(EventArgs<ITransferable> eventArgs) {
         Object[] listeners = this.listeners.getListenerList();
         for (int i = 0; i < listeners.length; i = i + 2) {
             if (listeners[i] == IClientConnectionListener.class) {
@@ -134,8 +143,7 @@ public class ServerDispatcher extends Thread implements IDisposable {
         }
     }
 
-
-    private void notifyClientObjectReceivedListener(EventArgs<ITransferable> eventArgs) {
+    private void objectReceived(EventArgs<ITransferable> eventArgs) {
         Object[] listeners = this.listeners.getListenerList();
         for (int i = 0; i < listeners.length; i = i + 2) {
             if (listeners[i] == IClientObjectReceivedListener.class) {
@@ -152,19 +160,18 @@ public class ServerDispatcher extends Thread implements IDisposable {
     }
 
     public synchronized void addGame(ITransferable receivedObject) {
-        if (receivedObject.getType() != TransferableType.Game){
+        if (receivedObject.getType() != TransferableType.Game) {
             this.errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Couldn't create new game!")));
             return;
         }
         Game game = (Game) receivedObject;
         this.games.add(game);
-        // TODO: hier noch alle clients benachichigen
-
-
+        objectReceived(new EventArgs<ITransferable>(this, game));
+        this.broadcast(game, null);
     }
 
     public synchronized void deleteGame(ITransferable receivedObject) {
-        if (receivedObject.getType() != TransferableType.Game){
+        if (receivedObject.getType() != TransferableType.Game) {
             this.errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Couldn't delete game!")));
             return;
         }
@@ -172,7 +179,30 @@ public class ServerDispatcher extends Thread implements IDisposable {
         int gameIndex = this.games.indexOf(receivedObject);
         if (gameIndex != -1) {
             this.games.removeElementAt(gameIndex);
-            // TODO: hier noch alle clients benachichigen
+            objectReceived(new EventArgs<ITransferable>(this, receivedObject));
+        }
+    }
+
+    public synchronized void addTurn(ITransferable receivedObject) {
+        Turn turn = (Turn) receivedObject;
+        for (Game game : this.games) {
+            if (turn.getGameId().equals(game.getId())) {
+                game.addTurn(turn);
+                break;
+            }
+        }
+        objectReceived(new EventArgs<ITransferable>(this, receivedObject));
+        this.broadcast(turn, null);
+    }
+
+    public void assignClientToGame(ClientHandler clientHandler, ITransferable receivedObject) {
+        Join join = (Join) receivedObject;
+        for (Game game : this.games) {
+            if (join.getGameId().equals(game.getId())) {
+                game.addPlayer(clientHandler);
+                this.multicast(TransferableObjectFactory.CreateClientInfo(clientHandler.getUsername(), clientHandler.getSocket().getInetAddress().getHostAddress(), clientHandler.getSocket().getPort(), InfoSendingReason.Connect), game.getJoinedPlayers());
+                break;
+            }
         }
     }
 }

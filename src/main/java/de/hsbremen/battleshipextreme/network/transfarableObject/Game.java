@@ -5,11 +5,13 @@ import de.hsbremen.battleshipextreme.network.TransferableType;
 import de.hsbremen.battleshipextreme.server.ClientHandler;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Created by cschaf on 30.04.2015.
  */
 public class Game extends TransferableObject {
+    private String id;
     private String name;
     private Settings settings;
     private ArrayList<ClientHandler> joinedPlayers;
@@ -19,6 +21,7 @@ public class Game extends TransferableObject {
     private ArrayList<Turn> turns;
 
     public Game(String name, Settings settings) {
+        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.settings = settings;
         this.joinedPlayers = new ArrayList<ClientHandler>();
@@ -89,5 +92,9 @@ public class Game extends TransferableObject {
 
     public int getMaxPlayers() {
         return maxPlayers;
+    }
+
+    public String getId() {
+        return id;
     }
 }
