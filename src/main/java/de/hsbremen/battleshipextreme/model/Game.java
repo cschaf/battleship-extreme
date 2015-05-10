@@ -12,10 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import de.hsbremen.battleshipextreme.model.exception.FieldOccupiedException;
-import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
-import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
-import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.player.AIPlayer;
 import de.hsbremen.battleshipextreme.model.player.HumanPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
@@ -25,6 +21,8 @@ public class Game implements Serializable {
 	private Player currentPlayer;
 	private Player winner;
 	private int turnNumber;
+	private int currentRound;
+	private boolean isNewRound;
 
 	public Game(Settings settings) {
 		int numberOfHumanPlayers = settings.getPlayers();
@@ -86,52 +84,6 @@ public class Game implements Serializable {
 	}
 
 	/**
-	 * Call the placeShip-method of the current player. If the current player
-	 * has placed all of its ships, call the nextPlayer-method, else call the
-	 * next ship method.
-	 * 
-	 * @param xPos
-	 * @param yPos
-	 * @param orientation
-	 * @throws ShipAlreadyPlacedException
-	 * @throws FieldOutOfBoardException
-	 * @throws ShipOutOfBoardException
-	 * @throws FieldOccupiedException
-	 */
-	public void placeShip(int xPos, int yPos, Orientation orientation) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException, FieldOccupiedException {
-		this.currentPlayer.placeShip(xPos, yPos, orientation);
-		if (!this.currentPlayer.hasPlacedAllShips()) {
-			this.currentPlayer.nextShip();
-		} else {
-			this.nextPlayer();
-		}
-	}
-
-	public void placeShipsAutomatically() {
-		((AIPlayer) this.currentPlayer).placeShipsAutomatically();
-		this.nextPlayer();
-	}
-
-	/**
-	 * Call the makeTurn method of the current player. If the turn was
-	 * successfully executed, call the nextPlayer-method.
-	 * 
-	 * @param enemy
-	 * @param xPos
-	 * @param yPos
-	 * @param orientation
-	 * @return
-	 * @throws Exception
-	 */
-	public boolean makeTurn(Player enemy, int xPos, int yPos, Orientation orientation) throws Exception {
-		boolean hasTurnBeenMade;
-		hasTurnBeenMade = this.currentPlayer.makeTurn(enemy, xPos, yPos, orientation);
-		if (hasTurnBeenMade)
-			this.nextPlayer();
-		return hasTurnBeenMade;
-	}
-
-	/**
 	 * This method is used for AI-Players. Call the makeTurnAutomatically-method
 	 * of the AI-Player. Then call the nextPlayer-method.
 	 * 
@@ -141,7 +93,6 @@ public class Game implements Serializable {
 		// AI soll Zug automatisch machen
 		AIPlayer ai = (AIPlayer) this.currentPlayer;
 		ai.makeTurnAutomatically(this.getEnemiesOfCurrentPlayer());
-		this.nextPlayer();
 	}
 
 	public Player getWinner() {
@@ -167,11 +118,6 @@ public class Game implements Serializable {
 		// ansonsten hochzählen
 		currentPlayerIndex = (currentPlayerIndex >= this.players.length - 1) ? currentPlayerIndex = 0 : currentPlayerIndex + 1;
 		this.currentPlayer = this.players[currentPlayerIndex];
-
-		// Spieler überspringen, wenn alle Schiffe nachladen oder er tot ist
-		if (this.currentPlayer.areAllShipsReloading() || this.currentPlayer.hasLost()) {
-			this.nextPlayer();
-		}
 
 	}
 
@@ -303,10 +249,6 @@ public class Game implements Serializable {
 
 	public int getTurnNumber() {
 		return turnNumber;
-	}
-
-	public boolean isNewRound() {
-		return (turnNumber % players.length == 0);
 	}
 
 }

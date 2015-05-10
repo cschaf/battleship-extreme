@@ -98,13 +98,13 @@ public class AIPlayer extends Player {
 			// Ausrichtung beibehalten
 			orientation = (currentDirection == 1 || currentDirection == 3) ? Orientation.Horizontal : Orientation.Vertical;
 			hasTurnBeenMade = super.makeTurn(this.currentEnemy, x, y, orientation);
-			// wenn Treffer, dann nach nächstem unbeschossenem Feld in
+			// wenn Treffer, dann nach nächstem unbeschossenen Feld in
 			// selbe Richtung suchen und als nächstes Ziel speichern
 			if (didShotHitShip(x, y, orientation)) {
 				int[] directionArray = determineDirection(currentDirection);
 				int xDirection = directionArray[0];
 				int yDirection = directionArray[1];
-				Field newTarget = findNextFieldNotHit(x, y, xDirection, yDirection);
+				Field newTarget = findNextFreeField(x, y, xDirection, yDirection);
 				this.nextTargetsArray[currentDirection] = newTarget;
 			} else {
 				// wenn kein Treffer, dann Target löschen
@@ -151,22 +151,22 @@ public class AIPlayer extends Player {
 
 		Field f;
 		// finde Ziel nördlich vom Treffer
-		f = findNextFieldNotHit(hitX, hitY, 0, 1);
+		f = findNextFreeField(hitX, hitY, 0, 1);
 		if (f != null)
 			this.nextTargetsArray[0] = f;
 
 		// finde Ziel östlich vom Treffer
-		f = findNextFieldNotHit(hitX, hitY, 1, 0);
+		f = findNextFreeField(hitX, hitY, 1, 0);
 		if (f != null)
 			this.nextTargetsArray[1] = f;
 
 		// finde Ziel südlich vom Treffer
-		f = findNextFieldNotHit(hitX, hitY, 0, -1);
+		f = findNextFreeField(hitX, hitY, 0, -1);
 		if (f != null)
 			this.nextTargetsArray[2] = f;
 
 		// finde Ziel westlich vom Treffer
-		f = findNextFieldNotHit(hitX, hitY, -1, 0);
+		f = findNextFreeField(hitX, hitY, -1, 0);
 		if (f != null)
 			this.nextTargetsArray[3] = f;
 	}
@@ -176,11 +176,11 @@ public class AIPlayer extends Player {
 		// weitergehen
 		switch (direction) {
 		case NORTH:
-			return new int[] { 0, 1 };
+			return new int[] { 0, -1 };
 		case EAST:
 			return new int[] { -1, 0 };
 		case SOUTH:
-			return new int[] { 0, -1 };
+			return new int[] { 0, 1 };
 		case WEST:
 			return new int[] { 1, 0 };
 		default:
@@ -189,11 +189,11 @@ public class AIPlayer extends Player {
 		return null;
 	}
 
-	private Field findNextFieldNotHit(int startX, int startY, int xDirection, int yDirection) throws FieldOutOfBoardException {
+	private Field findNextFreeField(int startX, int startY, int xDirection, int yDirection) throws FieldOutOfBoardException {
 		Board enemyBoard = this.currentEnemy.getBoard();
 		int step = 0;
-		int x = startX + step * xDirection;
-		int y = startY + step * yDirection;
+		int x;
+		int y;
 		boolean endLoop = false;
 		Field f = null;
 		do {

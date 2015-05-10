@@ -31,17 +31,23 @@ class ConsoleGame {
 	private Scanner input;
 	private static final String SAVEGAME_FILENAME = "savegame.sav";
 	private Game game;
+	private int currentRound;
 
 	public ConsoleGame() {
 		input = new Scanner(System.in);
 		createGame();
 		gameLoop();
 
-		printRoundStatus();
+		printGameStats();
+
+		input.close();
+	}
+
+	private void printGameStats() {
 		System.out.println();
 		System.out.println("Spiel zu Ende");
+		System.out.println((int) Math.floor(game.getTurnNumber() / game.getPlayers().length) + " Runden");
 		System.out.println(game.getWinner() + " hat gewonnen!");
-		input.close();
 	}
 
 	private void createGame() {
@@ -153,25 +159,25 @@ class ConsoleGame {
 		do {
 			Player currentPlayer = game.getCurrentPlayer();
 			if (currentPlayer.getType() == PlayerType.AI) {
-				// wenn KI dran ist, keine Koordinaten einlessen und automatisch
+				// wenn KI dran ist, keine Koordinaten einlesen und automatisch
 				// platzieren
 				System.out.println("Ai setzt Schiffe...");
-				game.placeShipsAutomatically();
+				((AIPlayer) currentPlayer).placeShipsAutomatically();
+				game.nextPlayer();
 			} else {
-				System.out.println(currentPlayer + " setzt Schiff: " + currentPlayer.getCurrentShip());
 				// wenn nicht, Koordinaten einlesen
 				placeShipsManually();
 			}
-
 			System.out.println();
 			System.out.println("Board von " + currentPlayer);
 			printBoard(currentPlayer.getBoard(), true);
-
 		} while (!game.isReady());
 
 	}
 
 	private void placeShipsManually() {
+		Player currentPlayer = game.getCurrentPlayer();
+		System.out.println(currentPlayer + " setzt Schiff: " + currentPlayer.getCurrentShip());
 		boolean isItPossibleToPlaceShip;
 		do {
 			// solange Schiffskoordinaten einlesen, bis keine Exception
@@ -180,7 +186,7 @@ class ConsoleGame {
 			Orientation orientation = readOrientation();
 			isItPossibleToPlaceShip = false;
 			try {
-				game.placeShip(coordinates[1], coordinates[0], orientation);
+				game.getCurrentPlayer().placeShip(coordinates[1], coordinates[0], orientation);
 				isItPossibleToPlaceShip = true;
 			} catch (ShipAlreadyPlacedException e) {
 				System.out.println("Schiff bereits gesetzt!");
@@ -192,37 +198,40 @@ class ConsoleGame {
 				System.out.println("Feld bereits belegt!");
 			}
 		} while (!isItPossibleToPlaceShip);
+		if (!currentPlayer.hasPlacedAllShips()) {
+			currentPlayer.nextShip();
+		} else {
+			game.nextPlayer();
+		}
+
 	}
 
 	private void gameLoop() {
+
 		do {
-			if (game.isNewRound()) {
-
-				printRoundStatus();
+			Player currentPlayer = game.getCurrentPlayer();
+			if (game.getTurnNumber() % game.getPlayers().length == 0) {
+				System.out.println();
+				System.out.println("Runde " + (int) Math.floor(game.getTurnNumber() / game.getPlayers().length));
+				System.out.println("------------------------------------------------------------------------");
+				System.out.println();
 			}
-			// ist der aktuelle Spieler eine KI
-			if (game.getCurrentPlayer().getType() == PlayerType.AI) {
-				makeAITurn();
+			// Spieler überspringen wenn er tot ist
+			if (currentPlayer.hasLost()) {
+				System.out.println(currentPlayer + " ist tot und kann nicht schießen.");
+			} else if (currentPlayer.areAllShipsReloading()) {
+				System.out.println(currentPlayer + " kann nicht schießen, da alle Schiffe nachladen.");
 			} else {
-				makePlayerTurn();
+				// ist der aktuelle Spieler eine KI
+				if (game.getCurrentPlayer().getType() == PlayerType.AI) {
+					makeAITurn();
+				} else {
+					makePlayerTurn();
+				}
+
 			}
+			game.nextPlayer();
 		} while (!game.isGameover());
-	}
-
-	private void printRoundStatus() {
-		System.out.println("Runde " + ((game.getTurnNumber() / game.getPlayers().length) + 1));
-		System.out.println("---------------------------------------------------------------------");
-		for (Player player : game.getPlayers()) {
-			if (player.hasLost()) {
-				System.out.println(player + " ist tot.");
-			} else if (player.areAllShipsReloading()) {
-				System.out.println(player + " setzt aus, da alle Schiffe nachladen.");
-			} else {
-				System.out.println(player + " kann angreifen.");
-			}
-
-		}
-
 	}
 
 	private void makeAITurn() {
@@ -234,7 +243,7 @@ class ConsoleGame {
 		}
 		// von AI beschossenes Board ausgeben
 		if (ai.getName().equals("AI1")) {
-			System.out.println(ai + " greift " + ai.getCurrentEnemy() + " an.");
+			System.out.println(ai + " greift " + ai.getCurrentEnemy() + " mit " + ai.getCurrentShip() + " an.");
 			System.out.println();
 			System.out.println("Board von " + ai.getCurrentEnemy());
 			System.out.println();
@@ -245,9 +254,10 @@ class ConsoleGame {
 	}
 
 	private void makePlayerTurn() {
+		Player currentPlayer = game.getCurrentPlayer();
 		// mögliche Spieleraktionen auflisten
 		System.out.println();
-		System.out.println(game.getCurrentPlayer() + " ist an der Reihe.");
+		System.out.println(currentPlayer + " ist an der Reihe.");
 		System.out.println();
 		System.out.println("Was möchtest du tun?");
 		System.out.println("(1) Gegner angreifen");
@@ -265,6 +275,7 @@ class ConsoleGame {
 			break;
 		case 3:
 			System.exit(0);
+
 		}
 	}
 
@@ -286,7 +297,7 @@ class ConsoleGame {
 			// Koordinaten einlesen, bis Schuss erfolgreich ausgeführt wurde
 			int[] coordinates = readCoordinates(currentPlayer.getBoard().getSize());
 			try {
-				isShotPossible = game.makeTurn(enemy, coordinates[1], coordinates[0], readOrientation());
+				isShotPossible = currentPlayer.makeTurn(enemy, coordinates[1], coordinates[0], readOrientation());
 				if (!isShotPossible)
 					System.out.println("Feld wurde bereits beschossen!");
 				else
