@@ -306,7 +306,7 @@ public class Game implements Serializable {
 	}
 
 	public boolean isNewRound() {
-		return turnNumber % players.length == 0;
+		return (turnNumber % players.length == 0);
 	}
 
 }

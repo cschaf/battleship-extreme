@@ -80,7 +80,7 @@ class ConsoleGame {
 		// Spiel mit 3 KIs erzeugen
 		Settings settings = null;
 		try {
-			settings = new Settings(0, 3, 10, 2, 1, 1, 1);
+			settings = new Settings(0, 2, 10, 2, 1, 1, 1);
 		} catch (BoardTooSmallException e) {
 			e.printStackTrace();
 		} catch (InvalidPlayerNumberException e) {
@@ -233,12 +233,15 @@ class ConsoleGame {
 			e.printStackTrace();
 		}
 		// von AI beschossenes Board ausgeben
-		System.out.println(ai + " greift " + ai.getCurrentEnemy() + " an.");
-		System.out.println();
-		System.out.println("Board von " + ai.getCurrentEnemy());
-		System.out.println();
-		printBoard(ai.getCurrentEnemy().getBoard(), false);
-		System.out.println();
+		if (ai.getName().equals("AI1")) {
+			System.out.println(ai + " greift " + ai.getCurrentEnemy() + " an.");
+			System.out.println();
+			System.out.println("Board von " + ai.getCurrentEnemy());
+			System.out.println();
+
+			printBoard(ai.getCurrentEnemy().getBoard(), false);
+			System.out.println();
+		}
 	}
 
 	private void makePlayerTurn() {
