@@ -134,8 +134,10 @@ public class Game implements Serializable {
 	/**
 	 * This method is used for AI-Players. Call the makeTurnAutomatically-method
 	 * of the AI-Player. Then call the nextPlayer-method.
+	 * 
+	 * @throws Exception
 	 */
-	public void makeTurnAutomatically() {
+	public void makeTurnAutomatically() throws Exception {
 		// AI soll Zug automatisch machen
 		AIPlayer ai = (AIPlayer) this.currentPlayer;
 		ai.makeTurnAutomatically(this.getEnemiesOfCurrentPlayer());

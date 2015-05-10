@@ -227,8 +227,11 @@ class ConsoleGame {
 
 	private void makeAITurn() {
 		AIPlayer ai = (AIPlayer) game.getCurrentPlayer();
-		game.makeTurnAutomatically();
-
+		try {
+			game.makeTurnAutomatically();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		// von AI beschossenes Board ausgeben
 		System.out.println(ai + " greift " + ai.getCurrentEnemy() + " an.");
 		System.out.println();
