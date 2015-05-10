@@ -36,6 +36,9 @@ class ConsoleGame {
 		input = new Scanner(System.in);
 		createGame();
 		gameLoop();
+
+		printRoundStatus();
+		System.out.println();
 		System.out.println("Spiel zu Ende");
 		System.out.println(game.getWinner() + " hat gewonnen!");
 		input.close();
@@ -43,6 +46,7 @@ class ConsoleGame {
 
 	private void createGame() {
 		// bietet mehrere Wege ein Spiel zu erstellen
+		// wird solange wiederholt, bis ein Spiel erstellt werden konnte
 		this.game = null;
 		do {
 			System.out.println("(1) Erzeuge Spiel manuell");
@@ -75,7 +79,6 @@ class ConsoleGame {
 	private void createGameWithoutInput() {
 		// Spiel mit 3 KIs erzeugen
 		Settings settings = null;
-
 		try {
 			settings = new Settings(0, 3, 10, 2, 1, 1, 1);
 		} catch (BoardTooSmallException e) {
@@ -150,10 +153,13 @@ class ConsoleGame {
 		do {
 			Player currentPlayer = game.getCurrentPlayer();
 			if (currentPlayer.getType() == PlayerType.AI) {
-				// automatisch setzen, wenn KI dran ist
+				// wenn KI dran ist, keine Koordinaten einlessen und automatisch
+				// platzieren
+				System.out.println("Ai setzt Schiffe...");
 				game.placeShipsAutomatically();
 			} else {
-				// Koordinaten einlesen, wenn nicht
+				System.out.println(currentPlayer + " setzt Schiff: " + currentPlayer.getCurrentShip());
+				// wenn nicht, Koordinaten einlesen
 				placeShipsManually();
 			}
 
@@ -189,50 +195,74 @@ class ConsoleGame {
 	}
 
 	private void gameLoop() {
-		Player currentPlayer;
 		do {
-			currentPlayer = game.getCurrentPlayer();
+			if (game.isNewRound()) {
 
-			// ist der aktuelle Spieler eine KI
-			if (currentPlayer.getType() == PlayerType.AI) {
-				AIPlayer ai = (AIPlayer) currentPlayer;
-				game.makeTurnAutomatically();
-
-				// von AI beschossenes Board ausgeben
-				System.out.println(ai + " greift " + ai.getCurrentEnemy() + " an.");
-				System.out.println();
-				System.out.println("Board von " + ai.getCurrentEnemy());
-				System.out.println();
-				printBoard(ai.getCurrentEnemy().getBoard(), false);
-				System.out.println();
-			} else {
-				// mögliche Spieleraktionen auflisten
-				System.out.println();
-				System.out.println(currentPlayer + " ist an der Reihe.");
-				System.out.println();
-				System.out.println("Was möchtest du tun?");
-				System.out.println("(1) Gegner angreifen");
-				System.out.println("(2) Spiel speichern");
-				System.out.println("(3) Spiel beenden");
-
-				// Wahl einlesen
-				int choice = readIntegerWithMinMax(1, 3);
-				switch (choice) {
-				case 1:
-					makeTurnManually();
-					break;
-				case 2:
-					saveGame();
-					break;
-				case 3:
-					System.exit(0);
-				}
+				printRoundStatus();
 			}
-
+			// ist der aktuelle Spieler eine KI
+			if (game.getCurrentPlayer().getType() == PlayerType.AI) {
+				makeAITurn();
+			} else {
+				makePlayerTurn();
+			}
 		} while (!game.isGameover());
 	}
 
-	private void makeTurnManually() {
+	private void printRoundStatus() {
+		System.out.println("Runde " + ((game.getTurnNumber() / game.getPlayers().length) + 1));
+		System.out.println("---------------------------------------------------------------------");
+		for (Player player : game.getPlayers()) {
+			if (player.hasLost()) {
+				System.out.println(player + " ist tot.");
+			} else if (player.areAllShipsReloading()) {
+				System.out.println(player + " setzt aus, da alle Schiffe nachladen.");
+			} else {
+				System.out.println(player + " kann angreifen.");
+			}
+
+		}
+
+	}
+
+	private void makeAITurn() {
+		AIPlayer ai = (AIPlayer) game.getCurrentPlayer();
+		game.makeTurnAutomatically();
+
+		// von AI beschossenes Board ausgeben
+		System.out.println(ai + " greift " + ai.getCurrentEnemy() + " an.");
+		System.out.println();
+		System.out.println("Board von " + ai.getCurrentEnemy());
+		System.out.println();
+		printBoard(ai.getCurrentEnemy().getBoard(), false);
+		System.out.println();
+	}
+
+	private void makePlayerTurn() {
+		// mögliche Spieleraktionen auflisten
+		System.out.println();
+		System.out.println(game.getCurrentPlayer() + " ist an der Reihe.");
+		System.out.println();
+		System.out.println("Was möchtest du tun?");
+		System.out.println("(1) Gegner angreifen");
+		System.out.println("(2) Spiel speichern");
+		System.out.println("(3) Spiel beenden");
+
+		// Wahl einlesen
+		int choice = readIntegerWithMinMax(1, 3);
+		switch (choice) {
+		case 1:
+			attackManually();
+			break;
+		case 2:
+			saveGame();
+			break;
+		case 3:
+			System.exit(0);
+		}
+	}
+
+	private void attackManually() {
 		Player enemy;
 		Player currentPlayer;
 		currentPlayer = game.getCurrentPlayer();
@@ -322,6 +352,7 @@ class ConsoleGame {
 			}
 			System.out.println();
 		}
+		System.out.println();
 	}
 
 	private void printState(FieldState fieldState, boolean isOwnBoard) {
@@ -381,7 +412,7 @@ class ConsoleGame {
 
 	private Orientation readOrientation() {
 		// Ausrichtung einlesen
-		System.out.print("Orientierung (H/V): ");
+		System.out.print("Ausrichtung (H/V): ");
 		Orientation orientation = input.next().toUpperCase().charAt(0) == 'V' ? Orientation.Vertical : Orientation.Horizontal;
 		return orientation;
 	}

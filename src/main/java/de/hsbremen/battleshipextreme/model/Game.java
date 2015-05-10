@@ -24,6 +24,7 @@ public class Game implements Serializable {
 	private Player[] players;
 	private Player currentPlayer;
 	private Player winner;
+	private int turnNumber;
 
 	public Game(Settings settings) {
 		int numberOfHumanPlayers = settings.getPlayers();
@@ -37,6 +38,7 @@ public class Game implements Serializable {
 		for (int i = numberOfHumanPlayers; i < numberOfPlayers; i++)
 			this.players[i] = new AIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
 
+		this.turnNumber = 0;
 		this.currentPlayer = null;
 	}
 
@@ -85,7 +87,8 @@ public class Game implements Serializable {
 
 	/**
 	 * Call the placeShip-method of the current player. If the current player
-	 * has placed all of its ships, call the nextPlayer-method.
+	 * has placed all of its ships, call the nextPlayer-method, else call the
+	 * next ship method.
 	 * 
 	 * @param xPos
 	 * @param yPos
@@ -97,7 +100,9 @@ public class Game implements Serializable {
 	 */
 	public void placeShip(int xPos, int yPos, Orientation orientation) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException, FieldOccupiedException {
 		this.currentPlayer.placeShip(xPos, yPos, orientation);
-		if (this.currentPlayer.hasPlacedAllShips()) {
+		if (!this.currentPlayer.hasPlacedAllShips()) {
+			this.currentPlayer.nextShip();
+		} else {
 			this.nextPlayer();
 		}
 	}
@@ -116,14 +121,11 @@ public class Game implements Serializable {
 	 * @param yPos
 	 * @param orientation
 	 * @return
+	 * @throws Exception
 	 */
-	public boolean makeTurn(Player enemy, int xPos, int yPos, Orientation orientation) {
-		boolean hasTurnBeenMade = false;
-		try {
-			hasTurnBeenMade = this.currentPlayer.makeTurn(enemy, xPos, yPos, orientation);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public boolean makeTurn(Player enemy, int xPos, int yPos, Orientation orientation) throws Exception {
+		boolean hasTurnBeenMade;
+		hasTurnBeenMade = this.currentPlayer.makeTurn(enemy, xPos, yPos, orientation);
 		if (hasTurnBeenMade)
 			this.nextPlayer();
 		return hasTurnBeenMade;
@@ -145,14 +147,18 @@ public class Game implements Serializable {
 	}
 
 	/**
-	 * Set the currentPlayer to the next available player. If a player is not
-	 * able to make a turn, he will be skipped.
+	 * 
+	 * Increase turnNumber and roundNumber.
 	 * 
 	 * Decrease the reload time of the current players' ships.
+	 * 
+	 * Set the currentPlayer to the next available player. If a player is not
+	 * able to make a turn, skip player.
 	 * 
 	 * Let AI make its turn automatically.
 	 */
 	public void nextPlayer() {
+		this.turnNumber++;
 		this.currentPlayer.decreaseCurrentReloadTimeOfShips();
 		int currentPlayerIndex = Arrays.asList(players).indexOf(currentPlayer);
 		// wenn letzter Spieler im Array, dann Index wieder auf 0 setzen,
@@ -291,6 +297,14 @@ public class Game implements Serializable {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public int getTurnNumber() {
+		return turnNumber;
+	}
+
+	public boolean isNewRound() {
+		return turnNumber % players.length == 0;
 	}
 
 }

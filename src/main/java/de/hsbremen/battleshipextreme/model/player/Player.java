@@ -18,7 +18,7 @@ import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.model.ship.Submarine;
 
 public abstract class Player implements Serializable {
-	protected static int currentId = 1;
+	protected static int currentId = 0;
 	protected int id;
 	protected String name;
 	protected Board board;
@@ -28,7 +28,6 @@ public abstract class Player implements Serializable {
 
 	public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 		this.id = this.currentId++;
-		this.name = "Player " + this.id;
 		this.board = new Board(boardSize);
 		this.ships = new Ship[destroyers + frigates + corvettes + submarines];
 
@@ -84,7 +83,6 @@ public abstract class Player implements Serializable {
 
 		placeShipOnBoard(this.currentShip, xPos, yPos, orientation);
 
-		this.nextShip();
 	}
 
 	private Field findOccupiedField(Ship ship, int xPos, int yPos, Orientation orientation) {
