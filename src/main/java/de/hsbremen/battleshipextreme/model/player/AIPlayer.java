@@ -14,11 +14,6 @@ public class AIPlayer extends Player {
 	private Player currentEnemy;
 	private Player nextEnemy;
 
-	private final int NORTH = 0;
-	private final int EAST = 1;
-	private final int SOUTH = 2;
-	private final int WEST = 3;
-
 	Field[] nextTargetsArray;
 
 	public AIPlayer(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
@@ -35,9 +30,9 @@ public class AIPlayer extends Player {
 				// zufällige Position generieren
 				Orientation orientation;
 				orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
-				int[] coordinate = generateCoordinate(orientation, super.getCurrentShip().getSize());
+				Field field = generateField(orientation, super.getCurrentShip().getSize());
 				try {
-					super.placeShip(coordinate[0], coordinate[1], orientation);
+					super.placeShip(field.getXPos(), field.getYPos(), orientation);
 					isItPossibleToPlaceShip = true;
 				} catch (Exception e) {
 				}
@@ -47,11 +42,11 @@ public class AIPlayer extends Player {
 	}
 
 	public void makeTurnAutomatically(ArrayList<Player> availablePlayers) throws Exception {
-		int[] coordinate;
+
 		Orientation orientation;
 		int currentDirection;
 		boolean hasTurnBeenMade = false;
-
+		Field fieldShotAt = null;
 		chooseShipToShootWithRandomly();
 
 		if (!this.hasTargets()) {
@@ -65,19 +60,20 @@ public class AIPlayer extends Player {
 			// zufällig schießen
 			do {
 				orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
-				coordinate = generateCoordinate(orientation, this.currentShip.getSize());
+				fieldShotAt = generateField(orientation, this.currentShip.getSize());
 				try {
-					hasTurnBeenMade = super.makeTurn(this.currentEnemy, coordinate[0], coordinate[1], orientation);
+					hasTurnBeenMade = super.makeTurn(this.currentEnemy, fieldShotAt.getXPos(), fieldShotAt.getYPos(), orientation);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			} while (!hasTurnBeenMade);
 
+			Field hitField = getFirstHitOfShot(fieldShotAt, orientation);
 			// wenn Treffer, dann Gegner merken und nächste Schüsse planen
-			if (didShotHitShip(coordinate[0], coordinate[1], orientation)) {
+			if (hitField != null) {
 				this.nextEnemy = this.currentEnemy;
-				planNextShots(coordinate[0], coordinate[1]);
+				planNextShots(hitField);
 			} else {
 				// currentEnemy vergessen, wenn kein Feld getroffen
 				// wurde
@@ -90,21 +86,36 @@ public class AIPlayer extends Player {
 
 			// Richtung ermitteln
 			currentDirection = getCurrentDirection();
+			System.out.println();
+			switch (currentDirection) {
+			case 0:
+				System.out.println("NORDEN");
+				break;
+			case 1:
+				System.out.println("OSTEN");
+				break;
+			case 2:
+				System.out.println("SÜDEN");
+				break;
+			case 3:
+				System.out.println("WESTEN");
+				break;
+			}
 
 			// wenn Ziel vorhanden ist, dann auf Ziel schießen
-			int x = this.nextTargetsArray[currentDirection].getXPos();
-			int y = this.nextTargetsArray[currentDirection].getYPos();
+			Field target = this.nextTargetsArray[currentDirection];
 
 			// Ausrichtung beibehalten
-			orientation = (currentDirection == 1 || currentDirection == 3) ? Orientation.Horizontal : Orientation.Vertical;
-			hasTurnBeenMade = super.makeTurn(this.currentEnemy, x, y, orientation);
+			orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
+			hasTurnBeenMade = super.makeTurn(this.currentEnemy, target.getXPos(), target.getYPos(), orientation);
 			// wenn Treffer, dann nach nächstem unbeschossenen Feld in
 			// selbe Richtung suchen und als nächstes Ziel speichern
-			if (didShotHitShip(x, y, orientation)) {
+			Field field = getFirstHitOfShot(target, orientation);
+			if ((field != null) && (field.getState() != FieldState.Destroyed)) {
 				int[] directionArray = determineDirection(currentDirection);
 				int xDirection = directionArray[0];
 				int yDirection = directionArray[1];
-				Field newTarget = findNextFreeField(x, y, xDirection, yDirection);
+				Field newTarget = findNextFreeField(field, xDirection, yDirection);
 				this.nextTargetsArray[currentDirection] = newTarget;
 			} else {
 				// wenn kein Treffer, dann Target löschen
@@ -145,28 +156,28 @@ public class AIPlayer extends Player {
 		return currentDirection;
 	}
 
-	private void planNextShots(int hitX, int hitY) throws FieldOutOfBoardException {
+	private void planNextShots(Field hitField) throws FieldOutOfBoardException {
 
 		this.nextTargetsArray = new Field[4];
 
 		Field f;
 		// finde Ziel nördlich vom Treffer
-		f = findNextFreeField(hitX, hitY, 0, 1);
+		f = findNextFreeField(hitField, 0, 1);
 		if (f != null)
 			this.nextTargetsArray[0] = f;
 
 		// finde Ziel östlich vom Treffer
-		f = findNextFreeField(hitX, hitY, 1, 0);
+		f = findNextFreeField(hitField, 1, 0);
 		if (f != null)
 			this.nextTargetsArray[1] = f;
 
 		// finde Ziel südlich vom Treffer
-		f = findNextFreeField(hitX, hitY, 0, -1);
+		f = findNextFreeField(hitField, 0, -1);
 		if (f != null)
 			this.nextTargetsArray[2] = f;
 
 		// finde Ziel westlich vom Treffer
-		f = findNextFreeField(hitX, hitY, -1, 0);
+		f = findNextFreeField(hitField, -1, 0);
 		if (f != null)
 			this.nextTargetsArray[3] = f;
 	}
@@ -175,13 +186,17 @@ public class AIPlayer extends Player {
 		// wenn Treffer, dann in die selbe Richtung
 		// weitergehen
 		switch (direction) {
-		case NORTH:
-			return new int[] { 0, -1 };
-		case EAST:
-			return new int[] { -1, 0 };
-		case SOUTH:
+		case 0:
+			// Norden
 			return new int[] { 0, 1 };
-		case WEST:
+		case 1:
+			// Osten
+			return new int[] { -1, 0 };
+		case 2:
+			// Süden
+			return new int[] { 0, -1 };
+		case 3:
+			// Westen
 			return new int[] { 1, 0 };
 		default:
 			break;
@@ -189,7 +204,7 @@ public class AIPlayer extends Player {
 		return null;
 	}
 
-	private Field findNextFreeField(int startX, int startY, int xDirection, int yDirection) throws FieldOutOfBoardException {
+	private Field findNextFreeField(Field field, int xDirection, int yDirection) throws FieldOutOfBoardException {
 		Board enemyBoard = this.currentEnemy.getBoard();
 		int step = 0;
 		int x;
@@ -197,8 +212,8 @@ public class AIPlayer extends Player {
 		boolean endLoop = false;
 		Field f = null;
 		do {
-			x = startX + step * xDirection;
-			y = startY + step * yDirection;
+			x = field.getXPos() + step * xDirection;
+			y = field.getYPos() + step * yDirection;
 			if (enemyBoard.containsFieldAtPosition(x, y)) {
 				f = enemyBoard.getField(x, y);
 				if ((f.getState() == FieldState.Missed) || (f.getState() == FieldState.Destroyed)) {
@@ -219,11 +234,24 @@ public class AIPlayer extends Player {
 		return f;
 	}
 
-	private boolean didShotHitShip(int x, int y, Orientation orientation) throws FieldOutOfBoardException {
-		return this.currentEnemy.getBoard().getField(x, y).hasShip();
+	private Field getFirstHitOfShot(Field field, Orientation orientation) throws FieldOutOfBoardException {
+		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
+		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
+		int x;
+		int y;
+		for (int i = 0; i < this.currentShip.getShootingRange(); i++) {
+			x = field.getXPos() + i * xDirection;
+			y = field.getYPos() + i * yDirection;
+			if (this.currentEnemy.getBoard().containsFieldAtPosition(x, y)) {
+				if (this.currentEnemy.getBoard().getField(x, y).hasShip()) {
+					return new Field(x, y);
+				}
+			}
+		}
+		return null;
 	}
 
-	private int[] generateCoordinate(Orientation orientation, int shipSize) {
+	private Field generateField(Orientation orientation, int shipSize) {
 		int xPos;
 		int yPos;
 		int xMax;
@@ -240,9 +268,7 @@ public class AIPlayer extends Player {
 		xPos = generateRandomNumber(0, xMax);
 		yPos = generateRandomNumber(0, yMax);
 
-		int[] coordinate = { xPos, yPos };
-
-		return coordinate;
+		return new Field(xPos, yPos);
 
 	}
 
