@@ -280,15 +280,15 @@ class ConsoleGame {
 			e.printStackTrace();
 		}
 		// von AI beschossenes Board ausgeben
-		// if (ai.getName().equals("AI1")) {
-		System.out.println(ai + " greift " + ai.getCurrentEnemy() + " mit " + ai.getCurrentShip() + " an.");
-		System.out.println();
-		System.out.println("Board von " + ai.getCurrentEnemy());
-		System.out.println();
+		if (ai.getName().equals("Schlaue KI1")) {
+			System.out.println(ai + " greift " + ai.getCurrentEnemy() + " mit " + ai.getCurrentShip() + " an.");
+			System.out.println();
+			System.out.println("Board von " + ai.getCurrentEnemy());
+			System.out.println();
 
-		printBoard(ai.getCurrentEnemy().getBoard(), false);
-		System.out.println();
-		// }
+			printBoard(ai.getCurrentEnemy().getBoard(), false);
+			System.out.println();
+		}
 	}
 
 	private void makePlayerTurn() {
@@ -404,6 +404,7 @@ class ConsoleGame {
 			for (int column = 0; column < fields[row].length; column++) {
 				Field field = fields[row][column];
 				printState(field.getState(), isOwnBoard);
+				System.out.print(" ");
 			}
 			System.out.println();
 		}

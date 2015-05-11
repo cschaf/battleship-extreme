@@ -11,7 +11,7 @@ import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 /**
  * Smart AI - uses basic strategy
  * 
- * AI-Benchmark: ~ 50 rounds (70 rounds = random)
+ * AI-Benchmark: ~ 46 rounds (70 rounds = random)
  *
  */
 public class SmartAIPlayer extends AIPlayer {
@@ -77,7 +77,7 @@ public class SmartAIPlayer extends AIPlayer {
 			// ansonsten vertikal
 			orientation = (currentDirection == 1 || currentDirection == 3) ? Orientation.Horizontal : Orientation.Vertical;
 
-			hasTurnBeenMade = makeTurn(this.currentEnemy, target.getXPos(), target.getYPos(), orientation);
+			hasTurnBeenMade = makeTurn(this.currentEnemy, adjustX(target, currentDirection), adjustY(target, currentDirection), orientation);
 			// wenn Treffer, dann nach nächstem unbeschossenen Feld in
 			// selbe Richtung suchen und als nächstes Ziel speichern
 
@@ -101,6 +101,48 @@ public class SmartAIPlayer extends AIPlayer {
 			}
 		}
 
+	}
+
+	private int adjustX(Field target, int currentDirection) throws FieldOutOfBoardException {
+		// wenn Richtung Westen , dann gehe Schussweite nach links um mehr
+		// felder zu treffen
+		int adjustedX = target.getXPos();
+		int range = this.currentShip.getShootingRange() - 1;
+		Board enemyBoard = this.currentEnemy.getBoard();
+		int targetYPos = target.getYPos();
+
+		if (currentDirection == 3) {
+			for (int i = 0; i < range; i++) {
+				if (enemyBoard.containsFieldAtPosition(adjustedX - 1, targetYPos)) {
+					if (!enemyBoard.getField(adjustedX - 1, target.getYPos()).isHit()) {
+						adjustedX -= 1;
+
+					} else
+						break;
+				}
+			}
+		}
+		return adjustedX;
+	}
+
+	private int adjustY(Field target, int currentDirection) throws FieldOutOfBoardException {
+		// wenn Richtung Norden, um Schussweite hoch gehen, um mehr Felder zu
+		// treffen
+		int range = this.currentShip.getShootingRange() - 1;
+		Board enemyBoard = this.currentEnemy.getBoard();
+		int adjustedY = target.getYPos();
+		int targetXPos = target.getXPos();
+		if (currentDirection == 0) {
+			for (int i = 0; i < range; i++) {
+				if (enemyBoard.containsFieldAtPosition(targetXPos, adjustedY - 1)) {
+					if (!enemyBoard.getField(targetXPos, adjustedY - 1).isHit()) {
+						adjustedY -= 1;
+					} else
+						break;
+				}
+			}
+		}
+		return adjustedY;
 	}
 
 	private boolean hasTargets() {
@@ -150,13 +192,13 @@ public class SmartAIPlayer extends AIPlayer {
 			return new int[] { 0, -1 };
 		case 1:
 			// Osten
-			return new int[] { -1, 0 };
+			return new int[] { 1, 0 };
 		case 2:
 			// Süden
 			return new int[] { 0, 1 };
 		case 3:
 			// Westen
-			return new int[] { 1, 0 };
+			return new int[] { -1, 0 };
 		default:
 			break;
 		}
