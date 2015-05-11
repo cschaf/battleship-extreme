@@ -44,6 +44,11 @@ class ConsoleGame {
 		System.out.println();
 		System.out.println("Spiel zu Ende");
 		System.out.println((int) Math.floor(game.getTurnNumber() / game.getPlayers().length) + " Runden");
+		for (Player player : game.getPlayers()) {
+			if (player.hasLost()) {
+				System.out.println(player + " ist tot.");
+			}
+		}
 		System.out.println(game.getWinner() + " hat gewonnen!");
 	}
 
@@ -53,20 +58,25 @@ class ConsoleGame {
 		this.game = null;
 		do {
 			System.out.println("(1) Erzeuge Spiel manuell");
-			System.out.println("(2) AI-Kampf");
-			System.out.println("(3) AI-Benchmark");
-			System.out.println("(4) Zuletzt gespeichertes Spiel fortsetzen");
-			int choice = readIntegerWithMinMax(1, 4);
+			System.out.println("(2) AI-Kampf (1 schlaue KI und 1 dumme KI)");
+			System.out.println("(3) AI-Kampf (2 schlaue KIs und 2 dumme KIs)");
+			System.out.println("(4) AI-Benchmark (Zeigt Runden-Durchschnitt von 1000 Spielen mit 2 schlauen KIs)");
+			System.out.println("(5) Zuletzt gespeichertes Spiel fortsetzen");
+			int choice = readIntegerWithMinMax(1, 5);
 			switch (choice) {
 			case 1:
 				createGameManually();
 				break;
 			case 2:
-				createAiGame();
+				createAiGame(1, 1);
 				break;
 			case 3:
-				createKIBenchmark();
+				createAiGame(2, 2);
+				break;
 			case 4:
+				createKIBenchmark();
+				break;
+			case 5:
 				tryToLoadGame();
 			}
 		} while (this.game == null);
@@ -82,11 +92,10 @@ class ConsoleGame {
 		}
 	}
 
-	private void createAiGame() {
-		// Spiel mit 2 KIs erzeugen
+	private void createAiGame(int numberOfSmartAis, int numberOfDumbAis) {
 		Settings settings = null;
 		try {
-			settings = new Settings(0, 2, 10, 1, 1, 1, 1);
+			settings = new Settings(0, numberOfSmartAis, numberOfDumbAis, 10, 1, 1, 1, 1);
 		} catch (BoardTooSmallException e) {
 			e.printStackTrace();
 		} catch (InvalidPlayerNumberException e) {
@@ -100,8 +109,6 @@ class ConsoleGame {
 			game.setBeginningPlayer(0);
 			placeShips();
 		}
-
-		System.out.println("AI-Spiel erfolgreich erzeugt");
 	}
 
 	private void createKIBenchmark() {
@@ -117,7 +124,8 @@ class ConsoleGame {
 
 		for (int i = 0; i < numberOfGames; i++) {
 			System.out.println("Spiel-Nr" + i);
-			createAiGame();
+			// Spiel mit zwei schlauen Ais erzeugen
+			createAiGame(2, 0);
 			gameLoop();
 			roundNumbersOfEachGame[i] = (int) Math.floor(game.getTurnNumber() / game.getPlayers().length);
 		}
@@ -163,7 +171,7 @@ class ConsoleGame {
 		int submarines = readInteger();
 
 		try {
-			return new Settings(players, aiPlayers, boardSize, destroyers, frigates, corvettes, submarines);
+			return new Settings(players, aiPlayers, 0, boardSize, destroyers, frigates, corvettes, submarines);
 		} catch (BoardTooSmallException e1) {
 			System.out.println("Das Board ist zu klein! Benötigte Prozentzahl freier Felder: " + e1.getMinPercentageOfFieldsThatShouldBeEmpty() + "%, dein Feld hat nur: "
 					+ e1.getEmptyFieldPercentage() + "%");

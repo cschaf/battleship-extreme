@@ -1,23 +1,23 @@
 package de.hsbremen.battleshipextreme.model.player;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.Orientation;
-import de.hsbremen.battleshipextreme.model.ship.Ship;
 
-//AI-Benchmark: ~ 70 rounds
+/**
+ * Dumb AI - shoots randomly
+ * 
+ * AI-Benchmark: ~ 70 rounds
+ *
+ */
 
-public class DumbAIPlayer extends Player {
-
-	private Player currentEnemy;
-
+public class DumbAIPlayer extends AIPlayer {
 	Field[] nextTargetsArray;
 
 	public DumbAIPlayer(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 		super(boardSize, destroyers, frigates, corvettes, submarines);
-		this.name = "AI" + currentId;
+		this.name = "Dumme KI" + currentId;
 		this.type = PlayerType.AI;
 	}
 
@@ -64,27 +64,4 @@ public class DumbAIPlayer extends Player {
 
 	}
 
-	private void chooseShipToShootWithRandomly() {
-		// zuf‰lliges freies Schiff zum Schieﬂen w‰hlen
-		ArrayList<Ship> availableShips = this.getAvailableShips();
-		int randomShipIndex = generateRandomNumber(0, availableShips.size() - 1);
-		this.currentShip = this.getAvailableShips().get(randomShipIndex);
-	}
-
-	private Field generateField(Orientation orientation, int shipSize) {
-		int xPos;
-		int yPos;
-		xPos = generateRandomNumber(0, this.board.getSize() - 1);
-		yPos = generateRandomNumber(0, this.board.getSize() - 1);
-		return new Field(xPos, yPos);
-	}
-
-	private int generateRandomNumber(int min, int max) {
-		Random random = new Random();
-		return random.nextInt(max - min + 1) + min;
-	}
-
-	public Player getCurrentEnemy() {
-		return currentEnemy;
-	}
 }

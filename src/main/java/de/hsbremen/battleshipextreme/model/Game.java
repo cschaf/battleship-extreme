@@ -13,8 +13,10 @@ import java.util.Arrays;
 import java.util.Random;
 
 import de.hsbremen.battleshipextreme.model.player.AIPlayer;
+import de.hsbremen.battleshipextreme.model.player.DumbAIPlayer;
 import de.hsbremen.battleshipextreme.model.player.HumanPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
+import de.hsbremen.battleshipextreme.model.player.SmartAIPlayer;
 
 public class Game implements Serializable {
 	private Player[] players;
@@ -23,16 +25,21 @@ public class Game implements Serializable {
 	private int turnNumber;
 
 	public Game(Settings settings) {
+		// Spieler erzeugen
 		int numberOfHumanPlayers = settings.getPlayers();
-		int numberOfAIPlayers = settings.getAiPlayers();
-		int numberOfPlayers = numberOfAIPlayers + numberOfHumanPlayers;
+		int numberOfAIPlayers = settings.getSmartAiPlayers();
+		int numberOfDumbAIPlayers = settings.getDumbAiPlayers();
+		int numberOfPlayers = numberOfAIPlayers + numberOfHumanPlayers + numberOfDumbAIPlayers;
 		this.players = new Player[numberOfPlayers];
 		// menschliche Spieler erzeugen
 		for (int i = 0; i < numberOfHumanPlayers; i++)
 			this.players[i] = new HumanPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
-		// KI-Spieler erzeugen
-		for (int i = numberOfHumanPlayers; i < numberOfPlayers; i++)
-			this.players[i] = new AIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
+		// schlaue KI-Spieler erzeugen
+		for (int i = numberOfHumanPlayers; i < numberOfAIPlayers + numberOfHumanPlayers; i++)
+			this.players[i] = new SmartAIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
+		// dumme KI-Spieler erzeugen
+		for (int i = numberOfHumanPlayers + numberOfAIPlayers; i < numberOfPlayers; i++)
+			this.players[i] = new DumbAIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
 
 		this.turnNumber = 0;
 		this.currentPlayer = null;

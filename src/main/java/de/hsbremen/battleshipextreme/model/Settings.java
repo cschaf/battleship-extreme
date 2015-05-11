@@ -6,7 +6,8 @@ import de.hsbremen.battleshipextreme.model.exception.InvalidPlayerNumberExceptio
 
 public class Settings {
 	private int players;
-	private int aiPlayers;
+	private int smartAiPlayers;
+	private int dumbAiPlayers;
 	private int boardSize;
 	private int destroyers;
 	private int frigates;
@@ -23,10 +24,11 @@ public class Settings {
 	private static final int MIN_PLAYERS = 2;
 	private static final int MAX_PLAYERS = 6;
 
-	public Settings(int players, int aiPlayers, int boardSize, int destroyers, int frigates, int corvettes, int submarines) throws BoardTooSmallException, InvalidPlayerNumberException,
-			InvalidNumberOfShipsException {
+	public Settings(int players, int aiPlayers, int dumbAiPlayers, int boardSize, int destroyers, int frigates, int corvettes, int submarines) throws BoardTooSmallException,
+			InvalidPlayerNumberException, InvalidNumberOfShipsException {
 		this.players = players;
-		this.aiPlayers = aiPlayers;
+		this.smartAiPlayers = aiPlayers;
+		this.dumbAiPlayers = dumbAiPlayers;
 		this.boardSize = boardSize;
 		this.boardSize = boardSize;
 		this.destroyers = destroyers;
@@ -39,8 +41,12 @@ public class Settings {
 
 	}
 
-	public int getAiPlayers() {
-		return aiPlayers;
+	public int getSmartAiPlayers() {
+		return smartAiPlayers;
+	}
+
+	public int getDumbAiPlayers() {
+		return dumbAiPlayers;
 	}
 
 	public int getPlayers() {
@@ -100,7 +106,8 @@ public class Settings {
 	}
 
 	private void validateNumberOfPlayers() throws InvalidPlayerNumberException {
-		if ((this.players + this.aiPlayers < MIN_PLAYERS) || (this.players + this.aiPlayers > MAX_PLAYERS))
+		int numberOfPlayers = this.players + this.smartAiPlayers + this.dumbAiPlayers;
+		if ((numberOfPlayers < MIN_PLAYERS) || (numberOfPlayers > MAX_PLAYERS))
 			throw new InvalidPlayerNumberException(MIN_PLAYERS, MAX_PLAYERS);
 	}
 
