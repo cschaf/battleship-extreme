@@ -10,6 +10,7 @@ import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 
+//AI-Benchmark: ~ 55 rounds
 public class AIPlayer extends Player {
 	private Player currentEnemy;
 	private Player nextEnemy;
@@ -110,12 +111,12 @@ public class AIPlayer extends Player {
 			hasTurnBeenMade = super.makeTurn(this.currentEnemy, target.getXPos(), target.getYPos(), orientation);
 			// wenn Treffer, dann nach nächstem unbeschossenen Feld in
 			// selbe Richtung suchen und als nächstes Ziel speichern
-			Field field = getFirstHitOfShot(target, orientation);
-			if ((field != null) && (field.getState() != FieldState.Destroyed)) {
+			if (target.hasShip()) {
 				int[] directionArray = determineDirection(currentDirection);
 				int xDirection = directionArray[0];
 				int yDirection = directionArray[1];
-				Field newTarget = findNextFreeField(field, xDirection, yDirection);
+				Field newTarget = findNextFreeField(target, xDirection, yDirection);
+				// neues Ziel in gleiche Richtung setzen
 				this.nextTargetsArray[currentDirection] = newTarget;
 			} else {
 				// wenn kein Treffer, dann Target löschen
@@ -254,22 +255,9 @@ public class AIPlayer extends Player {
 	private Field generateField(Orientation orientation, int shipSize) {
 		int xPos;
 		int yPos;
-		int xMax;
-		int yMax;
-
-		if (orientation == Orientation.Horizontal) {
-			xMax = this.board.getSize() - shipSize;
-			yMax = this.board.getSize() - 1;
-		} else {
-			xMax = this.board.getSize() - 1;
-			yMax = this.board.getSize() - shipSize;
-		}
-
-		xPos = generateRandomNumber(0, xMax);
-		yPos = generateRandomNumber(0, yMax);
-
+		xPos = generateRandomNumber(0, this.board.getSize() - 1);
+		yPos = generateRandomNumber(0, this.board.getSize() - 1);
 		return new Field(xPos, yPos);
-
 	}
 
 	private int generateRandomNumber(int min, int max) {

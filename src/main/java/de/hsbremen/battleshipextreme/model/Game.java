@@ -21,8 +21,6 @@ public class Game implements Serializable {
 	private Player currentPlayer;
 	private Player winner;
 	private int turnNumber;
-	private int currentRound;
-	private boolean isNewRound;
 
 	public Game(Settings settings) {
 		int numberOfHumanPlayers = settings.getPlayers();

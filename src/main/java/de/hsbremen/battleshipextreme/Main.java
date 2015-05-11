@@ -31,15 +31,12 @@ class ConsoleGame {
 	private Scanner input;
 	private static final String SAVEGAME_FILENAME = "savegame.sav";
 	private Game game;
-	private int currentRound;
 
 	public ConsoleGame() {
 		input = new Scanner(System.in);
 		createGame();
 		gameLoop();
-
 		printGameStats();
-
 		input.close();
 	}
 
@@ -57,16 +54,19 @@ class ConsoleGame {
 		do {
 			System.out.println("(1) Erzeuge Spiel manuell");
 			System.out.println("(2) AI-Kampf");
-			System.out.println("(3) Zuletzt gespeichertes Spiel fortsetzen");
+			System.out.println("(3) AI-Benchmark");
+			System.out.println("(4) Zuletzt gespeichertes Spiel fortsetzen");
 			int choice = readIntegerWithMinMax(1, 3);
 			switch (choice) {
 			case 1:
 				createGameManually();
 				break;
 			case 2:
-				createGameWithoutInput();
+				createAiGame();
 				break;
 			case 3:
+				createKIBenchmark();
+			case 4:
 				tryToLoadGame();
 			}
 		} while (this.game == null);
@@ -82,11 +82,11 @@ class ConsoleGame {
 		}
 	}
 
-	private void createGameWithoutInput() {
-		// Spiel mit 3 KIs erzeugen
+	private void createAiGame() {
+		// Spiel mit 2 KIs erzeugen
 		Settings settings = null;
 		try {
-			settings = new Settings(0, 2, 10, 2, 1, 1, 1);
+			settings = new Settings(0, 2, 10, 1, 1, 1, 1);
 		} catch (BoardTooSmallException e) {
 			e.printStackTrace();
 		} catch (InvalidPlayerNumberException e) {
@@ -100,6 +100,36 @@ class ConsoleGame {
 			game.setBeginningPlayer(0);
 			placeShips();
 		}
+
+		System.out.println("AI-Spiel erfolgreich erzeugt");
+	}
+
+	private void createKIBenchmark() {
+		// Methode dient zum Auswerten der Effektivität einer KI
+		//
+		// erzeugt mehrere Spiele und gibt am Ende den
+		// Durchschnitt der benötigten Rundenanzahl aus
+		//
+		// eine AI die zufällig schießt, braucht im Schnitt ca. 70 Runden
+
+		int numberOfGames = 1000;
+		int[] roundNumbersOfEachGame = new int[numberOfGames];
+
+		for (int i = 0; i < numberOfGames; i++) {
+			System.out.println("Spiel-Nr" + i);
+			createAiGame();
+			gameLoop();
+			roundNumbersOfEachGame[i] = (int) Math.floor(game.getTurnNumber() / game.getPlayers().length);
+		}
+		// Durchschnitt ausrechnen
+		int sum = 0;
+		for (Integer i : roundNumbersOfEachGame) {
+			sum += i;
+		}
+		float average = sum / numberOfGames;
+		System.out.println("------------------------------------------------------------------------");
+		System.out.println("Durchschnittliche Rundenanzahl aus " + numberOfGames + ": " + average);
+		System.exit(0);
 	}
 
 	private Game tryToLoadGame() {
@@ -242,15 +272,15 @@ class ConsoleGame {
 			e.printStackTrace();
 		}
 		// von AI beschossenes Board ausgeben
-		if (ai.getName().equals("AI1")) {
-			System.out.println(ai + " greift " + ai.getCurrentEnemy() + " mit " + ai.getCurrentShip() + " an.");
-			System.out.println();
-			System.out.println("Board von " + ai.getCurrentEnemy());
-			System.out.println();
+		// if (ai.getName().equals("AI1")) {
+		System.out.println(ai + " greift " + ai.getCurrentEnemy() + " mit " + ai.getCurrentShip() + " an.");
+		System.out.println();
+		System.out.println("Board von " + ai.getCurrentEnemy());
+		System.out.println();
 
-			printBoard(ai.getCurrentEnemy().getBoard(), false);
-			System.out.println();
-		}
+		printBoard(ai.getCurrentEnemy().getBoard(), false);
+		System.out.println();
+		// }
 	}
 
 	private void makePlayerTurn() {
