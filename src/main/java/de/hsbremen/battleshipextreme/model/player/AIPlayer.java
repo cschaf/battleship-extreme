@@ -21,6 +21,7 @@ public abstract class AIPlayer extends Player {
 		this.type = PlayerType.AI;
 	}
 
+	// TODO: keine Exception abfangen
 	public void placeShipsAutomatically() {
 		boolean isItPossibleToPlaceShip;
 		for (int i = 0; i < this.ships.length; i++) {
@@ -40,6 +41,7 @@ public abstract class AIPlayer extends Player {
 		}
 	}
 
+	// TODO: keine Exception abfangen
 	public void makeTurnAutomatically(ArrayList<Player> availablePlayers) throws Exception {
 		Orientation orientation;
 		boolean hasTurnBeenMade = false;
