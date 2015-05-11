@@ -56,7 +56,7 @@ class ConsoleGame {
 			System.out.println("(2) AI-Kampf");
 			System.out.println("(3) AI-Benchmark");
 			System.out.println("(4) Zuletzt gespeichertes Spiel fortsetzen");
-			int choice = readIntegerWithMinMax(1, 3);
+			int choice = readIntegerWithMinMax(1, 4);
 			switch (choice) {
 			case 1:
 				createGameManually();

@@ -206,6 +206,7 @@ public class Game implements Serializable {
 			this.players = game.players;
 			this.currentPlayer = game.currentPlayer;
 			this.winner = game.winner;
+			this.turnNumber = game.turnNumber;
 			save.close();
 		} catch (Exception ex1) {
 			throw ex1;
