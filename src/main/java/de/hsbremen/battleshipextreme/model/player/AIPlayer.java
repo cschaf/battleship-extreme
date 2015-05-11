@@ -23,7 +23,7 @@ public abstract class AIPlayer extends Player {
 
 	public void placeShipsAutomatically() {
 		boolean isItPossibleToPlaceShip;
-		for (int i = 0; i < super.getShips().length; i++) {
+		for (int i = 0; i < this.ships.length; i++) {
 			do {
 				isItPossibleToPlaceShip = false;
 				// zufällige Position generieren
@@ -31,7 +31,7 @@ public abstract class AIPlayer extends Player {
 				orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
 				Field field = generateField(orientation, this.getCurrentShip().getSize());
 				try {
-					super.placeShip(field.getXPos(), field.getYPos(), orientation);
+					placeShip(field.getXPos(), field.getYPos(), orientation);
 					isItPossibleToPlaceShip = true;
 				} catch (Exception e) {
 				}
@@ -55,7 +55,7 @@ public abstract class AIPlayer extends Player {
 			orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
 			Field field = generateField(orientation, this.currentShip.getSize());
 			try {
-				hasTurnBeenMade = super.makeTurn(this.currentEnemy, field.getXPos(), field.getYPos(), orientation);
+				hasTurnBeenMade = makeTurn(this.currentEnemy, field.getXPos(), field.getYPos(), orientation);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
