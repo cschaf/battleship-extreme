@@ -37,7 +37,7 @@ public abstract class AIPlayer extends Player {
 				} catch (Exception e) {
 				}
 			} while (!isItPossibleToPlaceShip);
-			super.nextShip();
+			nextShip();
 		}
 	}
 

@@ -16,7 +16,7 @@ import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
  */
 public class SmartAIPlayer extends AIPlayer {
 	private Player nextEnemy;
-	Field[] nextTargetsArray;
+	private Field[] nextTargetsArray;
 
 	public SmartAIPlayer(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 		super(boardSize, destroyers, frigates, corvettes, submarines);
@@ -72,9 +72,11 @@ public class SmartAIPlayer extends AIPlayer {
 			// wenn Ziel vorhanden ist, dann auf Ziel schieﬂen
 			Field target = this.nextTargetsArray[currentDirection];
 
-			// Ausrichtung beibehalten
-			orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
-			hasTurnBeenMade = super.makeTurn(this.currentEnemy, target.getXPos(), target.getYPos(), orientation);
+			// wenn Richtung Osten oder Westen, dann Ausrichtung horizontal,
+			// ansonsten vertikal
+			orientation = (currentDirection == 1 || currentDirection == 3) ? Orientation.Horizontal : Orientation.Vertical;
+
+			hasTurnBeenMade = makeTurn(this.currentEnemy, target.getXPos(), target.getYPos(), orientation);
 			// wenn Treffer, dann nach n‰chstem unbeschossenen Feld in
 			// selbe Richtung suchen und als n‰chstes Ziel speichern
 			if (target.hasShip()) {
