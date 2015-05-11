@@ -17,6 +17,10 @@ import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 public class SmartAIPlayer extends AIPlayer {
 	private Player nextEnemy;
 	private Field[] nextTargetsArray;
+	private final int NORTH = 0;
+	private final int SOUTH = 1;
+	private final int EAST = 2;
+	private final int WEST = 3;
 
 	public SmartAIPlayer(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 		super(boardSize, destroyers, frigates, corvettes, submarines);
@@ -26,7 +30,7 @@ public class SmartAIPlayer extends AIPlayer {
 	@Override
 	public void makeTurnAutomatically(ArrayList<Player> availablePlayers) throws Exception {
 		Orientation orientation;
-		int currentDirection;
+		int currentDirection = 0;
 		boolean hasTurnBeenMade = false;
 		Field fieldShotAt = null;
 
@@ -53,7 +57,7 @@ public class SmartAIPlayer extends AIPlayer {
 			} while (!hasTurnBeenMade);
 
 			Field hitField = getFirstHitOfShot(fieldShotAt, orientation);
-			// wenn Treffer, dann Gegner merken und nächste Schüsse planen
+			// wenn Treffer, dann Gegner merken und nächsten Schüsse planen
 			if (hitField != null) {
 				this.nextEnemy = this.currentEnemy;
 				planNextShots(hitField);
@@ -75,13 +79,14 @@ public class SmartAIPlayer extends AIPlayer {
 
 			// wenn Richtung Osten oder Westen, dann Ausrichtung horizontal,
 			// ansonsten vertikal
-			orientation = (currentDirection == 1 || currentDirection == 3) ? Orientation.Horizontal : Orientation.Vertical;
+			orientation = (currentDirection == EAST || currentDirection == WEST) ? Orientation.Horizontal : Orientation.Vertical;
 
 			hasTurnBeenMade = makeTurn(this.currentEnemy, adjustX(target, currentDirection), adjustY(target, currentDirection), orientation);
 			// wenn Treffer, dann nach nächstem unbeschossenen Feld in
 			// selbe Richtung suchen und als nächstes Ziel speichern
 
 			if (target.hasShip()) {
+				// wenn Treffer
 				if (target.getState() != FieldState.Destroyed) {
 					int[] directionArray = getDirectionArray(currentDirection);
 					int xDirection = directionArray[0];
@@ -105,13 +110,13 @@ public class SmartAIPlayer extends AIPlayer {
 
 	private int adjustX(Field target, int currentDirection) throws FieldOutOfBoardException {
 		// wenn Richtung Westen , dann gehe Schussweite nach links um mehr
-		// felder zu treffen
-		int adjustedX = target.getXPos();
-		int range = this.currentShip.getShootingRange() - 1;
+		// Felder zu treffen
 		Board enemyBoard = this.currentEnemy.getBoard();
+		int range = this.currentShip.getShootingRange() - 1;
+		int adjustedX = target.getXPos();
 		int targetYPos = target.getYPos();
 
-		if (currentDirection == 3) {
+		if (currentDirection == WEST) {
 			for (int i = 0; i < range; i++) {
 				if (enemyBoard.containsFieldAtPosition(adjustedX - 1, targetYPos)) {
 					if (!enemyBoard.getField(adjustedX - 1, target.getYPos()).isHit()) {
@@ -128,11 +133,11 @@ public class SmartAIPlayer extends AIPlayer {
 	private int adjustY(Field target, int currentDirection) throws FieldOutOfBoardException {
 		// wenn Richtung Norden, um Schussweite hoch gehen, um mehr Felder zu
 		// treffen
-		int range = this.currentShip.getShootingRange() - 1;
 		Board enemyBoard = this.currentEnemy.getBoard();
+		int range = this.currentShip.getShootingRange() - 1;
 		int adjustedY = target.getYPos();
 		int targetXPos = target.getXPos();
-		if (currentDirection == 0) {
+		if (currentDirection == NORTH) {
 			for (int i = 0; i < range; i++) {
 				if (enemyBoard.containsFieldAtPosition(targetXPos, adjustedY - 1)) {
 					if (!enemyBoard.getField(targetXPos, adjustedY - 1).isHit()) {
@@ -187,17 +192,13 @@ public class SmartAIPlayer extends AIPlayer {
 	private int[] getDirectionArray(int direction) {
 		// liefert ein Array mit x- und y-Richtung
 		switch (direction) {
-		case 0:
-			// Norden
+		case NORTH:
 			return new int[] { 0, -1 };
-		case 1:
-			// Osten
-			return new int[] { 1, 0 };
-		case 2:
-			// Süden
+		case SOUTH:
 			return new int[] { 0, 1 };
-		case 3:
-			// Westen
+		case EAST:
+			return new int[] { 1, 0 };
+		case WEST:
 			return new int[] { -1, 0 };
 		default:
 			break;
