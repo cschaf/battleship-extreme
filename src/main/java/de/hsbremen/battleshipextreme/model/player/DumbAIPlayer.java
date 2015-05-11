@@ -18,7 +18,6 @@ public class DumbAIPlayer extends AIPlayer {
 	public DumbAIPlayer(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 		super(boardSize, destroyers, frigates, corvettes, submarines);
 		this.name = "Dumme KI" + currentId;
-		this.type = PlayerType.AI;
 	}
 
 	public void placeShipsAutomatically() {
