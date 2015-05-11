@@ -107,9 +107,9 @@ public class SmartAIPlayer extends AIPlayer {
 	}
 
 	private int getCurrentDirection() {
+		// ermittle aktuelle Himmelsrichtung
 		int currentDirection = 0;
 		while ((currentDirection < 4) && (this.nextTargetsArray[currentDirection] == null)) {
-			// Finde nächstes Ziel
 			currentDirection++;
 		}
 		return currentDirection;
@@ -132,8 +132,7 @@ public class SmartAIPlayer extends AIPlayer {
 	}
 
 	private int[] getDirectionArray(int direction) {
-		// wenn Treffer, dann in die selbe Richtung
-		// weitergehen
+		// liefert ein Array mit x- und y-Richtung
 		switch (direction) {
 		case 0:
 			// Norden
@@ -179,6 +178,7 @@ public class SmartAIPlayer extends AIPlayer {
 				step++;
 			} else {
 				// Feld nicht mehr im Board
+				// Ziel nicht merken
 				target = null;
 				endLoop = true;
 			}
@@ -188,7 +188,7 @@ public class SmartAIPlayer extends AIPlayer {
 
 	private Field getFirstHitOfShot(Field field, Orientation orientation) throws FieldOutOfBoardException {
 		// prüft ob ein zufälliger Schuss (teilweise) getroffen hat
-		// gibt den ersten Treffer zurück
+		// gibt den ersten gefundenen Treffer zurück
 		// gibt null zurück, wenn es keinen Treffer gab
 		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
 		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
