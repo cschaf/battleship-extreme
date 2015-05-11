@@ -10,7 +10,7 @@ import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 
-//AI-Benchmark: ~ 55 rounds
+//AI-Benchmark: ~ 50 rounds (70 rounds = random)
 public class AIPlayer extends Player {
 	private Player currentEnemy;
 	private Player nextEnemy;
@@ -115,7 +115,7 @@ public class AIPlayer extends Player {
 				int[] directionArray = getDirectionArray(currentDirection);
 				int xDirection = directionArray[0];
 				int yDirection = directionArray[1];
-				Field newTarget = findNextFreeField(target, xDirection, yDirection);
+				Field newTarget = findNextPotentialTarget(target, xDirection, yDirection);
 				// neues Ziel in gleiche Richtung setzen
 				this.nextTargetsArray[currentDirection] = newTarget;
 			} else {
@@ -157,16 +157,18 @@ public class AIPlayer extends Player {
 	}
 
 	private void planNextShots(Field hitField) throws FieldOutOfBoardException {
+		// bekommt ein getroffenes Feld übergeben und guckt in alle
+		// Himmelsrichtungen nach potenziellen Zielen
 		this.nextTargetsArray = new Field[4];
-		Field f;
+		Field target;
 		int[] directions = new int[2];
-		// N=0 O=1 S=2 W=3
+		// Norden=0 Osten=1 Süden=2 Westen=3
 		for (int i = 0; i < 4; i++) {
 			directions = getDirectionArray(i);
-			f = findNextFreeField(hitField, directions[0], directions[1]);
-			if (f != null)
+			target = findNextPotentialTarget(hitField, directions[0], directions[1]);
+			if (target != null)
 				// wenn potenzielles Ziel gefunden, dann Feld merken
-				this.nextTargetsArray[i] = f;
+				this.nextTargetsArray[i] = target;
 		}
 	}
 
@@ -176,13 +178,13 @@ public class AIPlayer extends Player {
 		switch (direction) {
 		case 0:
 			// Norden
-			return new int[] { 0, 1 };
+			return new int[] { 0, -1 };
 		case 1:
 			// Osten
 			return new int[] { -1, 0 };
 		case 2:
 			// Süden
-			return new int[] { 0, -1 };
+			return new int[] { 0, 1 };
 		case 3:
 			// Westen
 			return new int[] { 1, 0 };
@@ -192,37 +194,43 @@ public class AIPlayer extends Player {
 		return null;
 	}
 
-	private Field findNextFreeField(Field field, int xDirection, int yDirection) throws FieldOutOfBoardException {
+	private Field findNextPotentialTarget(Field field, int xDirection, int yDirection) throws FieldOutOfBoardException {
+		// sucht nach dem nächsten Feld als potenzielles Ziel, ausgehend vom
+		// übergebenen Feld
 		Board enemyBoard = this.currentEnemy.getBoard();
 		int step = 0;
 		int x;
 		int y;
 		boolean endLoop = false;
-		Field f = null;
+		Field target = null;
 		do {
 			x = field.getXPos() + step * xDirection;
 			y = field.getYPos() + step * yDirection;
 			if (enemyBoard.containsFieldAtPosition(x, y)) {
-				f = enemyBoard.getField(x, y);
-				if ((f.getState() == FieldState.Missed) || (f.getState() == FieldState.Destroyed)) {
+				target = enemyBoard.getField(x, y);
+				if ((target.getState() == FieldState.Missed) || (target.getState() == FieldState.Destroyed)) {
 					// wenn Schiff verfehlt oder zerstört wurde, Ziel nicht
 					// merken
-					f = null;
+					target = null;
 					endLoop = true;
-				} else if (!f.isHit()) {
+				} else if (!target.isHit()) {
 					// wenn Feld noch nicht beschossen wurde, Feld merken
 					endLoop = true;
 				}
 				step++;
 			} else {
-				f = null;
+				// Feld nicht mehr im Board
+				target = null;
 				endLoop = true;
 			}
 		} while (!endLoop);
-		return f;
+		return target;
 	}
 
 	private Field getFirstHitOfShot(Field field, Orientation orientation) throws FieldOutOfBoardException {
+		// prüft ob ein zufälliger Schuss (teilweise) getroffen hat
+		// gibt den ersten Treffer zurück
+		// gibt null zurück, wenn es keinen Treffer gab
 		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
 		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
 		int x;
