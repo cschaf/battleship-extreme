@@ -29,6 +29,7 @@ public class SmartAIPlayer extends AIPlayer {
 		int currentDirection;
 		boolean hasTurnBeenMade = false;
 		Field fieldShotAt = null;
+
 		chooseShipToShootWithRandomly();
 
 		if (!this.hasTargets()) {
@@ -44,7 +45,7 @@ public class SmartAIPlayer extends AIPlayer {
 				orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
 				fieldShotAt = generateField(orientation, this.currentShip.getSize());
 				try {
-					hasTurnBeenMade = super.makeTurn(this.currentEnemy, fieldShotAt.getXPos(), fieldShotAt.getYPos(), orientation);
+					hasTurnBeenMade = makeTurn(this.currentEnemy, fieldShotAt.getXPos(), fieldShotAt.getYPos(), orientation);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -79,13 +80,21 @@ public class SmartAIPlayer extends AIPlayer {
 			hasTurnBeenMade = makeTurn(this.currentEnemy, target.getXPos(), target.getYPos(), orientation);
 			// wenn Treffer, dann nach nächstem unbeschossenen Feld in
 			// selbe Richtung suchen und als nächstes Ziel speichern
+
 			if (target.hasShip()) {
-				int[] directionArray = getDirectionArray(currentDirection);
-				int xDirection = directionArray[0];
-				int yDirection = directionArray[1];
-				Field newTarget = findNextPotentialTarget(target, xDirection, yDirection);
-				// neues Ziel in gleiche Richtung setzen
-				this.nextTargetsArray[currentDirection] = newTarget;
+				if (target.getState() != FieldState.Destroyed) {
+					int[] directionArray = getDirectionArray(currentDirection);
+					int xDirection = directionArray[0];
+					int yDirection = directionArray[1];
+					Field newTarget = findNextTarget(target, xDirection, yDirection);
+					// neues Ziel in gleiche Richtung setzen
+					this.nextTargetsArray[currentDirection] = newTarget;
+				} else {
+					// Schiff zerstört, komplettes targetArray löschen,
+					// da die Spur nicht mehr verfolgt werden muss
+					this.nextTargetsArray = null;
+					this.nextEnemy = null;
+				}
 			} else {
 				// wenn kein Treffer, dann Target löschen
 				this.nextTargetsArray[currentDirection] = null;
@@ -126,7 +135,7 @@ public class SmartAIPlayer extends AIPlayer {
 		// Norden=0 Osten=1 Süden=2 Westen=3
 		for (int i = 0; i < 4; i++) {
 			directions = getDirectionArray(i);
-			target = findNextPotentialTarget(hitField, directions[0], directions[1]);
+			target = findNextTarget(hitField, directions[0], directions[1]);
 			if (target != null)
 				// wenn potenzielles Ziel gefunden, dann Feld merken
 				this.nextTargetsArray[i] = target;
@@ -154,7 +163,7 @@ public class SmartAIPlayer extends AIPlayer {
 		return null;
 	}
 
-	private Field findNextPotentialTarget(Field field, int xDirection, int yDirection) throws FieldOutOfBoardException {
+	private Field findNextTarget(Field field, int xDirection, int yDirection) throws FieldOutOfBoardException {
 		// sucht nach dem nächsten Feld als potenzielles Ziel, ausgehend vom
 		// übergebenen Feld
 		Board enemyBoard = this.currentEnemy.getBoard();
