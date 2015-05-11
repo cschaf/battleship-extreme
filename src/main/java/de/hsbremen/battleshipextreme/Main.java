@@ -126,7 +126,7 @@ class ConsoleGame {
 		for (Integer i : roundNumbersOfEachGame) {
 			sum += i;
 		}
-		float average = sum / numberOfGames;
+		float average = (float) sum / (float) numberOfGames;
 		System.out.println("------------------------------------------------------------------------");
 		System.out.println("Durchschnittliche Rundenanzahl aus " + numberOfGames + ": " + average);
 		System.exit(0);

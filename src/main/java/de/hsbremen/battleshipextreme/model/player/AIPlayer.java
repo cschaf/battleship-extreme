@@ -112,7 +112,7 @@ public class AIPlayer extends Player {
 			// wenn Treffer, dann nach nächstem unbeschossenen Feld in
 			// selbe Richtung suchen und als nächstes Ziel speichern
 			if (target.hasShip()) {
-				int[] directionArray = determineDirection(currentDirection);
+				int[] directionArray = getDirectionArray(currentDirection);
 				int xDirection = directionArray[0];
 				int yDirection = directionArray[1];
 				Field newTarget = findNextFreeField(target, xDirection, yDirection);
@@ -134,16 +134,15 @@ public class AIPlayer extends Player {
 	}
 
 	private boolean hasTargets() {
-		// Ziele zum anvisieren übrig
-		// lebt der anvisierte Gegner noch?
+		// Ziele zum anvisieren übrig?
 		boolean hasTargets;
-
 		int i = 0;
 		if (this.nextTargetsArray != null) {
 			while ((i < 4) && (this.nextTargetsArray[i] == null)) {
 				i++;
 			}
 		}
+		// Index innerhalb des targetArrays? Lebt der gemerkte Spieler noch?
 		hasTargets = (i < 4) && this.nextTargetsArray != null && this.nextEnemy != null && !this.nextEnemy.hasLost();
 		return hasTargets;
 	}
@@ -158,32 +157,20 @@ public class AIPlayer extends Player {
 	}
 
 	private void planNextShots(Field hitField) throws FieldOutOfBoardException {
-
 		this.nextTargetsArray = new Field[4];
-
 		Field f;
-		// finde Ziel nördlich vom Treffer
-		f = findNextFreeField(hitField, 0, 1);
-		if (f != null)
-			this.nextTargetsArray[0] = f;
-
-		// finde Ziel östlich vom Treffer
-		f = findNextFreeField(hitField, 1, 0);
-		if (f != null)
-			this.nextTargetsArray[1] = f;
-
-		// finde Ziel südlich vom Treffer
-		f = findNextFreeField(hitField, 0, -1);
-		if (f != null)
-			this.nextTargetsArray[2] = f;
-
-		// finde Ziel westlich vom Treffer
-		f = findNextFreeField(hitField, -1, 0);
-		if (f != null)
-			this.nextTargetsArray[3] = f;
+		int[] directions = new int[2];
+		// N=0 O=1 S=2 W=3
+		for (int i = 0; i < 4; i++) {
+			directions = getDirectionArray(i);
+			f = findNextFreeField(hitField, directions[0], directions[1]);
+			if (f != null)
+				// wenn potenzielles Ziel gefunden, dann Feld merken
+				this.nextTargetsArray[i] = f;
+		}
 	}
 
-	private int[] determineDirection(int direction) {
+	private int[] getDirectionArray(int direction) {
 		// wenn Treffer, dann in die selbe Richtung
 		// weitergehen
 		switch (direction) {
