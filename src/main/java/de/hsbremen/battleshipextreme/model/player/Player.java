@@ -214,8 +214,9 @@ public abstract class Player implements Serializable {
 	 * @return true if the turn has been made, false if the turn was not
 	 *         possible
 	 * @throws Exception
-	 *             if the player tries to attack himself or if the player is
-	 *             already dead.
+	 *             if the player tries to attack himself. If the
+	 *             attacking/attacked player is already dead. If all ships are
+	 *             reloading.
 	 */
 	public boolean makeTurn(Player player, int xPos, int yPos, Orientation orientation) throws Exception {
 		boolean hasTurnBeenMade = true;
@@ -223,7 +224,11 @@ public abstract class Player implements Serializable {
 			throw new Exception("The player can't attack himself!");
 		}
 		if (player.hasLost()) {
-			throw new Exception("Player is already dead!");
+			throw new Exception(player + " is already dead!");
+		}
+
+		if (this.hasLost()) {
+			throw new Exception(this + " is already dead!");
 		}
 
 		if (this.areAllShipsReloading()) {
