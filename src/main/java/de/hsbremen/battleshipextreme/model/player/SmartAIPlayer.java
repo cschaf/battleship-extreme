@@ -43,13 +43,28 @@ public class SmartAIPlayer extends AIPlayer {
 			this.nextEnemy = null;
 			int randomEnemyIndex = generateRandomNumber(0, availablePlayers.size() - 1);
 			this.currentEnemy = availablePlayers.get(randomEnemyIndex);
-
+			int boardSize = this.currentEnemy.getBoard().getSize();
 			// zufällig schießen
 			do {
 				orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
 				fieldShotAt = generateField(orientation, this.currentShip.getSize());
+				
+				//wenn möglich, den Schuss so ausrichten, dass alle Schussfelder im Board sind
+				int adjustedX = fieldShotAt.getXPos();
+				int adjustedY = fieldShotAt.getYPos();	
+				//versuche x-Koordinate anzupassen
+				if (fieldShotAt.getXPos() >= boardSize) {
+					int overhang = fieldShotAt.getXPos() - boardSize;
+					adjustedX = adjustX(fieldShotAt, WEST, overhang);
+				}			
+				//versuche y-Koordinate anzupassen
+				if (fieldShotAt.getYPos() >= boardSize) {
+					int overhang = fieldShotAt.getXPos() - boardSize;
+					adjustedY = adjustY(fieldShotAt, NORTH, overhang);
+				}
+				
 				try {
-					hasTurnBeenMade = makeTurn(this.currentEnemy, fieldShotAt.getXPos(), fieldShotAt.getYPos(), orientation);
+					hasTurnBeenMade = makeTurn(this.currentEnemy, adjustedX, adjustedY, orientation);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -80,8 +95,8 @@ public class SmartAIPlayer extends AIPlayer {
 			// wenn Richtung Osten oder Westen, dann Ausrichtung horizontal,
 			// ansonsten vertikal
 			orientation = (currentDirection == EAST || currentDirection == WEST) ? Orientation.Horizontal : Orientation.Vertical;
-
-			hasTurnBeenMade = makeTurn(this.currentEnemy, adjustX(target, currentDirection), adjustY(target, currentDirection), orientation);
+			int range = this.currentShip.getShootingRange() - 1;
+			hasTurnBeenMade = makeTurn(this.currentEnemy, adjustX(target, currentDirection, range), adjustY(target, currentDirection, range), orientation);
 			// wenn Treffer, dann nach nächstem unbeschossenen Feld in
 			// selbe Richtung suchen und als nächstes Ziel speichern
 
@@ -108,11 +123,10 @@ public class SmartAIPlayer extends AIPlayer {
 
 	}
 
-	private int adjustX(Field target, int currentDirection) throws FieldOutOfBoardException {
+	private int adjustX(Field target, int currentDirection, int range) throws FieldOutOfBoardException {
 		// wenn Richtung Westen , dann gehe Schussweite nach links um mehr
 		// Felder zu treffen
 		Board enemyBoard = this.currentEnemy.getBoard();
-		int range = this.currentShip.getShootingRange() - 1;
 		int adjustedX = target.getXPos();
 		int targetYPos = target.getYPos();
 
@@ -130,11 +144,11 @@ public class SmartAIPlayer extends AIPlayer {
 		return adjustedX;
 	}
 
-	private int adjustY(Field target, int currentDirection) throws FieldOutOfBoardException {
+	private int adjustY(Field target, int currentDirection, int range) throws FieldOutOfBoardException {
 		// wenn Richtung Norden, um Schussweite hoch gehen, um mehr Felder zu
 		// treffen
 		Board enemyBoard = this.currentEnemy.getBoard();
-		int range = this.currentShip.getShootingRange() - 1;
+		
 		int adjustedY = target.getYPos();
 		int targetXPos = target.getXPos();
 		if (currentDirection == NORTH) {
@@ -179,7 +193,6 @@ public class SmartAIPlayer extends AIPlayer {
 		this.nextTargetsArray = new Field[4];
 		Field target;
 		int[] directions = new int[2];
-		// Norden=0 Osten=1 Süden=2 Westen=3
 		for (int i = 0; i < 4; i++) {
 			directions = getDirectionArray(i);
 			target = findNextTarget(hitField, directions[0], directions[1]);
