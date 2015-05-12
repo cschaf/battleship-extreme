@@ -17,6 +17,9 @@ import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 public class SmartAIPlayer extends AIPlayer {
 	private Player nextEnemy;
 	private Field[] nextTargetsArray;
+	private Field currentFieldShotAt;
+	private Orientation currentShotOrientation;
+
 	private final int NORTH = 0;
 	private final int SOUTH = 1;
 	private final int EAST = 2;
@@ -31,8 +34,6 @@ public class SmartAIPlayer extends AIPlayer {
 	public void makeTurnAutomatically(ArrayList<Player> availablePlayers) throws Exception {
 		Orientation orientation;
 		int currentDirection = 0;
-		boolean hasTurnBeenMade = false;
-		Field fieldShotAt = null;
 
 		chooseShipToShootWithRandomly();
 
@@ -43,35 +44,13 @@ public class SmartAIPlayer extends AIPlayer {
 			this.nextEnemy = null;
 			int randomEnemyIndex = generateRandomNumber(0, availablePlayers.size() - 1);
 			this.currentEnemy = availablePlayers.get(randomEnemyIndex);
-			int boardSize = this.currentEnemy.getBoard().getSize();
-			// zufällig schießen
-			do {
-				orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
-				fieldShotAt = generateField(orientation, this.currentShip.getSize());
-				
-				//wenn möglich, den Schuss so ausrichten, dass alle Schussfelder im Board sind
-				int adjustedX = fieldShotAt.getXPos();
-				int adjustedY = fieldShotAt.getYPos();	
-				//versuche x-Koordinate anzupassen
-				if (fieldShotAt.getXPos() >= boardSize) {
-					int overhang = fieldShotAt.getXPos() - boardSize;
-					adjustedX = adjustX(fieldShotAt, WEST, overhang);
-				}			
-				//versuche y-Koordinate anzupassen
-				if (fieldShotAt.getYPos() >= boardSize) {
-					int overhang = fieldShotAt.getXPos() - boardSize;
-					adjustedY = adjustY(fieldShotAt, NORTH, overhang);
-				}
-				
-				try {
-					hasTurnBeenMade = makeTurn(this.currentEnemy, adjustedX, adjustedY, orientation);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} while (!hasTurnBeenMade);
 
-			Field hitField = getFirstHitOfShot(fieldShotAt, orientation);
+			// zufällig schießen, Schuss merken
+			shootRandomly();
+
+			// prüfen ob ein Feld getroffen wurde, wenn ja dann Feld merken
+			Field hitField = getFirstHitOfShot(this.currentFieldShotAt, this.currentShotOrientation);
+
 			// wenn Treffer, dann Gegner merken und nächsten Schüsse planen
 			if (hitField != null) {
 				this.nextEnemy = this.currentEnemy;
@@ -95,18 +74,24 @@ public class SmartAIPlayer extends AIPlayer {
 			// wenn Richtung Osten oder Westen, dann Ausrichtung horizontal,
 			// ansonsten vertikal
 			orientation = (currentDirection == EAST || currentDirection == WEST) ? Orientation.Horizontal : Orientation.Vertical;
+
+			// x und y abhängig von der Schussweite korrigieren, so dass
+			// möglichst
+			// viele Felder getroffen werden
 			int range = this.currentShip.getShootingRange() - 1;
-			hasTurnBeenMade = makeTurn(this.currentEnemy, adjustX(target, currentDirection, range), adjustY(target, currentDirection, range), orientation);
+			int adjustedX = adjustX(target, currentDirection, range);
+			int adjustedY = adjustY(target, currentDirection, range);
+
+			// schießen
+			makeTurn(this.currentEnemy, adjustedX, adjustedY, orientation);
+
 			// wenn Treffer, dann nach nächstem unbeschossenen Feld in
 			// selbe Richtung suchen und als nächstes Ziel speichern
-
 			if (target.hasShip()) {
 				// wenn Treffer
 				if (target.getState() != FieldState.Destroyed) {
 					int[] directionArray = getDirectionArray(currentDirection);
-					int xDirection = directionArray[0];
-					int yDirection = directionArray[1];
-					Field newTarget = findNextTarget(target, xDirection, yDirection);
+					Field newTarget = findNextTarget(target, directionArray[0], directionArray[1]);
 					// neues Ziel in gleiche Richtung setzen
 					this.nextTargetsArray[currentDirection] = newTarget;
 				} else {
@@ -120,6 +105,44 @@ public class SmartAIPlayer extends AIPlayer {
 				this.nextTargetsArray[currentDirection] = null;
 			}
 		}
+
+	}
+
+	private void shootRandomly() throws FieldOutOfBoardException {
+		Orientation orientation;
+		Field fieldShotAt;
+		boolean hasTurnBeenMade = false;
+		int boardSize = this.currentEnemy.getBoard().getSize();
+		// zufällig schießen
+		do {
+			orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
+			fieldShotAt = generateField(orientation, this.currentShip.getSize());
+
+			// wenn möglich, den Schuss so ausrichten, dass alle
+			// Schussfelder im Board sind
+			int adjustedX = fieldShotAt.getXPos();
+			int adjustedY = fieldShotAt.getYPos();
+			// versuche x-Koordinate anzupassen
+			if (fieldShotAt.getXPos() >= boardSize) {
+				int overhang = fieldShotAt.getXPos() - boardSize;
+				adjustedX = adjustX(fieldShotAt, WEST, overhang);
+			}
+			// versuche y-Koordinate anzupassen
+			if (fieldShotAt.getYPos() >= boardSize) {
+				int overhang = fieldShotAt.getXPos() - boardSize;
+				adjustedY = adjustY(fieldShotAt, NORTH, overhang);
+			}
+
+			try {
+				hasTurnBeenMade = makeTurn(this.currentEnemy, adjustedX, adjustedY, orientation);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} while (!hasTurnBeenMade);
+
+		this.currentFieldShotAt = fieldShotAt;
+		this.currentShotOrientation = orientation;
 
 	}
 
@@ -148,7 +171,6 @@ public class SmartAIPlayer extends AIPlayer {
 		// wenn Richtung Norden, um Schussweite hoch gehen, um mehr Felder zu
 		// treffen
 		Board enemyBoard = this.currentEnemy.getBoard();
-		
 		int adjustedY = target.getYPos();
 		int targetXPos = target.getXPos();
 		if (currentDirection == NORTH) {
@@ -235,20 +257,21 @@ public class SmartAIPlayer extends AIPlayer {
 				target = enemyBoard.getField(x, y);
 				if ((target.getState() == FieldState.Missed) || (target.getState() == FieldState.Destroyed)) {
 					// wenn Schiff verfehlt oder zerstört wurde, Ziel nicht
-					// merken
+					// merken, Schleife abbrechen
 					target = null;
 					endLoop = true;
 				} else if (!target.isHit()) {
-					// wenn Feld noch nicht beschossen wurde, Feld merken
+					// wenn Feld noch nicht beschossen wurde, Schleife
+					// abbrechen, Feld zurückgeben
 					endLoop = true;
 				}
-				step++;
 			} else {
 				// Feld nicht mehr im Board
 				// Ziel nicht merken
 				target = null;
 				endLoop = true;
 			}
+			step++;
 		} while (!endLoop);
 		return target;
 	}
@@ -261,12 +284,15 @@ public class SmartAIPlayer extends AIPlayer {
 		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
 		int x;
 		int y;
+		Field hitField = null;
+		Board enemyBoard = this.currentEnemy.getBoard();
 		for (int i = 0; i < this.currentShip.getShootingRange(); i++) {
 			x = field.getXPos() + i * xDirection;
 			y = field.getYPos() + i * yDirection;
-			if (this.currentEnemy.getBoard().containsFieldAtPosition(x, y)) {
-				if (this.currentEnemy.getBoard().getField(x, y).hasShip()) {
-					return new Field(x, y);
+			if (enemyBoard.containsFieldAtPosition(x, y)) {
+				hitField = enemyBoard.getField(x, y);
+				if (hitField.hasShip()) {
+					return hitField;
 				}
 			}
 		}
