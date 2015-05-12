@@ -116,6 +116,10 @@ public class SmartAIPlayer extends AIPlayer {
 		// zufällig schießen
 		do {
 
+			// wiederhole die Erzeugung von zufälligen Koordinaten
+			// bis ein Feld gefunden wird, an welches kein zerstörtes
+			// Schiff angrenzt,
+			// (zwischen den Schiffen muss immer ein Feld frei sein)
 			do {
 				orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
 				fieldShotAt = generateField(orientation, this.currentShip.getSize());
@@ -152,6 +156,7 @@ public class SmartAIPlayer extends AIPlayer {
 	}
 
 	private boolean surroundingFieldContainsShip(Field fieldShotAt) throws FieldOutOfBoardException {
+		// prüft ob ein umliegendes Feld schon ein zerstörtes Schiff beinhaltet
 		Board enemyBoard = this.currentEnemy.getBoard();
 		int[] directions = new int[2];
 		int x;
