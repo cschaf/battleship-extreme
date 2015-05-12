@@ -85,9 +85,9 @@ public abstract class AIPlayer extends Player {
 
 	protected void chooseShipToShootWithRandomly() {
 		// zuf‰lliges freies Schiff zum Schieﬂen w‰hlen
-		ArrayList<Ship> availableShips = this.getAvailableShips();
+		ArrayList<Ship> availableShips = this.getAvailableShipsToShoot();
 		int randomShipIndex = generateRandomNumber(0, availableShips.size() - 1);
-		this.currentShip = this.getAvailableShips().get(randomShipIndex);
+		this.currentShip = availableShips.get(randomShipIndex);
 	}
 
 }

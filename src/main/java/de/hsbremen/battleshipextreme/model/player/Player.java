@@ -172,6 +172,20 @@ public abstract class Player implements Serializable {
 	}
 
 	/**
+	 * Provides a way to retrieve all ships that are able to shoot.
+	 * 
+	 * @return a list of all ships that are able to shoot.
+	 */
+	public ArrayList<Ship> getAvailableShipsToShoot() {
+		ArrayList<Ship> availableShips = new ArrayList<Ship>();
+		for (Ship ship : ships) {
+			if ((!ship.isDestroyed()) && (!ship.isReloading()))
+				availableShips.add(ship);
+		}
+		return availableShips;
+	}
+
+	/**
 	 * Tries to set the current ship of the player.
 	 * 
 	 * @param ship
@@ -179,7 +193,7 @@ public abstract class Player implements Serializable {
 	 * @return true if the ship was selected, false if not
 	 */
 	public boolean selectShip(Ship ship) {
-		if (ship.canShipBeSelected() && (doesPlayerPossessShip(ship))) {
+		if (!ship.isDestroyed() && !ship.isReloading() && doesPlayerPossessShip(ship)) {
 			this.currentShip = ship;
 			return true;
 		}
@@ -211,6 +225,11 @@ public abstract class Player implements Serializable {
 		if (player.hasLost()) {
 			throw new Exception("Player is already dead!");
 		}
+
+		if (this.areAllShipsReloading()) {
+			throw new Exception("All Ships are reloading!");
+		}
+
 		Board board = player.getBoard();
 		Field field = board.getField(xPos, yPos);
 		hasTurnBeenMade = this.currentShip.shoot(board, field, orientation);

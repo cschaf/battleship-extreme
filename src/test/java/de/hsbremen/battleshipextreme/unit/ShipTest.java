@@ -62,7 +62,7 @@ public class ShipTest {
 	}
 
 	@Test
-	public void testShootHorizontallyWithinBoard() throws FieldOutOfBoardException {
+	public void testShootHorizontallyWithinBoard() throws Exception {
 		Field field = mock(Field.class);
 		int x = 0;
 		int y = 0;
@@ -80,7 +80,7 @@ public class ShipTest {
 	}
 
 	@Test
-	public void testShootVerticallyWithinBoard() throws FieldOutOfBoardException {
+	public void testShootVerticallyWithinBoard() throws Exception {
 		Field field = mock(Field.class);
 		when(field.getXPos()).thenReturn(0);
 		when(field.getYPos()).thenReturn(1);
@@ -89,7 +89,7 @@ public class ShipTest {
 	}
 
 	@Test
-	public void testShootAtFieldThatWasAlreadyHit() throws FieldOutOfBoardException {
+	public void testShootAtFieldThatWasAlreadyHit() throws Exception {
 		Field field = mock(Field.class);
 		when(field.getXPos()).thenReturn(0);
 		when(field.getYPos()).thenReturn(0);
@@ -100,7 +100,7 @@ public class ShipTest {
 	}
 
 	@Test
-	public void testShootPartiallyOutsideBoard() throws FieldOutOfBoardException {
+	public void testShootPartiallyOutsideBoard() throws Exception {
 		Field field = mock(Field.class);
 		when(field.getXPos()).thenReturn(9);
 		when(field.getYPos()).thenReturn(0);
