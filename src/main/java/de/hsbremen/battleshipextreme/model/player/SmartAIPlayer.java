@@ -115,8 +115,11 @@ public class SmartAIPlayer extends AIPlayer {
 		int boardSize = this.currentEnemy.getBoard().getSize();
 		// zufällig schießen
 		do {
-			orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
-			fieldShotAt = generateField(orientation, this.currentShip.getSize());
+
+			do {
+				orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
+				fieldShotAt = generateField(orientation, this.currentShip.getSize());
+			} while (surroundingFieldContainsShip(fieldShotAt));
 
 			// wenn möglich, den Schuss so ausrichten, dass alle
 			// Schussfelder im Board sind
@@ -141,9 +144,30 @@ public class SmartAIPlayer extends AIPlayer {
 			}
 		} while (!hasTurnBeenMade);
 
+		// Feld und Ausrichtung merken
+		// TODO: Shot-Objekt?
 		this.currentFieldShotAt = fieldShotAt;
 		this.currentShotOrientation = orientation;
 
+	}
+
+	private boolean surroundingFieldContainsShip(Field fieldShotAt) throws FieldOutOfBoardException {
+		Board enemyBoard = this.currentEnemy.getBoard();
+		int[] directions = new int[2];
+		int x;
+		int y;
+		for (int i = 0; i < 4; i++) {
+			directions = getDirectionArray(i);
+			x = fieldShotAt.getXPos() + directions[0];
+			y = fieldShotAt.getYPos() + directions[1];
+			if (enemyBoard.containsFieldAtPosition(x, y)) {
+				FieldState actualFieldState = enemyBoard.getField(x, y).getState();
+				if (actualFieldState == FieldState.Destroyed) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private int adjustX(Field target, int currentDirection, int range) throws FieldOutOfBoardException {
