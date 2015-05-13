@@ -46,10 +46,11 @@ public class SmartAIPlayer extends AIPlayer {
 			this.currentEnemy = availablePlayers.get(randomEnemyIndex);
 
 			// zufällig schießen, Schuss merken
+			// setzt currentFieldShotAt und currentShotOrientation
 			shootRandomly();
 
 			// prüfen ob ein Feld getroffen wurde, wenn ja dann Feld merken
-			Field hitField = getFirstHitOfShot(this.currentFieldShotAt, this.currentShotOrientation);
+			Field hitField = getFirstHitOfShot();
 
 			// wenn Treffer, dann Gegner merken und nächsten Schüsse planen
 			if (hitField != null) {
@@ -220,8 +221,7 @@ public class SmartAIPlayer extends AIPlayer {
 				i++;
 			}
 		}
-		// Index innerhalb des targetArrays? Lebt der gemerkte Spieler noch?
-		hasTargets = (i < 4) && this.nextTargetsArray != null && this.nextEnemy != null && !this.nextEnemy.hasLost();
+		hasTargets = (i < 4) && this.nextTargetsArray != null;
 		return hasTargets;
 	}
 
@@ -301,19 +301,19 @@ public class SmartAIPlayer extends AIPlayer {
 		return target;
 	}
 
-	private Field getFirstHitOfShot(Field field, Orientation orientation) throws FieldOutOfBoardException {
+	private Field getFirstHitOfShot() throws FieldOutOfBoardException {
 		// prüft ob ein zufälliger Schuss (teilweise) getroffen hat
 		// gibt den ersten gefundenen Treffer zurück
 		// gibt null zurück, wenn es keinen Treffer gab
-		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
-		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
+		int xDirection = this.currentShotOrientation == Orientation.Horizontal ? 1 : 0;
+		int yDirection = this.currentShotOrientation == Orientation.Vertical ? 1 : 0;
 		int x;
 		int y;
 		Field hitField = null;
 		Board enemyBoard = this.currentEnemy.getBoard();
 		for (int i = 0; i < this.currentShip.getShootingRange(); i++) {
-			x = field.getXPos() + i * xDirection;
-			y = field.getYPos() + i * yDirection;
+			x = this.currentFieldShotAt.getXPos() + i * xDirection;
+			y = this.currentFieldShotAt.getYPos() + i * yDirection;
 			if (enemyBoard.containsFieldAtPosition(x, y)) {
 				hitField = enemyBoard.getField(x, y);
 				if (hitField.hasShip()) {
