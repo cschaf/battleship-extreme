@@ -6,7 +6,7 @@ public class InvalidPlayerNumberException extends Exception {
 	private int maxPlayers;
 
 	public InvalidPlayerNumberException(int minPlayers, int maxPlayers) {
-		super("The number of players must be greater than" + minPlayers + " and lower than " + maxPlayers);
+		super("The number of players must be greater than" + minPlayers + " and lower than " + maxPlayers + 1);
 		this.minPlayers = minPlayers;
 		this.maxPlayers = maxPlayers;
 	}

@@ -41,7 +41,6 @@ public abstract class AIPlayer extends Player {
 		}
 	}
 
-	// TODO: keine Exception abfangen
 	public void makeTurnAutomatically(ArrayList<Player> availablePlayers) throws Exception {
 		Orientation orientation;
 		boolean hasTurnBeenMade = false;
@@ -56,12 +55,7 @@ public abstract class AIPlayer extends Player {
 		do {
 			orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
 			Field field = generateField(orientation, this.currentShip.getSize());
-			try {
-				hasTurnBeenMade = makeTurn(this.currentEnemy, field.getXPos(), field.getYPos(), orientation);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			hasTurnBeenMade = makeTurn(this.currentEnemy, field.getXPos(), field.getYPos(), orientation);
 		} while (!hasTurnBeenMade);
 
 	}

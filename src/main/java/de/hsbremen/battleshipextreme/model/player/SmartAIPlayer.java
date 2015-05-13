@@ -11,7 +11,7 @@ import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 /**
  * Smart AI - uses basic strategy
  * 
- * AI-Benchmark: ~ 46 rounds (70 rounds = random)
+ * AI-Benchmark: ~ 40 rounds (77 rounds = random)
  *
  */
 public class SmartAIPlayer extends AIPlayer {
@@ -108,7 +108,7 @@ public class SmartAIPlayer extends AIPlayer {
 
 	}
 
-	private void shootRandomly() throws FieldOutOfBoardException {
+	private void shootRandomly() throws Exception {
 		Orientation orientation;
 		Field fieldShotAt;
 		boolean hasTurnBeenMade = false;
@@ -130,22 +130,18 @@ public class SmartAIPlayer extends AIPlayer {
 			int adjustedX = fieldShotAt.getXPos();
 			int adjustedY = fieldShotAt.getYPos();
 			// versuche x-Koordinate anzupassen
-			if (fieldShotAt.getXPos() >= boardSize) {
-				int overhang = fieldShotAt.getXPos() - boardSize;
+			if ((fieldShotAt.getXPos() + this.currentShip.getShootingRange() >= (boardSize)) && (orientation == Orientation.Horizontal)) {
+				int overhang = (fieldShotAt.getXPos() + this.currentShip.getShootingRange()) - (boardSize);
 				adjustedX = adjustX(fieldShotAt, WEST, overhang);
 			}
 			// versuche y-Koordinate anzupassen
-			if (fieldShotAt.getYPos() >= boardSize) {
-				int overhang = fieldShotAt.getXPos() - boardSize;
+			if ((fieldShotAt.getYPos() + this.currentShip.getShootingRange() >= (boardSize)) && (orientation == Orientation.Vertical)) {
+				int overhang = (fieldShotAt.getYPos() + this.currentShip.getShootingRange()) - (boardSize);
 				adjustedY = adjustY(fieldShotAt, NORTH, overhang);
 			}
+			fieldShotAt = new Field(adjustedX, adjustedY);
+			hasTurnBeenMade = makeTurn(this.currentEnemy, adjustedX, adjustedY, orientation);
 
-			try {
-				hasTurnBeenMade = makeTurn(this.currentEnemy, adjustedX, adjustedY, orientation);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		} while (!hasTurnBeenMade);
 
 		// Feld und Ausrichtung merken

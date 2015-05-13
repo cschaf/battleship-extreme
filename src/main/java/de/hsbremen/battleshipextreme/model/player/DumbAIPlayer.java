@@ -8,7 +8,7 @@ import de.hsbremen.battleshipextreme.model.Orientation;
 /**
  * Dumb AI - shoots randomly
  * 
- * AI-Benchmark: ~ 70 rounds
+ * AI-Benchmark: ~ 77 rounds
  *
  */
 

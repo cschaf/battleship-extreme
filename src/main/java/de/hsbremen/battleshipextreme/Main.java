@@ -47,7 +47,7 @@ class ConsoleGame {
 		do {
 			System.out.println("(1) Erzeuge Spiel manuell");
 			System.out.println("(2) AI-Kampf (1 schlaue KI und 1 dumme KI)");
-			System.out.println("(3) AI-Kampf (1 schlaue KIs und 3 dumme KIs)");
+			System.out.println("(3) AI-Kampf (1 schlaue KIs und 5 dumme KIs)");
 			System.out.println("(4) AI-Benchmark (Zeigt Runden-Durchschnitt von 1000 Spielen mit 2 schlauen KIs)");
 			System.out.println("(5) Zuletzt gespeichertes Spiel fortsetzen");
 			int choice = readIntegerWithMinMax(1, 5);
@@ -59,7 +59,7 @@ class ConsoleGame {
 				createAiGame(1, 1);
 				break;
 			case 3:
-				createAiGame(1, 3);
+				createAiGame(1, 5);
 				break;
 			case 4:
 				createKIBenchmark();
@@ -113,7 +113,7 @@ class ConsoleGame {
 		for (int i = 0; i < numberOfGames; i++) {
 			System.out.println("Spiel-Nr" + i);
 			// Spiel mit zwei schlauen Ais erzeugen
-			createAiGame(2, 0);
+			createAiGame(1, 1);
 			gameLoop();
 			roundNumbersOfEachGame[i] = (int) Math.floor(game.getTurnNumber() / game.getPlayers().length);
 		}
