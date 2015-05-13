@@ -32,7 +32,6 @@ public class SmartAIPlayer extends AIPlayer {
 
 	@Override
 	public void makeTurnAutomatically(ArrayList<Player> availablePlayers) throws Exception {
-		Orientation orientation;
 		int currentDirection = 0;
 
 		chooseShipToShootWithRandomly();
@@ -74,7 +73,7 @@ public class SmartAIPlayer extends AIPlayer {
 
 			// wenn Richtung Osten oder Westen, dann Ausrichtung horizontal,
 			// ansonsten vertikal
-			orientation = (currentDirection == EAST || currentDirection == WEST) ? Orientation.Horizontal : Orientation.Vertical;
+			Orientation orientation = (currentDirection == EAST || currentDirection == WEST) ? Orientation.Horizontal : Orientation.Vertical;
 
 			// x und y abhängig von der Schussweite korrigieren, so dass
 			// möglichst
