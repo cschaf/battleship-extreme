@@ -38,7 +38,6 @@ public class Settings {
 		validateNumberOfPlayers();
 		validateNumberOfShips();
 		validateFieldSize();
-
 	}
 
 	public int getSmartAiPlayers() {

@@ -232,7 +232,6 @@ class ConsoleGame {
 	}
 
 	private void gameLoop() {
-
 		do {
 			Player currentPlayer = game.getCurrentPlayer();
 			// Rundenanzahl ausgeben
@@ -268,15 +267,15 @@ class ConsoleGame {
 			e.printStackTrace();
 		}
 		// von AI beschossenes Board ausgeben
-		if (ai.getName().equals("Schlaue KI1")) {
-			System.out.println(ai + " greift " + ai.getCurrentEnemy() + " mit " + ai.getCurrentShip() + " an.");
-			System.out.println();
-			System.out.println("Board von " + ai.getCurrentEnemy());
-			System.out.println();
+		// if (ai.getName().equals("Schlaue KI1")) {
+		System.out.println(ai + " greift " + ai.getCurrentEnemy() + " mit " + ai.getCurrentShip() + " an.");
+		System.out.println();
+		System.out.println("Board von " + ai.getCurrentEnemy());
+		System.out.println();
 
-			printBoard(ai.getCurrentEnemy().getBoard(), false);
-			System.out.println();
-		}
+		printBoard(ai.getCurrentEnemy().getBoard(), false);
+		System.out.println();
+		// }
 	}
 
 	private void makePlayerTurn() {
@@ -289,19 +288,22 @@ class ConsoleGame {
 		System.out.println("(1) Gegner angreifen");
 		System.out.println("(2) Spiel speichern");
 		System.out.println("(3) Spiel beenden");
-
-		// Wahl einlesen
-		int choice = readIntegerWithMinMax(1, 3);
-		switch (choice) {
-		case 1:
-			attackManually();
-			break;
-		case 2:
-			saveGame();
-			break;
-		case 3:
-			System.exit(0);
-		}
+		boolean hasAttacked = false;
+		do {
+			// Wahl einlesen
+			int choice = readIntegerWithMinMax(1, 3);
+			switch (choice) {
+			case 1:
+				attackManually();
+				hasAttacked = true;
+				break;
+			case 2:
+				saveGame();
+				break;
+			case 3:
+				System.exit(0);
+			}
+		} while (!hasAttacked);
 	}
 
 	private void attackManually() {
@@ -328,7 +330,6 @@ class ConsoleGame {
 				else
 					printBoards(currentPlayer.getBoard(), enemy.getBoard());
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} while (!isShotPossible);
