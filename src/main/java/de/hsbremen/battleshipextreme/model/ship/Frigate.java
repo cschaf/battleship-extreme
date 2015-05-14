@@ -8,7 +8,7 @@ public class Frigate extends Ship {
 		this.size = 4;
 		this.shootingRange = 2;
 		this.maxReloadTime = 2;
-		this.shipType = ShipType.Frigate;
+		this.type = ShipType.Frigate;
 	}
 
 }
