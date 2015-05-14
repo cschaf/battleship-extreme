@@ -1,7 +1,4 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-<<<<<<< HEAD
-    </dependency>
-=======
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.hsbremen.battleshipextreme</groupId>
@@ -16,15 +13,22 @@
 			<artifactId>junit-dep</artifactId>
 			<version>4.8.2</version>
 		</dependency>
->>>>>>> develop
+
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>1.9.5</version>
 		</dependency>
-<<<<<<< HEAD
-	</dependencies></project>
-=======
+		<dependency>
+			<groupId>com.miglayout</groupId>
+		<artifactId>miglayout-core</artifactId>
+		<version>5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.miglayout</groupId>
+			<artifactId>miglayout-swing</artifactId>
+			<version>5.0</version>
+		</dependency>
 	</dependencies>
 </project>
->>>>>>> develop
+
