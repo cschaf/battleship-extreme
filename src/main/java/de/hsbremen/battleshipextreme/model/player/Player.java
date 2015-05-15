@@ -26,7 +26,8 @@ public abstract class Player implements Serializable {
 	protected Ship currentShip;
 	protected PlayerType type;
 
-	public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
+	public Player(int boardSize, int destroyers, int frigates, int corvettes,
+			int submarines) {
 		this.id = this.currentId++;
 		this.board = new Board(boardSize);
 		this.ships = new Ship[destroyers + frigates + corvettes + submarines];
@@ -66,7 +67,9 @@ public abstract class Player implements Serializable {
 	 * @throws FieldOccupiedException
 	 *             if the ship or the ships' radius collides with another ship.
 	 */
-	public void placeShip(int xPos, int yPos, Orientation orientation) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException, FieldOccupiedException {
+	public void placeShip(int xPos, int yPos, Orientation orientation)
+			throws ShipAlreadyPlacedException, FieldOutOfBoardException,
+			ShipOutOfBoardException, FieldOccupiedException {
 
 		if (this.currentShip.isPlaced())
 			throw new ShipAlreadyPlacedException(this.currentShip);
@@ -77,7 +80,8 @@ public abstract class Player implements Serializable {
 		if (isShipPartiallyOutOfBoard(this.currentShip, xPos, yPos, orientation))
 			throw new ShipOutOfBoardException(this.currentShip);
 
-		Field occupiedField = findOccupiedField(this.currentShip, xPos, yPos, orientation);
+		Field occupiedField = findOccupiedField(this.currentShip, xPos, yPos,
+				orientation);
 		if (occupiedField != null)
 			throw new FieldOccupiedException(occupiedField);
 
@@ -85,7 +89,8 @@ public abstract class Player implements Serializable {
 
 	}
 
-	private Field findOccupiedField(Ship ship, int xPos, int yPos, Orientation orientation) {
+	private Field findOccupiedField(Ship ship, int xPos, int yPos,
+			Orientation orientation) {
 		Field[][] fields = this.board.getFields();
 		// Orientation Horizontal
 		if (orientation == Orientation.Horizontal) {
@@ -94,7 +99,8 @@ public abstract class Player implements Serializable {
 			for (int y = yPos - 1; y <= yPos + 1; y++)
 				for (int x = xPos - 1; x <= xPos + ship.getSize(); x++)
 					// x und y innerhalb des Spielfeldes
-					if (x >= 0 && y >= 0 && x < fields.length && y < fields.length)
+					if (x >= 0 && y >= 0 && x < fields.length
+							&& y < fields.length)
 						if (fields[y][x].getShip() != null)
 							return (fields[y][x]);
 		}
@@ -105,7 +111,8 @@ public abstract class Player implements Serializable {
 			for (int y = yPos - 1; y <= yPos + ship.getSize(); y++)
 				for (int x = xPos - 1; x <= xPos + 1; x++)
 					// x und y innerhalb des Spielfeldes
-					if (x >= 0 && y >= 0 && x < fields.length && y < fields.length)
+					if (x >= 0 && y >= 0 && x < fields.length
+							&& y < fields.length)
 						if (fields[y][x].getShip() != null) // Feld hat Schiff
 							return (fields[y][x]);
 
@@ -113,7 +120,8 @@ public abstract class Player implements Serializable {
 		return null;
 	}
 
-	private boolean isShipPartiallyOutOfBoard(Ship ship, int xPos, int yPos, Orientation orientation) {
+	private boolean isShipPartiallyOutOfBoard(Ship ship, int xPos, int yPos,
+			Orientation orientation) {
 		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
 		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
 		int x = xPos + ship.getSize() * xDirection - 1;
@@ -121,11 +129,13 @@ public abstract class Player implements Serializable {
 		return (x >= board.getSize()) || (y >= board.getSize());
 	}
 
-	private void placeShipOnBoard(Ship ship, int xPos, int yPos, Orientation orientation) throws FieldOccupiedException {
+	private void placeShipOnBoard(Ship ship, int xPos, int yPos,
+			Orientation orientation) throws FieldOccupiedException {
 		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
 		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
 		for (int i = 0; i < ship.getSize(); i++) {
-			this.board.getFields()[yPos + i * yDirection][xPos + i * xDirection].setShip(ship);
+			this.board.getFields()[yPos + i * yDirection][xPos + i * xDirection]
+					.setShip(ship);
 		}
 		ship.setPlaced();
 	}
@@ -152,8 +162,10 @@ public abstract class Player implements Serializable {
 	 * keep track of the ship to place.
 	 */
 	public void nextShip() {
-		int currentShipIndex = Arrays.asList(this.ships).indexOf(this.currentShip);
-		currentShipIndex = (currentShipIndex >= this.ships.length - 1) ? currentShipIndex = 0 : currentShipIndex + 1;
+		int currentShipIndex = Arrays.asList(this.ships).indexOf(
+				this.currentShip);
+		currentShipIndex = (currentShipIndex >= this.ships.length - 1) ? currentShipIndex = 0
+				: currentShipIndex + 1;
 		this.currentShip = this.ships[currentShipIndex];
 	}
 
@@ -193,7 +205,8 @@ public abstract class Player implements Serializable {
 	 * @return true if the ship was selected, false if not
 	 */
 	public boolean selectShip(Ship ship) {
-		if (!ship.isDestroyed() && !ship.isReloading() && doesPlayerPossessShip(ship)) {
+		if (!ship.isDestroyed() && !ship.isReloading()
+				&& doesPlayerPossessShip(ship)) {
 			this.currentShip = ship;
 			return true;
 		}
@@ -218,7 +231,8 @@ public abstract class Player implements Serializable {
 	 *             attacking/attacked player is already dead. If all ships are
 	 *             reloading.
 	 */
-	public boolean makeTurn(Player player, int xPos, int yPos, Orientation orientation) throws Exception {
+	public boolean makeTurn(Player player, int xPos, int yPos,
+			Orientation orientation) throws Exception {
 		boolean hasTurnBeenMade = true;
 		if (this.equals(player)) {
 			throw new Exception("The player can't attack himself!");

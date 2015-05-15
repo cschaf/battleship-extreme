@@ -16,13 +16,8 @@ public abstract class Ship implements Serializable {
 	protected ShipType type;
 	protected boolean isPlaced;
 
-	public boolean shoot(Board boardShotAt, Field field, Orientation orientation) throws Exception {
-		if (this.isReloading()) {
-			throw new Exception("Ship is reloading!");
-		}
-		if (this.isDestroyed()) {
-			throw new Exception("Ship is destroyed!");
-		}
+	public boolean shoot(Board boardShotAt, Field field, Orientation orientation)
+			throws Exception {
 		if (!field.isHit()) {
 			fireShot(field, orientation, boardShotAt);
 			return true;
@@ -30,7 +25,8 @@ public abstract class Ship implements Serializable {
 		return false;
 	}
 
-	private void fireShot(Field field, Orientation orientation, Board boardShotAt) throws FieldOutOfBoardException {
+	private void fireShot(Field field, Orientation orientation,
+			Board boardShotAt) throws FieldOutOfBoardException {
 		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
 		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
 		int x;

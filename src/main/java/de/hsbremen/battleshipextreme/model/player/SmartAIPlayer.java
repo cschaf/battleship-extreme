@@ -31,7 +31,7 @@ public class SmartAIPlayer extends AIPlayer {
 	}
 
 	@Override
-	public void makeTurnAutomatically(ArrayList<Player> availablePlayers) throws Exception {
+	public void makeAiTurn(ArrayList<Player> availablePlayers) throws Exception {
 		int currentDirection = 0;
 
 		chooseShipToShootWithRandomly();

@@ -16,21 +16,24 @@ public abstract class AIPlayer extends Player {
 
 	protected Player currentEnemy;
 
-	public AIPlayer(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
+	public AIPlayer(int boardSize, int destroyers, int frigates, int corvettes,
+			int submarines) {
 		super(boardSize, destroyers, frigates, corvettes, submarines);
 		this.type = PlayerType.AI;
 	}
 
 	// TODO: keine Exception abfangen
-	public void placeShipsAutomatically() {
+	public void placeShips() {
 		boolean isItPossibleToPlaceShip;
 		for (int i = 0; i < this.ships.length; i++) {
 			do {
 				isItPossibleToPlaceShip = false;
 				// zuf‰llige Position generieren
 				Orientation orientation;
-				orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
-				Field field = generateField(orientation, this.getCurrentShip().getSize());
+				orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal
+						: Orientation.Vertical;
+				Field field = generateField(orientation, this.getCurrentShip()
+						.getSize());
 				try {
 					placeShip(field.getXPos(), field.getYPos(), orientation);
 					isItPossibleToPlaceShip = true;
@@ -41,21 +44,25 @@ public abstract class AIPlayer extends Player {
 		}
 	}
 
-	public void makeTurnAutomatically(ArrayList<Player> availablePlayers) throws Exception {
+	public void makeAiTurn(ArrayList<Player> availablePlayers)
+			throws Exception {
 		Orientation orientation;
 		boolean hasTurnBeenMade = false;
 
 		chooseShipToShootWithRandomly();
 
 		// Gegner zuf‰llig w‰hlen
-		int randomEnemyIndex = generateRandomNumber(0, availablePlayers.size() - 1);
+		int randomEnemyIndex = generateRandomNumber(0,
+				availablePlayers.size() - 1);
 		this.currentEnemy = availablePlayers.get(randomEnemyIndex);
 
 		// zuf‰llig schieﬂen
 		do {
-			orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
+			orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal
+					: Orientation.Vertical;
 			Field field = generateField(orientation, this.currentShip.getSize());
-			hasTurnBeenMade = makeTurn(this.currentEnemy, field.getXPos(), field.getYPos(), orientation);
+			hasTurnBeenMade = makeTurn(this.currentEnemy, field.getXPos(),
+					field.getYPos(), orientation);
 		} while (!hasTurnBeenMade);
 
 	}

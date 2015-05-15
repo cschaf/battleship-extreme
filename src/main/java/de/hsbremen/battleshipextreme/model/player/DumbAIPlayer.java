@@ -20,7 +20,7 @@ public class DumbAIPlayer extends AIPlayer {
 		this.name = "Dumme KI" + currentId;
 	}
 
-	public void placeShipsAutomatically() {
+	public void placeShips() {
 		boolean isItPossibleToPlaceShip;
 		for (int i = 0; i < super.getShips().length; i++) {
 			do {
@@ -39,7 +39,7 @@ public class DumbAIPlayer extends AIPlayer {
 		}
 	}
 
-	public void makeTurnAutomatically(ArrayList<Player> availablePlayers) throws Exception {
+	public void makeAiTurn(ArrayList<Player> availablePlayers) throws Exception {
 		Orientation orientation;
 		boolean hasTurnBeenMade = false;
 
