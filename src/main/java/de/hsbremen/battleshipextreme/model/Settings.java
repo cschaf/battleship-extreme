@@ -14,15 +14,15 @@ public class Settings {
 	private int corvettes;
 	private int submarines;
 
-	private static final int DESTROYER_SIZE = 5;
-	private static final int FRIGATE_SIZE = 4;
-	private static final int CORVETTE_SIZE = 3;
-	private static final int SUBMARINE_SIZE = 2;
+	public static final int DESTROYER_SIZE = 5;
+	public static final int FRIGATE_SIZE = 4;
+	public static final int CORVETTE_SIZE = 3;
+	public static final int SUBMARINE_SIZE = 2;
 
 	private static final float MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY = 10.0f;
 
-	private static final int MIN_PLAYERS = 2;
-	private static final int MAX_PLAYERS = 6;
+	public static final int MIN_PLAYERS = 2;
+	public static final int MAX_PLAYERS = 6;
 
 	public Settings(int players, int aiPlayers, int dumbAiPlayers, int boardSize, int destroyers, int frigates, int corvettes, int submarines) throws BoardTooSmallException,
 			InvalidPlayerNumberException, InvalidNumberOfShipsException {
