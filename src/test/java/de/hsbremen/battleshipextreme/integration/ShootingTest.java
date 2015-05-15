@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Orientation;
+import de.hsbremen.battleshipextreme.model.player.HumanPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 
@@ -20,7 +21,7 @@ public class ShootingTest extends GameTest {
 
 	@Test
 	public void testAreAllShipsReloading() throws Exception {
-		Player enemy = new Player(10, 1, 1, 1, 1);
+		Player enemy = new HumanPlayer(10, 1, 1, 1, 1);
 		int startX = 0;
 		int startY = 0;
 		Orientation orientation = Orientation.Horizontal;
@@ -35,7 +36,7 @@ public class ShootingTest extends GameTest {
 
 	@Test
 	public void testDecreaseCurrentReloadTime() throws Exception {
-		Player enemy = new Player(10, 1, 1, 1, 1);
+		Player enemy = new HumanPlayer(10, 1, 1, 1, 1);
 		int startX = 0;
 		int startY = 0;
 		Ship ship = player.getShips()[0];
@@ -69,7 +70,7 @@ public class ShootingTest extends GameTest {
 	@Test
 	public void testMakeTurnAndMiss() throws Exception {
 		// Schieﬂt auf Gegner und verfehlt Schiffe
-		Player enemy = new Player(10, 2, 1, 1, 1);
+		Player enemy = new HumanPlayer(10, 2, 1, 1, 1);
 		int startX = 5;
 		int startY = 5;
 		Ship ship = player.getShips()[0];
@@ -83,7 +84,7 @@ public class ShootingTest extends GameTest {
 	@Test
 	public void testMakeTurnAndHit() throws Exception {
 		// Schieﬂt auf Gegner und trifft ein Schiff
-		Player enemy = new Player(10, 2, 1, 1, 1);
+		Player enemy = new HumanPlayer(10, 2, 1, 1, 1);
 		int startX = 0;
 		int startY = 0;
 		Ship ship = player.getShips()[0];
@@ -97,7 +98,7 @@ public class ShootingTest extends GameTest {
 	@Test
 	public void testMakeTurnAndDestroy() throws Exception {
 		// schieﬂt auf U-Boot und zerstˆrt es
-		Player enemy = new Player(10, 2, 1, 1, 1);
+		Player enemy = new HumanPlayer(10, 2, 1, 1, 1);
 		int startX = 0;
 		int startY = 8;
 		Ship ship = player.getShips()[0];

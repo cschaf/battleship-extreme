@@ -1,12 +1,14 @@
 package de.hsbremen.battleshipextreme.model.ship;
 
+import java.io.Serializable;
+
 import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.ShipType;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 
-public abstract class Ship {
+public abstract class Ship implements Serializable {
 	protected int size;
 	protected int shootingRange;
 	protected int maxReloadTime;

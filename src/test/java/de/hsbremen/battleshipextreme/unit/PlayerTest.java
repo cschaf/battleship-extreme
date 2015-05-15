@@ -13,6 +13,7 @@ import de.hsbremen.battleshipextreme.model.exception.FieldOccupiedException;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
 import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.player.HumanPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.ship.Destroyer;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
@@ -37,7 +38,7 @@ public class PlayerTest {
 	@Before
 	public void setUp() throws Exception {
 		// wird vor jedem Test ausgeführt
-		player = new Player(10, 2, 1, 1, 1);
+		player = new HumanPlayer(10, 2, 1, 1, 1);
 
 	}
 
@@ -70,24 +71,24 @@ public class PlayerTest {
 	@Test(expected = ShipAlreadyPlacedException.class)
 	public void testShipAlreadyPlacedException() throws Exception {
 		Destroyer destroyer = (Destroyer) player.getShips()[0];
-		this.player.placeShip(destroyer, 0, 9, Orientation.Horizontal);
-		this.player.placeShip(destroyer, 5, 3, Orientation.Horizontal);
+		this.player.placeShip(0, 9, Orientation.Horizontal);
+		this.player.placeShip(5, 3, Orientation.Horizontal);
 	}
 
 	@Test(expected = FieldOccupiedException.class)
 	public void testPlaceShipsOnTheSameFieldHorizontally() throws Exception {
 		Ship ship = this.player.getShips()[0];
-		this.player.placeShip(ship, 0, 9, Orientation.Horizontal);
+		this.player.placeShip(0, 9, Orientation.Horizontal);
 		ship = player.getShips()[1];
-		this.player.placeShip(ship, 0, 9, Orientation.Horizontal);
+		this.player.placeShip(0, 9, Orientation.Horizontal);
 	}
 
 	@Test(expected = FieldOccupiedException.class)
 	public void testPlaceShipsOnTheSameFieldVertically() throws Exception {
 		Ship ship = this.player.getShips()[0];
-		this.player.placeShip(ship, 0, 0, Orientation.Vertical);
+		this.player.placeShip(0, 0, Orientation.Vertical);
 		ship = player.getShips()[1];
-		this.player.placeShip(ship, 0, 0, Orientation.Vertical);
+		this.player.placeShip(0, 0, Orientation.Vertical);
 	}
 
 	@Test(expected = FieldOccupiedException.class)
@@ -95,9 +96,9 @@ public class PlayerTest {
 		// Schiffe dürfen nicht ohne Freiraum nebeneinander stehen
 		// deshalb muss eine Exception geworfen werden
 		Ship ship = player.getShips()[0];
-		this.player.placeShip(ship, 0, 8, Orientation.Horizontal);
+		this.player.placeShip(0, 8, Orientation.Horizontal);
 		ship = player.getShips()[1];
-		this.player.placeShip(ship, 0, 9, Orientation.Horizontal);
+		this.player.placeShip(0, 9, Orientation.Horizontal);
 	}
 
 	@Test(expected = FieldOccupiedException.class)
@@ -105,28 +106,28 @@ public class PlayerTest {
 		// Schiffe dürfen nicht ohne Freiraum nebeneinander stehen
 		// deshalb muss eine Exception geworfen werden
 		Ship ship = player.getShips()[0];
-		this.player.placeShip(ship, 0, 0, Orientation.Vertical);
+		this.player.placeShip(0, 0, Orientation.Vertical);
 		ship = player.getShips()[1];
-		this.player.placeShip(ship, 1, 0, Orientation.Vertical);
+		this.player.placeShip(1, 0, Orientation.Vertical);
 	}
 
 	@Test(expected = FieldOutOfBoardException.class)
 	public void testFieldOutOfBoardException() throws Exception {
-		player.placeShip(player.getShips()[0], 1000, 10000, Orientation.Horizontal);
+		player.placeShip(1000, 10000, Orientation.Horizontal);
 	}
 
 	@Test(expected = ShipOutOfBoardException.class)
 	public void testPlaceShipOutOfBoardHorizontally() throws Exception {
-		player.placeShip(player.getShips()[0], 8, 8, Orientation.Horizontal);
+		player.placeShip(8, 8, Orientation.Horizontal);
 	}
 
 	@Test(expected = ShipOutOfBoardException.class)
 	public void testPlaceShipOutOfBoardVertically() throws Exception {
-		player.placeShip(player.getShips()[0], 8, 8, Orientation.Vertical);
+		player.placeShip(8, 8, Orientation.Vertical);
 	}
 
 	private void testPlaceShipAtPosition(Ship ship, int startX, int startY, Orientation orientation) throws ShipAlreadyPlacedException, FieldOutOfBoardException, Exception {
-		this.player.placeShip(ship, startX, startY, orientation);
+		this.player.placeShip(startX, startY, orientation);
 		checkFieldsForState(this.player.getBoard(), ship.getSize(), startX, startY, orientation, FieldState.HasShip);
 	}
 
