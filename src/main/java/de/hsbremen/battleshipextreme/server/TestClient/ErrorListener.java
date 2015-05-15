@@ -6,7 +6,7 @@ import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListen
 
 
 /**
- * Created by cschaf on 17.04.2015.
+ * Created by cschaf on 15.05.2015.
  */
 public class ErrorListener implements IErrorListener {
 

@@ -5,10 +5,8 @@ import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Message;
 
-import javax.swing.*;
-
 /**
- * Created by cschaf on 17.04.2015.
+ * Created by cschaf on 15.05.2015.
  */
 public class ServerObjectListener implements IServerObjectReceivedListener {
 
