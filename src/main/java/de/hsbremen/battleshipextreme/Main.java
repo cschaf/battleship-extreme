@@ -53,20 +53,20 @@ class ConsoleGame {
 			System.out.println("(5) Zuletzt gespeichertes Spiel fortsetzen");
 			int choice = readIntegerWithMinMax(1, 5);
 			switch (choice) {
-			case 1:
-				createGameManually();
-				break;
-			case 2:
-				createAiGame(1, 1);
-				break;
-			case 3:
-				createAiGame(1, 5);
-				break;
-			case 4:
-				createKIBenchmark();
-				break;
-			case 5:
-				tryToLoadGame();
+				case 1:
+					createGameManually();
+					break;
+				case 2:
+					createAiGame(1, 1);
+					break;
+				case 3:
+					createAiGame(1, 5);
+					break;
+				case 4:
+					createKIBenchmark();
+					break;
+				case 5:
+					tryToLoadGame();
 			}
 		} while (this.game == null);
 	}
@@ -102,12 +102,12 @@ class ConsoleGame {
 	}
 
 	private void createKIBenchmark() {
-		// Methode dient zum Auswerten der Effektivität einer KI
+		// Methode dient zum Auswerten der Effektivit?t einer KI
 		//
 		// erzeugt mehrere Spiele und gibt am Ende den
-		// Durchschnitt der benötigten Rundenanzahl aus
+		// Durchschnitt der ben?tigten Rundenanzahl aus
 		//
-		// eine AI die zufällig schießt, braucht im Schnitt ca. 70 Runden
+		// eine AI die zuf?llig schie?t, braucht im Schnitt ca. 70 Runden
 
 		int numberOfGames = 1000;
 		int[] roundNumbersOfEachGame = new int[numberOfGames];
@@ -168,7 +168,7 @@ class ConsoleGame {
 					frigates, corvettes, submarines);
 		} catch (BoardTooSmallException e1) {
 			System.out
-					.println("Das Board ist zu klein! Benötigte Prozentzahl freier Felder: "
+					.println("Das Board ist zu klein! Ben?tigte Prozentzahl freier Felder: "
 							+ e1.getMinPercentageOfFieldsThatShouldBeEmpty()
 							+ "%, dein Feld hat nur: "
 							+ e1.getEmptyFieldPercentage() + "%");
@@ -185,7 +185,7 @@ class ConsoleGame {
 	private void setPlayerNames(Player[] players) {
 		System.out.println("\nSpielernamen:");
 		for (Player player : players) {
-			System.out.print("Name für " + player + " : ");
+			System.out.print("Name f?r " + player + " : ");
 			player.setName(input.nextLine());
 		}
 	}
@@ -253,18 +253,18 @@ class ConsoleGame {
 				System.out.println();
 				System.out.println("Runde "
 						+ (int) Math.floor(game.getTurnNumber()
-								/ game.getPlayers().length));
+						/ game.getPlayers().length));
 				System.out
 						.println("------------------------------------------------------------------------");
 				System.out.println();
 			}
-			// Spieler überspringen wenn er tot ist
+			// Spieler ?berspringen wenn er tot ist
 			if (currentPlayer.hasLost()) {
 				System.out.println(currentPlayer
-						+ " ist tot und kann nicht schießen.");
+						+ " ist tot und kann nicht schie?en.");
 			} else if (currentPlayer.areAllShipsReloading()) {
 				System.out.println(currentPlayer
-						+ " kann nicht schießen, da alle Schiffe nachladen.");
+						+ " kann nicht schie?en, da alle Schiffe nachladen.");
 			} else {
 				// ist der aktuelle Spieler eine KI
 				if (game.getCurrentPlayer().getType() == PlayerType.AI) {
@@ -301,11 +301,11 @@ class ConsoleGame {
 
 	private void makePlayerTurn() {
 		Player currentPlayer = game.getCurrentPlayer();
-		// mögliche Spieleraktionen auflisten
+		// m?gliche Spieleraktionen auflisten
 		System.out.println();
 		System.out.println(currentPlayer + " ist an der Reihe.");
 		System.out.println();
-		System.out.println("Was möchtest du tun?");
+		System.out.println("Was m?chtest du tun?");
 		System.out.println("(1) Gegner angreifen");
 		System.out.println("(2) Spiel speichern");
 		System.out.println("(3) Spiel beenden");
@@ -314,15 +314,15 @@ class ConsoleGame {
 			// Wahl einlesen
 			int choice = readIntegerWithMinMax(1, 3);
 			switch (choice) {
-			case 1:
-				attackManually();
-				hasAttacked = true;
-				break;
-			case 2:
-				saveGame();
-				break;
-			case 3:
-				System.exit(0);
+				case 1:
+					attackManually();
+					hasAttacked = true;
+					break;
+				case 2:
+					saveGame();
+					break;
+				case 3:
+					System.exit(0);
 			}
 		} while (!hasAttacked);
 	}
@@ -332,8 +332,8 @@ class ConsoleGame {
 		Player currentPlayer;
 		currentPlayer = game.getCurrentPlayer();
 
-		// Auswahl des zu schießenden Schiffs
-		System.out.println("Welches Schiff soll schießen?");
+		// Auswahl des zu schie?enden Schiffs
+		System.out.println("Welches Schiff soll schie?en?");
 		selectShip();
 
 		// Auswahl des Gegners, auf den geschossen werden soll
@@ -342,7 +342,7 @@ class ConsoleGame {
 		printBoard(enemy.getBoard(), false);
 		boolean isShotPossible = false;
 		do {
-			// Koordinaten einlesen, bis Schuss erfolgreich ausgeführt wurde
+			// Koordinaten einlesen, bis Schuss erfolgreich ausgef?hrt wurde
 			int[] coordinates = readCoordinates(currentPlayer.getBoard()
 					.getSize());
 			try {
@@ -365,7 +365,7 @@ class ConsoleGame {
 		Ship selectedShip;
 		boolean isShipSelected = false;
 		do {
-			// Eingabe wiederholen bis Schiff gewählt wurde, das schießen kann
+			// Eingabe wiederholen bis Schiff gew?hlt wurde, das schie?en kann
 			for (Ship s : availableShips) {
 				System.out.println("(" + availableShips.indexOf(s) + ") "
 						+ s.getType() + "(reload:" + s.getCurrentReloadTime()
@@ -375,7 +375,7 @@ class ConsoleGame {
 					availableShips.size() - 1));
 			isShipSelected = currentPlayer.selectShip(selectedShip);
 			if (!isShipSelected)
-				System.out.println("Schiff lädt nach");
+				System.out.println("Schiff l?dt nach");
 		} while (!isShipSelected);
 		return selectedShip;
 	}
@@ -410,7 +410,7 @@ class ConsoleGame {
 		System.out.println();
 		printBoard(enemyBoard, false);
 		System.out
-				.println("O = getroffenes Schiff\nX = daneben\n+ = eigenes Schiff\n- = leer \nU = unbekannt\n! = zerstörtes Schiff\n");
+				.println("O = getroffenes Schiff\nX = daneben\n+ = eigenes Schiff\n- = leer \nU = unbekannt\n! = zerst?rtes Schiff\n");
 	}
 
 	private void printBoard(Board board, boolean isOwnBoard) {
@@ -443,23 +443,23 @@ class ConsoleGame {
 	private void printState(FieldState fieldState, boolean isOwnBoard) {
 		String s = "";
 		switch (fieldState) {
-		case Destroyed:
-			s = "!";
-			break;
-		case Hit:
-			s = "O";
-			break;
-		case Missed:
-			s = "X";
-			break;
-		case HasShip:
-			s = isOwnBoard ? "+" : "?";
-			break;
-		case IsEmpty:
-			s = isOwnBoard ? "-" : "?";
-			break;
-		default:
-			break;
+			case Destroyed:
+				s = "!";
+				break;
+			case Hit:
+				s = "O";
+				break;
+			case Missed:
+				s = "X";
+				break;
+			case HasShip:
+				s = isOwnBoard ? "+" : "?";
+				break;
+			case IsEmpty:
+				s = isOwnBoard ? "-" : "?";
+				break;
+			default:
+				break;
 		}
 		System.out.print(s);
 	}

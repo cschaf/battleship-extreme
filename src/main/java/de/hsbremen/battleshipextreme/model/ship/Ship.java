@@ -16,7 +16,8 @@ public abstract class Ship implements Serializable {
 	protected ShipType type;
 	protected boolean isPlaced;
 
-	public boolean shoot(Board boardShotAt, Field field, Orientation orientation) throws FieldOutOfBoardException {
+	public boolean shoot(Board boardShotAt, Field field, Orientation orientation)
+			throws Exception {
 		if (!field.isHit()) {
 			fireShot(field, orientation, boardShotAt);
 			return true;
@@ -24,7 +25,8 @@ public abstract class Ship implements Serializable {
 		return false;
 	}
 
-	private void fireShot(Field field, Orientation orientation, Board boardShotAt) throws FieldOutOfBoardException {
+	private void fireShot(Field field, Orientation orientation,
+						  Board boardShotAt) throws FieldOutOfBoardException {
 		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
 		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
 		int x;
@@ -37,11 +39,10 @@ public abstract class Ship implements Serializable {
 				Field fieldShotAt = boardShotAt.getField(x, y);
 				// wenn Board schon beschossen wurde, dann Schuss ignorieren
 				if (!fieldShotAt.isHit()) {
-
 					// wenn das Feld auf das geschossen wurde ein Schiff hat,
 					// dann ein Leben vom Schiff abziehen
 					if (fieldShotAt.hasShip()) {
-						Ship ship = field.getShip();
+						Ship ship = fieldShotAt.getShip();
 						ship.setSize(ship.getSize() - 1);
 					}
 					fieldShotAt.setHit(true);
@@ -49,10 +50,6 @@ public abstract class Ship implements Serializable {
 				this.currentReloadTime = this.maxReloadTime;
 			}
 		}
-	}
-
-	public boolean canShipBeSelected() {
-		return !(this.isReloading() || this.isDestroyed());
 	}
 
 	public void decreaseCurrentReloadTime() {
