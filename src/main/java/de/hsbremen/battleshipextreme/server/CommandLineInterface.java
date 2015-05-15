@@ -4,6 +4,7 @@ import de.hsbremen.battleshipextreme.network.ITransferable;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListener;
 import de.hsbremen.battleshipextreme.server.listener.ClientConnectionConsoleListener;
+import de.hsbremen.battleshipextreme.server.listener.ClientObjectReceivedListener;
 import de.hsbremen.battleshipextreme.server.listener.IClientObjectReceivedListener;
 import de.hsbremen.battleshipextreme.server.listener.IServerListener;
 
@@ -24,11 +25,9 @@ public class CommandLineInterface {
             }
         });
 
-        server.addClientObjectReceivedListener(new IClientObjectReceivedListener() {
-            public void onObjectReceived(EventArgs<ITransferable> eventArgs) {
-                System.out.println(eventArgs.getItem());
-            }
-        });
+        ClientObjectReceivedListener clientObjectReceivedListener = new ClientObjectReceivedListener();
+        server.addClientObjectReceivedListener(clientObjectReceivedListener);
+
         ClientConnectionConsoleListener consoleListener = new ClientConnectionConsoleListener();
         server.addClientConnectionListener(consoleListener);
 
