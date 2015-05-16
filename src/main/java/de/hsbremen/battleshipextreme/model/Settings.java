@@ -21,6 +21,9 @@ public class Settings {
 
 	private static final float MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY = 10.0f;
 
+	public static final int MIN_BOARD_SIZE = 5;
+	public static final int MAX_BOARD_SIZE = 20;
+
 	public static final int MIN_PLAYERS = 2;
 	public static final int MAX_PLAYERS = 6;
 
@@ -111,7 +114,7 @@ public class Settings {
 	private void validateFieldSize(int boardSize, int destroyers, int corvettes, int frigates, int submarines) throws BoardTooSmallException {
 		int requiredFields = getRequiredFields(destroyers, corvettes, frigates, submarines);
 		int requiredBoardSize = getRequiredBoardSize(requiredFields);
-		if (boardSize < requiredBoardSize)
+		if ((boardSize < requiredBoardSize) || (boardSize < MIN_BOARD_SIZE) || (boardSize > MAX_BOARD_SIZE))
 			throw new BoardTooSmallException();
 	}
 

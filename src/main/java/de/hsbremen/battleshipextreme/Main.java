@@ -143,18 +143,27 @@ class ConsoleGame {
 	private Settings createSettings() {
 		// Settings manuell einlesen
 		int maxPlayers = Settings.MAX_PLAYERS;
+		int minPlayers = Settings.MIN_PLAYERS;
+		int players = 0;
+		int aiPlayers = 0;
 		System.out.println("Einstellungen:");
-		System.out.print("Anzahl der menschlichen Spieler (0-" + maxPlayers + "): ");
-		int players = readIntegerWithMinMax(0, maxPlayers);
-		maxPlayers = maxPlayers - players;
-		int aiPlayers;
-		if (maxPlayers > 0) {
-			System.out.print("Anzahl der KI-Spieler (0-" + maxPlayers + "): ");
-			aiPlayers = readIntegerWithMinMax(0, maxPlayers);
-		} else {
-			aiPlayers = 0;
-			System.out.println("Kein Platz mehr für KI-Spieler.");
-		}
+		do {
+			System.out.print("Anzahl der menschlichen Spieler (0-" + maxPlayers + "): ");
+			players = readIntegerWithMinMax(0, maxPlayers);
+			maxPlayers = maxPlayers - players;
+
+			if (maxPlayers > 0) {
+				System.out.print("Anzahl der KI-Spieler (0-" + maxPlayers + "): ");
+				aiPlayers = readIntegerWithMinMax(0, maxPlayers);
+			} else {
+				aiPlayers = 0;
+				System.out.println("Kein Platz mehr für KI-Spieler.");
+			}
+			players += aiPlayers;
+			if (players < minPlayers)
+				System.out.println("Zu wenig Spieler!");
+		} while (players < minPlayers);
+
 		System.out.print("Zerstoerer: ");
 		int destroyers = readIntegerWithMinMax(0, 10);
 		System.out.print("Fregatten: ");
@@ -168,10 +177,11 @@ class ConsoleGame {
 		int requiredFields = Settings.getRequiredFields(destroyers, corvettes, frigates, submarines);
 		int requiredBoardSize = Settings.getRequiredBoardSize(requiredFields);
 		int boardSize = 0;
-		if (requiredBoardSize <= 20) {
+		if (requiredBoardSize <= Settings.MAX_BOARD_SIZE) {
 			System.out.print("Groesse des Spielfeldes (" + requiredBoardSize + "-20): ");
 			boardSize = readIntegerWithMinMax(requiredBoardSize, 20);
 		}
+
 		try {
 			return new Settings(players, aiPlayers, 0, boardSize, destroyers, frigates, corvettes, submarines);
 		} catch (BoardTooSmallException e1) {
