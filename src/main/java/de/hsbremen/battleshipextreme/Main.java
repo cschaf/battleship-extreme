@@ -146,6 +146,7 @@ class ConsoleGame {
 		int minPlayers = Settings.MIN_PLAYERS;
 		int players = 0;
 		int aiPlayers = 0;
+
 		System.out.println("Einstellungen:");
 		do {
 			System.out.print("Anzahl der menschlichen Spieler (0-" + maxPlayers + "): ");
@@ -159,10 +160,9 @@ class ConsoleGame {
 				aiPlayers = 0;
 				System.out.println("Kein Platz mehr für KI-Spieler.");
 			}
-			players += aiPlayers;
-			if (players < minPlayers)
+			if (players + aiPlayers < minPlayers)
 				System.out.println("Zu wenig Spieler!");
-		} while (players < minPlayers);
+		} while (players + aiPlayers < minPlayers);
 
 		System.out.print("Zerstoerer: ");
 		int destroyers = readIntegerWithMinMax(0, 10);
