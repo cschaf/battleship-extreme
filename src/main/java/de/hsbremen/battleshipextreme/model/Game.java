@@ -10,7 +10,6 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 
 import de.hsbremen.battleshipextreme.model.player.AIPlayer;
 import de.hsbremen.battleshipextreme.model.player.DumbAIPlayer;
@@ -41,8 +40,13 @@ public class Game implements Serializable {
 		for (int i = numberOfHumanPlayers + numberOfAIPlayers; i < numberOfPlayers; i++)
 			this.players[i] = new DumbAIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
 
+		// Spielernummern setzen
+		for (int i = 0; i < this.players.length; i++) {
+			this.players[i].setName(this.players[i].getName() + (i + 1));
+		}
+
 		this.turnNumber = 0;
-		this.currentPlayer = null;
+		this.currentPlayer = players[0];
 	}
 
 	/**
@@ -142,26 +146,6 @@ public class Game implements Serializable {
 			}
 		}
 		return enemies;
-	}
-
-	/**
-	 * Set beginning player by valid id or randomly.
-	 */
-	public void setBeginningPlayer(int playerId) {
-		if (this.currentPlayer == null) {
-			if ((playerId < this.players.length) || (playerId < 0)) {
-				this.currentPlayer = this.players[playerId];
-			} else {
-				setBeginningPlayerRandomly();
-			}
-		}
-	}
-
-	public void setBeginningPlayerRandomly() {
-		Random rand = new Random();
-		if (this.currentPlayer == null) {
-			this.currentPlayer = this.players[rand.nextInt(this.players.length)];
-		}
 	}
 
 	public Player[] getPlayers() {

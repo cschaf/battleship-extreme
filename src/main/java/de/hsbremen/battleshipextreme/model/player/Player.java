@@ -18,8 +18,6 @@ import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.model.ship.Submarine;
 
 public abstract class Player implements Serializable {
-	protected static int currentId = 0;
-	protected int id;
 	protected String name;
 	protected Board board;
 	protected Ship[] ships;
@@ -27,7 +25,6 @@ public abstract class Player implements Serializable {
 	protected PlayerType type;
 
 	public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
-		this.id = this.currentId++;
 		this.board = new Board(boardSize);
 		this.ships = new Ship[destroyers + frigates + corvettes + submarines];
 
@@ -288,20 +285,12 @@ public abstract class Player implements Serializable {
 		this.name = name;
 	}
 
-	public int getId() {
-		return this.id;
-	}
-
 	public Board getBoard() {
 		return board;
 	}
 
 	public Ship[] getShips() {
 		return ships;
-	}
-
-	public static void resetCurrentId() {
-		currentId = 1;
 	}
 
 	public String toString() {

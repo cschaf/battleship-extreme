@@ -17,7 +17,8 @@ public class DumbAIPlayer extends AIPlayer {
 
 	public DumbAIPlayer(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 		super(boardSize, destroyers, frigates, corvettes, submarines);
-		this.name = "Dumme KI" + currentId;
+		this.name = "Dumme KI";
+		;
 	}
 
 	public void makeAiTurn(ArrayList<Player> availablePlayers) throws Exception {

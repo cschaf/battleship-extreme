@@ -75,7 +75,6 @@ class ConsoleGame {
 		Settings settings = createSettings();
 		if (settings != null) {
 			game = new Game(settings);
-			game.setBeginningPlayer(0);
 			placeShips();
 		}
 	}
@@ -94,7 +93,6 @@ class ConsoleGame {
 
 		if (settings != null) {
 			game = new Game(settings);
-			game.setBeginningPlayer(0);
 			placeShips();
 		}
 	}

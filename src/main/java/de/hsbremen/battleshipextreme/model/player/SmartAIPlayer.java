@@ -27,7 +27,7 @@ public class SmartAIPlayer extends AIPlayer {
 
 	public SmartAIPlayer(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 		super(boardSize, destroyers, frigates, corvettes, submarines);
-		this.name = "Schlaue KI" + currentId;
+		this.name = "Schlaue KI";
 	}
 
 	@Override
