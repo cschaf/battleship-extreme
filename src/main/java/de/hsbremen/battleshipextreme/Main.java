@@ -113,7 +113,7 @@ class ConsoleGame {
 		for (int i = 0; i < numberOfGames; i++) {
 			System.out.println("Spiel-Nr" + i);
 			// Spiel mit zwei schlauen Ais erzeugen
-			createAiGame(0, 2);
+			createAiGame(1, 1);
 			gameLoop();
 			roundNumbersOfEachGame[i] = (int) Math.floor(game.getTurnNumber() / game.getPlayers().length);
 		}
@@ -209,7 +209,7 @@ class ConsoleGame {
 			if (currentPlayer.getType() == PlayerType.AI) {
 				// wenn KI dran ist, keine Koordinaten einlesen und automatisch
 				// platzieren
-				System.out.println("Ai setzt Schiffe...");
+				System.out.println(currentPlayer + " setzt Schiffe...");
 				((AIPlayer) currentPlayer).placeShips();
 				game.nextPlayer();
 			} else {

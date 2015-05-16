@@ -103,12 +103,13 @@ public class Settings {
 		int requiredFields = destroyers * (Settings.DESTROYER_SIZE * 2 + 1) + corvettes * (Settings.CORVETTE_SIZE * 2 + 1) + frigates * (Settings.FRIGATE_SIZE * 2 + 1) + submarines
 				* (Settings.SUBMARINE_SIZE * 2 + 1);
 		// Felder die leer sein sollen addieren
-		requiredFields += (int) Math.floor((requiredFields / MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY));
+		if (MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY > 0)
+			requiredFields += (int) Math.floor((requiredFields / MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY));
 		return requiredFields;
 	}
 
 	public static int getRequiredBoardSize(int requiredFields) {
-		return (int) Math.floor(Math.sqrt(requiredFields)) + 1;
+		return (int) Math.ceil(Math.sqrt(requiredFields));
 	}
 
 	private void validateFieldSize(int boardSize, int destroyers, int corvettes, int frigates, int submarines) throws BoardTooSmallException {

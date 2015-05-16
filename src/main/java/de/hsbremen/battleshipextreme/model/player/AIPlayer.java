@@ -15,6 +15,7 @@ import de.hsbremen.battleshipextreme.model.ship.Ship;
 public abstract class AIPlayer extends Player {
 
 	protected Player currentEnemy;
+	private static final int MAX_TRIES_TO_PLACE_SHIP = 1000;
 
 	public AIPlayer(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 		super(boardSize, destroyers, frigates, corvettes, submarines);
@@ -24,22 +25,35 @@ public abstract class AIPlayer extends Player {
 	// TODO: keine Exception abfangen
 	public void placeShips() {
 		boolean isItPossibleToPlaceShip;
+		int i = 0;
 
-		for (int i = 0; i < this.ships.length; i++) {
+		do {
+			int counter = 0;
 			do {
+				this.currentShip = this.ships[i];
 				isItPossibleToPlaceShip = false;
 				// zufällige Position generieren
 				Orientation orientation;
 				orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
 				Field field = generateField(orientation, this.getCurrentShip().getSize());
+				counter++;
 				try {
 					placeShip(field.getXPos(), field.getYPos(), orientation);
 					isItPossibleToPlaceShip = true;
 				} catch (Exception e) {
 				}
-			} while (!isItPossibleToPlaceShip);
-			nextShip();
-		}
+			} while ((counter <= MAX_TRIES_TO_PLACE_SHIP) && (!isItPossibleToPlaceShip));
+
+			if (counter >= MAX_TRIES_TO_PLACE_SHIP) {
+				resetBoard();
+				currentShip = ships[0];
+				counter = 0;
+				i = 0;
+			} else {
+				i++;
+				nextShip();
+			}
+		} while (i < ships.length);
 	}
 
 	public void makeAiTurn(ArrayList<Player> availablePlayers) throws Exception {

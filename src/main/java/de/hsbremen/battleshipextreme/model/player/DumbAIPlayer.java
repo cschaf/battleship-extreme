@@ -20,25 +20,6 @@ public class DumbAIPlayer extends AIPlayer {
 		this.name = "Dumme KI" + currentId;
 	}
 
-	public void placeShips() {
-		boolean isItPossibleToPlaceShip;
-		for (int i = 0; i < super.getShips().length; i++) {
-			do {
-				isItPossibleToPlaceShip = false;
-				// zufällige Position generieren
-				Orientation orientation;
-				orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
-				Field field = generateField(orientation, this.getCurrentShip().getSize());
-				try {
-					super.placeShip(field.getXPos(), field.getYPos(), orientation);
-					isItPossibleToPlaceShip = true;
-				} catch (Exception e) {
-				}
-			} while (!isItPossibleToPlaceShip);
-			super.nextShip();
-		}
-	}
-
 	public void makeAiTurn(ArrayList<Player> availablePlayers) throws Exception {
 		Orientation orientation;
 		boolean hasTurnBeenMade = false;
