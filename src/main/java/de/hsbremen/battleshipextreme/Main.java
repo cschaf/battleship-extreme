@@ -163,21 +163,24 @@ class ConsoleGame {
 		} while (players + aiPlayers < minPlayers);
 
 		System.out.print("Zerstoerer: ");
-		int destroyers = readIntegerWithMinMax(0, 10);
+		int destroyers = readIntegerWithMinMax(0, 100);
 		System.out.print("Fregatten: ");
-		int frigates = readIntegerWithMinMax(0, 10);
+		int frigates = readIntegerWithMinMax(0, 100);
 		System.out.print("Korvetten: ");
-		int corvettes = readIntegerWithMinMax(0, 10);
+		int corvettes = readIntegerWithMinMax(0, 100);
 		System.out.print("U-Boote: ");
-		int submarines = readIntegerWithMinMax(0, 10);
+		int submarines = readIntegerWithMinMax(0, 100);
 
 		// Mindestgröße des Feldes berechnen
 		int requiredFields = Settings.getRequiredFields(destroyers, corvettes, frigates, submarines);
 		int requiredBoardSize = Settings.getRequiredBoardSize(requiredFields);
+		System.out.println("Ermittle Mindestgröße des Boards...");
 		int boardSize = 0;
 		if (requiredBoardSize <= Settings.MAX_BOARD_SIZE) {
-			System.out.print("Groesse des Spielfeldes (" + requiredBoardSize + "-20): ");
-			boardSize = readIntegerWithMinMax(requiredBoardSize, 20);
+			System.out.print("Groesse des Spielfeldes (" + requiredBoardSize + "-" + Settings.MAX_BOARD_SIZE + "): ");
+			boardSize = readIntegerWithMinMax(requiredBoardSize, Settings.MAX_BOARD_SIZE);
+		} else {
+			System.out.println("Die ermittelte Mindeströße des Boards übersteigt die maximale Größe von " + Settings.MAX_BOARD_SIZE + "!");
 		}
 
 		try {

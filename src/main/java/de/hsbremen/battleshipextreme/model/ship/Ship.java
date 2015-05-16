@@ -5,7 +5,6 @@ import java.io.Serializable;
 import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.Orientation;
-import de.hsbremen.battleshipextreme.model.ShipType;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 
 public abstract class Ship implements Serializable {

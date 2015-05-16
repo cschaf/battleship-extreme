@@ -23,6 +23,12 @@ public class Game implements Serializable {
 	private Player winner;
 	private int turnNumber;
 
+	/**
+	 * Reads the settings and initializes the necessary game objects.
+	 * 
+	 * @param settings
+	 *            the game settings.
+	 */
 	public Game(Settings settings) {
 		// Spieler erzeugen
 		int numberOfHumanPlayers = settings.getPlayers();
