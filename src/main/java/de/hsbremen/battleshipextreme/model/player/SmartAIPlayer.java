@@ -41,7 +41,7 @@ public class SmartAIPlayer extends AIPlayer {
 			// zufälligen Player zum angreifen auswählen
 			// aktuellen Gegner nicht mehr merken
 			this.nextEnemy = null;
-			int randomEnemyIndex = generateRandomNumber(0, availablePlayers.size() - 1);
+			int randomEnemyIndex = createRandomNumber(0, availablePlayers.size() - 1);
 			this.currentEnemy = availablePlayers.get(randomEnemyIndex);
 
 			// zufällig schießen, Schuss merken
@@ -121,8 +121,8 @@ public class SmartAIPlayer extends AIPlayer {
 			// Schiff angrenzt,
 			// (zwischen den Schiffen muss immer ein Feld frei sein)
 			do {
-				orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
-				fieldShotAt = generateField(orientation, this.currentShip.getSize());
+				orientation = (createRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
+				fieldShotAt = createRandomField(0, board.getSize() - 1, 0, board.getSize() - 1);
 			} while (surroundingFieldContainsShip(fieldShotAt));
 
 			// wenn möglich, den Schuss so ausrichten, dass alle

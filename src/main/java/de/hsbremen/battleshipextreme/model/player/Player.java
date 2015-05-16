@@ -7,7 +7,6 @@ import java.util.Arrays;
 import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.Orientation;
-import de.hsbremen.battleshipextreme.model.exception.FieldOccupiedException;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
 import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
@@ -68,10 +67,10 @@ public abstract class Player implements Serializable {
 	 *             if the players' board does not contain the field.
 	 * @throws ShipOutOfBoardException
 	 *             if the ships boundaries exceed the board.
-	 * @throws FieldOccupiedException
-	 *             if the ship or the ships' radius collides with another ship.
+	 * @return false if the field is already occupied, true if the ship could be
+	 *         placed.
 	 */
-	public void placeShip(int xPos, int yPos, Orientation orientation) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException, FieldOccupiedException {
+	public boolean placeShip(int xPos, int yPos, Orientation orientation) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException {
 
 		if (this.currentShip.isPlaced())
 			throw new ShipAlreadyPlacedException(this.currentShip);
@@ -84,9 +83,10 @@ public abstract class Player implements Serializable {
 
 		Field occupiedField = findOccupiedField(this.currentShip, xPos, yPos, orientation);
 		if (occupiedField != null)
-			throw new FieldOccupiedException(occupiedField);
+			return false;
 
 		placeShipOnBoard(this.currentShip, xPos, yPos, orientation);
+		return true;
 
 	}
 
@@ -126,7 +126,7 @@ public abstract class Player implements Serializable {
 		return (x >= board.getSize()) || (y >= board.getSize());
 	}
 
-	private void placeShipOnBoard(Ship ship, int xPos, int yPos, Orientation orientation) throws FieldOccupiedException {
+	private void placeShipOnBoard(Ship ship, int xPos, int yPos, Orientation orientation) {
 		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
 		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
 		for (int i = 0; i < ship.getSize(); i++) {

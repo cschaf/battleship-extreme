@@ -109,7 +109,11 @@ public class Settings {
 	}
 
 	public static int getRequiredBoardSize(int requiredFields) {
-		return (int) Math.ceil(Math.sqrt(requiredFields));
+		int size = (int) Math.ceil(Math.sqrt(requiredFields));
+		if (size < MIN_BOARD_SIZE)
+			return MIN_BOARD_SIZE;
+		else
+			return size;
 	}
 
 	private void validateFieldSize(int boardSize, int destroyers, int corvettes, int frigates, int submarines) throws BoardTooSmallException {

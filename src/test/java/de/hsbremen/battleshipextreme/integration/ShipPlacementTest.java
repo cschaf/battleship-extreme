@@ -6,12 +6,10 @@ import org.junit.Test;
 
 import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Orientation;
-import de.hsbremen.battleshipextreme.model.exception.FieldOccupiedException;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
 import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.ship.Destroyer;
-import de.hsbremen.battleshipextreme.model.ship.Ship;
 
 /**
  * This Test checks if the placement of ships works as expected. Classes that
@@ -61,22 +59,6 @@ public class ShipPlacementTest extends GameTest {
 		Destroyer destroyer = (Destroyer) player.getShips()[0];
 		this.player.placeShip(0, 9, Orientation.Horizontal);
 		this.player.placeShip(5, 3, Orientation.Horizontal);
-	}
-
-	@Test(expected = FieldOccupiedException.class)
-	public void testPlaceShipsOnTheSameField() throws Exception {
-		Ship ship = this.player.getShips()[0];
-		this.player.placeShip(0, 9, Orientation.Horizontal);
-		ship = player.getShips()[1];
-		this.player.placeShip(0, 9, Orientation.Horizontal);
-	}
-
-	@Test(expected = FieldOccupiedException.class)
-	public void testPlaceShipsNextToEachOther() throws ShipAlreadyPlacedException, FieldOutOfBoardException, Exception {
-		Ship ship = player.getShips()[0];
-		this.player.placeShip(0, 8, Orientation.Horizontal);
-		ship = player.getShips()[1];
-		this.player.placeShip(0, 9, Orientation.Horizontal);
 	}
 
 	@Test(expected = FieldOutOfBoardException.class)

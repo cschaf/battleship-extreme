@@ -1,9 +1,8 @@
 package de.hsbremen.battleshipextreme.model;
 
-import de.hsbremen.battleshipextreme.model.exception.FieldOccupiedException;
-import de.hsbremen.battleshipextreme.model.ship.Ship;
-
 import java.io.Serializable;
+
+import de.hsbremen.battleshipextreme.model.ship.Ship;
 
 public class Field implements Serializable {
 	private int xPos;
@@ -67,10 +66,7 @@ public class Field implements Serializable {
 		}
 	}
 
-	public void setShip(Ship ship) throws FieldOccupiedException {
-		if (this.hasShip()) {
-			throw new FieldOccupiedException(this); // hat Schiff Exception
-		}
+	public void setShip(Ship ship) {
 		this.ship = ship;
 	}
 }

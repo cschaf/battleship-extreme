@@ -10,7 +10,6 @@ import de.hsbremen.battleshipextreme.model.Game;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.Settings;
 import de.hsbremen.battleshipextreme.model.exception.BoardTooSmallException;
-import de.hsbremen.battleshipextreme.model.exception.FieldOccupiedException;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.exception.InvalidNumberOfShipsException;
 import de.hsbremen.battleshipextreme.model.exception.InvalidPlayerNumberException;
@@ -211,7 +210,15 @@ class ConsoleGame {
 				// wenn KI dran ist, keine Koordinaten einlesen und automatisch
 				// platzieren
 				System.out.println(currentPlayer + " setzt Schiffe...");
-				((AIPlayer) currentPlayer).placeShips();
+				try {
+					((AIPlayer) currentPlayer).placeShips();
+				} catch (ShipAlreadyPlacedException e) {
+					e.printStackTrace();
+				} catch (FieldOutOfBoardException e) {
+					e.printStackTrace();
+				} catch (ShipOutOfBoardException e) {
+					e.printStackTrace();
+				}
 				game.nextPlayer();
 			} else {
 				// wenn nicht, Koordinaten einlesen
@@ -235,16 +242,13 @@ class ConsoleGame {
 			Orientation orientation = readOrientation();
 			isItPossibleToPlaceShip = false;
 			try {
-				game.getCurrentPlayer().placeShip(coordinates[1], coordinates[0], orientation);
-				isItPossibleToPlaceShip = true;
+				isItPossibleToPlaceShip = game.getCurrentPlayer().placeShip(coordinates[1], coordinates[0], orientation);
 			} catch (ShipAlreadyPlacedException e) {
 				System.out.println("Schiff bereits gesetzt!");
 			} catch (FieldOutOfBoardException e) {
 				System.out.println("Feld nicht im Board!");
 			} catch (ShipOutOfBoardException e) {
 				System.out.println("Schiff (teilweise) nicht im Board!");
-			} catch (FieldOccupiedException e) {
-				System.out.println("Feld bereits belegt!");
 			}
 		} while (!isItPossibleToPlaceShip);
 		if (!currentPlayer.hasPlacedAllShips()) {
@@ -292,15 +296,15 @@ class ConsoleGame {
 		}
 		// TODO
 		// von AI beschossenes Board ausgeben
-		if (ai.getName().equals("Schlaue KI1")) {
-			System.out.println(ai + " greift " + ai.getCurrentEnemy() + " mit " + ai.getCurrentShip() + " an.");
-			System.out.println();
-			System.out.println("Board von " + ai.getCurrentEnemy());
-			System.out.println();
+		// if (ai.getName().equals("Schlaue KI1")) {
+		System.out.println(ai + " greift " + ai.getCurrentEnemy() + " mit " + ai.getCurrentShip() + " an.");
+		System.out.println();
+		System.out.println("Board von " + ai.getCurrentEnemy());
+		System.out.println();
 
-			printBoard(ai.getCurrentEnemy().getBoard(), false);
-			System.out.println();
-		}
+		printBoard(ai.getCurrentEnemy().getBoard(), false);
+		System.out.println();
+		// }
 	}
 
 	private void makePlayerTurn() {

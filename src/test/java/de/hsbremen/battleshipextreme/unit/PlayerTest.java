@@ -9,7 +9,6 @@ import org.mockito.Mock;
 import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Orientation;
-import de.hsbremen.battleshipextreme.model.exception.FieldOccupiedException;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
 import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
@@ -70,45 +69,8 @@ public class PlayerTest {
 
 	@Test(expected = ShipAlreadyPlacedException.class)
 	public void testShipAlreadyPlacedException() throws Exception {
-		Destroyer destroyer = (Destroyer) player.getShips()[0];
 		this.player.placeShip(0, 9, Orientation.Horizontal);
 		this.player.placeShip(5, 3, Orientation.Horizontal);
-	}
-
-	@Test(expected = FieldOccupiedException.class)
-	public void testPlaceShipsOnTheSameFieldHorizontally() throws Exception {
-		Ship ship = this.player.getShips()[0];
-		this.player.placeShip(0, 9, Orientation.Horizontal);
-		ship = player.getShips()[1];
-		this.player.placeShip(0, 9, Orientation.Horizontal);
-	}
-
-	@Test(expected = FieldOccupiedException.class)
-	public void testPlaceShipsOnTheSameFieldVertically() throws Exception {
-		Ship ship = this.player.getShips()[0];
-		this.player.placeShip(0, 0, Orientation.Vertical);
-		ship = player.getShips()[1];
-		this.player.placeShip(0, 0, Orientation.Vertical);
-	}
-
-	@Test(expected = FieldOccupiedException.class)
-	public void testPlaceShipsNextToEachOtherHorizontally() throws ShipAlreadyPlacedException, FieldOutOfBoardException, Exception {
-		// Schiffe dürfen nicht ohne Freiraum nebeneinander stehen
-		// deshalb muss eine Exception geworfen werden
-		Ship ship = player.getShips()[0];
-		this.player.placeShip(0, 8, Orientation.Horizontal);
-		ship = player.getShips()[1];
-		this.player.placeShip(0, 9, Orientation.Horizontal);
-	}
-
-	@Test(expected = FieldOccupiedException.class)
-	public void testPlaceShipsNextToEachOtherVertically() throws ShipAlreadyPlacedException, FieldOutOfBoardException, Exception {
-		// Schiffe dürfen nicht ohne Freiraum nebeneinander stehen
-		// deshalb muss eine Exception geworfen werden
-		Ship ship = player.getShips()[0];
-		this.player.placeShip(0, 0, Orientation.Vertical);
-		ship = player.getShips()[1];
-		this.player.placeShip(1, 0, Orientation.Vertical);
 	}
 
 	@Test(expected = FieldOutOfBoardException.class)
