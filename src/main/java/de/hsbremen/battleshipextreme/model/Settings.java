@@ -26,6 +26,9 @@ public class Settings {
 
 	public Settings(int players, int aiPlayers, int dumbAiPlayers, int boardSize, int destroyers, int frigates, int corvettes, int submarines) throws BoardTooSmallException,
 			InvalidPlayerNumberException, InvalidNumberOfShipsException {
+		validateNumberOfPlayers(players, aiPlayers, dumbAiPlayers);
+		validateNumberOfShips(destroyers, corvettes, frigates, submarines);
+		validateFieldSize(boardSize, destroyers, corvettes, frigates, submarines);
 		this.players = players;
 		this.smartAiPlayers = aiPlayers;
 		this.dumbAiPlayers = dumbAiPlayers;
@@ -35,9 +38,6 @@ public class Settings {
 		this.frigates = frigates;
 		this.corvettes = corvettes;
 		this.submarines = submarines;
-		validateNumberOfPlayers();
-		validateNumberOfShips();
-		validateFieldSize();
 	}
 
 	public int getSmartAiPlayers() {
@@ -96,22 +96,33 @@ public class Settings {
 		this.submarines = submarines;
 	}
 
-	private void validateFieldSize() throws BoardTooSmallException {
-		int availableFields = this.boardSize * this.boardSize;
-		int requiredFields = this.destroyers * DESTROYER_SIZE + this.corvettes * CORVETTE_SIZE + this.frigates * FRIGATE_SIZE + this.submarines * SUBMARINE_SIZE;
-		float emptyFieldPercentage = 100f - (((float) requiredFields / (float) availableFields) * 100f);
-		if (emptyFieldPercentage < MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY)
-			throw new BoardTooSmallException(MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY, emptyFieldPercentage, availableFields, requiredFields);
+	public static int getRequiredFields(int destroyers, int corvettes, int frigates, int submarines) {
+		int requiredFields = destroyers * (Settings.DESTROYER_SIZE * 2 + 1) + corvettes * (Settings.CORVETTE_SIZE * 2 + 1) + frigates * (Settings.FRIGATE_SIZE * 2 + 1) + submarines
+				* (Settings.SUBMARINE_SIZE * 2 + 1);
+		// Felder die leer sein sollen addieren
+		requiredFields += (int) Math.floor((requiredFields / MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY));
+		return requiredFields;
 	}
 
-	private void validateNumberOfPlayers() throws InvalidPlayerNumberException {
-		int numberOfPlayers = this.players + this.smartAiPlayers + this.dumbAiPlayers;
+	public static int getRequiredBoardSize(int requiredFields) {
+		return (int) Math.floor(Math.sqrt(requiredFields)) + 1;
+	}
+
+	private void validateFieldSize(int boardSize, int destroyers, int corvettes, int frigates, int submarines) throws BoardTooSmallException {
+		int requiredFields = getRequiredFields(destroyers, corvettes, frigates, submarines);
+		int requiredBoardSize = getRequiredBoardSize(requiredFields);
+		if (boardSize < requiredBoardSize)
+			throw new BoardTooSmallException();
+	}
+
+	private void validateNumberOfPlayers(int players, int smartAiPlayers, int dumbAiPlayers) throws InvalidPlayerNumberException {
+		int numberOfPlayers = players + smartAiPlayers + dumbAiPlayers;
 		if ((numberOfPlayers < MIN_PLAYERS) || (numberOfPlayers > MAX_PLAYERS))
 			throw new InvalidPlayerNumberException(MIN_PLAYERS, MAX_PLAYERS);
 	}
 
-	private void validateNumberOfShips() throws InvalidNumberOfShipsException {
-		if (this.destroyers + this.corvettes + this.frigates + this.submarines <= 0)
+	private void validateNumberOfShips(int destroyers, int corvettes, int frigates, int submarines) throws InvalidNumberOfShipsException {
+		if (destroyers + corvettes + frigates + submarines <= 0)
 			throw new InvalidNumberOfShipsException();
 	}
 

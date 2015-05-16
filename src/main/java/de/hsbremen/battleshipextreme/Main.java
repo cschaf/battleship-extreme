@@ -155,22 +155,27 @@ class ConsoleGame {
 			aiPlayers = 0;
 			System.out.println("Kein Platz mehr für KI-Spieler.");
 		}
-		System.out.print("Groesse des Spielfeldes (10-20): ");
-		int boardSize = readIntegerWithMinMax(10, 20);
 		System.out.print("Zerstoerer: ");
-		int destroyers = readInteger();
+		int destroyers = readIntegerWithMinMax(0, 10);
 		System.out.print("Fregatten: ");
-		int frigates = readInteger();
+		int frigates = readIntegerWithMinMax(0, 10);
 		System.out.print("Korvetten: ");
-		int corvettes = readInteger();
+		int corvettes = readIntegerWithMinMax(0, 10);
 		System.out.print("U-Boote: ");
-		int submarines = readInteger();
+		int submarines = readIntegerWithMinMax(0, 10);
 
+		// Mindestgröße des Feldes berechnen
+		int requiredFields = Settings.getRequiredFields(destroyers, corvettes, frigates, submarines);
+		int requiredBoardSize = Settings.getRequiredBoardSize(requiredFields);
+		int boardSize = 0;
+		if (requiredBoardSize <= 20) {
+			System.out.print("Groesse des Spielfeldes (" + requiredBoardSize + "-20): ");
+			boardSize = readIntegerWithMinMax(requiredBoardSize, 20);
+		}
 		try {
 			return new Settings(players, aiPlayers, 0, boardSize, destroyers, frigates, corvettes, submarines);
 		} catch (BoardTooSmallException e1) {
-			System.out.println("Das Board ist zu klein! Benötigte Prozentzahl freier Felder: " + e1.getMinPercentageOfFieldsThatShouldBeEmpty() + "%, dein Feld hat nur: "
-					+ e1.getEmptyFieldPercentage() + "%");
+			System.out.println("Das Board ist zu klein!");
 		} catch (InvalidPlayerNumberException e) {
 			System.out.println("Spieleranzahl muss zwischen " + e.getMinPlayers() + " und " + e.getMaxPlayers() + " liegen.");
 		} catch (InvalidNumberOfShipsException e) {
