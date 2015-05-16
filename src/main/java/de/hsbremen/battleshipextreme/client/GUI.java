@@ -1,56 +1,61 @@
 package de.hsbremen.battleshipextreme.client;
 
-import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 public class GUI {
+	
+	public final static String MAIN_MENU_PANEL = "card with main menu panel";
+	public final static String SETTINGS_PANEL = "card with settings panel";
+	public final static String GAME_PANEL = "card with game panel";
+	
 	private JFrame frame;
+	private MainMenuPanel panelMainMenu;
+	private SettingsPanel panelSettings;
+	private GamePanel panelGame;
+	private JMenuItem menuItemSaveGame, menuItemLoadGame, menuItemQuitGame;
+	private JMenuItem menuItemManual;
 	
-	private JMenuItem saveGameItem, loadGameItem, quitGameItem;
-	private JMenuItem manualItem;
-	
-	private GamePanel gamePanel;
+	private JPanel cards;
 	
 	public GUI() {
 		frame = new JFrame("Battleship-Extreme");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setResizable(false);
+//		frame.setResizable(false);
 		frame.setJMenuBar(createMenuBar());
 		
 		InitComponents();
 
 		frame.pack();
+//		frame.setSize(500, 500);
 		frame.setLocationRelativeTo(null);
+		
+//		showPanel(GUI.GAME_PANEL);
+		
 		frame.setVisible(true);
 	}
 	
 	private void InitComponents() {
-		gamePanel = new GamePanel();
-		frame.add(gamePanel);
+		
+		panelMainMenu = new MainMenuPanel();
+		panelSettings = new SettingsPanel();
+		panelGame = new GamePanel();
+		
+		cards = new JPanel(new CardLayout());
+		cards.add(panelMainMenu, MAIN_MENU_PANEL);
+		cards.add(panelSettings, SETTINGS_PANEL);
+		cards.add(panelGame, GAME_PANEL);
+		
+		frame.add(cards);
 	}
 	
 	//////////////////////////////////////////////////////////////////
-	// create Panels
+	// create Menu
 	//////////////////////////////////////////////////////////////////
 	
 	private JMenuBar createMenuBar() {
@@ -60,49 +65,67 @@ public class GUI {
 		JMenu gameMenu = new JMenu("Game");
 		menuBar.add(gameMenu);
 
-		saveGameItem = new JMenuItem("Save...");
-		loadGameItem = new JMenuItem("Load...");
-		quitGameItem = new JMenuItem("Quit");
+		menuItemSaveGame = new JMenuItem("Save...");
+		menuItemLoadGame = new JMenuItem("Load...");
+		menuItemQuitGame = new JMenuItem("Quit");
 		
-		gameMenu.add(saveGameItem);
-		gameMenu.add(loadGameItem);
-		gameMenu.add(quitGameItem);
+		gameMenu.add(menuItemSaveGame);
+		gameMenu.add(menuItemLoadGame);
+		gameMenu.add(menuItemQuitGame);
 		
 		// Help Menue
 		JMenu helpMenu = new JMenu("Help");
 		menuBar.add(helpMenu);
 		
-		manualItem = new JMenuItem("Manual");
-		helpMenu.add(manualItem);
+		menuItemManual = new JMenuItem("Manual");
+		helpMenu.add(menuItemManual);
 		
 		return menuBar;
 	}
+	
+	//////////////////////////////////////////////////////////////////
+	// get Components
+	//////////////////////////////////////////////////////////////////
 
-	
-	//////////////////////////////////////////////////////////////////
-	// get Menue Buttons
-	//////////////////////////////////////////////////////////////////
-	
-	public JMenuItem getSaveGameItem() {
-		return saveGameItem;
+	public JFrame getFrame() {
+		return frame;
 	}
 	
-	public JMenuItem getLoadGameItem() {
-		return loadGameItem;
+	public MainMenuPanel getPanelMainMenu() {
+		return panelMainMenu;
 	}
 	
-	public JMenuItem getQuitGameItem() {
-		return quitGameItem;
+	public SettingsPanel getPanelSettings() {
+		return panelSettings;
 	}
 	
-	public JMenuItem getManualItem() {
-		return manualItem;
+	public GamePanel getPanelGame() {
+		return panelGame;
+	}
+	
+	public JMenuItem getMenuItemSaveGame() {
+		return menuItemSaveGame;
+	}
+	
+	public JMenuItem getMenuItemLoadGame() {
+		return menuItemLoadGame;
+	}
+	
+	public JMenuItem getMenuItemQuitGame() {
+		return menuItemQuitGame;
+	}
+	
+	public JMenuItem getMenuItemManual() {
+		return menuItemManual;
 	}
 	
 	//////////////////////////////////////////////////////////////////
-	// get Settings Panel Items
+	// methoden
 	//////////////////////////////////////////////////////////////////
 	
-	
-	
+	public void showPanel(String card) {
+		CardLayout c1 = (CardLayout)cards.getLayout();
+		c1.show(cards, card);
+	}
+
 }
