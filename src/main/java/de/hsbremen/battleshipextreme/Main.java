@@ -243,6 +243,9 @@ class ConsoleGame {
 			isItPossibleToPlaceShip = false;
 			try {
 				isItPossibleToPlaceShip = game.getCurrentPlayer().placeShip(coordinates[1], coordinates[0], orientation);
+				if (!isItPossibleToPlaceShip) {
+					System.out.println("Feld bereits belegt");
+				}
 			} catch (ShipAlreadyPlacedException e) {
 				System.out.println("Schiff bereits gesetzt!");
 			} catch (FieldOutOfBoardException e) {

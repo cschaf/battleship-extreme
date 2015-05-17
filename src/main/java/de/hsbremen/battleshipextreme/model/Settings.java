@@ -19,7 +19,7 @@ public class Settings {
 	public static final int CORVETTE_SIZE = 3;
 	public static final int SUBMARINE_SIZE = 2;
 
-	private static final float MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY = 10.0f;
+	private static final float MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY = 0.0f;
 
 	public static final int MIN_BOARD_SIZE = 5;
 	public static final int MAX_BOARD_SIZE = 20;
@@ -100,8 +100,8 @@ public class Settings {
 	}
 
 	public static int getRequiredFields(int destroyers, int corvettes, int frigates, int submarines) {
-		int requiredFields = destroyers * (Settings.DESTROYER_SIZE * 2 + 1) + corvettes * (Settings.CORVETTE_SIZE * 2 + 1) + frigates * (Settings.FRIGATE_SIZE * 2 + 1) + submarines
-				* (Settings.SUBMARINE_SIZE * 2 + 1);
+		int requiredFields = destroyers * ((Settings.DESTROYER_SIZE + 1) * 2) + corvettes * ((Settings.DESTROYER_SIZE + 1) * 2) + frigates * ((Settings.FRIGATE_SIZE + 1) * 2) + submarines
+				* ((Settings.SUBMARINE_SIZE + 1) * 2);
 		// Felder die leer sein sollen addieren
 		if (MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY > 0)
 			requiredFields += (int) Math.floor((requiredFields / MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY));
