@@ -161,6 +161,7 @@ class ConsoleGame {
 				System.out.println("Zu wenig Spieler!");
 		} while (players + aiPlayers < minPlayers);
 
+		System.out.println("Anzahl der Schiffe:");
 		System.out.print("Zerstoerer: ");
 		int destroyers = readIntegerWithMinMax(0, 100);
 		System.out.print("Fregatten: ");
@@ -233,9 +234,9 @@ class ConsoleGame {
 
 	private void placeShipsManually() {
 		Player currentPlayer = game.getCurrentPlayer();
-		System.out.println(currentPlayer + " setzt Schiff: " + currentPlayer.getCurrentShip());
 		boolean isItPossibleToPlaceShip;
 		do {
+			System.out.println(currentPlayer + " setzt Schiff: " + currentPlayer.getCurrentShip());
 			// solange Schiffskoordinaten einlesen, bis keine Exception
 			// auftritt
 			int[] coordinates = readCoordinates(game.getCurrentPlayer().getBoard().getSize());
@@ -245,6 +246,13 @@ class ConsoleGame {
 				isItPossibleToPlaceShip = game.getCurrentPlayer().placeShip(coordinates[1], coordinates[0], orientation);
 				if (!isItPossibleToPlaceShip) {
 					System.out.println("Feld bereits belegt");
+					System.out.println("Board zurücksetzen? (J/N)");
+					boolean reset = input.next().toUpperCase().charAt(0) == 'J' ? true : false;
+					if (reset) {
+						currentPlayer.resetBoard();
+						System.out.println("Board zurückgesetzt.");
+					}
+
 				}
 			} catch (ShipAlreadyPlacedException e) {
 				System.out.println("Schiff bereits gesetzt!");

@@ -31,7 +31,7 @@ public abstract class AIPlayer extends Player {
 		do {
 			int counter = 0;
 			do {
-				this.currentShip = this.ships[i];
+				currentShip = ships[i];
 				isItPossibleToPlaceShip = false;
 				// zufällige Position generieren
 				Orientation orientation;
@@ -53,7 +53,6 @@ public abstract class AIPlayer extends Player {
 
 			if (counter >= MAX_TRIES_TO_PLACE_SHIP) {
 				resetBoard();
-				currentShip = ships[0];
 				counter = 0;
 				i = 0;
 			} else {

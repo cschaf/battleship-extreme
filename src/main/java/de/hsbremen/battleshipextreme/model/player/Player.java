@@ -41,12 +41,13 @@ public abstract class Player implements Serializable {
 		this.currentShip = this.ships[0];
 	}
 
-	protected void resetBoard() {
+	public void resetBoard() {
 		int size = board.getSize();
 		board = new Board(size);
 		for (Ship ship : ships) {
 			ship.setPlaced(false);
 		}
+		currentShip = ships[0];
 	}
 
 	/**
