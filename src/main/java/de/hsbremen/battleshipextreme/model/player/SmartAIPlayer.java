@@ -24,6 +24,10 @@ public class SmartAIPlayer extends AIPlayer {
 	private final int SOUTH = 1;
 	private final int EAST = 2;
 	private final int WEST = 3;
+	private final int NORTH_EAST = 4;
+	private final int SOUTH_EAST = 5;
+	private final int NORTH_WEST = 6;
+	private final int SOUTH_WEST = 7;
 
 	public SmartAIPlayer(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 		super(boardSize, destroyers, frigates, corvettes, submarines);
@@ -157,7 +161,7 @@ public class SmartAIPlayer extends AIPlayer {
 		int[] directions = new int[2];
 		int x;
 		int y;
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 8; i++) {
 			directions = getDirectionArray(i);
 			x = fieldShotAt.getXPos() + directions[0];
 			y = fieldShotAt.getYPos() + directions[1];
@@ -168,6 +172,7 @@ public class SmartAIPlayer extends AIPlayer {
 				}
 			}
 		}
+
 		return false;
 	}
 
@@ -259,6 +264,14 @@ public class SmartAIPlayer extends AIPlayer {
 			return new int[] { 1, 0 };
 		case WEST:
 			return new int[] { -1, 0 };
+		case NORTH_EAST:
+			return new int[] { 1, -1 };
+		case SOUTH_EAST:
+			return new int[] { 1, 1 };
+		case NORTH_WEST:
+			return new int[] { -1, 1 };
+		case SOUTH_WEST:
+			return new int[] { -1, -1 };
 		default:
 			break;
 		}
