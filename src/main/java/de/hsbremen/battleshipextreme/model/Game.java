@@ -100,7 +100,7 @@ public class Game implements Serializable {
 
 	/**
 	 * This method is used for AI-Players. Call the makeTurnAutomatically-method
-	 * of the AI-Player. Then call the nextPlayer-method.
+	 * of the AI-Player and pass a list of enemies that can be attacked.
 	 * 
 	 * @throws Exception
 	 */
@@ -116,14 +116,12 @@ public class Game implements Serializable {
 
 	/**
 	 * 
-	 * Increase turnNumber and roundNumber.
+	 * Increase turnNumber.
 	 * 
 	 * Decrease the reload time of the current players' ships.
 	 * 
-	 * Set the currentPlayer to the next available player. If a player is not
-	 * able to make a turn, skip player.
+	 * Set the currentPlayer to the next player.
 	 * 
-	 * Let AI make its turn automatically.
 	 */
 	public void nextPlayer() {
 		this.turnNumber++;
