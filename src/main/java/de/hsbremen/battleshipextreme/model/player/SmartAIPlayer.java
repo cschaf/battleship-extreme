@@ -53,12 +53,12 @@ public class SmartAIPlayer extends AIPlayer {
 			shootRandomly();
 
 			// prüfen ob ein Feld getroffen wurde, wenn ja dann Feld merken
-			Field hitField = getFirstHitOfShot();
+			ArrayList<Field> hitFields = getHitFields();
 
 			// wenn Treffer, dann Gegner merken und nächsten Schüsse planen
-			if (hitField != null) {
+			if (hitFields.size() > 0) {
 				this.nextEnemy = this.currentEnemy;
-				planNextShots(hitField);
+				planNextShots(hitFields);
 			} else {
 				// currentEnemy vergessen, wenn kein Feld getroffen
 				// wurde
@@ -238,18 +238,42 @@ public class SmartAIPlayer extends AIPlayer {
 		return currentDirection;
 	}
 
-	private void planNextShots(Field hitField) throws FieldOutOfBoardException {
+	private void planNextShots(ArrayList<Field> hitFields) throws FieldOutOfBoardException {
+		boolean isHorizontalHit = false;
+		boolean isVerticalHit = false;
+		System.out.println("HITFIELDS");
+		for (Field f : hitFields) {
+			System.out.println(f);
+		}
+
+		// wenn mehrere Felder getroffen wurden, gucken ob die Schiffausrichtung
+		// horizontal oder vertikal ist
+		if (hitFields.size() > 1) {
+			isHorizontalHit = hitFields.get(0).getYPos() == hitFields.get(1).getYPos();
+			isVerticalHit = hitFields.get(0).getXPos() == hitFields.get(1).getXPos();
+		}
 		// bekommt ein getroffenes Feld übergeben und guckt in alle
 		// Himmelsrichtungen nach potenziellen Zielen
 		this.nextTargetsArray = new Field[4];
-		Field target;
+		Field target = null;
 		int[] directions = new int[2];
 		for (int i = 0; i < 4; i++) {
 			directions = getDirectionArray(i);
-			target = findNextTarget(hitField, directions[0], directions[1]);
-			if (target != null)
-				// wenn potenzielles Ziel gefunden, dann Feld merken
-				this.nextTargetsArray[i] = target;
+			if (!isHorizontalHit && !isVerticalHit) {
+				target = findNextTarget(hitFields.get(0), directions[0], directions[1]);
+			}
+			if (isHorizontalHit && (i == EAST || i == WEST)) {
+				System.out.println("HORIZONTAL");
+				target = findNextTarget(hitFields.get(0), directions[0], directions[1]);
+			}
+			if (isVerticalHit && (i == NORTH || i == SOUTH)) {
+				System.out.println("VERTIKAL");
+				target = findNextTarget(hitFields.get(0), directions[0], directions[1]);
+			}
+			System.out.println("FOUND TARGET");
+
+			// wenn potenzielles Ziel gefunden, dann Feld merken
+			this.nextTargetsArray[i] = target;
 		}
 	}
 
@@ -313,7 +337,7 @@ public class SmartAIPlayer extends AIPlayer {
 		return target;
 	}
 
-	private Field getFirstHitOfShot() throws FieldOutOfBoardException {
+	private ArrayList<Field> getHitFields() throws FieldOutOfBoardException {
 		// prüft ob ein zufälliger Schuss (teilweise) getroffen hat
 		// gibt den ersten gefundenen Treffer zurück
 		// gibt null zurück, wenn es keinen Treffer gab
@@ -323,16 +347,17 @@ public class SmartAIPlayer extends AIPlayer {
 		int y;
 		Field hitField = null;
 		Board enemyBoard = this.currentEnemy.getBoard();
+		ArrayList<Field> fields = new ArrayList<Field>();
 		for (int i = 0; i < this.currentShip.getShootingRange(); i++) {
 			x = this.currentFieldShotAt.getXPos() + i * xDirection;
 			y = this.currentFieldShotAt.getYPos() + i * yDirection;
 			if (enemyBoard.containsFieldAtPosition(x, y)) {
 				hitField = enemyBoard.getField(x, y);
 				if (hitField.hasShip()) {
-					return hitField;
+					fields.add(hitField);
 				}
 			}
 		}
-		return null;
+		return fields;
 	}
 }
