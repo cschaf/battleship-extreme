@@ -241,11 +241,6 @@ public class SmartAIPlayer extends AIPlayer {
 	private void planNextShots(ArrayList<Field> hitFields) throws FieldOutOfBoardException {
 		boolean isHorizontalHit = false;
 		boolean isVerticalHit = false;
-		System.out.println("HITFIELDS");
-		for (Field f : hitFields) {
-			System.out.println(f);
-		}
-
 		// wenn mehrere Felder getroffen wurden, gucken ob die Schiffausrichtung
 		// horizontal oder vertikal ist
 		if (hitFields.size() > 1) {
@@ -263,14 +258,11 @@ public class SmartAIPlayer extends AIPlayer {
 				target = findNextTarget(hitFields.get(0), directions[0], directions[1]);
 			}
 			if (isHorizontalHit && (i == EAST || i == WEST)) {
-				System.out.println("HORIZONTAL");
 				target = findNextTarget(hitFields.get(0), directions[0], directions[1]);
 			}
 			if (isVerticalHit && (i == NORTH || i == SOUTH)) {
-				System.out.println("VERTIKAL");
 				target = findNextTarget(hitFields.get(0), directions[0], directions[1]);
 			}
-			System.out.println("FOUND TARGET");
 
 			// wenn potenzielles Ziel gefunden, dann Feld merken
 			this.nextTargetsArray[i] = target;
