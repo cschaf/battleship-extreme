@@ -8,10 +8,6 @@ import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 
-/**
- * Smart AI - uses basic strategy
- * 
- */
 public class SmartAIPlayer extends AIPlayer {
 	private Player nextEnemy;
 
@@ -152,12 +148,10 @@ public class SmartAIPlayer extends AIPlayer {
 					// da die Spur nicht mehr verfolgt werden muss
 					this.nextTargetsArray = null;
 					this.nextEnemy = null;
-					System.out.println("SCHIFF ZERSTÖRT NEUE FÄHRTE");
 				}
 			} else {
 				// wenn kein Treffer, dann Target löschen
 				this.nextTargetsArray[currentDirection] = null;
-				System.out.println("kein Treffer, Target löschen");
 			}
 		}
 	}
@@ -339,11 +333,9 @@ public class SmartAIPlayer extends AIPlayer {
 				target = findNextTarget(hitFields.get(0), directions[0], directions[1]);
 			}
 			if (isHorizontalHit && (i == EAST || i == WEST)) {
-				System.out.println("HORIZONTAL");
 				target = findNextTarget(hitFields.get(0), directions[0], directions[1]);
 			}
 			if (isVerticalHit && (i == NORTH || i == SOUTH)) {
-				System.out.println("VERTIKAL");
 				target = findNextTarget(hitFields.get(0), directions[0], directions[1]);
 			}
 			// wenn potenzielles Ziel gefunden, dann Feld merken
