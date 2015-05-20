@@ -58,9 +58,8 @@ public class Game implements Serializable {
 	/**
 	 * This constructor is used when a game is loaded.
 	 */
-	public Game() {
-		this.players = new Player[0];
-		this.currentPlayer = null;
+	public Game(String pathToSaveGame) throws Exception {
+		this.load(pathToSaveGame);
 	}
 
 	/**
