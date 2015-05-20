@@ -65,6 +65,7 @@ class ConsoleGame {
 				break;
 			case 5:
 				tryToLoadGame();
+				this.makePlayerTurn();
 			}
 		} while (this.game == null);
 	}
@@ -411,6 +412,7 @@ class ConsoleGame {
 		System.out.println();
 		System.out.println("Spiel gespeichert.");
 		System.out.println();
+		this.makePlayerTurn();
 	}
 
 	private void printBoards(Board ownBoard, Board enemyBoard) {
