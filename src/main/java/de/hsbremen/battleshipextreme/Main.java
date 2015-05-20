@@ -432,7 +432,7 @@ class ConsoleGame {
 		this.printFieldColumnNumbers(fields[0].length);
 		for (int row = 0; row < fields.length; row++) {
 			String number = row+1 < 10 ? "0" + (row+1) : ""+(row+1);
-			System.out.print(number + "  ");
+			System.out.print(number + "\t");
 			for (int column = 0; column < fields[row].length; column++) {
 				Field field = fields[row][column];
 				printState(field.getState(), isOwnBoard);
