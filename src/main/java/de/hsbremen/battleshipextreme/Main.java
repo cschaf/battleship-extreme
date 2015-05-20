@@ -21,7 +21,7 @@ import de.hsbremen.battleshipextreme.model.player.PlayerType;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 
 public class Main {
-	public static final void main(String[] args) {
+	public static void main(String[] args) {
 		new ConsoleGame();
 	}
 }
@@ -427,15 +427,30 @@ class ConsoleGame {
 
 	private void printBoard(Board board, boolean isOwnBoard) {
 		Field[][] fields = board.getFields();
+		this.printFieldColumnNumbers(fields[0].length);
 		for (int row = 0; row < fields.length; row++) {
+			String number = row+1 < 10 ? "0" + (row+1) : ""+(row+1);
+			System.out.print(number + "  ");
 			for (int column = 0; column < fields[row].length; column++) {
 				Field field = fields[row][column];
 				printState(field.getState(), isOwnBoard);
-				System.out.print(" ");
+				System.out.print("\t");
 			}
 			System.out.println();
 		}
 		System.out.println();
+	}
+
+	private void printFieldColumnNumbers(int length) {
+		String result = "\t";
+		for (int i=1; i<=length; i++){
+			String number = "" + i + "\t";
+			if (i<10){
+				number = "0" + i + "\t";
+			}
+			result += number;
+		}
+		System.out.println(result);
 	}
 
 	private void printGameStats() {
