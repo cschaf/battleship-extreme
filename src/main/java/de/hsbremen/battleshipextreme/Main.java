@@ -244,7 +244,7 @@ class ConsoleGame {
 			try {
 				isItPossibleToPlaceShip = game.getCurrentPlayer().placeShip(coordinates[1], coordinates[0], orientation);
 				if (!isItPossibleToPlaceShip) {
-					System.out.println("Feld bereits belegt");
+					System.out.println("Feld bereits belegt oder darf nicht belegt werden");
 					System.out.println("Board zurücksetzen? (J/N)");
 					boolean reset = input.next().toUpperCase().charAt(0) == 'J' ? true : false;
 					if (reset) {
