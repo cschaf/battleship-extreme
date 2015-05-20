@@ -110,7 +110,7 @@ class ConsoleGame {
 		for (int i = 0; i < numberOfGames; i++) {
 			System.out.println("Spiel-Nr" + i);
 			// Spiel mit zwei schlauen Ais erzeugen
-			createAiGame(1, 1);
+			createAiGame(4, 1);
 			gameLoop();
 			roundNumbersOfEachGame[i] = (int) Math.floor(game.getTurnNumber() / game.getPlayers().length);
 		}
@@ -148,11 +148,11 @@ class ConsoleGame {
 		do {
 			System.out.print("Anzahl der menschlichen Spieler (0-" + maxPlayers + "): ");
 			players = readIntegerWithMinMax(0, maxPlayers);
-			maxPlayers = maxPlayers - players;
+			int playersLeft = maxPlayers - players;
 
-			if (maxPlayers > 0) {
-				System.out.print("Anzahl der KI-Spieler (0-" + maxPlayers + "): ");
-				aiPlayers = readIntegerWithMinMax(0, maxPlayers);
+			if (playersLeft > 0) {
+				System.out.print("Anzahl der KI-Spieler (0-" + playersLeft + "): ");
+				aiPlayers = readIntegerWithMinMax(0, playersLeft);
 			} else {
 				aiPlayers = 0;
 				System.out.println("Kein Platz mehr für KI-Spieler.");
