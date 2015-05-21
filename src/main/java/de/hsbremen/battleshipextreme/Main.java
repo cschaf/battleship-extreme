@@ -66,7 +66,7 @@ class ConsoleGame {
 				break;
 			case 5:
 				tryToLoadGame();
-				this.makePlayerTurn();
+				if(game!=null)this.makePlayerTurn();
 			}
 		} while (this.game == null);
 	}
@@ -131,7 +131,7 @@ class ConsoleGame {
 		System.exit(0);
 	}
 
-	private Game tryToLoadGame() {
+	private void tryToLoadGame() {
 		// gespeichertes Spiel fortsetzen
 		try {
 			game = new Game(SAVEGAME_FILENAME);
@@ -139,7 +139,6 @@ class ConsoleGame {
 			System.out.println("Spiel konnte nicht geladen werden");
 			game = null;
 		}
-		return game;
 	}
 
 	private Settings createSettings() {
