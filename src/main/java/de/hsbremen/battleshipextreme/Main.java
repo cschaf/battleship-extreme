@@ -242,6 +242,7 @@ class ConsoleGame {
 			}
 			System.out.println();
 			System.out.println("Board von " + currentPlayer);
+			System.out.println();
 			printBoard(currentPlayer.getBoard(), true);
 		} while (!game.isReady());
 
@@ -306,7 +307,7 @@ class ConsoleGame {
 			// Spieler ¸berspringen wenn er tot ist
 			if (currentPlayer.hasLost()) {
 				System.out.println(currentPlayer
-						+ " ist tot und kann nicht schieﬂen.");
+						+ " ist besiegt und kann nicht schieﬂen.");
 			} else if (currentPlayer.areAllShipsReloading()) {
 				System.out.println(currentPlayer
 						+ " kann nicht schieﬂen, da alle Schiffe nachladen.");
@@ -326,7 +327,7 @@ class ConsoleGame {
 	private void makeAITurn() {
 		AIPlayer ai = (AIPlayer) game.getCurrentPlayer();
 		try {
-			game.makeTurnAutomatically();
+			game.makeAiTurn();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -496,7 +497,7 @@ class ConsoleGame {
 				+ " Runden");
 		for (Player player : game.getPlayers()) {
 			if (player.hasLost()) {
-				System.out.println(player + " ist tot.");
+				System.out.println(player + " ist besiegt.");
 			}
 		}
 		System.out.println(game.getWinner() + " hat gewonnen!");

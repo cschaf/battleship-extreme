@@ -34,17 +34,25 @@ public class Game implements Serializable {
 		int numberOfHumanPlayers = settings.getPlayers();
 		int numberOfAIPlayers = settings.getSmartAiPlayers();
 		int numberOfDumbAIPlayers = settings.getDumbAiPlayers();
-		int numberOfPlayers = numberOfAIPlayers + numberOfHumanPlayers + numberOfDumbAIPlayers;
+		int numberOfPlayers = numberOfAIPlayers + numberOfHumanPlayers
+				+ numberOfDumbAIPlayers;
 		this.players = new Player[numberOfPlayers];
 		// menschliche Spieler erzeugen
 		for (int i = 0; i < numberOfHumanPlayers; i++)
-			this.players[i] = new HumanPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
+			this.players[i] = new HumanPlayer(settings.getBoardSize(),
+					settings.getDestroyers(), settings.getFrigates(),
+					settings.getCorvettes(), settings.getSubmarines());
 		// schlaue KI-Spieler erzeugen
-		for (int i = numberOfHumanPlayers; i < numberOfAIPlayers + numberOfHumanPlayers; i++)
-			this.players[i] = new SmartAIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
+		for (int i = numberOfHumanPlayers; i < numberOfAIPlayers
+				+ numberOfHumanPlayers; i++)
+			this.players[i] = new SmartAIPlayer(settings.getBoardSize(),
+					settings.getDestroyers(), settings.getFrigates(),
+					settings.getCorvettes(), settings.getSubmarines());
 		// dumme KI-Spieler erzeugen
 		for (int i = numberOfHumanPlayers + numberOfAIPlayers; i < numberOfPlayers; i++)
-			this.players[i] = new DumbAIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
+			this.players[i] = new DumbAIPlayer(settings.getBoardSize(),
+					settings.getDestroyers(), settings.getFrigates(),
+					settings.getCorvettes(), settings.getSubmarines());
 
 		// Spielernummern setzen
 		for (int i = 0; i < this.players.length; i++) {
@@ -103,7 +111,7 @@ public class Game implements Serializable {
 	 * 
 	 * @throws Exception
 	 */
-	public void makeTurnAutomatically() throws Exception {
+	public void makeAiTurn() throws Exception {
 		// AI soll Zug automatisch machen
 		AIPlayer ai = (AIPlayer) this.currentPlayer;
 		ai.makeAiTurn(this.getEnemiesOfCurrentPlayer());
@@ -128,7 +136,8 @@ public class Game implements Serializable {
 		int currentPlayerIndex = Arrays.asList(players).indexOf(currentPlayer);
 		// wenn letzter Spieler im Array, dann Index wieder auf 0 setzen,
 		// ansonsten hochzählen
-		currentPlayerIndex = (currentPlayerIndex >= this.players.length - 1) ? currentPlayerIndex = 0 : currentPlayerIndex + 1;
+		currentPlayerIndex = (currentPlayerIndex >= this.players.length - 1) ? currentPlayerIndex = 0
+				: currentPlayerIndex + 1;
 		this.currentPlayer = this.players[currentPlayerIndex];
 	}
 
