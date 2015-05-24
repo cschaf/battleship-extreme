@@ -168,11 +168,18 @@ public abstract class Player implements Serializable {
 	 * 
 	 * @return a list of all ships that are not destroyed.
 	 */
-	public ArrayList<Ship> getAvailableShips() {
+	public ArrayList<Ship> getAvailableShips(boolean excludeReloadingShips) {
 		ArrayList<Ship> availableShips = new ArrayList<Ship>();
 		for (Ship ship : ships) {
-			if (!ship.isDestroyed())
-				availableShips.add(ship);
+			if (!ship.isDestroyed()) {
+				if (excludeReloadingShips) {
+					if (!ship.isReloading()) {
+						availableShips.add(ship);
+					}
+				} else {
+					availableShips.add(ship);
+				}
+			}
 		}
 		return availableShips;
 	}
@@ -232,13 +239,8 @@ public abstract class Player implements Serializable {
 	 * @return true if all available ships are reloading, else false.
 	 */
 	public boolean areAllShipsReloading() {
-		ArrayList<Ship> availableShips = this.getAvailableShips();
-		for (Ship ship : availableShips) {
-			if (!ship.isReloading()) {
-				return false;
-			}
-		}
-		return true;
+		ArrayList<Ship> availableShips = this.getAvailableShips(true);
+		return availableShips.size() <= 0;
 	}
 
 	/**

@@ -122,21 +122,24 @@ public class Game implements Serializable {
 		AIPlayer ai = (AIPlayer) this.currentPlayer;
 		Player currentEnemy;
 		do {
-
-			// Gegner auswählen
 			do {
-				// if (ai.getCurrentEnemyIndex() == -1)
-				ai.setRandomEnemyIndex(players.length - 1);
 				currentEnemy = players[ai.getCurrentEnemyIndex()];
-			} while (currentEnemy.hasLost() || currentEnemy == null || currentPlayer.equals(currentEnemy));
+				// zufälligen Gegner auswählen, wenn die KI keine Spur verfolgt,
+				// ansonsten gemerkten Gegner beibehalten
+				if (!ai.hasTargets() || currentEnemy.hasLost() || ai.equals(currentEnemy) || ai.getType() == PlayerType.DUMB_AI) {
+					ai.setRandomEnemyIndex(players.length - 1);
+					currentEnemy = players[ai.getCurrentEnemyIndex()];
+				}
+			} while (currentEnemy.hasLost() || currentEnemy == null || ai.equals(currentEnemy));
+
 			System.out.println("gegner gewählt");
 			// Schiff auswählen
 			ai.selectShip(ai.getAvailableShipsToShoot().get(0));
-
 			Shot shot = ai.getTarget(getFieldStates(currentEnemy));
 			wasShotPossible = makeTurn(currentEnemy, shot.getX(), shot.getY(), shot.getOrientation());
 			System.out.println(wasShotPossible);
 		} while (!wasShotPossible);
+
 	}
 
 	public boolean makeTurn(Player enemy, int xPos, int yPos, Orientation orientation) throws FieldOutOfBoardException {

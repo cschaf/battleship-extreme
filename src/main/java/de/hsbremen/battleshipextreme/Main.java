@@ -404,7 +404,7 @@ class ConsoleGame {
 
 	private void selectShip() {
 		Player currentPlayer = game.getCurrentPlayer();
-		ArrayList<Ship> availableShips = currentPlayer.getAvailableShips();
+		ArrayList<Ship> availableShips = currentPlayer.getAvailableShips(false);
 		Ship selectedShip;
 		boolean isShipSelected = false;
 		do {
