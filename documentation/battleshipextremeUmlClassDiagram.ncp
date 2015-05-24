@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <Project>
   <Name>BattleshipExtreme</Name>
   <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
@@ -12,49 +11,66 @@
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private int size</Member>
+        <Member type="Field">private Field fields</Member>
         <Member type="Constructor">public Board(int size)</Member>
+        <Member type="Method">public boolean containsFieldAtPosition(int x, int y)</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>Player</Name>
         <Access>Public</Access>
         <Location left="399" top="52" />
-        <Size width="285" height="247" />
+        <Size width="285" height="366" />
         <Collapsed>False</Collapsed>
-        <Member type="Field">protected boolean hasLost</Member>
-        <Member type="Field">protected static int currentId</Member>
         <Member type="Field">protected Ship[] ships</Member>
-        <Member type="Field">protected int id</Member>
-        <Member type="Method">public void resetCurrentId()</Member>
+        <Member type="Field">protected Board publicBoard</Member>
+        <Member type="Field">protected Board privateBoard</Member>
+        <Member type="Field">private String name</Member>
+        <Member type="Field">private Ship currentShip</Member>
+        <Member type="Field">private PlayerType type</Member>
         <Member type="Method">public void placeShip(Ship ship, int xPos, int yPos, Orientation orientation)</Member>
         <Member type="Constructor">public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines)</Member>
-        <Member type="Method">public boolean shoot(Ship ship, Player player, Field field, Orientation orientation)</Member>
+        <Member type="Method">public boolean markPublicBoard(int xPos, int yPos)</Member>
         <Member type="Method">public boolean hasPlacedAllShips()</Member>
-        <Member type="Method">public boolean AreAllShipsPlaced()</Member>
+        <Member type="Method">public boolean areAllShipsPlaced()</Member>
+        <Member type="Method">public void resetBoard()</Member>
+        <Member type="Method">public void nextShip()</Member>
+        <Member type="Method">public ArrayList getAvailableShips(boolean withReload)</Member>
+        <Member type="Method">public boolean setCurrentShip()</Member>
+        <Member type="Method">public boolean areAllShipsReloading()</Member>
+        <Member type="Method">public boolean hasLost()</Member>
         <Modifier>Abstract</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>Game</Name>
         <Access>Public</Access>
-        <Location left="55" top="52" />
-        <Size width="226" height="247" />
+        <Location left="55" top="10" />
+        <Size width="226" height="383" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private Player currentPlayer</Member>
+        <Member type="Field">private Player[] players</Member>
+        <Member type="Field">private Player winner</Member>
+        <Member type="Field">private int turnNumber</Member>
+        <Member type="Field">private int roundNumber</Member>
         <Member type="Constructor">public Game(Settings settings)</Member>
+        <Member type="Constructor">public Game(String saveGamePath)</Member>
         <Member type="Method">public void setPlayerName(int id, String name)</Member>
         <Member type="Method">public void nextPlayer()</Member>
         <Member type="Method">public Player getPlayer(int id)</Member>
         <Member type="Method">public boolean isReady()</Member>
-        <Member type="Method">public void setBeginningPlayerRandomly()</Member>
-        <Member type="Method">public void setBeginningPlayer(int playerId)</Member>
         <Member type="Method">public boolean isGameover()</Member>
-        <Member type="Method">public Player determineWinner()</Member>
+        <Member type="Method">public void makeAiTurn()</Member>
+        <Member type="Method">public void makeTurn(Player enemy, int xPos, int yPos, Orientation orientation)</Member>
+        <Member type="Method">public void load(String sourcePath)</Member>
+        <Member type="Method">public void save(String destinationPath)</Member>
+        <Member type="Method">private void closeQuietly(InputStream stream)</Member>
+        <Member type="Method">private void closeQuietly(OutputStream stream)</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>HumanPlayer</Name>
         <Access>Public</Access>
-        <Location left="399" top="353" />
+        <Location left="399" top="574" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -72,7 +88,7 @@
         <Member type="Field">protected int currentReloadTime</Member>
         <Member type="Field">protected ShipType type</Member>
         <Member type="Method">public boolean isDestroyed()</Member>
-        <Member type="Method">public boolean shoot(Player player, Field field, Orientation orientation)</Member>
+        <Member type="Method">public boolean setReloadTimeToMax()</Member>
         <Member type="Method">public boolean isReloading()</Member>
         <Member type="Method">public void decreaseCurrentReloadTime()</Member>
         <Member type="Method">public boolean isPlaced()</Member>
@@ -81,8 +97,8 @@
       <Entity type="Enum">
         <Name>Orientation</Name>
         <Access>Public</Access>
-        <Location left="55" top="592" />
-        <Size width="162" height="216" />
+        <Location left="75" top="682" />
+        <Size width="162" height="175" />
         <Collapsed>False</Collapsed>
         <Value>Horizontal</Value>
         <Value>Vertical</Value>
@@ -137,7 +153,7 @@
       <Entity type="Class">
         <Name>Settings</Name>
         <Access>Public</Access>
-        <Location left="55" top="324" />
+        <Location left="75" top="443" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private int players</Member>
@@ -258,6 +274,8 @@
         <EndMultiplicity>2..6</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="1" second="0">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -266,8 +284,6 @@
         <EndMultiplicity>1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="10" second="4">
-        <Label>
-        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -276,8 +292,6 @@
         <EndMultiplicity>0..1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="0" second="10">
-        <Label>
-        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -286,6 +300,8 @@
         <EndMultiplicity>25..*</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="2" second="11">
+        <Label>
+        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -831,394 +847,4 @@ Contains:
       </Relationship>
     </Relationships>
   </ProjectItem>
-=======
-<Project>
-  <Name>BattleshipExtreme</Name>
-  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
-    <Name>all</Name>
-    <Language>Java</Language>
-    <Entities>
-      <Entity type="Class">
-        <Name>Board</Name>
-        <Access>Public</Access>
-        <Location left="704" top="52" />
-        <Size width="162" height="216" />
-        <Collapsed>False</Collapsed>
-        <Member type="Field">private int size</Member>
-        <Member type="Field">private Field fields</Member>
-        <Member type="Constructor">public Board(int size)</Member>
-        <Member type="Method">public boolean containsFieldAtPosition(int x, int y)</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>Player</Name>
-        <Access>Public</Access>
-        <Location left="399" top="52" />
-        <Size width="285" height="366" />
-        <Collapsed>False</Collapsed>
-        <Member type="Field">protected Ship[] ships</Member>
-        <Member type="Field">protected Board publicBoard</Member>
-        <Member type="Field">protected Board privateBoard</Member>
-        <Member type="Field">private String name</Member>
-        <Member type="Field">private Ship currentShip</Member>
-        <Member type="Field">private PlayerType type</Member>
-        <Member type="Method">public void placeShip(Ship ship, int xPos, int yPos, Orientation orientation)</Member>
-        <Member type="Constructor">public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines)</Member>
-        <Member type="Method">public boolean markPublicBoard(int xPos, int yPos)</Member>
-        <Member type="Method">public boolean hasPlacedAllShips()</Member>
-        <Member type="Method">public boolean areAllShipsPlaced()</Member>
-        <Member type="Method">public void resetBoard()</Member>
-        <Member type="Method">public void nextShip()</Member>
-        <Member type="Method">public ArrayList getAvailableShips(boolean withReload)</Member>
-        <Member type="Method">public boolean setCurrentShip()</Member>
-        <Member type="Method">public boolean areAllShipsReloading()</Member>
-        <Member type="Method">public boolean hasLost()</Member>
-        <Modifier>Abstract</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>Game</Name>
-        <Access>Public</Access>
-        <Location left="55" top="10" />
-        <Size width="226" height="383" />
-        <Collapsed>False</Collapsed>
-        <Member type="Field">private Player currentPlayer</Member>
-        <Member type="Field">private Player[] players</Member>
-        <Member type="Field">private Player winner</Member>
-        <Member type="Field">private int turnNumber</Member>
-        <Member type="Field">private int roundNumber</Member>
-        <Member type="Constructor">public Game(Settings settings)</Member>
-        <Member type="Constructor">public Game(String saveGamePath)</Member>
-        <Member type="Method">public void setPlayerName(int id, String name)</Member>
-        <Member type="Method">public void nextPlayer()</Member>
-        <Member type="Method">public Player getPlayer(int id)</Member>
-        <Member type="Method">public boolean isReady()</Member>
-        <Member type="Method">public boolean isGameover()</Member>
-        <Member type="Method">public void makeAiTurn()</Member>
-        <Member type="Method">public void makeTurn(Player enemy, int xPos, int yPos, Orientation orientation)</Member>
-        <Member type="Method">public void load(String sourcePath)</Member>
-        <Member type="Method">public void save(String destinationPath)</Member>
-        <Member type="Method">private void closeQuietly(InputStream stream)</Member>
-        <Member type="Method">private void closeQuietly(OutputStream stream)</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>HumanPlayer</Name>
-        <Access>Public</Access>
-        <Location left="399" top="574" />
-        <Size width="162" height="216" />
-        <Collapsed>False</Collapsed>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>Ship</Name>
-        <Access>Public</Access>
-        <Location left="1183" top="52" />
-        <Size width="482" height="264" />
-        <Collapsed>False</Collapsed>
-        <Member type="Field">protected boolean isPlaced</Member>
-        <Member type="Field">protected int shootingRange</Member>
-        <Member type="Field">protected Orientation orientation</Member>
-        <Member type="Field">protected int maxReloadTime</Member>
-        <Member type="Field">protected int currentReloadTime</Member>
-        <Member type="Field">protected ShipType type</Member>
-        <Member type="Method">public boolean isDestroyed()</Member>
-        <Member type="Method">public boolean setReloadTimeToMax()</Member>
-        <Member type="Method">public boolean isReloading()</Member>
-        <Member type="Method">public void decreaseCurrentReloadTime()</Member>
-        <Member type="Method">public boolean isPlaced()</Member>
-        <Modifier>Abstract</Modifier>
-      </Entity>
-      <Entity type="Enum">
-        <Name>Orientation</Name>
-        <Access>Public</Access>
-        <Location left="75" top="682" />
-        <Size width="162" height="175" />
-        <Collapsed>False</Collapsed>
-        <Value>Horizontal</Value>
-        <Value>Vertical</Value>
-      </Entity>
-      <Entity type="Class">
-        <Name>Submarine</Name>
-        <Access>Public</Access>
-        <Location left="985" top="459" />
-        <Size width="162" height="216" />
-        <Collapsed>False</Collapsed>
-        <Member type="Constructor">public Submarine()</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>Destroyer</Name>
-        <Access>Public</Access>
-        <Location left="1205" top="459" />
-        <Size width="162" height="216" />
-        <Collapsed>False</Collapsed>
-        <Member type="Constructor">public Destroyer()</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>Frigate</Name>
-        <Access>Public</Access>
-        <Location left="1447" top="459" />
-        <Size width="162" height="216" />
-        <Collapsed>False</Collapsed>
-        <Member type="Constructor">public Frigate()</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>Corvette</Name>
-        <Access>Public</Access>
-        <Location left="1679" top="459" />
-        <Size width="162" height="216" />
-        <Collapsed>False</Collapsed>
-        <Member type="Constructor">public Corvette()</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>Field</Name>
-        <Access>Public</Access>
-        <Location left="950" top="52" />
-        <Size width="162" height="216" />
-        <Collapsed>False</Collapsed>
-        <Member type="Field">private int xPos</Member>
-        <Member type="Field">private int yPos</Member>
-        <Member type="Field">private boolean isHit</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>Settings</Name>
-        <Access>Public</Access>
-        <Location left="75" top="443" />
-        <Size width="162" height="216" />
-        <Collapsed>False</Collapsed>
-        <Member type="Field">private int players</Member>
-        <Member type="Field">private int boardSize</Member>
-        <Member type="Field">private int destroyers</Member>
-        <Member type="Field">private int frigates</Member>
-        <Member type="Field">private int corvettes</Member>
-        <Member type="Field">private int submarines</Member>
-        <Member type="Constructor">public Settings(int players, int boardSize, int destroyers, int frigates, int corvettes, int submarines)</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>Controller</Name>
-        <Access>Public</Access>
-        <Location left="692" top="324" />
-        <Size width="213" height="216" />
-        <Collapsed>False</Collapsed>
-        <Member type="Field">private Game game</Member>
-        <Member type="Field">private View view</Member>
-        <Member type="Constructor">public Controller(Game game, View view)</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Enum">
-        <Name>ShipType</Name>
-        <Access>Public</Access>
-        <Location left="692" top="592" />
-        <Size width="162" height="216" />
-        <Collapsed>False</Collapsed>
-        <Value>Destroyer</Value>
-        <Value>Frigate</Value>
-        <Value>Submarine</Value>
-        <Value>Corvette</Value>
-      </Entity>
-      <Entity type="Class">
-        <Name>FieldOccupiedException</Name>
-        <Access>Public</Access>
-        <Location left="141" top="885" />
-        <Size width="236" height="216" />
-        <Collapsed>False</Collapsed>
-        <Member type="Field">private Field field</Member>
-        <Member type="Method">public Field getField()</Member>
-        <Member type="Constructor">public FieldOccupiedException(Field field)</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>NotAllShipsPlacedException</Name>
-        <Access>Public</Access>
-        <Location left="141" top="1139" />
-        <Size width="236" height="216" />
-        <Collapsed>False</Collapsed>
-        <Member type="Field">private Player player</Member>
-        <Member type="Method">public Player getPlayer()</Member>
-        <Member type="Constructor">public NotAllShipsPlacedException(Player player)</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>FieldOutOfBoardException</Name>
-        <Access>Public</Access>
-        <Location left="483" top="885" />
-        <Size width="236" height="216" />
-        <Collapsed>False</Collapsed>
-        <Member type="Field">private Field field</Member>
-        <Member type="Method">public Field getField()</Member>
-        <Member type="Constructor">public FieldOutOfBoardException(Field field)</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>ShipAlreadyPlacedException</Name>
-        <Access>Public</Access>
-        <Location left="483" top="1139" />
-        <Size width="236" height="216" />
-        <Collapsed>False</Collapsed>
-        <Member type="Field">private Ship ship</Member>
-        <Member type="Method">public Ship getShip()</Member>
-        <Member type="Constructor">public ShipAlreadyPlacedException(Ship ship)</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>ShipOutOfBoardException</Name>
-        <Access>Public</Access>
-        <Location left="141" top="1393" />
-        <Size width="236" height="216" />
-        <Collapsed>False</Collapsed>
-        <Member type="Field">private Ship ship</Member>
-        <Member type="Method">public Ship getShip()</Member>
-        <Member type="Constructor">public ShipOutOfBoardException(Ship ship)</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-    </Entities>
-    <Relationships>
-      <Relationship type="Generalization" first="3" second="1">
-        <StartOrientation>Vertical</StartOrientation>
-        <EndOrientation>Vertical</EndOrientation>
-      </Relationship>
-      <Relationship type="Generalization" first="6" second="4">
-        <StartOrientation>Vertical</StartOrientation>
-        <EndOrientation>Vertical</EndOrientation>
-      </Relationship>
-      <Relationship type="Generalization" first="7" second="4">
-        <StartOrientation>Vertical</StartOrientation>
-        <EndOrientation>Vertical</EndOrientation>
-      </Relationship>
-      <Relationship type="Generalization" first="8" second="4">
-        <StartOrientation>Vertical</StartOrientation>
-        <EndOrientation>Vertical</EndOrientation>
-      </Relationship>
-      <Relationship type="Generalization" first="9" second="4">
-        <StartOrientation>Vertical</StartOrientation>
-        <EndOrientation>Vertical</EndOrientation>
-      </Relationship>
-      <Relationship type="Association" first="2" second="1">
-        <Label>hat</Label>
-        <StartOrientation>Horizontal</StartOrientation>
-        <EndOrientation>Horizontal</EndOrientation>
-        <Direction>Unidirectional</Direction>
-        <AssociationType>Association</AssociationType>
-        <StartMultiplicity>1</StartMultiplicity>
-        <EndMultiplicity>2..6</EndMultiplicity>
-      </Relationship>
-      <Relationship type="Association" first="1" second="0">
-        <Label>
-        </Label>
-        <StartOrientation>Horizontal</StartOrientation>
-        <EndOrientation>Horizontal</EndOrientation>
-        <Direction>Unidirectional</Direction>
-        <AssociationType>Association</AssociationType>
-        <StartMultiplicity>1</StartMultiplicity>
-        <EndMultiplicity>1</EndMultiplicity>
-      </Relationship>
-      <Relationship type="Association" first="10" second="4">
-        <StartOrientation>Horizontal</StartOrientation>
-        <EndOrientation>Horizontal</EndOrientation>
-        <Direction>Unidirectional</Direction>
-        <AssociationType>Association</AssociationType>
-        <StartMultiplicity>1</StartMultiplicity>
-        <EndMultiplicity>0..1</EndMultiplicity>
-      </Relationship>
-      <Relationship type="Association" first="0" second="10">
-        <StartOrientation>Horizontal</StartOrientation>
-        <EndOrientation>Horizontal</EndOrientation>
-        <Direction>Unidirectional</Direction>
-        <AssociationType>Association</AssociationType>
-        <StartMultiplicity>1</StartMultiplicity>
-        <EndMultiplicity>25..*</EndMultiplicity>
-      </Relationship>
-      <Relationship type="Association" first="2" second="11">
-        <Label>
-        </Label>
-        <StartOrientation>Vertical</StartOrientation>
-        <EndOrientation>Vertical</EndOrientation>
-        <Direction>Unidirectional</Direction>
-        <AssociationType>Association</AssociationType>
-      </Relationship>
-    </Relationships>
-  </ProjectItem>
-  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
-    <Name>packages</Name>
-    <Language>Java</Language>
-    <Entities>
-      <Entity type="Comment">
-        <Text>de.hsbremen.battleshipextreme.core
-
-Conatins:
--Ship
--ShipType
--Orientation
--Settings
--Player
--Field</Text>
-        <Location left="293" top="101" />
-        <Size width="206" height="151" />
-      </Entity>
-      <Entity type="Comment">
-        <Text>de.hsbremen.battleshipextreme.ships
-
-Contains:
--Submarine
--Corvette
--Frigate
--Destroyer</Text>
-        <Location left="293" top="282" />
-        <Size width="206" height="111" />
-      </Entity>
-      <Entity type="Comment">
-        <Text>de.hsbremen.battleshipextreme.logic
-
-Conatins:
--Board
--Game</Text>
-        <Location left="549" top="101" />
-        <Size width="206" height="117" />
-      </Entity>
-      <Entity type="Comment">
-        <Text>de.hsbremen.battleshipextreme.players
-
-Contains:
--HumanPlayer
--AiPlayer</Text>
-        <Location left="293" top="408" />
-        <Size width="219" height="111" />
-      </Entity>
-      <Entity type="Comment">
-        <Text>de.hsbremen.battleshipextreme.client
--Controller</Text>
-        <Location left="884" top="101" />
-        <Size width="210" height="104" />
-      </Entity>
-      <Entity type="Comment">
-        <Text>de.hsbremen.battleshipextreme.server
--Controller</Text>
-        <Location left="884" top="262" />
-        <Size width="226" height="104" />
-      </Entity>
-      <Entity type="Comment">
-        <Text>de.hsbremen.battleshipextreme.network
-</Text>
-        <Location left="884" top="408" />
-        <Size width="226" height="104" />
-      </Entity>
-      <Entity type="Comment">
-        <Text>de.hsbremen.battleshipextreme.excepions</Text>
-        <Location left="549" top="282" />
-        <Size width="232" height="104" />
-      </Entity>
-      <Entity type="Comment">
-        <Text>de.hsbremen.battleshipextreme.eventhandling</Text>
-        <Location left="549" top="408" />
-        <Size width="248" height="104" />
-      </Entity>
-    </Entities>
-    <Relationships />
-  </ProjectItem>
->>>>>>> develop
 </Project>

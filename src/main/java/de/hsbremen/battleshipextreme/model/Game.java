@@ -1,79 +1,57 @@
 package de.hsbremen.battleshipextreme.model;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
+import de.hsbremen.battleshipextreme.model.player.*;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import de.hsbremen.battleshipextreme.model.player.AIPlayer;
-import de.hsbremen.battleshipextreme.model.player.DumbAIPlayer;
-import de.hsbremen.battleshipextreme.model.player.HumanPlayer;
-import de.hsbremen.battleshipextreme.model.player.Player;
-import de.hsbremen.battleshipextreme.model.player.SmartAIPlayer;
-
 public class Game implements Serializable {
-	private Player[] players;
-	private Player currentPlayer;
-	private Player winner;
-	private int turnNumber;
+    private Player[] players;
+    private Player currentPlayer;
+    private Player winner;
+    private int turnNumber;
 
-	/**
-	 * Reads the settings and initializes the necessary game objects.
-	 * 
-	 * @param settings
-	 *            the game settings.
-	 */
-	public Game(Settings settings) {
-		// Spieler erzeugen
-		int numberOfHumanPlayers = settings.getPlayers();
-		int numberOfAIPlayers = settings.getSmartAiPlayers();
-		int numberOfDumbAIPlayers = settings.getDumbAiPlayers();
-		int numberOfPlayers = numberOfAIPlayers + numberOfHumanPlayers
-				+ numberOfDumbAIPlayers;
-		this.players = new Player[numberOfPlayers];
-		// menschliche Spieler erzeugen
-		for (int i = 0; i < numberOfHumanPlayers; i++)
-			this.players[i] = new HumanPlayer(settings.getBoardSize(),
-					settings.getDestroyers(), settings.getFrigates(),
-					settings.getCorvettes(), settings.getSubmarines());
-		// schlaue KI-Spieler erzeugen
-		for (int i = numberOfHumanPlayers; i < numberOfAIPlayers
-				+ numberOfHumanPlayers; i++)
-			this.players[i] = new SmartAIPlayer(settings.getBoardSize(),
-					settings.getDestroyers(), settings.getFrigates(),
-					settings.getCorvettes(), settings.getSubmarines());
-		// dumme KI-Spieler erzeugen
-		for (int i = numberOfHumanPlayers + numberOfAIPlayers; i < numberOfPlayers; i++)
-			this.players[i] = new DumbAIPlayer(settings.getBoardSize(),
-					settings.getDestroyers(), settings.getFrigates(),
-					settings.getCorvettes(), settings.getSubmarines());
+    /**
+     * Reads the settings and initializes the necessary game objects.
+     * @param settings the game settings.
+     */
+    public Game(Settings settings) {
+        // Spieler erzeugen
+        int numberOfHumanPlayers = settings.getPlayers();
+        int numberOfAIPlayers = settings.getSmartAiPlayers();
+        int numberOfDumbAIPlayers = settings.getDumbAiPlayers();
+        int numberOfPlayers = numberOfAIPlayers + numberOfHumanPlayers + numberOfDumbAIPlayers;
+        this.players = new Player[numberOfPlayers];
+        // menschliche Spieler erzeugen
+        for (int i = 0; i < numberOfHumanPlayers; i++)
+            this.players[i] = new HumanPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
+        // schlaue KI-Spieler erzeugen
+        for (int i = numberOfHumanPlayers; i < numberOfAIPlayers + numberOfHumanPlayers; i++)
+            this.players[i] = new SmartAIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
+        // dumme KI-Spieler erzeugen
+        for (int i = numberOfHumanPlayers + numberOfAIPlayers; i < numberOfPlayers; i++)
+            this.players[i] = new DumbAIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
 
-		// Spielernummern setzen
-		for (int i = 0; i < this.players.length; i++) {
-			this.players[i].setName(this.players[i].getName() + (i + 1));
-		}
+        // Spielernummern setzen
+        for (int i = 0; i < this.players.length; i++) {
+            this.players[i].setName(this.players[i].getName() + (i + 1));
+        }
 
-		this.turnNumber = 0;
-		this.currentPlayer = players[0];
-	}
+        this.turnNumber = 0;
+        this.currentPlayer = players[0];
+    }
 
-	/**
-	 * This constructor is used when a game is loaded.
-	 */
-	public Game(String pathToSaveGame) throws Exception {
-		this.load(pathToSaveGame);
-	}
+    /**
+     * This constructor is used when a game is loaded.
+     */
+    public Game(String pathToSaveGame) throws Exception {
+        this.load(pathToSaveGame);
+    }
 
     /**
      * Returns true if the ships of all players have been placed. The method is
      * used to determine if a game is ready to start.
-     *
      * @return true if all ships by all players are placed, else false
      */
     public boolean isReady() {
@@ -87,7 +65,6 @@ public class Game implements Serializable {
 
     /**
      * Check if the game is over. Set the game winner if the game is over.
-     *
      * @return true if the game is over, false if not
      */
     public boolean isGameover() {
@@ -105,60 +82,52 @@ public class Game implements Serializable {
         return numberOfPlayersLeft <= 1;
     }
 
-	/**
-	 * This method is used for AI-Players. Call the makeTurnAutomatically-method
-	 * of the AI-Player and pass a list of enemies that can be attacked.
-	 * 
-	 * @throws Exception
-	 */
-	public void makeAiTurn() throws Exception {
-		// AI soll Zug automatisch machen
-		AIPlayer ai = (AIPlayer) this.currentPlayer;
-		ai.makeAiTurn(this.getEnemiesOfCurrentPlayer());
-	}
+    /**
+     * This method is used for AI-Players. Call the makeTurnAutomatically-method
+     * of the AI-Player and pass a list of enemies that can be attacked.
+     */
+    public void makeAiTurn() throws Exception {
+        // AI soll Zug automatisch machen
+        AIPlayer ai = (AIPlayer) this.currentPlayer;
+        ai.makeAiTurn(this.getEnemiesOfCurrentPlayer());
+    }
 
     public Player getWinner() {
         return this.winner;
     }
 
-	/**
-	 * 
-	 * Increase turnNumber.
-	 * 
-	 * Decrease the reload time of the current players' ships.
-	 * 
-	 * Set the currentPlayer to the next player.
-	 * 
-	 */
-	public void nextPlayer() {
-		this.turnNumber++;
-		this.currentPlayer.decreaseCurrentReloadTimeOfShips();
-		int currentPlayerIndex = Arrays.asList(players).indexOf(currentPlayer);
-		// wenn letzter Spieler im Array, dann Index wieder auf 0 setzen,
-		// ansonsten hochzählen
-		currentPlayerIndex = (currentPlayerIndex >= this.players.length - 1) ? currentPlayerIndex = 0
-				: currentPlayerIndex + 1;
-		this.currentPlayer = this.players[currentPlayerIndex];
-	}
+    /**
+     * Increase turnNumber.
+     * Decrease the reload time of the current players' ships.
+     * Set the currentPlayer to the next player.
+     */
+    public void nextPlayer() {
+        this.turnNumber++;
+        this.currentPlayer.decreaseCurrentReloadTimeOfShips();
+        int currentPlayerIndex = Arrays.asList(players).indexOf(currentPlayer);
+        // wenn letzter Spieler im Array, dann Index wieder auf 0 setzen,
+        // ansonsten hochzählen
+        currentPlayerIndex = (currentPlayerIndex >= this.players.length - 1) ? currentPlayerIndex = 0 : currentPlayerIndex + 1;
+        this.currentPlayer = this.players[currentPlayerIndex];
+    }
 
-	/**
-	 * Provides a list of enemies the current player may attack. Players that
-	 * are lost or equal to the current player are filtered.
-	 * 
-	 * @return an ArrayList of Players
-	 */
-	public ArrayList<Player> getEnemiesOfCurrentPlayer() {
-		// angreifbare Gegner des currentPlayers zurückgeben
-		ArrayList<Player> enemies = new ArrayList<Player>();
-		for (int i = 0; i < this.players.length; i++) {
-			if (!this.players[i].hasLost()) {
-				if (!this.currentPlayer.equals(players[i])) {
-					enemies.add(this.players[i]);
-				}
-			}
-		}
-		return enemies;
-	}
+    /**
+     * Provides a list of enemies the current player may attack. Players that
+     * are lost or equal to the current player are filtered.
+     * @return an ArrayList of Players
+     */
+    public ArrayList<Player> getEnemiesOfCurrentPlayer() {
+        // angreifbare Gegner des currentPlayers zurückgeben
+        ArrayList<Player> enemies = new ArrayList<Player>();
+        for (int i = 0; i < this.players.length; i++) {
+            if (!this.players[i].hasLost()) {
+                if (!this.currentPlayer.equals(players[i])) {
+                    enemies.add(this.players[i]);
+                }
+            }
+        }
+        return enemies;
+    }
 
     public Player[] getPlayers() {
         return players;
@@ -170,8 +139,6 @@ public class Game implements Serializable {
 
     /**
      * Saves the this Game to a File
-     *
-     * @param destinationPath
      * @throws Exception if the file could not be saved
      */
     public void save(String destinationPath) throws Exception {
@@ -192,8 +159,6 @@ public class Game implements Serializable {
 
     /**
      * Load a saved Game object
-     *
-     * @param destinationPath
      * @throws Exception if the game could not be loaded
      */
     public void load(String destinationPath) throws Exception {
@@ -218,8 +183,6 @@ public class Game implements Serializable {
 
     /**
      * Close a Stream quietly
-     *
-     * @param stream
      */
     private void closeQuietly(InputStream stream) {
         if (stream != null) {
@@ -233,8 +196,6 @@ public class Game implements Serializable {
 
     /**
      * Close a Stream quietly
-     *
-     * @param stream
      */
     private void closeQuietly(OutputStream stream) {
         if (stream != null) {
@@ -249,5 +210,4 @@ public class Game implements Serializable {
     public int getTurnNumber() {
         return turnNumber;
     }
-
 }

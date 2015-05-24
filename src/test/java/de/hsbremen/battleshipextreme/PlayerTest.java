@@ -1,51 +1,35 @@
 package de.hsbremen.battleshipextreme;
 
-import static org.junit.Assert.assertEquals;
-
 import de.hsbremen.battleshipextreme.model.player.HumanPlayer;
-import org.junit.Before;
-import org.junit.Test;
-
-import de.hsbremen.battleshipextreme.model.Board;
-import de.hsbremen.battleshipextreme.model.FieldState;
-import de.hsbremen.battleshipextreme.model.Orientation;
-import de.hsbremen.battleshipextreme.model.exception.FieldOccupiedException;
-import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
-import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
-import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.player.Player;
-import de.hsbremen.battleshipextreme.model.ship.Destroyer;
-import de.hsbremen.battleshipextreme.model.ship.Ship;
+import org.junit.Before;
 
 /**
  * Tests the Player class
- * 
  * TODO: Mock ship object
- * 
  */
 
 public class PlayerTest {
 
-	private Player player;
+    private Player player;
 
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@Before
-	public void setUp() throws Exception {
+    /**
+     * @throws java.lang.Exception
+     */
+    @Before
+    public void setUp() throws Exception {
 
-		// wird vor jedem Test ausgeführt
-		player = new HumanPlayer(10, 2, 1, 1, 1);
+        // wird vor jedem Test ausgeführt
+        player = new HumanPlayer(10, 2, 1, 1, 1);
+    }
 
-	}
-
-	/**
-	 * Test method for
-	 * 
-	 * @throws Exception
-	 */
+    /**
+     * Test method for
+     *
+     * @throws Exception
+     */
 /*	@Test
-	public void testPlaceShipsHorizontally() throws Exception {
+    public void testPlaceShipsHorizontally() throws Exception {
 		// links oben
 		Destroyer destroyer = (Destroyer) player.getShips()[0];
 		testPlaceShipAtPosition(destroyer, 0, 0, Orientation.Horizontal);

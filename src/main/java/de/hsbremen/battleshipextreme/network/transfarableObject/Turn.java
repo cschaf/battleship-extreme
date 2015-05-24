@@ -1,7 +1,6 @@
 package de.hsbremen.battleshipextreme.network.transfarableObject;
 
 import de.hsbremen.battleshipextreme.model.Field;
-import de.hsbremen.battleshipextreme.model.ShipType;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.network.TransferableType;
@@ -9,7 +8,7 @@ import de.hsbremen.battleshipextreme.network.TransferableType;
 /**
  * Created by cschaf on 30.04.2015.
  */
-public class Turn extends TransferableObject{
+public class Turn extends TransferableObject {
     private String gameId;
     private Player from;
     private Player to;
@@ -24,7 +23,6 @@ public class Turn extends TransferableObject{
         this.field = field;
     }
 
-    @Override
     public TransferableType getType() {
         return TransferableType.Turn;
     }
