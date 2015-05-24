@@ -8,88 +8,137 @@ import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 
-/**
- * Smart AI - uses basic strategy
- * 
- * AI-Benchmark: ~ 40 rounds (77 rounds = random)
- *
- */
 public class SmartAIPlayer extends AIPlayer {
 	private Player nextEnemy;
+
+	// enthält 4 Felder für jede Himmelsrichtung
 	private Field[] nextTargetsArray;
+
 	private Field currentFieldShotAt;
 	private Orientation currentShotOrientation;
+	private ArrayList<Player> availablePlayers;
 
 	private final int NORTH = 0;
 	private final int SOUTH = 1;
 	private final int EAST = 2;
 	private final int WEST = 3;
+	private final int NORTH_EAST = 4;
+	private final int SOUTH_EAST = 5;
+	private final int NORTH_WEST = 6;
+	private final int SOUTH_WEST = 7;
 
 	public SmartAIPlayer(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 		super(boardSize, destroyers, frigates, corvettes, submarines);
-		this.name = "Schlaue KI" + currentId;
+		this.name = "Schlaue KI";
 	}
 
 	@Override
 	public void makeAiTurn(ArrayList<Player> availablePlayers) throws Exception {
-		int currentDirection = 0;
-
+		this.availablePlayers = availablePlayers;
 		chooseShipToShootWithRandomly();
-
 		if (!this.hasTargets()) {
-			// wenn keine Ziele vorhanden sind
-			// zufälligen Player zum angreifen auswählen
-			// aktuellen Gegner nicht mehr merken
-			this.nextEnemy = null;
-			int randomEnemyIndex = generateRandomNumber(0, availablePlayers.size() - 1);
-			this.currentEnemy = availablePlayers.get(randomEnemyIndex);
+			// neues Ziel angreifen, wenn es keine vorgemerkten Ziele gibt
+			attackNewTarget();
+		} else {
+			// gemerkte Ziele angreifen, wenn welche vorhanden sind.
+			attackMemorizedTarget();
+		}
+	}
 
+	private void attackNewTarget() throws Exception {
+		// wenn keine Ziele vorhanden sind
+		// zufälligen Player zum angreifen auswählen
+		// aktuellen Gegner nicht mehr merken
+		nextEnemy = null;
+		int randomEnemyIndex = createRandomNumber(0, availablePlayers.size() - 1);
+		currentEnemy = availablePlayers.get(randomEnemyIndex);
+
+		// Wenn es mehr als 2 Mitspieler gibt oder die KI mit einem Schuss
+		// gleichzeitig zwei Schiffe getroffen hat (nur mit Destroyer
+		// möglich), kann es sein, dass es getroffene Schiffe gibt, die sich
+		// die KI nicht gemerkt hat.
+		// Deshalb wird, wenn die KI keine vorgemerkten Ziele mehr hat, das
+		// Feld nach getroffenen Schiffen abgesucht
+		ArrayList<Field> hitFields = lookForHitFields();
+
+		// wenn ein getroffenes Schiff gefunden wurde, dann plane die nächsten
+		// Schüsse und greife das gefundene Ziel an
+		if (hitFields.size() > 0) {
+			planNextShots(hitFields);
+			attackMemorizedTarget();
+		} else {
+			// wenn keine getroffenen Schiffe gefunden wurden
 			// zufällig schießen, Schuss merken
 			// setzt currentFieldShotAt und currentShotOrientation
 			shootRandomly();
-
 			// prüfen ob ein Feld getroffen wurde, wenn ja dann Feld merken
-			Field hitField = getFirstHitOfShot();
+			hitFields = getHitFields();
+		}
+		// wenn Treffer, dann Gegner merken und nächsten Schüsse planen
+		if (hitFields.size() > 0) {
+			planNextShots(hitFields);
+		}
+	}
 
-			// wenn Treffer, dann Gegner merken und nächsten Schüsse planen
-			if (hitField != null) {
-				this.nextEnemy = this.currentEnemy;
-				planNextShots(hitField);
-			} else {
-				// currentEnemy vergessen, wenn kein Feld getroffen
-				// wurde
-				this.nextEnemy = null;
-			}
-		} else {
-			// wenn KI Spur verfolgt
-			// den letzten Spieler ermitteln
-			this.currentEnemy = this.nextEnemy;
+	private void attackMemorizedTarget() throws Exception {
+		// wenn KI eine Spur verfolgt
+		// den letzten Spieler ermitteln
+		this.currentEnemy = this.nextEnemy;
+		Field target;
+		int currentDirection;
 
+		boolean hasTurnBeenMade = false;
+		boolean hasStoppedAttackingTarget = false;
+		do {
 			// Richtung ermitteln
 			currentDirection = getCurrentDirection();
 
-			// wenn Ziel vorhanden ist, dann auf Ziel schießen
-			Field target = this.nextTargetsArray[currentDirection];
+			// aktuelles Ziel ermitteln
+			target = this.nextTargetsArray[currentDirection];
 
 			// wenn Richtung Osten oder Westen, dann Ausrichtung horizontal,
 			// ansonsten vertikal
 			Orientation orientation = (currentDirection == EAST || currentDirection == WEST) ? Orientation.Horizontal : Orientation.Vertical;
 
 			// x und y abhängig von der Schussweite korrigieren, so dass
-			// möglichst
-			// viele Felder getroffen werden
+			// möglichst viele Felder getroffen werden
 			int range = this.currentShip.getShootingRange() - 1;
 			int adjustedX = adjustX(target, currentDirection, range);
 			int adjustedY = adjustY(target, currentDirection, range);
 
 			// schießen
-			makeTurn(this.currentEnemy, adjustedX, adjustedY, orientation);
+			hasTurnBeenMade = makeTurn(this.currentEnemy, adjustedX, adjustedY, orientation);
 
-			// wenn Treffer, dann nach nächstem unbeschossenen Feld in
+			// es kann passieren, dass z. B. ein Schuss Richtung Norden mit
+			// einem Destroyer, ein Feld südlich trifft und
+			// somit evtl. das nächste Ziel schon beschossen wurde.
+			// dann ist der Schuss nicht möglich, und die KI soll zum nächsten
+			// Ziel springen
+			if (!hasTurnBeenMade) {
+				this.nextTargetsArray[currentDirection] = null;
+				if (!hasTargets()) {
+					// wenn keine Ziele mehr übrig sind, dann neue Ziele suchen
+					// aktuelles Ziel wird nicht mehr gemerkt
+					attackNewTarget();
+					hasStoppedAttackingTarget = true;
+					hasTurnBeenMade = true;
+				}
+			} else {
+				// Schuss merken
+				this.currentFieldShotAt = new Field(adjustedX, adjustedY);
+				this.currentShotOrientation = orientation;
+			}
+		} while (!hasTurnBeenMade);
+
+		// verfolgt die KI das Ziel weiter?
+		if (!hasStoppedAttackingTarget) {
+
+			// wenn der Schuss ein Treffer war, dann nach nächstem
+			// unbeschossenen Feld in
 			// selbe Richtung suchen und als nächstes Ziel speichern
 			if (target.hasShip()) {
 				// wenn Treffer
-				if (target.getState() != FieldState.Destroyed) {
+				if (!isTargetDestroyed()) {
 					int[] directionArray = getDirectionArray(currentDirection);
 					Field newTarget = findNextTarget(target, directionArray[0], directionArray[1]);
 					// neues Ziel in gleiche Richtung setzen
@@ -105,7 +154,30 @@ public class SmartAIPlayer extends AIPlayer {
 				this.nextTargetsArray[currentDirection] = null;
 			}
 		}
+	}
 
+	private boolean isTargetDestroyed() throws FieldOutOfBoardException {
+		ArrayList<Field> hitFields = getHitFields();
+		for (Field f : hitFields) {
+			if (f.getState() == FieldState.Destroyed) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private ArrayList<Field> lookForHitFields() throws FieldOutOfBoardException {
+		Board enemyBoard = currentEnemy.getBoard();
+		ArrayList<Field> hitFields = new ArrayList<Field>();
+		for (int i = 0; i < enemyBoard.getSize(); i++) {
+			for (int j = 0; j < enemyBoard.getSize(); j++) {
+				Field f = enemyBoard.getField(j, i);
+				if (f.getState() == FieldState.Hit) {
+					hitFields.add(f);
+				}
+			}
+		}
+		return hitFields;
 	}
 
 	private void shootRandomly() throws Exception {
@@ -121,8 +193,8 @@ public class SmartAIPlayer extends AIPlayer {
 			// Schiff angrenzt,
 			// (zwischen den Schiffen muss immer ein Feld frei sein)
 			do {
-				orientation = (generateRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
-				fieldShotAt = generateField(orientation, this.currentShip.getSize());
+				orientation = (createRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
+				fieldShotAt = createRandomField(0, board.getSize() - 1, 0, board.getSize() - 1);
 			} while (surroundingFieldContainsShip(fieldShotAt));
 
 			// wenn möglich, den Schuss so ausrichten, dass alle
@@ -157,7 +229,7 @@ public class SmartAIPlayer extends AIPlayer {
 		int[] directions = new int[2];
 		int x;
 		int y;
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 8; i++) {
 			directions = getDirectionArray(i);
 			x = fieldShotAt.getXPos() + directions[0];
 			y = fieldShotAt.getYPos() + directions[1];
@@ -168,6 +240,7 @@ public class SmartAIPlayer extends AIPlayer {
 				}
 			}
 		}
+
 		return false;
 	}
 
@@ -220,7 +293,7 @@ public class SmartAIPlayer extends AIPlayer {
 				i++;
 			}
 		}
-		hasTargets = (i < 4) && this.nextTargetsArray != null;
+		hasTargets = (i < 4) && this.nextTargetsArray != null && this.nextEnemy != null && !this.nextEnemy.hasLost();
 		return hasTargets;
 	}
 
@@ -233,18 +306,40 @@ public class SmartAIPlayer extends AIPlayer {
 		return currentDirection;
 	}
 
-	private void planNextShots(Field hitField) throws FieldOutOfBoardException {
+	private void planNextShots(ArrayList<Field> hitFields) throws FieldOutOfBoardException {
+		boolean isHorizontalHit = false;
+		boolean isVerticalHit = false;
+
+		// Gegner merken
+		this.nextEnemy = this.currentEnemy;
+
+		// wenn mehrere Felder getroffen wurden, gucken ob die Schiffausrichtung
+		// horizontal oder vertikal ist
+		if (hitFields.size() > 1) {
+			// liegen die Felder horizontal aneinander?
+			isHorizontalHit = hitFields.get(0).getYPos() == hitFields.get(1).getYPos() && ((Math.abs(hitFields.get(0).getXPos() - hitFields.get(1).getXPos()) == 1));
+			// liegen die Felder vertikal aneinander
+			isVerticalHit = hitFields.get(0).getXPos() == hitFields.get(1).getXPos() && ((Math.abs(hitFields.get(0).getYPos() - hitFields.get(1).getYPos()) == 1));
+		}
 		// bekommt ein getroffenes Feld übergeben und guckt in alle
 		// Himmelsrichtungen nach potenziellen Zielen
 		this.nextTargetsArray = new Field[4];
-		Field target;
+		Field target = null;
 		int[] directions = new int[2];
 		for (int i = 0; i < 4; i++) {
 			directions = getDirectionArray(i);
-			target = findNextTarget(hitField, directions[0], directions[1]);
-			if (target != null)
-				// wenn potenzielles Ziel gefunden, dann Feld merken
-				this.nextTargetsArray[i] = target;
+			if (!isHorizontalHit && !isVerticalHit) {
+
+				target = findNextTarget(hitFields.get(0), directions[0], directions[1]);
+			}
+			if (isHorizontalHit && (i == EAST || i == WEST)) {
+				target = findNextTarget(hitFields.get(0), directions[0], directions[1]);
+			}
+			if (isVerticalHit && (i == NORTH || i == SOUTH)) {
+				target = findNextTarget(hitFields.get(0), directions[0], directions[1]);
+			}
+			// wenn potenzielles Ziel gefunden, dann Feld merken
+			this.nextTargetsArray[i] = target;
 		}
 	}
 
@@ -259,6 +354,14 @@ public class SmartAIPlayer extends AIPlayer {
 			return new int[] { 1, 0 };
 		case WEST:
 			return new int[] { -1, 0 };
+		case NORTH_EAST:
+			return new int[] { 1, -1 };
+		case SOUTH_EAST:
+			return new int[] { 1, 1 };
+		case NORTH_WEST:
+			return new int[] { -1, 1 };
+		case SOUTH_WEST:
+			return new int[] { -1, -1 };
 		default:
 			break;
 		}
@@ -300,7 +403,7 @@ public class SmartAIPlayer extends AIPlayer {
 		return target;
 	}
 
-	private Field getFirstHitOfShot() throws FieldOutOfBoardException {
+	private ArrayList<Field> getHitFields() throws FieldOutOfBoardException {
 		// prüft ob ein zufälliger Schuss (teilweise) getroffen hat
 		// gibt den ersten gefundenen Treffer zurück
 		// gibt null zurück, wenn es keinen Treffer gab
@@ -310,16 +413,17 @@ public class SmartAIPlayer extends AIPlayer {
 		int y;
 		Field hitField = null;
 		Board enemyBoard = this.currentEnemy.getBoard();
+		ArrayList<Field> fields = new ArrayList<Field>();
 		for (int i = 0; i < this.currentShip.getShootingRange(); i++) {
 			x = this.currentFieldShotAt.getXPos() + i * xDirection;
 			y = this.currentFieldShotAt.getYPos() + i * yDirection;
 			if (enemyBoard.containsFieldAtPosition(x, y)) {
 				hitField = enemyBoard.getField(x, y);
 				if (hitField.hasShip()) {
-					return hitField;
+					fields.add(hitField);
 				}
 			}
 		}
-		return null;
+		return fields;
 	}
 }

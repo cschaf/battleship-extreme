@@ -30,5 +30,20 @@
 			<version>5.0</version>
 		</dependency>
 	</dependencies>
+	<!-- jar file building -->
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>de.hsbremen.battleshipextreme.Main</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
 

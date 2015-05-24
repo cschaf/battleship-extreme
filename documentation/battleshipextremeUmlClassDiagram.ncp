@@ -845,49 +845,66 @@ Contains:
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private int size</Member>
+        <Member type="Field">private Field fields</Member>
         <Member type="Constructor">public Board(int size)</Member>
+        <Member type="Method">public boolean containsFieldAtPosition(int x, int y)</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>Player</Name>
         <Access>Public</Access>
         <Location left="399" top="52" />
-        <Size width="285" height="247" />
+        <Size width="285" height="366" />
         <Collapsed>False</Collapsed>
-        <Member type="Field">protected boolean hasLost</Member>
-        <Member type="Field">protected static int currentId</Member>
         <Member type="Field">protected Ship[] ships</Member>
-        <Member type="Field">protected int id</Member>
-        <Member type="Method">public void resetCurrentId()</Member>
+        <Member type="Field">protected Board publicBoard</Member>
+        <Member type="Field">protected Board privateBoard</Member>
+        <Member type="Field">private String name</Member>
+        <Member type="Field">private Ship currentShip</Member>
+        <Member type="Field">private PlayerType type</Member>
         <Member type="Method">public void placeShip(Ship ship, int xPos, int yPos, Orientation orientation)</Member>
         <Member type="Constructor">public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines)</Member>
-        <Member type="Method">public boolean shoot(Ship ship, Player player, Field field, Orientation orientation)</Member>
+        <Member type="Method">public boolean markPublicBoard(int xPos, int yPos)</Member>
         <Member type="Method">public boolean hasPlacedAllShips()</Member>
-        <Member type="Method">public boolean AreAllShipsPlaced()</Member>
+        <Member type="Method">public boolean areAllShipsPlaced()</Member>
+        <Member type="Method">public void resetBoard()</Member>
+        <Member type="Method">public void nextShip()</Member>
+        <Member type="Method">public ArrayList getAvailableShips(boolean withReload)</Member>
+        <Member type="Method">public boolean setCurrentShip()</Member>
+        <Member type="Method">public boolean areAllShipsReloading()</Member>
+        <Member type="Method">public boolean hasLost()</Member>
         <Modifier>Abstract</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>Game</Name>
         <Access>Public</Access>
-        <Location left="55" top="52" />
-        <Size width="226" height="247" />
+        <Location left="55" top="10" />
+        <Size width="226" height="383" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private Player currentPlayer</Member>
+        <Member type="Field">private Player[] players</Member>
+        <Member type="Field">private Player winner</Member>
+        <Member type="Field">private int turnNumber</Member>
+        <Member type="Field">private int roundNumber</Member>
         <Member type="Constructor">public Game(Settings settings)</Member>
+        <Member type="Constructor">public Game(String saveGamePath)</Member>
         <Member type="Method">public void setPlayerName(int id, String name)</Member>
         <Member type="Method">public void nextPlayer()</Member>
         <Member type="Method">public Player getPlayer(int id)</Member>
         <Member type="Method">public boolean isReady()</Member>
-        <Member type="Method">public void setBeginningPlayerRandomly()</Member>
-        <Member type="Method">public void setBeginningPlayer(int playerId)</Member>
         <Member type="Method">public boolean isGameover()</Member>
-        <Member type="Method">public Player determineWinner()</Member>
+        <Member type="Method">public void makeAiTurn()</Member>
+        <Member type="Method">public void makeTurn(Player enemy, int xPos, int yPos, Orientation orientation)</Member>
+        <Member type="Method">public void load(String sourcePath)</Member>
+        <Member type="Method">public void save(String destinationPath)</Member>
+        <Member type="Method">private void closeQuietly(InputStream stream)</Member>
+        <Member type="Method">private void closeQuietly(OutputStream stream)</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>HumanPlayer</Name>
         <Access>Public</Access>
-        <Location left="399" top="353" />
+        <Location left="399" top="574" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -905,7 +922,7 @@ Contains:
         <Member type="Field">protected int currentReloadTime</Member>
         <Member type="Field">protected ShipType type</Member>
         <Member type="Method">public boolean isDestroyed()</Member>
-        <Member type="Method">public boolean shoot(Player player, Field field, Orientation orientation)</Member>
+        <Member type="Method">public boolean setReloadTimeToMax()</Member>
         <Member type="Method">public boolean isReloading()</Member>
         <Member type="Method">public void decreaseCurrentReloadTime()</Member>
         <Member type="Method">public boolean isPlaced()</Member>
@@ -914,8 +931,8 @@ Contains:
       <Entity type="Enum">
         <Name>Orientation</Name>
         <Access>Public</Access>
-        <Location left="55" top="592" />
-        <Size width="162" height="216" />
+        <Location left="75" top="682" />
+        <Size width="162" height="175" />
         <Collapsed>False</Collapsed>
         <Value>Horizontal</Value>
         <Value>Vertical</Value>
@@ -970,7 +987,7 @@ Contains:
       <Entity type="Class">
         <Name>Settings</Name>
         <Access>Public</Access>
-        <Location left="55" top="324" />
+        <Location left="75" top="443" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private int players</Member>
@@ -1091,6 +1108,8 @@ Contains:
         <EndMultiplicity>2..6</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="1" second="0">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -1099,8 +1118,6 @@ Contains:
         <EndMultiplicity>1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="10" second="4">
-        <Label>
-        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -1109,8 +1126,6 @@ Contains:
         <EndMultiplicity>0..1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="0" second="10">
-        <Label>
-        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -1119,6 +1134,8 @@ Contains:
         <EndMultiplicity>25..*</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="2" second="11">
+        <Label>
+        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <Direction>Unidirectional</Direction>

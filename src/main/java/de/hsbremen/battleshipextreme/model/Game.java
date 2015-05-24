@@ -10,7 +10,6 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 
 import de.hsbremen.battleshipextreme.model.player.AIPlayer;
 import de.hsbremen.battleshipextreme.model.player.DumbAIPlayer;
@@ -19,47 +18,57 @@ import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.player.SmartAIPlayer;
 
 public class Game implements Serializable {
-    private Player[] players;
-    private Player currentPlayer;
-    private Player winner;
-    private int turnNumber;
+	private Player[] players;
+	private Player currentPlayer;
+	private Player winner;
+	private int turnNumber;
 
-    public Game(Settings settings) {
-        // Spieler erzeugen
-        int numberOfHumanPlayers = settings.getPlayers();
-        int numberOfAIPlayers = settings.getSmartAiPlayers();
-        int numberOfDumbAIPlayers = settings.getDumbAiPlayers();
-        int numberOfPlayers = numberOfAIPlayers + numberOfHumanPlayers
-                + numberOfDumbAIPlayers;
-        this.players = new Player[numberOfPlayers];
-        // menschliche Spieler erzeugen
-        for (int i = 0; i < numberOfHumanPlayers; i++)
-            this.players[i] = new HumanPlayer(settings.getBoardSize(),
-                    settings.getDestroyers(), settings.getFrigates(),
-                    settings.getCorvettes(), settings.getSubmarines());
-        // schlaue KI-Spieler erzeugen
-        for (int i = numberOfHumanPlayers; i < numberOfAIPlayers
-                + numberOfHumanPlayers; i++)
-            this.players[i] = new SmartAIPlayer(settings.getBoardSize(),
-                    settings.getDestroyers(), settings.getFrigates(),
-                    settings.getCorvettes(), settings.getSubmarines());
-        // dumme KI-Spieler erzeugen
-        for (int i = numberOfHumanPlayers + numberOfAIPlayers; i < numberOfPlayers; i++)
-            this.players[i] = new DumbAIPlayer(settings.getBoardSize(),
-                    settings.getDestroyers(), settings.getFrigates(),
-                    settings.getCorvettes(), settings.getSubmarines());
+	/**
+	 * Reads the settings and initializes the necessary game objects.
+	 * 
+	 * @param settings
+	 *            the game settings.
+	 */
+	public Game(Settings settings) {
+		// Spieler erzeugen
+		int numberOfHumanPlayers = settings.getPlayers();
+		int numberOfAIPlayers = settings.getSmartAiPlayers();
+		int numberOfDumbAIPlayers = settings.getDumbAiPlayers();
+		int numberOfPlayers = numberOfAIPlayers + numberOfHumanPlayers
+				+ numberOfDumbAIPlayers;
+		this.players = new Player[numberOfPlayers];
+		// menschliche Spieler erzeugen
+		for (int i = 0; i < numberOfHumanPlayers; i++)
+			this.players[i] = new HumanPlayer(settings.getBoardSize(),
+					settings.getDestroyers(), settings.getFrigates(),
+					settings.getCorvettes(), settings.getSubmarines());
+		// schlaue KI-Spieler erzeugen
+		for (int i = numberOfHumanPlayers; i < numberOfAIPlayers
+				+ numberOfHumanPlayers; i++)
+			this.players[i] = new SmartAIPlayer(settings.getBoardSize(),
+					settings.getDestroyers(), settings.getFrigates(),
+					settings.getCorvettes(), settings.getSubmarines());
+		// dumme KI-Spieler erzeugen
+		for (int i = numberOfHumanPlayers + numberOfAIPlayers; i < numberOfPlayers; i++)
+			this.players[i] = new DumbAIPlayer(settings.getBoardSize(),
+					settings.getDestroyers(), settings.getFrigates(),
+					settings.getCorvettes(), settings.getSubmarines());
 
-        this.turnNumber = 0;
-        this.currentPlayer = null;
-    }
+		// Spielernummern setzen
+		for (int i = 0; i < this.players.length; i++) {
+			this.players[i].setName(this.players[i].getName() + (i + 1));
+		}
 
-    /**
-     * This constructor is used when a game is loaded.
-     */
-    public Game() {
-        this.players = new Player[0];
-        this.currentPlayer = null;
-    }
+		this.turnNumber = 0;
+		this.currentPlayer = players[0];
+	}
+
+	/**
+	 * This constructor is used when a game is loaded.
+	 */
+	public Game(String pathToSaveGame) throws Exception {
+		this.load(pathToSaveGame);
+	}
 
     /**
      * Returns true if the ships of all players have been placed. The method is
@@ -96,81 +105,60 @@ public class Game implements Serializable {
         return numberOfPlayersLeft <= 1;
     }
 
-    /**
-     * This method is used for AI-Players. Call the makeTurnAutomatically-method
-     * of the AI-Player. Then call the nextPlayer-method.
-     *
-     * @throws Exception
-     */
-    public void makeTurnAutomatically() throws Exception {
-        // AI soll Zug automatisch machen
-        AIPlayer ai = (AIPlayer) this.currentPlayer;
-        ai.makeAiTurn(this.getEnemiesOfCurrentPlayer());
-    }
+	/**
+	 * This method is used for AI-Players. Call the makeTurnAutomatically-method
+	 * of the AI-Player and pass a list of enemies that can be attacked.
+	 * 
+	 * @throws Exception
+	 */
+	public void makeAiTurn() throws Exception {
+		// AI soll Zug automatisch machen
+		AIPlayer ai = (AIPlayer) this.currentPlayer;
+		ai.makeAiTurn(this.getEnemiesOfCurrentPlayer());
+	}
 
     public Player getWinner() {
         return this.winner;
     }
 
-    /**
-     * Increase turnNumber and roundNumber.
-     * <p/>
-     * Decrease the reload time of the current players' ships.
-     * <p/>
-     * Set the currentPlayer to the next available player. If a player is not
-     * able to make a turn, skip player.
-     * <p/>
-     * Let AI make its turn automatically.
-     */
-    public void nextPlayer() {
-        this.turnNumber++;
-        this.currentPlayer.decreaseCurrentReloadTimeOfShips();
-        int currentPlayerIndex = Arrays.asList(players).indexOf(currentPlayer);
-        // wenn letzter Spieler im Array, dann Index wieder auf 0 setzen,
-        // ansonsten hochzählen
-        currentPlayerIndex = (currentPlayerIndex >= this.players.length - 1) ? currentPlayerIndex = 0
-                : currentPlayerIndex + 1;
-        this.currentPlayer = this.players[currentPlayerIndex];
-    }
+	/**
+	 * 
+	 * Increase turnNumber.
+	 * 
+	 * Decrease the reload time of the current players' ships.
+	 * 
+	 * Set the currentPlayer to the next player.
+	 * 
+	 */
+	public void nextPlayer() {
+		this.turnNumber++;
+		this.currentPlayer.decreaseCurrentReloadTimeOfShips();
+		int currentPlayerIndex = Arrays.asList(players).indexOf(currentPlayer);
+		// wenn letzter Spieler im Array, dann Index wieder auf 0 setzen,
+		// ansonsten hochzählen
+		currentPlayerIndex = (currentPlayerIndex >= this.players.length - 1) ? currentPlayerIndex = 0
+				: currentPlayerIndex + 1;
+		this.currentPlayer = this.players[currentPlayerIndex];
+	}
 
-    /**
-     * Provides a list of enemies the current player may attack. Players that
-     * are lost or equal to the current player are filtered.
-     *
-     * @return an ArrayList of Players
-     */
-    public ArrayList<Player> getEnemiesOfCurrentPlayer() {
-        // angreifbare Gegner des currentPlayers zurückgeben
-        ArrayList<Player> enemies = new ArrayList<Player>();
-        for (int i = 0; i < this.players.length; i++) {
-            if (!this.players[i].hasLost()) {
-                if (!this.currentPlayer.equals(players[i])) {
-                    enemies.add(this.players[i]);
-                }
-            }
-        }
-        return enemies;
-    }
-
-    /**
-     * Set beginning player by valid id or randomly.
-     */
-    public void setBeginningPlayer(int playerId) {
-        if (this.currentPlayer == null) {
-            if ((playerId < this.players.length) || (playerId < 0)) {
-                this.currentPlayer = this.players[playerId];
-            } else {
-                setBeginningPlayerRandomly();
-            }
-        }
-    }
-
-    public void setBeginningPlayerRandomly() {
-        Random rand = new Random();
-        if (this.currentPlayer == null) {
-            this.currentPlayer = this.players[rand.nextInt(this.players.length)];
-        }
-    }
+	/**
+	 * Provides a list of enemies the current player may attack. Players that
+	 * are lost or equal to the current player are filtered.
+	 * 
+	 * @return an ArrayList of Players
+	 */
+	public ArrayList<Player> getEnemiesOfCurrentPlayer() {
+		// angreifbare Gegner des currentPlayers zurückgeben
+		ArrayList<Player> enemies = new ArrayList<Player>();
+		for (int i = 0; i < this.players.length; i++) {
+			if (!this.players[i].hasLost()) {
+				if (!this.currentPlayer.equals(players[i])) {
+					enemies.add(this.players[i]);
+				}
+			}
+		}
+		return enemies;
+	}
 
     public Player[] getPlayers() {
         return players;

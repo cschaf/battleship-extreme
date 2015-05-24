@@ -7,7 +7,6 @@ import java.util.Arrays;
 import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.Orientation;
-import de.hsbremen.battleshipextreme.model.exception.FieldOccupiedException;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
 import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
@@ -18,8 +17,6 @@ import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.model.ship.Submarine;
 
 public abstract class Player implements Serializable {
-	protected static int currentId = 0;
-	protected int id;
 	protected String name;
 	protected Board board;
 	protected Ship[] ships;
@@ -28,7 +25,6 @@ public abstract class Player implements Serializable {
 
 	public Player(int boardSize, int destroyers, int frigates, int corvettes,
 			int submarines) {
-		this.id = this.currentId++;
 		this.board = new Board(boardSize);
 		this.ships = new Ship[destroyers + frigates + corvettes + submarines];
 
@@ -44,6 +40,15 @@ public abstract class Player implements Serializable {
 		}
 
 		this.currentShip = this.ships[0];
+	}
+
+	public void resetBoard() {
+		int size = board.getSize();
+		board = new Board(size);
+		for (Ship ship : ships) {
+			ship.setPlaced(false);
+		}
+		currentShip = ships[0];
 	}
 
 	/**
@@ -62,12 +67,12 @@ public abstract class Player implements Serializable {
 	 *             if the players' board does not contain the field.
 	 * @throws ShipOutOfBoardException
 	 *             if the ships boundaries exceed the board.
-	 * @throws FieldOccupiedException
-	 *             if the ship or the ships' radius collides with another ship.
+	 * @return false if the field is already occupied, true if the ship could be
+	 *         placed.
 	 */
-	public void placeShip(int xPos, int yPos, Orientation orientation)
+	public boolean placeShip(int xPos, int yPos, Orientation orientation)
 			throws ShipAlreadyPlacedException, FieldOutOfBoardException,
-			ShipOutOfBoardException, FieldOccupiedException {
+			ShipOutOfBoardException {
 
 		if (this.currentShip.isPlaced())
 			throw new ShipAlreadyPlacedException(this.currentShip);
@@ -81,9 +86,10 @@ public abstract class Player implements Serializable {
 		Field occupiedField = findOccupiedField(this.currentShip, xPos, yPos,
 				orientation);
 		if (occupiedField != null)
-			throw new FieldOccupiedException(occupiedField);
+			return false;
 
 		placeShipOnBoard(this.currentShip, xPos, yPos, orientation);
+		return true;
 
 	}
 
@@ -128,7 +134,7 @@ public abstract class Player implements Serializable {
 	}
 
 	private void placeShipOnBoard(Ship ship, int xPos, int yPos,
-			Orientation orientation) throws FieldOccupiedException {
+			Orientation orientation) {
 		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
 		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
 		for (int i = 0; i < ship.getSize(); i++) {
@@ -292,20 +298,12 @@ public abstract class Player implements Serializable {
 		this.name = name;
 	}
 
-	public int getId() {
-		return this.id;
-	}
-
 	public Board getBoard() {
 		return board;
 	}
 
 	public Ship[] getShips() {
 		return ships;
-	}
-
-	public static void resetCurrentId() {
-		currentId = 1;
 	}
 
 	public String toString() {
