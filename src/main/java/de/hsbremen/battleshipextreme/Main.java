@@ -313,7 +313,7 @@ class ConsoleGame {
 		}
 		// TODO
 		// von AI beschossenes Board ausgeben
-		if (ai.getName().equals("Schlaue KI1")) {
+		if (ai.getName().equals("SMART_AI1")) {
 			System.out.println(ai + " greift " + game.getPlayers()[ai.getCurrentEnemyIndex()] + " mit " + ai.getCurrentShip() + " an.");
 			System.out.println();
 			System.out.println("Board von " + game.getPlayers()[ai.getCurrentEnemyIndex()]);

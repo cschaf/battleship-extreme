@@ -117,7 +117,6 @@ public class AIPlayer extends Player {
 		// wenn ein getroffenes Schiff gefunden wurde, dann plane die nächsten
 		// Schüsse und greife das gefundene Ziel an
 		if (hitFields.size() > 0) {
-			System.out.println(this + "HAT ZIELE GEFUNDEN");
 			planNextShots(hitFields);
 			lastShot = getNextTarget();
 		} else {
@@ -155,7 +154,6 @@ public class AIPlayer extends Player {
 				// Schiff zerstört, komplettes targetArray löschen,
 				// da die Spur nicht mehr verfolgt werden muss
 				nextTargetsArray = null;
-				System.out.println(this + "Zerstört, ZIEL LÖSCHEN");
 			}
 
 		}
@@ -164,7 +162,6 @@ public class AIPlayer extends Player {
 		if (hasTargets()) {
 			Field target;
 			currentDirection = getCurrentDirection();
-			System.out.println(currentDirection);
 			// aktuelles Ziel ermitteln
 			target = nextTargetsArray[currentDirection];
 			// wenn Richtung Osten oder Westen, dann Ausrichtung horizontal,
@@ -180,7 +177,6 @@ public class AIPlayer extends Player {
 			lastShot = new Shot(adjustedX, adjustedY, orientation);
 
 		} else {
-			System.out.println(this + "HAT KEIN ZIEL MEHR");
 			lastShot = null;
 			getNewTarget();
 		}
@@ -358,17 +354,13 @@ public class AIPlayer extends Player {
 				target = findNextTarget(hitFields.get(0), directions[0], directions[1]);
 			}
 			if (isHorizontalHit && (i == EAST || i == WEST)) {
-				System.out.println("HORIZONTALES ZIEL");
 				target = findNextTarget(hitFields.get(0), directions[0], directions[1]);
 			}
 			if (isVerticalHit && (i == NORTH || i == SOUTH)) {
-				System.out.println("VERTIKALES ZIEL");
 				target = findNextTarget(hitFields.get(0), directions[0], directions[1]);
 			}
 			// wenn potenzielles Ziel gefunden, dann Feld merken
 			nextTargetsArray[i] = target;
-			System.out.println("PLANE SCHÜSSE");
-			System.out.println(target);
 		}
 	}
 
@@ -418,8 +410,6 @@ public class AIPlayer extends Player {
 				} else if (!target.isHit()) {
 					// wenn Feld noch nicht beschossen wurde, Schleife
 					// abbrechen, Feld zurückgeben
-					System.out.println("GEFUNDEN");
-					System.out.println("X" + target.getXPos() + "Y" + target.getYPos());
 					endLoop = true;
 				}
 			} else {
