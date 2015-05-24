@@ -15,8 +15,6 @@ import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
 import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.player.AIPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
-import de.hsbremen.battleshipextreme.model.player.PlayerType;
-import de.hsbremen.battleshipextreme.model.player.SmartAIPlayer;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 
 public class Main {
@@ -54,10 +52,10 @@ class ConsoleGame {
 				createGameManually();
 				break;
 			case 2:
-				createAiGame(2);
+				createAiGame(1, 1);
 				break;
 			case 3:
-				createAiGame(5);
+				createAiGame(1, 4);
 				break;
 			case 4:
 				createKIBenchmark();
@@ -79,10 +77,10 @@ class ConsoleGame {
 		}
 	}
 
-	private void createAiGame(int numberOfSmartAis) {
+	private void createAiGame(int numberOfSmartAis, int numberOfDumbAis) {
 		Settings settings = null;
 		try {
-			settings = new Settings(0, numberOfSmartAis, 10, 1, 1, 1, 1);
+			settings = new Settings(0, numberOfSmartAis, numberOfDumbAis, 10, 1, 1, 1, 1);
 		} catch (BoardTooSmallException e) {
 			e.printStackTrace();
 		} catch (InvalidPlayerNumberException e) {
@@ -111,7 +109,7 @@ class ConsoleGame {
 		for (int i = 0; i < numberOfGames; i++) {
 			System.out.println("Spiel-Nr" + i);
 			// Spiel mit zwei schlauen Ais erzeugen
-			createAiGame(2);
+			createAiGame(1, 1);
 			gameLoop();
 			roundNumbersOfEachGame[i] = (int) Math.floor(game.getTurnNumber() / game.getPlayers().length);
 		}
@@ -183,7 +181,7 @@ class ConsoleGame {
 		}
 
 		try {
-			return new Settings(players, aiPlayers, boardSize, destroyers, frigates, corvettes, submarines);
+			return new Settings(players, aiPlayers, 0, boardSize, destroyers, frigates, corvettes, submarines);
 		} catch (BoardTooSmallException e1) {
 			System.out.println("Das Board ist zu klein!");
 		} catch (InvalidPlayerNumberException e) {
@@ -206,7 +204,7 @@ class ConsoleGame {
 		// Schiffe setzen
 		do {
 			Player currentPlayer = game.getCurrentPlayer();
-			if (currentPlayer.getType() == PlayerType.AI) {
+			if (currentPlayer instanceof AIPlayer) {
 				// wenn KI dran ist, keine Koordinaten einlesen und automatisch
 				// platzieren
 				System.out.println(currentPlayer + " setzt Schiffe...");
@@ -295,7 +293,7 @@ class ConsoleGame {
 				System.out.println(currentPlayer + " kann nicht schießen, da alle Schiffe nachladen.");
 			} else {
 				// ist der aktuelle Spieler eine KI
-				if (game.getCurrentPlayer().getType() == PlayerType.AI) {
+				if (currentPlayer instanceof AIPlayer) {
 					makeAITurn();
 				} else {
 					makePlayerTurn();
@@ -307,7 +305,7 @@ class ConsoleGame {
 	}
 
 	private void makeAITurn() {
-		SmartAIPlayer ai = (SmartAIPlayer) game.getCurrentPlayer();
+		AIPlayer ai = (AIPlayer) game.getCurrentPlayer();
 		try {
 			game.makeAiTurn();
 		} catch (Exception e) {
@@ -404,7 +402,7 @@ class ConsoleGame {
 
 	}
 
-	private Ship selectShip() {
+	private void selectShip() {
 		Player currentPlayer = game.getCurrentPlayer();
 		ArrayList<Ship> availableShips = currentPlayer.getAvailableShips();
 		Ship selectedShip;
@@ -419,7 +417,6 @@ class ConsoleGame {
 			if (!isShipSelected)
 				System.out.println("Schiff lädt nach");
 		} while (!isShipSelected);
-		return selectedShip;
 	}
 
 	private Player selectEnemy(ArrayList<Player> enemies) {

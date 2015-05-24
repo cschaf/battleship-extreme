@@ -19,7 +19,7 @@
       <Entity type="Class">
         <Name>Player</Name>
         <Access>Public</Access>
-        <Location left="399" top="52" />
+        <Location left="350" top="30" />
         <Size width="285" height="366" />
         <Collapsed>False</Collapsed>
         <Member type="Field">protected Ship[] ships</Member>
@@ -44,7 +44,7 @@
       <Entity type="Class">
         <Name>Game</Name>
         <Access>Public</Access>
-        <Location left="55" top="10" />
+        <Location left="46" top="30" />
         <Size width="226" height="383" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private Player currentPlayer</Member>
@@ -70,7 +70,7 @@
       <Entity type="Class">
         <Name>HumanPlayer</Name>
         <Access>Public</Access>
-        <Location left="399" top="574" />
+        <Location left="447" top="592" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -153,7 +153,7 @@
       <Entity type="Class">
         <Name>Settings</Name>
         <Access>Public</Access>
-        <Location left="75" top="443" />
+        <Location left="280" top="499" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private int players</Member>
@@ -274,8 +274,6 @@
         <EndMultiplicity>2..6</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="1" second="0">
-        <Label>
-        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -284,6 +282,8 @@
         <EndMultiplicity>1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="10" second="4">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -292,6 +292,8 @@
         <EndMultiplicity>0..1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="0" second="10">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -300,8 +302,6 @@
         <EndMultiplicity>25..*</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="2" second="11">
-        <Label>
-        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -385,5 +385,313 @@ Contains:
       </Entity>
     </Entities>
     <Relationships />
+  </ProjectItem>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>test</Name>
+    <Language>Java</Language>
+    <Entities>
+      <Entity type="Class">
+        <Name>Player</Name>
+        <Access>Public</Access>
+        <Location left="422" top="63" />
+        <Size width="285" height="366" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">protected Ship[] ships</Member>
+        <Member type="Field">protected Board publicBoard</Member>
+        <Member type="Field">protected Board privateBoard</Member>
+        <Member type="Field">private String name</Member>
+        <Member type="Field">private Ship currentShip</Member>
+        <Member type="Field">private PlayerType type</Member>
+        <Member type="Method">public void placeShip(Ship ship, int xPos, int yPos, Orientation orientation)</Member>
+        <Member type="Constructor">public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines)</Member>
+        <Member type="Method">public boolean markPublicBoard(int xPos, int yPos)</Member>
+        <Member type="Method">public boolean hasPlacedAllShips()</Member>
+        <Member type="Method">public void resetBoard()</Member>
+        <Member type="Method">public void nextShip()</Member>
+        <Member type="Method">public ArrayList getAvailableShips(boolean withReload)</Member>
+        <Member type="Method">public boolean setCurrentShip()</Member>
+        <Member type="Method">public boolean areAllShipsReloading()</Member>
+        <Member type="Method">public boolean hasLost()</Member>
+        <Modifier>Abstract</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Settings</Name>
+        <Access>Public</Access>
+        <Location left="319" top="532" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private int players</Member>
+        <Member type="Field">private int boardSize</Member>
+        <Member type="Field">private int destroyers</Member>
+        <Member type="Field">private int frigates</Member>
+        <Member type="Field">private int corvettes</Member>
+        <Member type="Field">private int submarines</Member>
+        <Member type="Constructor">public Settings(int players, int boardSize, int destroyers, int frigates, int corvettes, int submarines)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>HumanPlayer</Name>
+        <Access>Public</Access>
+        <Location left="486" top="625" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Game</Name>
+        <Access>Public</Access>
+        <Location left="85" top="63" />
+        <Size width="257" height="399" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private Player currentPlayer</Member>
+        <Member type="Field">private Player[] players</Member>
+        <Member type="Field">private Player winner</Member>
+        <Member type="Field">private int turnNumber</Member>
+        <Member type="Field">private int roundNumber</Member>
+        <Member type="Constructor">public Game(Settings settings)</Member>
+        <Member type="Constructor">public Game(String saveGamePath)</Member>
+        <Member type="Method">public void setPlayerName(int id, String name)</Member>
+        <Member type="Method">public void nextPlayer()</Member>
+        <Member type="Method">public Player getPlayer(int id)</Member>
+        <Member type="Method">public boolean isReady()</Member>
+        <Member type="Method">public boolean isGameover()</Member>
+        <Member type="Method">public void makeAiTurn()</Member>
+        <Member type="Method">public void makeTurn(Player enemy, int xPos, int yPos, Orientation orientation)</Member>
+        <Member type="Method">public void load(String sourcePath)</Member>
+        <Member type="Method">public void save(String destinationPath)</Member>
+        <Member type="Method">private void closeQuietly(InputStream stream)</Member>
+        <Member type="Method">private void closeQuietly(OutputStream stream)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ShipOutOfBoardException</Name>
+        <Access>Public</Access>
+        <Location left="180" top="1426" />
+        <Size width="236" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private Ship ship</Member>
+        <Member type="Method">public Ship getShip()</Member>
+        <Member type="Constructor">public ShipOutOfBoardException(Ship ship)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ShipAlreadyPlacedException</Name>
+        <Access>Public</Access>
+        <Location left="522" top="1172" />
+        <Size width="236" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private Ship ship</Member>
+        <Member type="Method">public Ship getShip()</Member>
+        <Member type="Constructor">public ShipAlreadyPlacedException(Ship ship)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>FieldOutOfBoardException</Name>
+        <Access>Public</Access>
+        <Location left="522" top="918" />
+        <Size width="236" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private Field field</Member>
+        <Member type="Method">public Field getField()</Member>
+        <Member type="Constructor">public FieldOutOfBoardException(Field field)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>NotAllShipsPlacedException</Name>
+        <Access>Public</Access>
+        <Location left="180" top="1172" />
+        <Size width="236" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private Player player</Member>
+        <Member type="Method">public Player getPlayer()</Member>
+        <Member type="Constructor">public NotAllShipsPlacedException(Player player)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>FieldOccupiedException</Name>
+        <Access>Public</Access>
+        <Location left="180" top="918" />
+        <Size width="236" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private Field field</Member>
+        <Member type="Method">public Field getField()</Member>
+        <Member type="Constructor">public FieldOccupiedException(Field field)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Enum">
+        <Name>ShipType</Name>
+        <Access>Public</Access>
+        <Location left="731" top="625" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Value>Destroyer</Value>
+        <Value>Frigate</Value>
+        <Value>Submarine</Value>
+        <Value>Corvette</Value>
+      </Entity>
+      <Entity type="Class">
+        <Name>Controller</Name>
+        <Access>Public</Access>
+        <Location left="731" top="357" />
+        <Size width="213" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private Game game</Member>
+        <Member type="Field">private View view</Member>
+        <Member type="Constructor">public Controller(Game game, View view)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Field</Name>
+        <Access>Public</Access>
+        <Location left="989" top="85" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private int xPos</Member>
+        <Member type="Field">private int yPos</Member>
+        <Member type="Field">private boolean isHit</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Corvette</Name>
+        <Access>Public</Access>
+        <Location left="1718" top="492" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public Corvette()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Frigate</Name>
+        <Access>Public</Access>
+        <Location left="1486" top="492" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public Frigate()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Destroyer</Name>
+        <Access>Public</Access>
+        <Location left="1244" top="492" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public Destroyer()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Submarine</Name>
+        <Access>Public</Access>
+        <Location left="1024" top="492" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public Submarine()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Enum">
+        <Name>Orientation</Name>
+        <Access>Public</Access>
+        <Location left="114" top="715" />
+        <Size width="162" height="175" />
+        <Collapsed>False</Collapsed>
+        <Value>Horizontal</Value>
+        <Value>Vertical</Value>
+      </Entity>
+      <Entity type="Class">
+        <Name>Ship</Name>
+        <Access>Public</Access>
+        <Location left="1222" top="85" />
+        <Size width="482" height="264" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">protected boolean isPlaced</Member>
+        <Member type="Field">protected int shootingRange</Member>
+        <Member type="Field">protected Orientation orientation</Member>
+        <Member type="Field">protected int maxReloadTime</Member>
+        <Member type="Field">protected int currentReloadTime</Member>
+        <Member type="Field">protected ShipType type</Member>
+        <Member type="Method">public boolean isDestroyed()</Member>
+        <Member type="Method">public boolean setReloadTimeToMax()</Member>
+        <Member type="Method">public boolean isReloading()</Member>
+        <Member type="Method">public void decreaseCurrentReloadTime()</Member>
+        <Member type="Method">public boolean isPlaced()</Member>
+        <Modifier>Abstract</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Board</Name>
+        <Access>Public</Access>
+        <Location left="743" top="85" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private int size</Member>
+        <Member type="Field">private Field fields</Member>
+        <Member type="Constructor">public Board(int size)</Member>
+        <Member type="Method">public boolean containsFieldAtPosition(int x, int y)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+    </Entities>
+    <Relationships>
+      <Relationship type="Association" first="3" second="1">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="18" second="11">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartMultiplicity>1</StartMultiplicity>
+        <EndMultiplicity>25..*</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="11" second="17">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartMultiplicity>1</StartMultiplicity>
+        <EndMultiplicity>0..1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="0" second="18">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartMultiplicity>1</StartMultiplicity>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="3" second="0">
+        <Label>hat</Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartMultiplicity>1</StartMultiplicity>
+        <EndMultiplicity>2..6</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Generalization" first="12" second="17">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Generalization" first="13" second="17">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Generalization" first="14" second="17">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Generalization" first="15" second="17">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Generalization" first="2" second="0">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+    </Relationships>
   </ProjectItem>
 </Project>

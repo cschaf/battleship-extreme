@@ -89,7 +89,6 @@ public abstract class Player implements Serializable {
 
 		placeShipOnBoard(this.currentShip, xPos, yPos, orientation);
 		return true;
-
 	}
 
 	private Field findOccupiedField(Ship ship, int xPos, int yPos, Orientation orientation) {
