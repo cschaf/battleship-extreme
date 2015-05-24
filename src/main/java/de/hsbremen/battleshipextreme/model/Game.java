@@ -11,14 +11,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.player.AIPlayer;
-import de.hsbremen.battleshipextreme.model.player.DumbAIPlayer;
 import de.hsbremen.battleshipextreme.model.player.HumanPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
+import de.hsbremen.battleshipextreme.model.player.Shot;
 import de.hsbremen.battleshipextreme.model.player.SmartAIPlayer;
 
 public class Game implements Serializable {
 	private Player[] players;
+	private Board[] playerBoards;
 	private Player currentPlayer;
 	private Player winner;
 	private int turnNumber;
@@ -33,26 +35,23 @@ public class Game implements Serializable {
 		// Spieler erzeugen
 		int numberOfHumanPlayers = settings.getPlayers();
 		int numberOfAIPlayers = settings.getSmartAiPlayers();
-		int numberOfDumbAIPlayers = settings.getDumbAiPlayers();
-		int numberOfPlayers = numberOfAIPlayers + numberOfHumanPlayers
-				+ numberOfDumbAIPlayers;
-		this.players = new Player[numberOfPlayers];
-		// menschliche Spieler erzeugen
-		for (int i = 0; i < numberOfHumanPlayers; i++)
-			this.players[i] = new HumanPlayer(settings.getBoardSize(),
-					settings.getDestroyers(), settings.getFrigates(),
-					settings.getCorvettes(), settings.getSubmarines());
-		// schlaue KI-Spieler erzeugen
-		for (int i = numberOfHumanPlayers; i < numberOfAIPlayers
-				+ numberOfHumanPlayers; i++)
-			this.players[i] = new SmartAIPlayer(settings.getBoardSize(),
-					settings.getDestroyers(), settings.getFrigates(),
-					settings.getCorvettes(), settings.getSubmarines());
-		// dumme KI-Spieler erzeugen
-		for (int i = numberOfHumanPlayers + numberOfAIPlayers; i < numberOfPlayers; i++)
-			this.players[i] = new DumbAIPlayer(settings.getBoardSize(),
-					settings.getDestroyers(), settings.getFrigates(),
-					settings.getCorvettes(), settings.getSubmarines());
+		int numberOfPlayers = numberOfAIPlayers + numberOfHumanPlayers;
+		players = new Player[numberOfPlayers];
+		playerBoards = new Board[numberOfPlayers];
+
+		// Boards erzeugen
+		Board board;
+		for (int i = 0; i < numberOfPlayers; i++) {
+			board = new Board(settings.getBoardSize());
+			playerBoards[i] = board;
+			if (i < numberOfHumanPlayers) {
+				this.players[i] = new HumanPlayer(board, settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
+			} else {
+				if (i < numberOfAIPlayers + numberOfHumanPlayers) {
+					this.players[i] = new SmartAIPlayer(board, settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
+				}
+			}
+		}
 
 		// Spielernummern setzen
 		for (int i = 0; i < this.players.length; i++) {
@@ -112,9 +111,45 @@ public class Game implements Serializable {
 	 * @throws Exception
 	 */
 	public void makeAiTurn() throws Exception {
+		boolean wasShotPossible = false;
 		// AI soll Zug automatisch machen
 		AIPlayer ai = (AIPlayer) this.currentPlayer;
-		ai.makeAiTurn(this.getEnemiesOfCurrentPlayer());
+		if (ai instanceof SmartAIPlayer) {
+			SmartAIPlayer smartAi = (SmartAIPlayer) ai;
+			Player currentEnemy;
+			do {
+				do {
+					smartAi.setRandomEnemyIndex(players.length - 1);
+					currentEnemy = players[smartAi.getCurrentEnemyIndex()];
+				} while (currentEnemy.hasLost() || currentEnemy == null || currentPlayer.equals(currentEnemy));
+
+				ai.selectShip(ai.getAvailableShipsToShoot().get(0));
+				Shot shot = smartAi.getTarget(getFieldStates(currentEnemy));
+				wasShotPossible = makeTurn(currentEnemy, shot.getX(), shot.getY(), shot.getOrientation());
+				System.out.println(wasShotPossible);
+			} while (!wasShotPossible);
+		}
+	}
+
+	public boolean makeTurn(Player enemy, int xPos, int yPos, Orientation orientation) throws FieldOutOfBoardException {
+		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
+		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
+		int x;
+		int y;
+		for (int i = 0; i < currentPlayer.getCurrentShip().getShootingRange(); i++) {
+			x = xPos + i * xDirection;
+			y = yPos + i * yDirection;
+			boolean isShotPossible = enemy.markBoard(x, y);
+			if (i == 0) {
+				// erstes Feld belegt
+				if (!isShotPossible)
+					return false;
+			}
+		}
+		currentPlayer.getCurrentShip().setReloadTimeToMax();
+		// Schuss erfolgreich
+		return true;
+
 	}
 
 	public Player getWinner() {
@@ -136,8 +171,7 @@ public class Game implements Serializable {
 		int currentPlayerIndex = Arrays.asList(players).indexOf(currentPlayer);
 		// wenn letzter Spieler im Array, dann Index wieder auf 0 setzen,
 		// ansonsten hochzählen
-		currentPlayerIndex = (currentPlayerIndex >= this.players.length - 1) ? currentPlayerIndex = 0
-				: currentPlayerIndex + 1;
+		currentPlayerIndex = (currentPlayerIndex >= this.players.length - 1) ? currentPlayerIndex = 0 : currentPlayerIndex + 1;
 		this.currentPlayer = this.players[currentPlayerIndex];
 	}
 
@@ -218,6 +252,33 @@ public class Game implements Serializable {
 		}
 	}
 
+	private int getIndexOfCurrentPlayer() {
+		return Arrays.asList(players).indexOf(currentPlayer);
+	}
+
+	public FieldState[][] getFieldStates(int playerIndex) throws FieldOutOfBoardException {
+		boolean isOwnBoard = playerIndex == getIndexOfCurrentPlayer();
+		int size = playerBoards[playerIndex].getSize();
+		FieldState[][] fieldStates = new FieldState[size][size];
+		Board board = playerBoards[playerIndex];
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				FieldState state = board.getField(j, i).getState();
+				if ((state == FieldState.HasShip || state == FieldState.IsEmpty) && (!isOwnBoard)) {
+					fieldStates[i][j] = null;
+				} else {
+					fieldStates[i][j] = state;
+				}
+			}
+		}
+		return fieldStates;
+	}
+
+	public FieldState[][] getFieldStates(Player player) throws FieldOutOfBoardException {
+		int index = Arrays.asList(players).indexOf(player);
+		return getFieldStates(index);
+	}
+
 	/**
 	 * Close a Stream quietly
 	 * 
@@ -250,6 +311,10 @@ public class Game implements Serializable {
 
 	public int getTurnNumber() {
 		return turnNumber;
+	}
+
+	public int getBoardSize() {
+		return playerBoards[0].getSize();
 	}
 
 }

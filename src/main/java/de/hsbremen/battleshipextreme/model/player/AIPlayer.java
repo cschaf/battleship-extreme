@@ -3,6 +3,7 @@ package de.hsbremen.battleshipextreme.model.player;
 import java.util.ArrayList;
 import java.util.Random;
 
+import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
@@ -15,13 +16,13 @@ import de.hsbremen.battleshipextreme.model.ship.Ship;
  *
  */
 
-public abstract class AIPlayer extends Player {
+public class AIPlayer extends Player {
 
 	protected Player currentEnemy;
 	private static final int MAX_TRIES_TO_PLACE_SHIP = 1000;
 
-	public AIPlayer(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
-		super(boardSize, destroyers, frigates, corvettes, submarines);
+	public AIPlayer(Board board, int destroyers, int frigates, int corvettes, int submarines) {
+		super(board, destroyers, frigates, corvettes, submarines);
 		this.type = PlayerType.AI;
 	}
 
@@ -77,10 +78,6 @@ public abstract class AIPlayer extends Player {
 	protected int createRandomNumber(int min, int max) {
 		Random random = new Random();
 		return random.nextInt(max - min + 1) + min;
-	}
-
-	public Player getCurrentEnemy() {
-		return this.currentEnemy;
 	}
 
 	protected void chooseShipToShootWithRandomly() {

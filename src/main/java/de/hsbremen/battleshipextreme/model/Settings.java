@@ -27,14 +27,13 @@ public class Settings {
 	public static final int MIN_PLAYERS = 2;
 	public static final int MAX_PLAYERS = 6;
 
-	public Settings(int players, int aiPlayers, int dumbAiPlayers, int boardSize, int destroyers, int frigates, int corvettes, int submarines) throws BoardTooSmallException,
-			InvalidPlayerNumberException, InvalidNumberOfShipsException {
-		validateNumberOfPlayers(players, aiPlayers, dumbAiPlayers);
+	public Settings(int players, int aiPlayers, int boardSize, int destroyers, int frigates, int corvettes, int submarines) throws BoardTooSmallException, InvalidPlayerNumberException,
+			InvalidNumberOfShipsException {
+		validateNumberOfPlayers(players, aiPlayers);
 		validateNumberOfShips(destroyers, corvettes, frigates, submarines);
 		validateFieldSize(boardSize, destroyers, corvettes, frigates, submarines);
 		this.players = players;
 		this.smartAiPlayers = aiPlayers;
-		this.dumbAiPlayers = dumbAiPlayers;
 		this.boardSize = boardSize;
 		this.boardSize = boardSize;
 		this.destroyers = destroyers;
@@ -45,10 +44,6 @@ public class Settings {
 
 	public int getSmartAiPlayers() {
 		return smartAiPlayers;
-	}
-
-	public int getDumbAiPlayers() {
-		return dumbAiPlayers;
 	}
 
 	public int getPlayers() {
@@ -123,8 +118,8 @@ public class Settings {
 			throw new BoardTooSmallException();
 	}
 
-	private void validateNumberOfPlayers(int players, int smartAiPlayers, int dumbAiPlayers) throws InvalidPlayerNumberException {
-		int numberOfPlayers = players + smartAiPlayers + dumbAiPlayers;
+	private void validateNumberOfPlayers(int players, int smartAiPlayers) throws InvalidPlayerNumberException {
+		int numberOfPlayers = players + smartAiPlayers;
 		if ((numberOfPlayers < MIN_PLAYERS) || (numberOfPlayers > MAX_PLAYERS))
 			throw new InvalidPlayerNumberException(MIN_PLAYERS, MAX_PLAYERS);
 	}
