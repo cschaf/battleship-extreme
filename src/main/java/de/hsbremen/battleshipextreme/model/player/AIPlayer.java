@@ -36,8 +36,8 @@ public class AIPlayer extends Player {
 
 	private static final int MAX_TRIES_TO_PLACE_SHIP = 1000;
 
-	public AIPlayer(Board board, int destroyers, int frigates, int corvettes, int submarines, PlayerType aiType) {
-		super(board, destroyers, frigates, corvettes, submarines);
+	public AIPlayer(int boardSize, int destroyers, int frigates, int corvettes, int submarines, PlayerType aiType) {
+		super(boardSize, destroyers, frigates, corvettes, submarines);
 		this.type = aiType;
 		this.name = aiType.toString();
 	}
@@ -461,7 +461,6 @@ public class AIPlayer extends Player {
 	// baut anhand der bekannten Fieldstates eine Nachbildung des Boards
 	private Board buildBoardRepresentation(FieldState[][] fieldStates) throws FieldOutOfBoardException {
 		enemyBoardRepresentation = new Board(fieldStates.length);
-		Field[][] fields = board.getFields();
 		for (int i = 0; i < fieldStates.length; i++) {
 			for (int j = 0; j < fieldStates[i].length; j++) {
 				FieldState state = fieldStates[i][j];

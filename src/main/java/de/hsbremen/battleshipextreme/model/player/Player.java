@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Field;
+import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
@@ -23,7 +24,7 @@ public abstract class Player implements Serializable {
 	protected PlayerType type;
 	protected Board board;
 
-	public Player(Board board, int destroyers, int frigates, int corvettes, int submarines) {
+	public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 
 		this.ships = new Ship[destroyers + frigates + corvettes + submarines];
 
@@ -38,7 +39,7 @@ public abstract class Player implements Serializable {
 				ships[i] = new Submarine();
 		}
 
-		this.board = board;
+		this.board = new Board(boardSize);
 		this.currentShip = this.ships[0];
 	}
 
@@ -49,6 +50,22 @@ public abstract class Player implements Serializable {
 			ship.setPlaced(false);
 		}
 		currentShip = ships[0];
+	}
+
+	public FieldState[][] getFieldStates(boolean isOwnBoard) throws FieldOutOfBoardException {
+		int size = board.getSize();
+		FieldState[][] fieldStates = new FieldState[size][size];
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				FieldState state = board.getField(j, i).getState();
+				if ((state == FieldState.HasShip || state == FieldState.IsEmpty) && (!isOwnBoard)) {
+					fieldStates[i][j] = null;
+				} else {
+					fieldStates[i][j] = state;
+				}
+			}
+		}
+		return fieldStates;
 	}
 
 	/**

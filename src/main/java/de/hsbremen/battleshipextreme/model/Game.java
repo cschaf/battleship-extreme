@@ -20,11 +20,11 @@ import de.hsbremen.battleshipextreme.model.player.Shot;
 
 public class Game implements Serializable {
 	private Player[] players;
-	private Board[] boards;
 	private Player currentPlayer;
 	private Player winner;
 	private int turnNumber;
 	private int roundNumber;
+	private int boardSize;
 
 	/**
 	 * Reads the settings and initializes the necessary game objects.
@@ -38,23 +38,19 @@ public class Game implements Serializable {
 		int numberOfAIPlayers = settings.getSmartAiPlayers();
 		int numberOfDumbAiPlayers = settings.getDumbAiPlayers();
 		int numberOfPlayers = numberOfAIPlayers + numberOfHumanPlayers + numberOfDumbAiPlayers;
+
 		System.out.println(numberOfPlayers);
 
 		players = new Player[numberOfPlayers];
-		boards = new Board[numberOfPlayers];
 
-		// Boards erzeugen
-		Board board;
 		for (int i = 0; i < numberOfPlayers; i++) {
-			board = new Board(settings.getBoardSize());
-			boards[i] = board;
 			if (i < numberOfHumanPlayers) {
-				this.players[i] = new HumanPlayer(board, settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
+				this.players[i] = new HumanPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
 			} else {
 				if (i < numberOfAIPlayers + numberOfHumanPlayers) {
-					this.players[i] = new AIPlayer(board, settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines(), PlayerType.SMART_AI);
+					this.players[i] = new AIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines(), PlayerType.SMART_AI);
 				} else {
-					this.players[i] = new AIPlayer(board, settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines(), PlayerType.DUMB_AI);
+					this.players[i] = new AIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines(), PlayerType.DUMB_AI);
 				}
 			}
 		}
@@ -64,6 +60,7 @@ public class Game implements Serializable {
 			this.players[i].setName(this.players[i].getName() + (i + 1));
 		}
 
+		this.boardSize = settings.getBoardSize();
 		this.turnNumber = 0;
 		this.currentPlayer = players[0];
 	}
@@ -128,7 +125,7 @@ public class Game implements Serializable {
 
 			// Schiff auswählen
 			ai.selectShip(ai.getAvailableShipsToShoot().get(0));
-			Shot shot = ai.getTarget(getFieldStates(currentEnemy));
+			Shot shot = ai.getTarget(currentEnemy.getFieldStates(false));
 
 			wasShotPossible = makeTurn(currentEnemy, shot.getX(), shot.getY(), shot.getOrientation());
 		} while (!wasShotPossible);
@@ -259,33 +256,6 @@ public class Game implements Serializable {
 		}
 	}
 
-	private int getIndexOfCurrentPlayer() {
-		return Arrays.asList(players).indexOf(currentPlayer);
-	}
-
-	public FieldState[][] getFieldStates(int playerIndex) throws FieldOutOfBoardException {
-		boolean isOwnBoard = playerIndex == getIndexOfCurrentPlayer();
-		int size = boards[playerIndex].getSize();
-		FieldState[][] fieldStates = new FieldState[size][size];
-		Board board = boards[playerIndex];
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
-				FieldState state = board.getField(j, i).getState();
-				if ((state == FieldState.HasShip || state == FieldState.IsEmpty) && (!isOwnBoard)) {
-					fieldStates[i][j] = null;
-				} else {
-					fieldStates[i][j] = state;
-				}
-			}
-		}
-		return fieldStates;
-	}
-
-	public FieldState[][] getFieldStates(Player player) throws FieldOutOfBoardException {
-		int index = Arrays.asList(players).indexOf(player);
-		return getFieldStates(index);
-	}
-
 	/**
 	 * Close a Stream quietly
 	 * 
@@ -320,12 +290,11 @@ public class Game implements Serializable {
 		return turnNumber;
 	}
 
-	public int getBoardSize() {
-		return boards[0].getSize();
-	}
-
 	public int getRoundNumber() {
 		return roundNumber;
 	}
 
+	public int getBoardSize() {
+		return boardSize;
+	}
 }

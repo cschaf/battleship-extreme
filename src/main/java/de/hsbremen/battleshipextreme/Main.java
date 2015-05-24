@@ -45,7 +45,7 @@ class ConsoleGame {
 			System.out.println("(2) AI-Kampf (1 schlaue KI und 1 dumme KI)");
 			System.out.println("(3) AI-Kampf (1 schlaue KIs und 5 dumme KIs)");
 			System.out.println("(4) AI-Benchmark (Zeigt Runden-Durchschnitt von 1000 Spielen mit 2 schlauen KIs)");
-			System.out.println("(2) Zuletzt gespeichertes Spiel fortsetzen");
+			System.out.println("(5) Zuletzt gespeichertes Spiel fortsetzen");
 			int choice = readIntegerWithMinMax(1, 5);
 			switch (choice) {
 			case 1:
@@ -222,7 +222,7 @@ class ConsoleGame {
 				System.out.println("Board von " + currentPlayer);
 				System.out.println();
 				try {
-					printBoard(game.getFieldStates(currentPlayer));
+					printBoard(game.getCurrentPlayer().getFieldStates(true));
 				} catch (FieldOutOfBoardException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -268,6 +268,15 @@ class ConsoleGame {
 				System.out.println("Schiff (teilweise) nicht im Board!");
 			}
 		} while (!isItPossibleToPlaceShip);
+
+		try {
+			System.out.println();
+			printBoard(currentPlayer.getFieldStates(true));
+		} catch (FieldOutOfBoardException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		if (!currentPlayer.hasPlacedAllShips()) {
 			currentPlayer.nextShip();
 		} else {
@@ -318,7 +327,7 @@ class ConsoleGame {
 			System.out.println();
 			System.out.println("Board von " + game.getPlayers()[ai.getCurrentEnemyIndex()]);
 			try {
-				printBoard(game.getFieldStates(ai.getCurrentEnemyIndex()));
+				printBoard(game.getPlayers()[ai.getCurrentEnemyIndex()].getFieldStates(false));
 			} catch (FieldOutOfBoardException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -369,8 +378,6 @@ class ConsoleGame {
 
 	private void attackManually() {
 		Player enemy;
-		Player currentPlayer;
-		currentPlayer = game.getCurrentPlayer();
 
 		// Auswahl des zu schießenden Schiffs
 		System.out.println("Welches Schiff soll schießen?");
@@ -380,7 +387,7 @@ class ConsoleGame {
 		System.out.println("Auf welchen Spieler?");
 		enemy = selectEnemy(game.getEnemiesOfCurrentPlayer());
 		try {
-			printBoard(game.getFieldStates(enemy));
+			printBoard(enemy.getFieldStates(false));
 		} catch (FieldOutOfBoardException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -394,7 +401,7 @@ class ConsoleGame {
 				if (!isShotPossible)
 					System.out.println("Feld wurde bereits beschossen!");
 				else
-					printBoards(game.getFieldStates(currentPlayer), game.getFieldStates(enemy));
+					printBoards(game.getCurrentPlayer().getFieldStates(true), enemy.getFieldStates(false));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -440,15 +447,15 @@ class ConsoleGame {
 		this.makePlayerTurn();
 	}
 
-	private void printBoards(FieldState[][] fieldStates2, FieldState[][] fieldStates3) {
+	private void printBoards(FieldState[][] ownBoard, FieldState[][] enemyBoard) {
 		System.out.println();
 		System.out.println("Eigenes Board");
 		System.out.println();
-		printBoard(fieldStates2);
+		printBoard(ownBoard);
 		System.out.println();
 		System.out.println("Board des Gegners");
 		System.out.println();
-		printBoard(fieldStates3);
+		printBoard(enemyBoard);
 		System.out.println("O = getroffenes Schiff\nX = daneben\n+ = eigenes Schiff\n- = leer \nU = unbekannt\n! = zerstörtes Schiff\n");
 	}
 
