@@ -7,8 +7,7 @@ import de.hsbremen.battleshipextreme.network.ITransferable;
 import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 import de.hsbremen.battleshipextreme.network.eventhandling.ErrorHandler;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
-import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
-import de.hsbremen.battleshipextreme.network.transfarableObject.Message;
+import de.hsbremen.battleshipextreme.network.transfarableObject.*;
 
 import javax.swing.event.EventListenerList;
 import java.io.IOException;
@@ -40,9 +39,21 @@ public class Listener extends Thread implements IDisposable {
                         Message message = (Message)receivedObj;
                         messageObjectReceived(new EventArgs<Message>(this, message));
                         break;
+                    case ClientMessage:
+                        ClientMessage clientMessage = (ClientMessage)receivedObj;
+                        messageObjectReceived(new EventArgs<Message>(this, clientMessage));
+                        break;
                     case ClientInfo:
                         ClientInfo clientInfo = (ClientInfo) receivedObj;
                         clientInfoObjectReceived(new EventArgs<ClientInfo>(this, clientInfo));
+                        break;
+                    case Game:
+                        Game game = (Game)receivedObj;
+                        gameObjectReceived(new EventArgs<Game>(this, game));
+                        break;
+                    case Turn:
+                        Turn turn = (Turn)receivedObj;
+                        turnObjectReceived(new EventArgs<Turn>(this, turn));
                         break;
                 }
             }
@@ -52,6 +63,8 @@ public class Listener extends Thread implements IDisposable {
             errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage(e.getMessage())));
         }
     }
+
+
 
     public void addServerObjectReceivedListener(IServerObjectReceivedListener listener) {
         this.listeners.add(IServerObjectReceivedListener.class, listener);
@@ -77,6 +90,25 @@ public class Listener extends Thread implements IDisposable {
             }
         }
     }
+
+    private void gameObjectReceived(EventArgs<Game> eventArgs) {
+        Object[] listeners = this.listeners.getListenerList();
+        for (int i = 0; i < listeners.length; i = i+2) {
+            if (listeners[i] == IServerObjectReceivedListener.class) {
+                ((IServerObjectReceivedListener) listeners[i+1]).onGameObjectReceived(eventArgs);
+            }
+        }
+    }
+
+    private void turnObjectReceived(EventArgs<Turn> eventArgs) {
+        Object[] listeners = this.listeners.getListenerList();
+        for (int i = 0; i < listeners.length; i = i+2) {
+            if (listeners[i] == IServerObjectReceivedListener.class) {
+                ((IServerObjectReceivedListener) listeners[i+1]).onTurnObjectReceived(eventArgs);
+            }
+        }
+    }
+
     private void clientInfoObjectReceived(EventArgs<ClientInfo> eventArgs) {
         Object[] listeners = this.listeners.getListenerList();
         for (int i = 0; i < listeners.length; i = i+2) {
@@ -86,7 +118,6 @@ public class Listener extends Thread implements IDisposable {
         }
     }
 
-    @Override
     public void dispose() {
         this.disposed = true;
     }

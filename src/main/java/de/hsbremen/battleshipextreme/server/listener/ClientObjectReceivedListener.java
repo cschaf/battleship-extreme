@@ -9,7 +9,6 @@ import de.hsbremen.battleshipextreme.network.transfarableObject.Turn;
  * Created by cschaf on 15.05.2015.
  */
 public class ClientObjectReceivedListener implements IClientObjectReceivedListener {
-    @Override
     public void onObjectReceived(EventArgs<ITransferable> eventArgs) {
         ITransferable receivedObject = eventArgs.getItem();
         switch (receivedObject.getType()) {

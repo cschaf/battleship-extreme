@@ -31,7 +31,6 @@ public class Game extends TransferableObject {
         this.turns = new ArrayList<Turn>();
     }
 
-    @Override
     public TransferableType getType() {
         return TransferableType.Game;
     }
