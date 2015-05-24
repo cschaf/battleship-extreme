@@ -111,7 +111,7 @@ class ConsoleGame {
 			// Spiel mit zwei schlauen Ais erzeugen
 			createAiGame(1, 1);
 			gameLoop();
-			roundNumbersOfEachGame[i] = (int) Math.floor(game.getTurnNumber() / game.getPlayers().length);
+			roundNumbersOfEachGame[i] = game.getRoundNumber();
 		}
 		// Durchschnitt ausrechnen
 		int sum = 0;
@@ -282,7 +282,7 @@ class ConsoleGame {
 			// Rundenanzahl ausgeben
 			if (game.getTurnNumber() % game.getPlayers().length == 0) {
 				System.out.println();
-				System.out.println("Runde " + (int) Math.floor(game.getTurnNumber() / game.getPlayers().length));
+				System.out.println("Runde " + game.getRoundNumber());
 				System.out.println("------------------------------------------------------------------------");
 				System.out.println();
 			}

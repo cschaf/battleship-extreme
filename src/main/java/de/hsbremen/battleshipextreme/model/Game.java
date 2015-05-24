@@ -24,6 +24,7 @@ public class Game implements Serializable {
 	private Player currentPlayer;
 	private Player winner;
 	private int turnNumber;
+	private int roundNumber;
 
 	/**
 	 * Reads the settings and initializes the necessary game objects.
@@ -53,7 +54,6 @@ public class Game implements Serializable {
 				if (i < numberOfAIPlayers + numberOfHumanPlayers) {
 					this.players[i] = new AIPlayer(board, settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines(), PlayerType.SMART_AI);
 				} else {
-
 					this.players[i] = new AIPlayer(board, settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines(), PlayerType.DUMB_AI);
 				}
 			}
@@ -110,12 +110,6 @@ public class Game implements Serializable {
 		return numberOfPlayersLeft <= 1;
 	}
 
-	/**
-	 * This method is used for AI-Players. Call the makeTurnAutomatically-method
-	 * of the AI-Player and pass a list of enemies that can be attacked.
-	 * 
-	 * @throws Exception
-	 */
 	public void makeAiTurn() throws Exception {
 		boolean wasShotPossible = false;
 		// AI soll Zug automatisch machen
@@ -130,14 +124,13 @@ public class Game implements Serializable {
 					ai.setRandomEnemyIndex(players.length - 1);
 					currentEnemy = players[ai.getCurrentEnemyIndex()];
 				}
-			} while (currentEnemy.hasLost() || currentEnemy == null || ai.equals(currentEnemy));
+			} while (currentEnemy.hasLost() || ai.equals(currentEnemy));
 
-			System.out.println("gegner gewählt");
 			// Schiff auswählen
 			ai.selectShip(ai.getAvailableShipsToShoot().get(0));
 			Shot shot = ai.getTarget(getFieldStates(currentEnemy));
+
 			wasShotPossible = makeTurn(currentEnemy, shot.getX(), shot.getY(), shot.getOrientation());
-			System.out.println(wasShotPossible);
 		} while (!wasShotPossible);
 
 	}
@@ -152,9 +145,10 @@ public class Game implements Serializable {
 			y = yPos + i * yDirection;
 			boolean isShotPossible = enemy.markBoard(x, y);
 			if (i == 0) {
-				// erstes Feld belegt
-				if (!isShotPossible)
+				if (!isShotPossible) {
+					// erstes Feld belegt, Schuss nicht möglich
 					return false;
+				}
 			}
 		}
 		currentPlayer.getCurrentShip().setReloadTimeToMax();
@@ -182,6 +176,9 @@ public class Game implements Serializable {
 		// wenn letzter Spieler im Array, dann Index wieder auf 0 setzen,
 		// ansonsten hochzählen
 		currentPlayerIndex = (currentPlayerIndex >= this.players.length - 1) ? currentPlayerIndex = 0 : currentPlayerIndex + 1;
+		if (currentPlayerIndex == 0) {
+			roundNumber++;
+		}
 		this.currentPlayer = this.players[currentPlayerIndex];
 	}
 
@@ -325,6 +322,10 @@ public class Game implements Serializable {
 
 	public int getBoardSize() {
 		return boards[0].getSize();
+	}
+
+	public int getRoundNumber() {
+		return roundNumber;
 	}
 
 }
