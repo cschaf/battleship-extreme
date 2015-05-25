@@ -117,7 +117,7 @@ public class Game implements Serializable {
 				currentEnemy = players[ai.getCurrentEnemyIndex()];
 				// zufälligen Gegner auswählen, wenn die KI keine Spur verfolgt,
 				// ansonsten gemerkten Gegner beibehalten
-				if (!ai.hasTargets() || currentEnemy.hasLost() || ai.equals(currentEnemy) || ai.getType() == PlayerType.DUMB_AI) {
+				if (!ai.hasTargets() || currentEnemy.hasLost() || ai.getType() == PlayerType.DUMB_AI) {
 					ai.setRandomEnemyIndex(players.length - 1);
 					currentEnemy = players[ai.getCurrentEnemyIndex()];
 				}

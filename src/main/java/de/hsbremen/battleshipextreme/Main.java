@@ -322,25 +322,17 @@ class ConsoleGame {
 		}
 		// TODO
 		// von AI beschossenes Board ausgeben
-		if (ai.getName().equals("SMART_AI1")) {
-			System.out.println(ai + " greift " + game.getPlayers()[ai.getCurrentEnemyIndex()] + " mit " + ai.getCurrentShip() + " an.");
-			System.out.println();
-			System.out.println("Board von " + game.getPlayers()[ai.getCurrentEnemyIndex()]);
-			try {
-				printBoard(game.getPlayers()[ai.getCurrentEnemyIndex()].getFieldStates(false));
-			} catch (FieldOutOfBoardException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			// System.out.println("Eigenes Board");
-			// try {
-			// printBoard(game.getFieldStates(ai));
-			// } catch (FieldOutOfBoardException e) {
-			// // TODO Auto-generated catch block
-			// e.printStackTrace();
-			// }
-			// System.out.println();
+		// if (ai.getName().equals("SMART_AI1")) {
+		System.out.println(ai + " greift " + game.getPlayers()[ai.getCurrentEnemyIndex()] + " mit " + ai.getCurrentShip() + " an.");
+		System.out.println();
+		System.out.println("Board von " + game.getPlayers()[ai.getCurrentEnemyIndex()]);
+		try {
+			printBoard(game.getPlayers()[ai.getCurrentEnemyIndex()].getFieldStates(false));
+		} catch (FieldOutOfBoardException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
+		// }
 	}
 
 	private void makePlayerTurn() {
