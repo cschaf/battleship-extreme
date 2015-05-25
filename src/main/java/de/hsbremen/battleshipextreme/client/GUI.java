@@ -1,6 +1,7 @@
 package de.hsbremen.battleshipextreme.client;
 
 import java.awt.CardLayout;
+import java.awt.Dimension;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -32,11 +33,8 @@ public class GUI {
 		InitComponents();
 
 		frame.pack();
-//		frame.setSize(500, 500);
+//		frame.setMinimumSize(new Dimension(1500, 640));
 		frame.setLocationRelativeTo(null);
-		
-//		showPanel(GUI.GAME_PANEL);
-		
 		frame.setVisible(true);
 	}
 	
@@ -44,7 +42,7 @@ public class GUI {
 		
 		panelMainMenu = new MainMenuPanel();
 		panelSettings = new SettingsPanel();
-		panelGame = new GamePanel();
+		panelGame = new GamePanel(10);
 		
 		cards = new JPanel(new CardLayout());
 		cards.add(panelMainMenu, MAIN_MENU_PANEL);

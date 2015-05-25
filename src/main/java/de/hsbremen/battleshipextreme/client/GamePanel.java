@@ -24,6 +24,7 @@ public class GamePanel extends JPanel {
 
 	private JLabel labelInfo;
 	private JPanel panelGameArea;
+	private JPanel panelBoards;
 	private BoardPanel panelEnemyBoard;
 	private BoardPanel panelPlayerBoard;
 
@@ -32,7 +33,7 @@ public class GamePanel extends JPanel {
 	private JComboBox comboBoxEnemySelection;
 	private JButton buttonApplyEnemy;
 	private JTextArea textAreaGameLog;
-	private JTextArea textAreaChatWindow;
+	private JTextArea textAreaChatLog;
 	private JTextField textFieldChatMessage;
 	private JButton buttonSendMessage;
 	
@@ -44,19 +45,19 @@ public class GamePanel extends JPanel {
 	// Constructor
 	//////////////////////////////////////////////////////////////////
 	
-	public GamePanel() {
-		
-		int size = 10;
+	public GamePanel(int boardSize) {
 		
 		this.setLayout(new BorderLayout());
 		
 		// Panel fuer die Spielsteuerung
-		//navigationPanel = new NavigationPanel();
 		this.add(createNavigationPanel(), BorderLayout.WEST);
 		
 		// Panel fuer die eigentliche Spielflaeche
 		panelGameArea = new JPanel(new BorderLayout());
 		this.add(panelGameArea);
+		
+		// Panel fuer die beiden Boards
+		panelBoards = new JPanel(new GridLayout(1, 2));
 		
 		// Label fuer die Spielinformationen
 		labelInfo = new JLabel("Hier stehen aktuelle Spielinformationen!", SwingConstants.CENTER);
@@ -66,12 +67,15 @@ public class GamePanel extends JPanel {
 		panelGameArea.add(labelInfo, BorderLayout.NORTH);
 		
 		// Spielbrett fuer den Gegner
-		panelEnemyBoard = new BoardPanel("Enemy", size);
-		panelGameArea.add(panelEnemyBoard, BorderLayout.WEST);
-
+		panelEnemyBoard = new BoardPanel("Enemy", boardSize);
+		panelBoards.add(panelEnemyBoard);
+		
 		// Spielbrett fuer den Player
-		panelPlayerBoard = new BoardPanel("Yours", size);
-		panelGameArea.add(panelPlayerBoard, BorderLayout.EAST);
+		panelPlayerBoard = new BoardPanel("Yours", boardSize);
+		panelBoards.add(panelPlayerBoard);
+		
+		// Panel fuer mit den Boards hinzufügen
+		panelGameArea.add(panelBoards);
 	}
 	
 	//////////////////////////////////////////////////////////////////
@@ -108,7 +112,7 @@ public class GamePanel extends JPanel {
 		
 		// chat panel
 		c.gridy++;
-		c.weighty = 0;
+		c.weighty = .5;
 		panel.add(createChatPanel(), c);
 
 		return panel;
@@ -127,13 +131,13 @@ public class GamePanel extends JPanel {
 
 		// Labels für die Anzahl der Schiffe
 		labelShipCount = new JLabel[4];
-
+		
 		for (int i = 0; i < labelShipCount.length; i++) {
 			c.insets = new Insets(0, 3, 0, 5);
 			c.gridx = 0;
 			c.gridy = i;
 			labelShipCount[i] = new JLabel("0x");
-			labelShipCount[i].setFont(new Font("Tahoma", Font.BOLD, 15));
+			labelShipCount[i].setFont(new Font("Tahoma", Font.CENTER_BASELINE, 12));
 			panel.add(labelShipCount[i], c);
 		}
 
@@ -149,9 +153,9 @@ public class GamePanel extends JPanel {
 				c.insets = new Insets(0, 0, 1, 1);
 				c.gridx = x + 1;
 				c.gridy = y;
-				c.ipadx = c.ipady = 30;
+				c.ipadx = c.ipady = 25;
 				labelShip[y][x] = new JLabel();
-				labelShip[y][x].setBackground(Color.BLUE);
+				labelShip[y][x].setBackground(new Color(1, 124, 232));
 				labelShip[y][x].setOpaque(true);
 				panel.add(labelShip[y][x], c);
 			}
@@ -232,7 +236,7 @@ public class GamePanel extends JPanel {
 		
 		textAreaGameLog = new JTextArea();
 		textAreaGameLog.setEditable(false);
-		textAreaGameLog.setRows(10);
+		textAreaGameLog.setRows(6);
 		textAreaGameLog.setLineWrap(true);
 		textAreaGameLog.setWrapStyleWord(true);
 		
@@ -250,27 +254,27 @@ public class GamePanel extends JPanel {
 		c.fill = GridBagConstraints.BOTH;
 		c.anchor = GridBagConstraints.NORTHWEST;
 
-		// Chat Window
+		// Chat log
 		c.gridx = 0;
 		c.gridy = 0;
 		c.weightx = 1;
 		c.weighty = 1;
 		c.gridwidth = 2;
 		
-		textAreaChatWindow = new JTextArea();
-		textAreaChatWindow.setEditable(false);
-		textAreaChatWindow.setRows(6);
-		textAreaChatWindow.setLineWrap(true);
-		textAreaChatWindow.setWrapStyleWord(true);
+		textAreaChatLog = new JTextArea();
+		textAreaChatLog.setEditable(false);
+		textAreaChatLog.setRows(4);
+		textAreaChatLog.setLineWrap(true);
+		textAreaChatLog.setWrapStyleWord(true);
 		
-		JScrollPane scroll = new JScrollPane(this.textAreaChatWindow);
+		JScrollPane scroll = new JScrollPane(this.textAreaChatLog);
 		panel.add(scroll, c);
 		
 		// Chat Message
 		c.gridx = 0;
 		c.gridy = 1;
 		c.weightx = 1;
-		c.weighty = 1;
+		c.weighty = 0;
 		c.gridwidth = 1;
 		
 		textFieldChatMessage = new JTextField();
@@ -287,23 +291,11 @@ public class GamePanel extends JPanel {
 		
 		return panel;
 	}
-	
-	//////////////////////////////////////////////////////////////////
-	// get Components
-	//////////////////////////////////////////////////////////////////
-	
-	public void setPanelEnemyBoard(BoardPanel panelEnemyBoard) {
-		panelGameArea.remove(this.panelEnemyBoard);
-		this.panelEnemyBoard = panelEnemyBoard;
-		panelGameArea.add(this.panelEnemyBoard, BorderLayout.WEST);
-	}
 
-	public void setPanelPlayerBoard(BoardPanel panelPlayerBoard) {
-		panelGameArea.remove(this.panelPlayerBoard);
-		this.panelPlayerBoard = panelPlayerBoard;
-		panelGameArea.add(this.panelPlayerBoard, BorderLayout.EAST);
-	}
-
+	//////////////////////////////////////////////////////////////////
+	// get, set Components
+	//////////////////////////////////////////////////////////////////
+	
 	public JLabel getLabelInfo() {
 		return labelInfo;
 	}
@@ -312,10 +304,22 @@ public class GamePanel extends JPanel {
 		return panelEnemyBoard;
 	}
 
+	public void setPanelEnemyBoard(BoardPanel panelEnemyBoard) {
+		panelBoards.remove(this.panelEnemyBoard);
+		this.panelEnemyBoard = panelEnemyBoard;
+		panelBoards.add(this.panelEnemyBoard);
+	}
+	
 	public BoardPanel getPanelPlayerBoard() {
 		return panelPlayerBoard;
 	}
 
+	public void setPanelPlayerBoard(BoardPanel panelPlayerBoard) {
+		panelBoards.remove(this.panelPlayerBoard);
+		this.panelPlayerBoard = panelPlayerBoard;
+		panelBoards.add(this.panelPlayerBoard);
+	}
+	
 	public JRadioButton getRadioButtonHorizontalOrientation() {
 		return radioButtonHorizontalOrientation;
 	}
@@ -336,8 +340,8 @@ public class GamePanel extends JPanel {
 		return textAreaGameLog;
 	}
 
-	public JTextArea getTextAreaChatWindow() {
-		return textAreaChatWindow;
+	public JTextArea getTextAreaChatLog() {
+		return textAreaChatLog;
 	}
 
 	public JTextField getTextFieldChatMessage() {
