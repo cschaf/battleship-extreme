@@ -244,6 +244,7 @@ public abstract class Player implements Serializable {
 					ship.setSize(ship.getSize() - 1);
 				}
 			} else {
+				// Feld bereits beschossen
 				return false;
 			}
 		}

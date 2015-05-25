@@ -7,7 +7,7 @@
       <Entity type="Class">
         <Name>Board</Name>
         <Access>Public</Access>
-        <Location left="704" top="52" />
+        <Location left="705" top="52" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private int size</Member>
@@ -19,18 +19,17 @@
       <Entity type="Class">
         <Name>Player</Name>
         <Access>Public</Access>
-        <Location left="350" top="30" />
+        <Location left="348" top="29" />
         <Size width="285" height="366" />
         <Collapsed>False</Collapsed>
         <Member type="Field">protected Ship[] ships</Member>
-        <Member type="Field">protected Board publicBoard</Member>
-        <Member type="Field">protected Board privateBoard</Member>
+        <Member type="Field">protected Board board</Member>
         <Member type="Field">private String name</Member>
         <Member type="Field">private Ship currentShip</Member>
         <Member type="Field">private PlayerType type</Member>
         <Member type="Method">public void placeShip(Ship ship, int xPos, int yPos, Orientation orientation)</Member>
         <Member type="Constructor">public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines)</Member>
-        <Member type="Method">public boolean markPublicBoard(int xPos, int yPos)</Member>
+        <Member type="Method">public boolean markBoard(int xPos, int yPos)</Member>
         <Member type="Method">public boolean hasPlacedAllShips()</Member>
         <Member type="Method">public boolean areAllShipsPlaced()</Member>
         <Member type="Method">public void resetBoard()</Member>
@@ -44,7 +43,7 @@
       <Entity type="Class">
         <Name>Game</Name>
         <Access>Public</Access>
-        <Location left="46" top="30" />
+        <Location left="41" top="18" />
         <Size width="226" height="383" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private Player currentPlayer</Member>
@@ -153,7 +152,7 @@
       <Entity type="Class">
         <Name>Settings</Name>
         <Access>Public</Access>
-        <Location left="280" top="499" />
+        <Location left="54" top="431" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private int players</Member>
@@ -274,6 +273,8 @@
         <EndMultiplicity>2..6</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="1" second="0">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -282,8 +283,6 @@
         <EndMultiplicity>1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="10" second="4">
-        <Label>
-        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -292,8 +291,6 @@
         <EndMultiplicity>0..1</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="0" second="10">
-        <Label>
-        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
@@ -302,6 +299,8 @@
         <EndMultiplicity>25..*</EndMultiplicity>
       </Relationship>
       <Relationship type="Association" first="2" second="11">
+        <Label>
+        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <Direction>Unidirectional</Direction>

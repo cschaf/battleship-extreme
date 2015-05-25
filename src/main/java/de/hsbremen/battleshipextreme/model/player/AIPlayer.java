@@ -111,7 +111,6 @@ public class AIPlayer extends Player {
 		// die KI nicht gemerkt hat.
 		// Deshalb wird, wenn die KI keine vorgemerkten Ziele mehr hat, das
 		// Feld nach getroffenen Schiffen abgesucht
-
 		ArrayList<Field> hitFields = lookForHitFields();
 
 		// wenn ein getroffenes Schiff gefunden wurde, dann plane die nächsten
@@ -134,13 +133,11 @@ public class AIPlayer extends Player {
 		// wenn der letzte Schuss ein Treffer war, dann nach nächstem
 		// unbeschossenen Feld in selbe Richtung suchen und als nächstes Ziel
 		// speichern
-
 		if (lastShot != null) {
 			Field lastFieldShotAt = enemyBoardRepresentation.getField(lastShot.getX(), lastShot.getY());
 
 			if (!isTargetDestroyed()) {
 				if (lastFieldShotAt.getState() == FieldState.Hit) {
-					// wenn Treffer
 					int[] directionArray = getDirectionArray(currentDirection);
 					Field newTarget = findNextTarget(lastFieldShotAt, directionArray[0], directionArray[1]);
 					// neues Ziel in gleiche Richtung setzen
@@ -158,7 +155,6 @@ public class AIPlayer extends Player {
 
 		}
 
-		// hat er immer noch targets?
 		if (hasTargets()) {
 			Field target;
 			currentDirection = getCurrentDirection();
@@ -244,10 +240,8 @@ public class AIPlayer extends Player {
 			int overhang = (fieldShotAt.getYPos() + this.currentShip.getShootingRange()) - (boardSize);
 			adjustedY = adjustY(fieldShotAt, NORTH, overhang);
 		}
-		fieldShotAt = new Field(adjustedX, adjustedY);
 
 		return new Shot(adjustedX, adjustedY, orientation);
-
 	}
 
 	private boolean surroundingFieldContainsShip(Field fieldShotAt) throws FieldOutOfBoardException {

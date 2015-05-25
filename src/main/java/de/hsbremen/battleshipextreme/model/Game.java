@@ -33,43 +33,43 @@ public class Game implements Serializable {
 	 *            the game settings.
 	 */
 	public Game(Settings settings) {
+		createPlayers(settings);
+
+		// Spielernummern setzen
+		for (int i = 0; i < players.length; i++) {
+			players[i].setName(players[i].getName() + (i + 1));
+		}
+
+		boardSize = settings.getBoardSize();
+		turnNumber = 0;
+		currentPlayer = players[0];
+	}
+
+	private void createPlayers(Settings settings) {
 		// Spieler erzeugen
 		int numberOfHumanPlayers = settings.getPlayers();
 		int numberOfAIPlayers = settings.getSmartAiPlayers();
 		int numberOfDumbAiPlayers = settings.getDumbAiPlayers();
 		int numberOfPlayers = numberOfAIPlayers + numberOfHumanPlayers + numberOfDumbAiPlayers;
-
-		System.out.println(numberOfPlayers);
-
 		players = new Player[numberOfPlayers];
-
 		for (int i = 0; i < numberOfPlayers; i++) {
 			if (i < numberOfHumanPlayers) {
-				this.players[i] = new HumanPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
+				players[i] = new HumanPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
 			} else {
 				if (i < numberOfAIPlayers + numberOfHumanPlayers) {
-					this.players[i] = new AIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines(), PlayerType.SMART_AI);
+					players[i] = new AIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines(), PlayerType.SMART_AI);
 				} else {
-					this.players[i] = new AIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines(), PlayerType.DUMB_AI);
+					players[i] = new AIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines(), PlayerType.DUMB_AI);
 				}
 			}
 		}
-
-		// Spielernummern setzen
-		for (int i = 0; i < this.players.length; i++) {
-			this.players[i].setName(this.players[i].getName() + (i + 1));
-		}
-
-		this.boardSize = settings.getBoardSize();
-		this.turnNumber = 0;
-		this.currentPlayer = players[0];
 	}
 
 	/**
 	 * This constructor is used when a game is loaded.
 	 */
 	public Game(String pathToSaveGame) throws Exception {
-		this.load(pathToSaveGame);
+		load(pathToSaveGame);
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class Game implements Serializable {
 	 */
 	public boolean isReady() {
 		// prüft ob alle Schiffe gesetzt sind
-		for (Player player : this.players)
+		for (Player player : players)
 			if (!player.hasPlacedAllShips()) {
 				return false;
 			}
@@ -95,14 +95,14 @@ public class Game implements Serializable {
 	public boolean isGameover() {
 		int numberOfPlayersLeft = 0;
 		Player potentialWinner = null;
-		for (Player player : this.players) {
+		for (Player player : players) {
 			if (!player.hasLost()) {
 				numberOfPlayersLeft++;
 				potentialWinner = player;
 			}
 		}
 		if (numberOfPlayersLeft <= 1) {
-			this.winner = potentialWinner;
+			winner = potentialWinner;
 		}
 		return numberOfPlayersLeft <= 1;
 	}
@@ -110,7 +110,7 @@ public class Game implements Serializable {
 	public void makeAiTurn() throws Exception {
 		boolean wasShotPossible = false;
 		// AI soll Zug automatisch machen
-		AIPlayer ai = (AIPlayer) this.currentPlayer;
+		AIPlayer ai = (AIPlayer) currentPlayer;
 		Player currentEnemy;
 		do {
 			do {
@@ -149,12 +149,11 @@ public class Game implements Serializable {
 			}
 		}
 		currentPlayer.getCurrentShip().setReloadTimeToMax();
-		// Schuss erfolgreich
 		return true;
 	}
 
 	public Player getWinner() {
-		return this.winner;
+		return winner;
 	}
 
 	/**
@@ -172,11 +171,10 @@ public class Game implements Serializable {
 		int currentPlayerIndex = Arrays.asList(players).indexOf(currentPlayer);
 		// wenn letzter Spieler im Array, dann Index wieder auf 0 setzen,
 		// ansonsten hochzählen
-		currentPlayerIndex = (currentPlayerIndex >= this.players.length - 1) ? currentPlayerIndex = 0 : currentPlayerIndex + 1;
-		if (currentPlayerIndex == 0) {
+		currentPlayerIndex = (currentPlayerIndex >= players.length - 1) ? currentPlayerIndex = 0 : currentPlayerIndex + 1;
+		if (currentPlayerIndex == 0)
 			roundNumber++;
-		}
-		this.currentPlayer = this.players[currentPlayerIndex];
+		currentPlayer = players[currentPlayerIndex];
 	}
 
 	/**
@@ -188,10 +186,10 @@ public class Game implements Serializable {
 	public ArrayList<Player> getEnemiesOfCurrentPlayer() {
 		// angreifbare Gegner des currentPlayers zurückgeben
 		ArrayList<Player> enemies = new ArrayList<Player>();
-		for (int i = 0; i < this.players.length; i++) {
-			if (!this.players[i].hasLost()) {
-				if (!this.currentPlayer.equals(players[i])) {
-					enemies.add(this.players[i]);
+		for (int i = 0; i < players.length; i++) {
+			if (!players[i].hasLost()) {
+				if (!currentPlayer.equals(players[i])) {
+					enemies.add(players[i]);
 				}
 			}
 		}
@@ -243,10 +241,10 @@ public class Game implements Serializable {
 			saveFile = new FileInputStream(destinationPath);
 			save = new ObjectInputStream(saveFile);
 			Game game = (Game) save.readObject();
-			this.players = game.players;
-			this.currentPlayer = game.currentPlayer;
-			this.winner = game.winner;
-			this.turnNumber = game.turnNumber;
+			players = game.players;
+			currentPlayer = game.currentPlayer;
+			winner = game.winner;
+			turnNumber = game.turnNumber;
 			save.close();
 		} catch (Exception ex1) {
 			throw ex1;
