@@ -24,7 +24,8 @@ public class AIPlayer extends Player {
 
 	// enthält 4 Felder für jede Himmelsrichtung
 	private Field[] nextTargetsArray;
-	private Shot lastShot;
+
+	private Target lastShot;
 
 	private final int NORTH = 0;
 	private final int SOUTH = 1;
@@ -51,22 +52,9 @@ public class AIPlayer extends Player {
 			do {
 				currentShip = ships[i];
 				isItPossibleToPlaceShip = false;
-				// zufällige Position generieren
-				Orientation orientation;
-				orientation = (createRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
-				int xMax;
-				int yMax;
-				if (orientation == Orientation.Horizontal) {
-					xMax = this.board.getSize() - this.getCurrentShip().getSize();
-					yMax = this.board.getSize() - 1;
-				} else {
-					xMax = this.board.getSize() - 1;
-					yMax = this.board.getSize() - this.getCurrentShip().getSize();
-
-				}
-				Field field = createRandomField(0, xMax, 0, yMax);
+				Target shot = getRandomShipPlacementTarget();
 				counter++;
-				isItPossibleToPlaceShip = placeShip(field.getXPos(), field.getYPos(), orientation);
+				isItPossibleToPlaceShip = placeShip(shot.getX(), shot.getY(), shot.getOrientation());
 			} while ((counter <= MAX_TRIES_TO_PLACE_SHIP) && (!isItPossibleToPlaceShip));
 
 			if (counter >= MAX_TRIES_TO_PLACE_SHIP) {
@@ -80,7 +68,26 @@ public class AIPlayer extends Player {
 		} while (i < ships.length);
 	}
 
-	protected Field createRandomField(int xMin, int xMax, int yMin, int yMax) {
+	private Target getRandomShipPlacementTarget() {
+		// zufällige Position generieren
+		Orientation orientation;
+		orientation = (createRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
+		int xMax;
+		int yMax;
+		if (orientation == Orientation.Horizontal) {
+			xMax = this.board.getSize() - this.getCurrentShip().getSize();
+			yMax = this.board.getSize() - 1;
+		} else {
+			xMax = this.board.getSize() - 1;
+			yMax = this.board.getSize() - this.getCurrentShip().getSize();
+
+		}
+		int xPos = createRandomNumber(0, xMax);
+		int yPos = createRandomNumber(0, yMax);
+		return new Target(xPos, yPos, orientation);
+	}
+
+	private Field createRandomField(int xMin, int xMax, int yMin, int yMax) {
 		int xPos;
 		int yPos;
 		xPos = createRandomNumber(xMin, xMax);
@@ -88,12 +95,12 @@ public class AIPlayer extends Player {
 		return new Field(xPos, yPos);
 	}
 
-	protected int createRandomNumber(int min, int max) {
+	private int createRandomNumber(int min, int max) {
 		Random random = new Random();
 		return random.nextInt(max - min + 1) + min;
 	}
 
-	public Shot getTarget(FieldState[][] fieldStates) throws Exception {
+	public Target getTarget(FieldState[][] fieldStates) throws Exception {
 		if (type == PlayerType.DUMB_AI)
 			return getRandomShot();
 
@@ -105,7 +112,7 @@ public class AIPlayer extends Player {
 		}
 	}
 
-	private Shot getNewTarget() throws Exception {
+	private Target getNewTarget() throws Exception {
 		// Wenn es mehr als 2 Mitspieler gibt oder die KI mit einem Schuss
 		// gleichzeitig zwei Schiffe getroffen hat (nur mit Destroyer
 		// möglich), kann es sein, dass es getroffene Schiffe gibt, die sich
@@ -128,7 +135,7 @@ public class AIPlayer extends Player {
 		return lastShot;
 	}
 
-	private Shot getNextTarget() throws Exception {
+	private Target getNextTarget() throws Exception {
 		int currentDirection = getCurrentDirection();
 
 		// wenn der letzte Schuss ein Treffer war, dann nach nächstem
@@ -171,7 +178,7 @@ public class AIPlayer extends Player {
 			int adjustedX = adjustX(target, currentDirection, range);
 			int adjustedY = adjustY(target, currentDirection, range);
 
-			lastShot = new Shot(adjustedX, adjustedY, orientation);
+			lastShot = new Target(adjustedX, adjustedY, orientation);
 
 		} else {
 			lastShot = null;
@@ -205,17 +212,16 @@ public class AIPlayer extends Player {
 		return hitFields;
 	}
 
-	private Shot getRandomShot() throws Exception {
+	private Target getRandomShot() throws Exception {
 		Orientation orientation;
 		Field fieldShotAt;
 		int boardSize = this.board.getSize();
 
 		// zufällig schießen
-
 		if (type == PlayerType.DUMB_AI) {
 			orientation = (createRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
 			fieldShotAt = createRandomField(0, boardSize - 1, 0, boardSize - 1);
-			return new Shot(fieldShotAt.getXPos(), fieldShotAt.getYPos(), orientation);
+			return new Target(fieldShotAt.getXPos(), fieldShotAt.getYPos(), orientation);
 		}
 
 		// wiederhole die Erzeugung von zufälligen Koordinaten
@@ -242,7 +248,7 @@ public class AIPlayer extends Player {
 			adjustedY = adjustY(fieldShotAt, NORTH, overhang);
 		}
 
-		return new Shot(adjustedX, adjustedY, orientation);
+		return new Target(adjustedX, adjustedY, orientation);
 	}
 
 	private boolean surroundingFieldContainsShip(Field fieldShotAt) throws FieldOutOfBoardException {

@@ -16,7 +16,7 @@ import de.hsbremen.battleshipextreme.model.player.AIPlayer;
 import de.hsbremen.battleshipextreme.model.player.HumanPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.player.PlayerType;
-import de.hsbremen.battleshipextreme.model.player.Shot;
+import de.hsbremen.battleshipextreme.model.player.Target;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 
 public class Game implements Serializable {
@@ -126,7 +126,7 @@ public class Game implements Serializable {
 
 			// Schiff auswählen
 			ai.selectShip(ai.getAvailableShipsToShoot().get(0));
-			Shot shot = ai.getTarget(currentEnemy.getFieldStates(false));
+			Target shot = ai.getTarget(currentEnemy.getFieldStates(false));
 
 			wasShotPossible = makeTurn(currentEnemy, shot.getX(), shot.getY(), shot.getOrientation());
 		} while (!wasShotPossible);
