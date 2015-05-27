@@ -19,22 +19,24 @@ import de.hsbremen.battleshipextreme.model.ship.Submarine;
 
 public class AIPlayer extends Player {
 
+	// zum Merken des Gegners
 	private int currentEnemyIndex;
+
 	private Board enemyBoardRepresentation;
 
 	// enthält 4 Felder für jede Himmelsrichtung
 	private Field[] nextTargetsArray;
 
-	private Target lastShot;
+	private Target currentTarget;
 
-	private final int NORTH = 0;
-	private final int SOUTH = 1;
-	private final int EAST = 2;
-	private final int WEST = 3;
-	private final int NORTH_EAST = 4;
-	private final int SOUTH_EAST = 5;
-	private final int NORTH_WEST = 6;
-	private final int SOUTH_WEST = 7;
+	private static final int NORTH = 0;
+	private static final int SOUTH = 1;
+	private static final int EAST = 2;
+	private static final int WEST = 3;
+	private static final int NORTH_EAST = 4;
+	private static final int SOUTH_EAST = 5;
+	private static final int NORTH_WEST = 6;
+	private static final int SOUTH_WEST = 7;
 
 	private static final int MAX_TRIES_TO_PLACE_SHIP = 1000;
 
@@ -68,38 +70,6 @@ public class AIPlayer extends Player {
 		} while (i < ships.length);
 	}
 
-	private Target getRandomShipPlacementTarget() {
-		// zufällige Position generieren
-		Orientation orientation;
-		orientation = (createRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
-		int xMax;
-		int yMax;
-		if (orientation == Orientation.Horizontal) {
-			xMax = this.board.getSize() - this.getCurrentShip().getSize();
-			yMax = this.board.getSize() - 1;
-		} else {
-			xMax = this.board.getSize() - 1;
-			yMax = this.board.getSize() - this.getCurrentShip().getSize();
-
-		}
-		int xPos = createRandomNumber(0, xMax);
-		int yPos = createRandomNumber(0, yMax);
-		return new Target(xPos, yPos, orientation);
-	}
-
-	private Field createRandomField(int xMin, int xMax, int yMin, int yMax) {
-		int xPos;
-		int yPos;
-		xPos = createRandomNumber(xMin, xMax);
-		yPos = createRandomNumber(yMin, yMax);
-		return new Field(xPos, yPos);
-	}
-
-	private int createRandomNumber(int min, int max) {
-		Random random = new Random();
-		return random.nextInt(max - min + 1) + min;
-	}
-
 	public Target getTarget(FieldState[][] fieldStates) throws Exception {
 		if (type == PlayerType.DUMB_AI)
 			return getRandomShot();
@@ -125,14 +95,13 @@ public class AIPlayer extends Player {
 		// Schüsse und greife das gefundene Ziel an
 		if (hitFields.size() > 0) {
 			planNextShots(hitFields);
-			lastShot = getNextTarget();
+			currentTarget = getNextTarget();
 		} else {
 			// wenn keine getroffenen Schiffe gefunden wurden
 			// zufällig schießen, Schuss merken
-			// setzt currentFieldShotAt und currentShotOrientation
-			lastShot = getRandomShot();
+			currentTarget = getRandomShot();
 		}
-		return lastShot;
+		return currentTarget;
 	}
 
 	private Target getNextTarget() throws Exception {
@@ -141,8 +110,12 @@ public class AIPlayer extends Player {
 		// wenn der letzte Schuss ein Treffer war, dann nach nächstem
 		// unbeschossenen Feld in selbe Richtung suchen und als nächstes Ziel
 		// speichern
-		if (lastShot != null) {
-			Field lastFieldShotAt = enemyBoardRepresentation.getField(lastShot.getX(), lastShot.getY());
+
+		// wenn es noch keinen Schuss gab, dann überspringen
+		// (kann der Fall sein, wenn die AI einen Treffer findet,
+		// der von einem anderen Spieler verursacht wurde)
+		if (currentTarget != null) {
+			Field lastFieldShotAt = enemyBoardRepresentation.getField(currentTarget.getX(), currentTarget.getY());
 
 			if (!isTargetDestroyed()) {
 				if (lastFieldShotAt.getState() == FieldState.Hit) {
@@ -160,9 +133,9 @@ public class AIPlayer extends Player {
 				// da die Spur nicht mehr verfolgt werden muss
 				nextTargetsArray = null;
 			}
-
 		}
 
+		// wenn (noch) vorgemerkte Ziele vorhanden sind
 		if (hasTargets()) {
 			Field target;
 			currentDirection = getCurrentDirection();
@@ -177,16 +150,13 @@ public class AIPlayer extends Player {
 			int range = this.currentShip.getShootingRange() - 1;
 			int adjustedX = adjustX(target, currentDirection, range);
 			int adjustedY = adjustY(target, currentDirection, range);
-
-			lastShot = new Target(adjustedX, adjustedY, orientation);
-
+			currentTarget = new Target(adjustedX, adjustedY, orientation);
 		} else {
-			lastShot = null;
+			// wenn kein Ziel mehr vorhanden, neues Ziel suchen
+			currentTarget = null;
 			getNewTarget();
 		}
-
-		return lastShot;
-
+		return currentTarget;
 	}
 
 	private boolean isTargetDestroyed() throws FieldOutOfBoardException {
@@ -272,7 +242,7 @@ public class AIPlayer extends Player {
 	}
 
 	private int adjustX(Field target, int currentDirection, int range) throws FieldOutOfBoardException {
-		// wenn Richtung Westen , dann gehe Schussweite nach links um mehr
+		// wenn Richtung Westen, dann gehe Schussweite nach links um mehr
 		// Felder zu treffen
 		int adjustedX = target.getXPos();
 		int targetYPos = target.getYPos();
@@ -428,15 +398,15 @@ public class AIPlayer extends Player {
 		// prüft ob ein zufälliger Schuss (teilweise) getroffen hat
 		// gibt den ersten gefundenen Treffer zurück
 		// gibt null zurück, wenn es keinen Treffer gab
-		int xDirection = lastShot.getOrientation() == Orientation.Horizontal ? 1 : 0;
-		int yDirection = lastShot.getOrientation() == Orientation.Vertical ? 1 : 0;
+		int xDirection = currentTarget.getOrientation() == Orientation.Horizontal ? 1 : 0;
+		int yDirection = currentTarget.getOrientation() == Orientation.Vertical ? 1 : 0;
 		int x;
 		int y;
 		Field hitField = null;
 		ArrayList<Field> fields = new ArrayList<Field>();
 		for (int i = 0; i < this.currentShip.getShootingRange(); i++) {
-			x = lastShot.getX() + i * xDirection;
-			y = lastShot.getY() + i * yDirection;
+			x = currentTarget.getX() + i * xDirection;
+			y = currentTarget.getY() + i * yDirection;
 			if (enemyBoardRepresentation.containsFieldAtPosition(x, y)) {
 				hitField = enemyBoardRepresentation.getField(x, y);
 				if (hitField.hasShip()) {
@@ -447,16 +417,36 @@ public class AIPlayer extends Player {
 		return fields;
 	}
 
-	public int getCurrentEnemyIndex() {
-		return currentEnemyIndex;
+	private Target getRandomShipPlacementTarget() {
+		// zufällige Position generieren
+		Orientation orientation;
+		orientation = (createRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
+		int xMax;
+		int yMax;
+		if (orientation == Orientation.Horizontal) {
+			xMax = this.board.getSize() - this.getCurrentShip().getSize();
+			yMax = this.board.getSize() - 1;
+		} else {
+			xMax = this.board.getSize() - 1;
+			yMax = this.board.getSize() - this.getCurrentShip().getSize();
+
+		}
+		int xPos = createRandomNumber(0, xMax);
+		int yPos = createRandomNumber(0, yMax);
+		return new Target(xPos, yPos, orientation);
 	}
 
-	public void setCurrentEnemyIndex(int currentEnemyIndex) {
-		this.currentEnemyIndex = currentEnemyIndex;
+	private Field createRandomField(int xMin, int xMax, int yMin, int yMax) {
+		int xPos;
+		int yPos;
+		xPos = createRandomNumber(xMin, xMax);
+		yPos = createRandomNumber(yMin, yMax);
+		return new Field(xPos, yPos);
 	}
 
-	public void setRandomEnemyIndex(int max) {
-		this.currentEnemyIndex = createRandomNumber(0, max);
+	private int createRandomNumber(int min, int max) {
+		Random random = new Random();
+		return random.nextInt(max - min + 1) + min;
 	}
 
 	// baut anhand der bekannten Fieldstates eine Nachbildung des Boards
@@ -488,6 +478,18 @@ public class AIPlayer extends Player {
 			}
 		}
 		return enemyBoardRepresentation;
+	}
+
+	public int getCurrentEnemyIndex() {
+		return currentEnemyIndex;
+	}
+
+	public void setCurrentEnemyIndex(int currentEnemyIndex) {
+		this.currentEnemyIndex = currentEnemyIndex;
+	}
+
+	public void setRandomEnemyIndex(int max) {
+		this.currentEnemyIndex = createRandomNumber(0, max);
 	}
 
 }
