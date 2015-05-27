@@ -170,6 +170,10 @@ public abstract class Player implements Serializable {
 		return Arrays.asList(this.getShips()).contains(ship);
 	}
 
+	public void setCurrentShipToNull() {
+		this.currentShip = null;
+	}
+
 	/**
 	 * Set the currentShip to next ship in array of ships. Its purpose is to
 	 * keep track of the ship to place.
@@ -259,18 +263,6 @@ public abstract class Player implements Serializable {
 	public boolean areAllShipsReloading() {
 		ArrayList<Ship> availableShips = this.getAvailableShips(true);
 		return availableShips.size() <= 0;
-	}
-
-	/**
-	 * Decreases the reload time of the ships, except for the ship that just
-	 * shot.
-	 */
-	public void decreaseCurrentReloadTimeOfShips() {
-		for (Ship ship : this.ships) {
-			if (!ship.equals(this.currentShip))
-				ship.decreaseCurrentReloadTime();
-		}
-		this.currentShip = null;
 	}
 
 	public Ship getCurrentShip() {

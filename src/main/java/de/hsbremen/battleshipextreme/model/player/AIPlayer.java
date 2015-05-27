@@ -21,6 +21,7 @@ public class AIPlayer extends Player {
 
 	private int currentEnemyIndex;
 	private Board enemyBoardRepresentation;
+
 	// enthält 4 Felder für jede Himmelsrichtung
 	private Field[] nextTargetsArray;
 	private Shot lastShot;

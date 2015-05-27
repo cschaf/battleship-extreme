@@ -17,6 +17,7 @@ import de.hsbremen.battleshipextreme.model.player.HumanPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.player.PlayerType;
 import de.hsbremen.battleshipextreme.model.player.Shot;
+import de.hsbremen.battleshipextreme.model.ship.Ship;
 
 public class Game implements Serializable {
 	private Player[] players;
@@ -167,7 +168,7 @@ public class Game implements Serializable {
 	 */
 	public void nextPlayer() {
 		turnNumber++;
-		currentPlayer.decreaseCurrentReloadTimeOfShips();
+		decreaseCurrentReloadTimeOfShips(currentPlayer);
 		int currentPlayerIndex = Arrays.asList(players).indexOf(currentPlayer);
 		// wenn letzter Spieler im Array, dann Index wieder auf 0 setzen,
 		// ansonsten hochzählen
@@ -175,6 +176,19 @@ public class Game implements Serializable {
 		if (currentPlayerIndex == 0)
 			roundNumber++;
 		currentPlayer = players[currentPlayerIndex];
+	}
+
+	/**
+	 * Decreases the reload time of the ships, except for the ship that just
+	 * shot.
+	 */
+	private void decreaseCurrentReloadTimeOfShips(Player player) {
+		Ship[] ships = player.getShips();
+		for (Ship ship : ships) {
+			if (!ship.equals(player.getCurrentShip()))
+				ship.decreaseCurrentReloadTime();
+		}
+		player.setCurrentShipToNull();
 	}
 
 	/**

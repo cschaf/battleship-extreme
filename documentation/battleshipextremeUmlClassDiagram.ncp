@@ -38,6 +38,7 @@
         <Member type="Method">public boolean setCurrentShip()</Member>
         <Member type="Method">public boolean areAllShipsReloading()</Member>
         <Member type="Method">public boolean hasLost()</Member>
+        <Member type="Method">public void getFieldStates()</Member>
         <Modifier>Abstract</Modifier>
       </Entity>
       <Entity type="Class">
