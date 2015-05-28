@@ -49,8 +49,6 @@ public class ServerController{
     });
 
     server.addClientConnectionListener(new IClientConnectionListener(){
-
-
       public void onClientHasConnected(EventArgs<ITransferable> eventArgs){
         ClientInfo info = (ClientInfo)eventArgs.getItem();
         ClientJListItem item = new ClientJListItem(info.getIp(), info.getPort(), info.getUsername());
