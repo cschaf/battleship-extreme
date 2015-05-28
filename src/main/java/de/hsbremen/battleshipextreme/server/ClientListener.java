@@ -6,6 +6,7 @@ import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Game;
+import de.hsbremen.battleshipextreme.network.transfarableObject.Message;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -50,12 +51,22 @@ public class ClientListener extends Thread implements IDisposable {
                     case Turn:
                         this.serverDispatcher.addTurn(this.clientHandler, receivedObject);
                         break;
+                    case ClientInfo:
+                        ClientInfo info = (ClientInfo) receivedObject;
+                        switch (info.getReason()) {
+                            case Connect:
+                                clientHandler.setUsername(info.getUsername());
+                                break;
+                        }
+                        this.serverDispatcher.printInfo(new EventArgs<ITransferable>(this, new Message(info.getIp() + ":" + info.getPort() + " has named to " + info.getUsername() + "(" + info.getPort() + ")")));
+                        this.serverDispatcher.objectReceived(new EventArgs<ITransferable>(this, info));
+                        break;
                     default:
                         this.serverDispatcher.dispatchObject(receivedObject);
                 }
             }
         } catch (IOException e) {
-            this.serverDispatcher.getErrorHandler().errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Problem reading from socket(" + clientHandler.getSocket().getInetAddress().getHostAddress() + ":" + clientHandler.getSocket().getPort() + ") -> communication is broken")));
+            this.serverDispatcher.getErrorHandler().errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Connection to " + clientHandler.getSocket().getInetAddress().getHostAddress() + ":" + clientHandler.getSocket().getPort() + " -> " + clientHandler.getUsername() + " has closed")));
             this.dispose();
         }
 

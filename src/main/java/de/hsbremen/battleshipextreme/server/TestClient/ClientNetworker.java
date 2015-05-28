@@ -83,7 +83,6 @@ public class ClientNetworker implements IDisposable {
 
         // Create and start Sender thread
         this.sender = new Sender(socket, out, username);
-        //this.sender.sendLogin(this.username);
         this.sender.start();
 
         this.listener = new Listener(in, this.errorHandler);

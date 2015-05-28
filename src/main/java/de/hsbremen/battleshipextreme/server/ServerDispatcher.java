@@ -8,6 +8,7 @@ import de.hsbremen.battleshipextreme.network.transfarableObject.Join;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Turn;
 import de.hsbremen.battleshipextreme.server.listener.IClientConnectionListener;
 import de.hsbremen.battleshipextreme.server.listener.IClientObjectReceivedListener;
+import de.hsbremen.battleshipextreme.server.listener.IServerListener;
 
 import javax.swing.event.EventListenerList;
 import java.util.List;
@@ -51,8 +52,9 @@ public class ServerDispatcher extends Thread implements IDisposable {
         int clientIndex = this.clients.indexOf(clientHandler);
         if (clientIndex != -1) {
             this.clients.removeElementAt(clientIndex);
-            ITransferable serverMessage = TransferableObjectFactory.CreateMessage(clientHandler.getSocket().getInetAddress().getHostAddress() + ":" + clientHandler.getSocket().getPort() + " (" + clientHandler.getUsername() + ")" + " has disconnected");
-            clientHasDisconnected(new EventArgs<ITransferable>(this, serverMessage));
+            ITransferable user = TransferableObjectFactory.CreateClientInfo(clientHandler.getUsername(), clientHandler.getSocket().getInetAddress().getHostAddress(), clientHandler.getSocket().getPort());
+            clientHasDisconnected(new EventArgs<ITransferable>(this, user));
+
         }
     }
 
@@ -143,7 +145,7 @@ public class ServerDispatcher extends Thread implements IDisposable {
         }
     }
 
-    private void objectReceived(EventArgs<ITransferable> eventArgs) {
+    public void objectReceived(EventArgs<ITransferable> eventArgs) {
         Object[] listeners = this.listeners.getListenerList();
         for (int i = 0; i < listeners.length; i = i + 2) {
             if (listeners[i] == IClientObjectReceivedListener.class) {
@@ -209,6 +211,23 @@ public class ServerDispatcher extends Thread implements IDisposable {
                 game.addPlayer(clientHandler);
                 this.multicast(TransferableObjectFactory.CreateClientInfo(clientHandler.getUsername(), clientHandler.getSocket().getInetAddress().getHostAddress(), clientHandler.getSocket().getPort(), InfoSendingReason.Connect), game.getJoinedPlayers());
                 break;
+            }
+        }
+    }
+
+    public void addServerListener(IServerListener listener) {
+        this.listeners.add(IServerListener.class, listener);
+    }
+
+
+    public void removeServerListener(IServerListener listener) {
+        this.listeners.remove(IServerListener.class, listener);
+    }
+    public void printInfo(EventArgs<ITransferable> eventArgs) {
+        Object[] listeners = this.listeners.getListenerList();
+        for (int i = 0; i < listeners.length; i = i + 2) {
+            if (listeners[i] == IServerListener.class) {
+                ((IServerListener) listeners[i + 1]).onInfo(eventArgs);
             }
         }
     }

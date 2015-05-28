@@ -19,6 +19,7 @@ import java.util.ArrayList;
  * Created by cschaf on 26.04.2015.
  */
 public class Server implements IDisposable {
+
     public int port;
     protected EventListenerList listeners;
     private ServerSocket serverSocket;
@@ -26,6 +27,7 @@ public class Server implements IDisposable {
     private ClientAccepter clientAccepter;
     private ArrayList<IClientConnectionListener> tempClientConnectionListeners;
     private ArrayList<IClientObjectReceivedListener> tempClientObjectReceivedListeners;
+    private ArrayList<IServerListener> tempServerListeners;
     private ErrorHandler errorHandler;
 
     public Server(int port) {
@@ -33,13 +35,13 @@ public class Server implements IDisposable {
         this.errorHandler = new ErrorHandler();
         this.tempClientObjectReceivedListeners = new ArrayList<IClientObjectReceivedListener>();
         this.tempClientConnectionListeners = new ArrayList<IClientConnectionListener>();
+        this.tempServerListeners = new ArrayList<IServerListener>();
         this.port = port;
     }
 
     public void start() {
         try {
             serverSocket = new ServerSocket(port);
-            printInfo(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Server started on port " + port)));
         } catch (IOException e) {
             errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Can not start listening on port " + port)));
             this.dispose();
@@ -53,11 +55,17 @@ public class Server implements IDisposable {
         for (IClientObjectReceivedListener listener : this.tempClientObjectReceivedListeners) {
             this.serverDispatcher.addClientObjectReceivedListener(listener);
         }
+        for (IServerListener listener : this.tempServerListeners) {
+            this.serverDispatcher.addServerListener(listener);
+        }
+
         this.tempClientConnectionListeners.clear();
         this.serverDispatcher.start();
         // Accept and handle client connections
         this.clientAccepter = new ClientAccepter(serverSocket, serverDispatcher);
         this.clientAccepter.start();
+
+        this.serverDispatcher.printInfo(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Server started on port " + port)));
     }
 
     public void stop() {
@@ -89,11 +97,15 @@ public class Server implements IDisposable {
     }
 
     public void addServerListener(IServerListener listener) {
-        this.listeners.add(IServerListener.class, listener);
+        if (this.serverDispatcher == null) {
+            tempServerListeners.add(listener);
+        } else {
+            this.serverDispatcher.addServerListener(listener);
+        }
     }
 
     public void removeServerListener(IServerListener listener) {
-        this.listeners.remove(IServerListener.class, listener);
+        this.removeServerListener(listener);
     }
 
     public void addErrorListener(IErrorListener listener) {
@@ -104,14 +116,6 @@ public class Server implements IDisposable {
         this.errorHandler.removeErrorListener(listener);
     }
 
-    private void printInfo(EventArgs<ITransferable> eventArgs) {
-        Object[] listeners = this.listeners.getListenerList();
-        for (int i = 0; i < listeners.length; i = i + 2) {
-            if (listeners[i] == IServerListener.class) {
-                ((IServerListener) listeners[i + 1]).onInfo(eventArgs);
-            }
-        }
-    }
 
     public void dispose() {
         try {

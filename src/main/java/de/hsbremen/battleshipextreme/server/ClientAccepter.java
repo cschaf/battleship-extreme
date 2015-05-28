@@ -40,7 +40,7 @@ public class ClientAccepter extends Thread implements IDisposable {
                 clientSender.start();
                 serverDispatcher.addClient(clientHandler);
             } catch (IOException e) {
-                this.serverDispatcher.getErrorHandler().errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Could not accepted client")));
+                this.serverDispatcher.getErrorHandler().errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Stopped listening for clients")));
             }
         }
     }
