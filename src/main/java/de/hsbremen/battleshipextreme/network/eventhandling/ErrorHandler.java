@@ -11,7 +11,7 @@ import javax.swing.event.EventListenerList;
 public class ErrorHandler {
     protected EventListenerList listeners = new EventListenerList();
 
-    public void addErrorListender(IErrorListener listener) {
+    public void addErrorListener(IErrorListener listener) {
         this.listeners.add(IErrorListener.class, listener);
     }
 

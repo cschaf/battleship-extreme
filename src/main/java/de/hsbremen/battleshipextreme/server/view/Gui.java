@@ -9,8 +9,8 @@ import java.awt.*;
  * Created by cschaf on 14.05.2015.
  */
 public class Gui extends JFrame {
-    public JPanel pnlMain;
-    private ServerControl pnlServerControlPanel;
+    private JPanel pnlMain;
+    private ServerControlBar pnlServerControlBarPanel;
     private JTextField tbxMessage;
     private JButton btnSend;
     private JScrollPane scrollPanelUsers;
@@ -38,7 +38,7 @@ public class Gui extends JFrame {
 
     private void _addComponents() {
         // row 1
-        pnlMain.add(pnlServerControlPanel, "spanx 3, growx, pushx, wrap");
+        pnlMain.add(pnlServerControlBarPanel, "spanx 3, growx, pushx, wrap");
 
 // row 2
         pnlMain.add(boxMessages, "push, grow, spanx 2, spany 2");
@@ -53,7 +53,7 @@ public class Gui extends JFrame {
     private void _initComponents() {
         pnlMain = new JPanel(new MigLayout());
 
-        pnlServerControlPanel = new ServerControl();
+        pnlServerControlBarPanel = new ServerControlBar();
 
         traMessages = new JTextArea(10, 10);
         scrollPanelMessages = new JScrollPane(traMessages);
@@ -75,6 +75,34 @@ public class Gui extends JFrame {
 
         tbxMessage = new JTextField("");
         btnSend = new JButton("Send");
+    }
+
+    public JPanel getPnlMain(){
+        return pnlMain;
+    }
+
+    public ServerControlBar getPnlServerControlBarPanel(){
+        return pnlServerControlBarPanel;
+    }
+
+    public JTextField getTbxMessage(){
+        return tbxMessage;
+    }
+
+    public JButton getBtnSend(){
+        return btnSend;
+    }
+
+    public JList getListUsers(){
+        return listUsers;
+    }
+
+    public JList getListGames(){
+        return listGames;
+    }
+
+    public JTextArea getTraMessages(){
+        return traMessages;
     }
 }
 

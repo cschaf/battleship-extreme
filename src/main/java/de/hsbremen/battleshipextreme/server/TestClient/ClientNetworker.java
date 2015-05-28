@@ -49,7 +49,7 @@ public class ClientNetworker implements IDisposable {
     }
 
     public void addErrorListener(IErrorListener listener) {
-        this.errorHandler.addErrorListender(listener);
+        this.errorHandler.addErrorListener(listener);
     }
 
     public void removeErrorListener(IErrorListener listener) {

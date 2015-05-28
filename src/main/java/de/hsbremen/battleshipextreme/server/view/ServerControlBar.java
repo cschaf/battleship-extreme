@@ -8,7 +8,7 @@ import java.awt.*;
 /**
  * Created by cschaf on 14.05.2015.
  */
-public class ServerControl extends JPanel {
+public class ServerControlBar extends JPanel {
     private JLabel lblPort;
     private JTextField tbxPort;
     private JLabel lblIp;
@@ -16,7 +16,7 @@ public class ServerControl extends JPanel {
     private JButton btnStart;
     private JButton btnStop;
 
-    public ServerControl(){
+    public ServerControlBar(){
         _initComponents();
         this.add(lblIp, "split 2");
         this.add(tbxIp, "pushx, growx");
@@ -36,4 +36,21 @@ public class ServerControl extends JPanel {
                 btnStart = new JButton("Start");
         btnStop = new JButton("Stop");
     }
+
+    public JTextField getTbxPort(){
+        return tbxPort;
+    }
+
+    public JTextField getTbxIp(){
+        return tbxIp;
+    }
+
+    public JButton getBtnStart(){
+        return btnStart;
+    }
+
+    public JButton getBtnStop(){
+        return btnStop;
+    }
+
 }

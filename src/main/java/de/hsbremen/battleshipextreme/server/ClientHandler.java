@@ -84,7 +84,6 @@ public class ClientHandler extends TransferableObject implements IDisposable {
         this.username = username;
     }
 
-    @Override
     public TransferableType getType() {
         return TransferableType.ClientHandler;
     }

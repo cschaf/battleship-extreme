@@ -5,6 +5,7 @@ import de.hsbremen.battleshipextreme.network.ITransferable;
 import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
+import de.hsbremen.battleshipextreme.network.transfarableObject.Game;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -47,7 +48,7 @@ public class ClientListener extends Thread implements IDisposable {
                         this.serverDispatcher.addGame(receivedObject);
                         break;
                     case Turn:
-                        this.serverDispatcher.addTurn(receivedObject);
+                        this.serverDispatcher.addTurn(this.clientHandler, receivedObject);
                         break;
                     default:
                         this.serverDispatcher.dispatchObject(receivedObject);

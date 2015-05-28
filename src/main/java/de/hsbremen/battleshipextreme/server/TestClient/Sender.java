@@ -1,6 +1,7 @@
 package de.hsbremen.battleshipextreme.server.TestClient;
 
 import de.hsbremen.battleshipextreme.model.Field;
+import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.Settings;
 import de.hsbremen.battleshipextreme.model.exception.BoardTooSmallException;
 import de.hsbremen.battleshipextreme.model.exception.InvalidNumberOfShipsException;
@@ -53,10 +54,8 @@ public class Sender extends Thread implements IDisposable {
 
             // Turn
             Player from = new HumanPlayer(5,1,0,0,0);
-            Player to = new HumanPlayer(5,1,0,0,0);
-            Ship ship = new Destroyer();
-            Field field = new Field(0,0);
-            ITransferable game = TransferableObjectFactory.CreateTurn("ds5165156dada2sdasd", from, to, ship, field);
+            Player to = new HumanPlayer(5,1,0,0,0);;
+            ITransferable game = TransferableObjectFactory.CreateTurn(from, to, 0,0, Orientation.Horizontal);
             this.out.writeObject(game);
             this.out.flush();
 

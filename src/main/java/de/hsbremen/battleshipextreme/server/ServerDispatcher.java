@@ -183,16 +183,23 @@ public class ServerDispatcher extends Thread implements IDisposable {
         }
     }
 
-    public synchronized void addTurn(ITransferable receivedObject) {
+    public synchronized void addTurn(ClientHandler handler, ITransferable receivedObject) {
         Turn turn = (Turn) receivedObject;
+        boolean gameFound = false;
         for (Game game : this.games) {
-            if (turn.getGameId().equals(game.getId())) {
-                game.addTurn(turn);
+            for(ClientHandler client : game.getJoinedPlayers()){
+                if (client == handler) {
+                    game.addTurn(turn);
+                    gameFound = true;
+                    break;
+                }
+            }
+            if(gameFound){
+                this.multicast(turn, game.getJoinedPlayers());
                 break;
             }
         }
         objectReceived(new EventArgs<ITransferable>(this, receivedObject));
-        this.broadcast(turn, null);
     }
 
     public void assignClientToGame(ClientHandler clientHandler, ITransferable receivedObject) {

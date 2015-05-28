@@ -1,6 +1,7 @@
 package de.hsbremen.battleshipextreme.network;
 
 import de.hsbremen.battleshipextreme.model.Field;
+import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.Settings;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
@@ -30,7 +31,7 @@ public class TransferableObjectFactory {
         return new Game(name, settings);
     }
 
-    public static ITransferable CreateTurn(String gameId, Player from, Player to, Ship ship, Field field) {
-        return new Turn(gameId, from, to,ship, field);
+    public static ITransferable CreateTurn(Player from, Player to, int fieldX, int fieldY, Orientation orientation) {
+        return new Turn(from, to, fieldX, fieldY, orientation);
     }
 }
