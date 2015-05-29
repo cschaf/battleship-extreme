@@ -19,11 +19,8 @@ import de.hsbremen.battleshipextreme.model.ship.Submarine;
 
 public class AIPlayer extends Player {
 
-	// zum Merken des Gegners
 	private int currentEnemyIndex;
-
 	private Board enemyBoardRepresentation;
-	// enthält 4 Felder für jede Himmelsrichtung
 	private Field[] nextTargetsArray;
 	boolean attacksDirectionFirstTime;
 
@@ -105,8 +102,8 @@ public class AIPlayer extends Player {
 			// wenn nicht, dann prüfe, ob das letzte Ziel ein Treffer war oder
 			// das Schiff bereits zerstört wurde
 			Field lastFieldShotAt = enemyBoardRepresentation.getField(nextTargetsArray[currentDirection].getXPos(), nextTargetsArray[currentDirection].getYPos());
-			if (lastFieldShotAt.getState() != FieldState.Destroyed) {
-				if (lastFieldShotAt.getState() == FieldState.Hit) {
+			if (lastFieldShotAt.getState() != FieldState.DESTROYED) {
+				if (lastFieldShotAt.getState() == FieldState.HIT) {
 					// wenn das letzte Ziel ein Treffer war, dann neues Ziel in
 					// gleiche Richtung setzen
 					int[] directionArray = getDirectionArray(currentDirection);
@@ -134,7 +131,7 @@ public class AIPlayer extends Player {
 		targetField = nextTargetsArray[currentDirection];
 		// wenn Richtung Osten oder Westen, dann Ausrichtung horizontal,
 		// ansonsten vertikal
-		Orientation orientation = (currentDirection == EAST || currentDirection == WEST) ? Orientation.Horizontal : Orientation.Vertical;
+		Orientation orientation = (currentDirection == EAST || currentDirection == WEST) ? Orientation.HORIZONTAL : Orientation.VERTICAL;
 
 		// x und y abhängig von der Schussweite korrigieren, so dass
 		// möglichst viele Felder getroffen werden
@@ -152,7 +149,7 @@ public class AIPlayer extends Player {
 		for (int i = 0; i < enemyBoardRepresentation.getSize(); i++) {
 			for (int j = 0; j < enemyBoardRepresentation.getSize(); j++) {
 				Field f = enemyBoardRepresentation.getField(j, i);
-				if (f.getState() == FieldState.Hit) {
+				if (f.getState() == FieldState.HIT) {
 					hitFields.add(f);
 				}
 			}
@@ -167,7 +164,7 @@ public class AIPlayer extends Player {
 
 		// zufällig schießen
 		if (type == PlayerType.DUMB_AI) {
-			orientation = (createRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
+			orientation = (createRandomNumber(0, 1) == 0) ? Orientation.HORIZONTAL : Orientation.VERTICAL;
 			fieldShotAt = createRandomField(0, boardSize - 1, 0, boardSize - 1);
 			return new Target(fieldShotAt.getXPos(), fieldShotAt.getYPos(), orientation);
 		}
@@ -177,7 +174,7 @@ public class AIPlayer extends Player {
 		// Schiff angrenzt,
 		// (zwischen den Schiffen muss immer ein Feld frei sein)
 		do {
-			orientation = (createRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
+			orientation = (createRandomNumber(0, 1) == 0) ? Orientation.HORIZONTAL : Orientation.VERTICAL;
 			fieldShotAt = createRandomField(0, boardSize - 1, 0, boardSize - 1);
 		} while (surroundingFieldContainsShip(fieldShotAt));
 
@@ -186,12 +183,12 @@ public class AIPlayer extends Player {
 		int adjustedX = fieldShotAt.getXPos();
 		int adjustedY = fieldShotAt.getYPos();
 		// versuche x-Koordinate anzupassen
-		if ((fieldShotAt.getXPos() + this.currentShip.getShootingRange() >= (boardSize)) && (orientation == Orientation.Horizontal)) {
+		if ((fieldShotAt.getXPos() + this.currentShip.getShootingRange() >= (boardSize)) && (orientation == Orientation.HORIZONTAL)) {
 			int overhang = (fieldShotAt.getXPos() + this.currentShip.getShootingRange()) - (boardSize);
 			adjustedX = adjustX(fieldShotAt, WEST, overhang);
 		}
 		// versuche y-Koordinate anzupassen
-		if ((fieldShotAt.getYPos() + this.currentShip.getShootingRange() >= (boardSize)) && (orientation == Orientation.Vertical)) {
+		if ((fieldShotAt.getYPos() + this.currentShip.getShootingRange() >= (boardSize)) && (orientation == Orientation.VERTICAL)) {
 			int overhang = (fieldShotAt.getYPos() + this.currentShip.getShootingRange()) - (boardSize);
 			adjustedY = adjustY(fieldShotAt, NORTH, overhang);
 		}
@@ -210,7 +207,7 @@ public class AIPlayer extends Player {
 			y = fieldShotAt.getYPos() + directions[1];
 			if (enemyBoardRepresentation.containsFieldAtPosition(x, y)) {
 				FieldState actualFieldState = enemyBoardRepresentation.getField(x, y).getState();
-				if (actualFieldState == FieldState.Destroyed) {
+				if (actualFieldState == FieldState.DESTROYED) {
 					return true;
 				}
 			}
@@ -351,7 +348,7 @@ public class AIPlayer extends Player {
 			y = field.getYPos() + step * yDirection;
 			if (enemyBoardRepresentation.containsFieldAtPosition(x, y)) {
 				target = enemyBoardRepresentation.getField(x, y);
-				if ((target.getState() == FieldState.Missed) || (target.getState() == FieldState.Destroyed)) {
+				if ((target.getState() == FieldState.MISSED) || (target.getState() == FieldState.DESTROYED)) {
 					// wenn Schiff verfehlt oder zerstört wurde, Ziel nicht
 					// merken, Schleife abbrechen
 					target = null;
@@ -375,10 +372,10 @@ public class AIPlayer extends Player {
 	private Target getRandomShipPlacementTarget() {
 		// zufällige Position generieren
 		Orientation orientation;
-		orientation = (createRandomNumber(0, 1) == 0) ? Orientation.Horizontal : Orientation.Vertical;
+		orientation = (createRandomNumber(0, 1) == 0) ? Orientation.HORIZONTAL : Orientation.VERTICAL;
 		int xMax;
 		int yMax;
-		if (orientation == Orientation.Horizontal) {
+		if (orientation == Orientation.HORIZONTAL) {
 			xMax = this.board.getSize() - this.getCurrentShip().getSize();
 			yMax = this.board.getSize() - 1;
 		} else {
@@ -413,17 +410,18 @@ public class AIPlayer extends Player {
 				if (state != null) {
 					Field f = enemyBoardRepresentation.getField(j, i);
 					switch (state) {
-					case Destroyed:
+					case DESTROYED:
 						Submarine submarine = new Submarine();
-						submarine.setSize(0);
+						submarine.decreaseSize();
+						submarine.decreaseSize();
 						f.setShip(submarine);
-						f.setHit(true);
+						f.mark();
 						break;
-					case Missed:
-						f.setHit(true);
+					case MISSED:
+						f.mark();
 						break;
-					case Hit:
-						f.setHit(true);
+					case HIT:
+						f.mark();
 						f.setShip(new Submarine());
 						break;
 					default:

@@ -322,17 +322,17 @@ class ConsoleGame {
 		}
 		// TODO
 		// von AI beschossenes Board ausgeben
-		// if (ai.getName().equals("SMART_AI1")) {
-		System.out.println(ai + " greift " + game.getPlayers()[ai.getCurrentEnemyIndex()] + " mit " + ai.getCurrentShip() + " an.");
-		System.out.println();
-		System.out.println("Board von " + game.getPlayers()[ai.getCurrentEnemyIndex()]);
-		try {
-			printBoard(game.getPlayers()[ai.getCurrentEnemyIndex()].getFieldStates(false));
-		} catch (FieldOutOfBoardException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		if (ai.getName().equals("SMART_AI1")) {
+			System.out.println(ai + " greift " + game.getPlayers()[ai.getCurrentEnemyIndex()] + " mit " + ai.getCurrentShip() + " an.");
+			System.out.println();
+			System.out.println("Board von " + game.getPlayers()[ai.getCurrentEnemyIndex()]);
+			try {
+				printBoard(game.getPlayers()[ai.getCurrentEnemyIndex()].getFieldStates(false));
+			} catch (FieldOutOfBoardException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
-		// }
 	}
 
 	private void makePlayerTurn() {
@@ -405,17 +405,20 @@ class ConsoleGame {
 		Player currentPlayer = game.getCurrentPlayer();
 		ArrayList<Ship> availableShips = currentPlayer.getAvailableShips(false);
 		Ship selectedShip;
-		boolean isShipSelected = false;
 		do {
 			// Eingabe wiederholen bis Schiff gew‰hlt wurde, das schieﬂen kann
 			for (Ship s : availableShips) {
 				System.out.println("(" + availableShips.indexOf(s) + ") " + s.getType() + "(reload:" + s.getCurrentReloadTime() + "," + " health:" + s.getSize() + ")");
 			}
 			selectedShip = availableShips.get(readIntegerWithMinMax(0, availableShips.size() - 1));
-			isShipSelected = currentPlayer.selectShip(selectedShip);
-			if (!isShipSelected)
+			try {
+				currentPlayer.selectShip(selectedShip);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if (currentPlayer.getCurrentShip().isReloading())
 				System.out.println("Schiff l‰dt nach");
-		} while (!isShipSelected);
+		} while (currentPlayer.getCurrentShip().isReloading());
 	}
 
 	private Player selectEnemy(ArrayList<Player> enemies) {
@@ -498,19 +501,19 @@ class ConsoleGame {
 			s = "?";
 		} else {
 			switch (fieldState) {
-			case Destroyed:
+			case DESTROYED:
 				s = "!";
 				break;
-			case Hit:
+			case HIT:
 				s = "O";
 				break;
-			case Missed:
+			case MISSED:
 				s = "X";
 				break;
-			case HasShip:
+			case HAS_SHIP:
 				s = "+";
 				break;
-			case IsEmpty:
+			case IS_EMPTY:
 				s = "-";
 				break;
 			default:
@@ -554,7 +557,7 @@ class ConsoleGame {
 	private Orientation readOrientation() {
 		// Ausrichtung einlesen
 		System.out.print("Ausrichtung (H/V): ");
-		Orientation orientation = input.next().toUpperCase().charAt(0) == 'V' ? Orientation.Vertical : Orientation.Horizontal;
+		Orientation orientation = input.next().toUpperCase().charAt(0) == 'V' ? Orientation.VERTICAL : Orientation.HORIZONTAL;
 		return orientation;
 	}
 }

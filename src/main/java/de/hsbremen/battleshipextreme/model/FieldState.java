@@ -1,6 +1,5 @@
 package de.hsbremen.battleshipextreme.model;
 
 public enum FieldState {
-	Hit, Missed, Destroyed, HasShip, IsEmpty
-
+	HIT, MISSED, DESTROYED, HAS_SHIP, IS_EMPTY
 }

@@ -10,20 +10,20 @@ public abstract class Ship implements Serializable {
 	protected ShipType type;
 	protected boolean isPlaced;
 
-	public void setReloadTimeToMax() {
+	public void shoot() {
 		currentReloadTime = maxReloadTime;
 	}
 
 	public void decreaseCurrentReloadTime() {
-		if (this.currentReloadTime > 0)
-			this.currentReloadTime--;
+		if (currentReloadTime > 0)
+			currentReloadTime--;
 	}
 
 	public boolean isReloading() {
 		return currentReloadTime > 0;
 	}
 
-	public void setPlaced() {
+	public void place() {
 		this.isPlaced = true;
 	}
 
@@ -35,8 +35,9 @@ public abstract class Ship implements Serializable {
 		return size <= 0;
 	}
 
-	public void setSize(int size) {
-		this.size = size;
+	public void decreaseSize() {
+		if (size > 0)
+			size--;
 	}
 
 	public int getSize() {
@@ -65,6 +66,5 @@ public abstract class Ship implements Serializable {
 
 	public void setPlaced(boolean isPlaced) {
 		this.isPlaced = isPlaced;
-
 	}
 }

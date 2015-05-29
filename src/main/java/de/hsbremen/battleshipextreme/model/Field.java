@@ -35,8 +35,8 @@ public class Field implements Serializable {
 		return isHit;
 	}
 
-	public void setHit(boolean isHit) {
-		this.isHit = isHit;
+	public void mark() {
+		isHit = true;
 	}
 
 	/**
@@ -46,27 +46,27 @@ public class Field implements Serializable {
 	 * @return the field state.
 	 */
 	public FieldState getState() {
-		// erleichtert das Ausgeben der Felder
 		if (this.isHit()) {
 			if (this.hasShip()) {
 				if (this.getShip().isDestroyed()) {
-					return FieldState.Destroyed;
+					return FieldState.DESTROYED;
 				} else {
-					return FieldState.Hit;
+					return FieldState.HIT;
 				}
 			} else {
-				return FieldState.Missed;
+				return FieldState.MISSED;
 			}
 		} else {
 			if (this.hasShip()) {
-				return FieldState.HasShip;
+				return FieldState.HAS_SHIP;
 			} else {
-				return FieldState.IsEmpty;
+				return FieldState.IS_EMPTY;
 			}
 		}
 	}
 
 	public void setShip(Ship ship) {
-		this.ship = ship;
+		if (!hasShip())
+			this.ship = ship;
 	}
 }

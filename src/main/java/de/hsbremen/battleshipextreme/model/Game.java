@@ -46,6 +46,13 @@ public class Game implements Serializable {
 		currentPlayer = players[0];
 	}
 
+	/**
+	 * This constructor is used when a game is loaded.
+	 */
+	public Game(String pathToSaveGame) throws Exception {
+		load(pathToSaveGame);
+	}
+
 	private void createPlayers(Settings settings) {
 		// Spieler erzeugen
 		int numberOfHumanPlayers = settings.getPlayers();
@@ -66,48 +73,6 @@ public class Game implements Serializable {
 		}
 	}
 
-	/**
-	 * This constructor is used when a game is loaded.
-	 */
-	public Game(String pathToSaveGame) throws Exception {
-		load(pathToSaveGame);
-	}
-
-	/**
-	 * Returns true if the ships of all players have been placed. The method is
-	 * used to determine if a game is ready to start.
-	 * 
-	 * @return true if all ships by all players are placed, else false
-	 */
-	public boolean isReady() {
-		// prüft ob alle Schiffe gesetzt sind
-		for (Player player : players)
-			if (!player.hasPlacedAllShips()) {
-				return false;
-			}
-		return true;
-	}
-
-	/**
-	 * Check if the game is over. Set the game winner if the game is over.
-	 * 
-	 * @return true if the game is over, false if not
-	 */
-	public boolean isGameover() {
-		int numberOfPlayersLeft = 0;
-		Player potentialWinner = null;
-		for (Player player : players) {
-			if (!player.hasLost()) {
-				numberOfPlayersLeft++;
-				potentialWinner = player;
-			}
-		}
-		if (numberOfPlayersLeft <= 1) {
-			winner = potentialWinner;
-		}
-		return numberOfPlayersLeft <= 1;
-	}
-
 	public void makeAiTurn() throws Exception {
 		boolean wasShotPossible = false;
 		// AI soll Zug automatisch machen
@@ -115,11 +80,10 @@ public class Game implements Serializable {
 
 		do {
 			Player currentEnemy = selectAiEnemy(ai);
-			ai.selectShip(ai.getAvailableShipsToShoot().get(0));
+			ai.selectShip(ai.getAvailableShips(true).get(0));
 			Target shot = ai.getTarget(currentEnemy.getFieldStates(false));
 			wasShotPossible = makeTurn(currentEnemy, shot.getX(), shot.getY(), shot.getOrientation());
 		} while (!wasShotPossible);
-
 	}
 
 	private Player selectAiEnemy(AIPlayer ai) {
@@ -137,8 +101,8 @@ public class Game implements Serializable {
 	}
 
 	public boolean makeTurn(Player enemy, int xPos, int yPos, Orientation orientation) throws FieldOutOfBoardException {
-		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
-		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
+		int xDirection = orientation == Orientation.HORIZONTAL ? 1 : 0;
+		int yDirection = orientation == Orientation.VERTICAL ? 1 : 0;
 		int x;
 		int y;
 		for (int i = 0; i < currentPlayer.getCurrentShip().getShootingRange(); i++) {
@@ -152,73 +116,8 @@ public class Game implements Serializable {
 				}
 			}
 		}
-		currentPlayer.getCurrentShip().setReloadTimeToMax();
+		currentPlayer.getCurrentShip().shoot();
 		return true;
-	}
-
-	public Player getWinner() {
-		return winner;
-	}
-
-	/**
-	 * 
-	 * Increase turnNumber.
-	 * 
-	 * Decrease the reload time of the current players' ships.
-	 * 
-	 * Set the currentPlayer to the next player.
-	 * 
-	 */
-	public void nextPlayer() {
-		turnNumber++;
-		decreaseCurrentReloadTimeOfShips(currentPlayer);
-		int currentPlayerIndex = Arrays.asList(players).indexOf(currentPlayer);
-		// wenn letzter Spieler im Array, dann Index wieder auf 0 setzen,
-		// ansonsten hochzählen
-		currentPlayerIndex = (currentPlayerIndex >= players.length - 1) ? currentPlayerIndex = 0 : currentPlayerIndex + 1;
-		if (currentPlayerIndex == 0)
-			roundNumber++;
-		currentPlayer = players[currentPlayerIndex];
-	}
-
-	/**
-	 * Decreases the reload time of the ships, except for the ship that just
-	 * shot.
-	 */
-	private void decreaseCurrentReloadTimeOfShips(Player player) {
-		Ship[] ships = player.getShips();
-		for (Ship ship : ships) {
-			if (!ship.equals(player.getCurrentShip()))
-				ship.decreaseCurrentReloadTime();
-		}
-		player.setCurrentShipToNull();
-	}
-
-	/**
-	 * Provides a list of enemies the current player may attack. Players that
-	 * are lost or equal to the current player are filtered.
-	 * 
-	 * @return an ArrayList of Players
-	 */
-	public ArrayList<Player> getEnemiesOfCurrentPlayer() {
-		// angreifbare Gegner des currentPlayers zurückgeben
-		ArrayList<Player> enemies = new ArrayList<Player>();
-		for (int i = 0; i < players.length; i++) {
-			if (!players[i].hasLost()) {
-				if (!currentPlayer.equals(players[i])) {
-					enemies.add(players[i]);
-				}
-			}
-		}
-		return enemies;
-	}
-
-	public Player[] getPlayers() {
-		return players;
-	}
-
-	public Player getCurrentPlayer() {
-		return currentPlayer;
 	}
 
 	/**
@@ -299,6 +198,106 @@ public class Game implements Serializable {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	/**
+	 * 
+	 * Increase turnNumber.
+	 * 
+	 * Decrease the reload time of the current players' ships.
+	 * 
+	 * Set the currentPlayer to the next player.
+	 * 
+	 */
+	public void nextPlayer() {
+		turnNumber++;
+		decreaseCurrentReloadTimeOfShips(currentPlayer);
+		int currentPlayerIndex = Arrays.asList(players).indexOf(currentPlayer);
+		// wenn letzter Spieler im Array, dann Index wieder auf 0 setzen,
+		// ansonsten hochzählen
+		currentPlayerIndex = (currentPlayerIndex >= players.length - 1) ? currentPlayerIndex = 0 : currentPlayerIndex + 1;
+		if (currentPlayerIndex == 0)
+			roundNumber++;
+		currentPlayer = players[currentPlayerIndex];
+	}
+
+	/**
+	 * Decreases the reload time of the ships, except for the ship that just
+	 * shot.
+	 */
+	private void decreaseCurrentReloadTimeOfShips(Player player) {
+		Ship[] ships = player.getShips();
+		for (Ship ship : ships) {
+			if (!ship.equals(player.getCurrentShip()))
+				ship.decreaseCurrentReloadTime();
+		}
+		player.setCurrentShipToNull();
+	}
+
+	/**
+	 * Provides a list of enemies the current player may attack. Players that
+	 * are lost or equal to the current player are filtered.
+	 * 
+	 * @return an ArrayList of Players
+	 */
+	public ArrayList<Player> getEnemiesOfCurrentPlayer() {
+		// angreifbare Gegner des currentPlayers zurückgeben
+		ArrayList<Player> enemies = new ArrayList<Player>();
+		for (int i = 0; i < players.length; i++) {
+			if (!players[i].hasLost()) {
+				if (!currentPlayer.equals(players[i])) {
+					enemies.add(players[i]);
+				}
+			}
+		}
+		return enemies;
+	}
+
+	/**
+	 * Returns true if the ships of all players have been placed. The method is
+	 * used to determine if a game is ready to start.
+	 * 
+	 * @return true if all ships by all players are placed, else false
+	 */
+	public boolean isReady() {
+		// prüft ob alle Schiffe gesetzt sind
+		for (Player player : players)
+			if (!player.hasPlacedAllShips()) {
+				return false;
+			}
+		return true;
+	}
+
+	/**
+	 * Check if the game is over. Set the game winner if the game is over.
+	 * 
+	 * @return true if the game is over, false if not
+	 */
+	public boolean isGameover() {
+		int numberOfPlayersLeft = 0;
+		Player potentialWinner = null;
+		for (Player player : players) {
+			if (!player.hasLost()) {
+				numberOfPlayersLeft++;
+				potentialWinner = player;
+			}
+		}
+		if (numberOfPlayersLeft <= 1) {
+			winner = potentialWinner;
+		}
+		return numberOfPlayersLeft <= 1;
+	}
+
+	public Player[] getPlayers() {
+		return players;
+	}
+
+	public Player getCurrentPlayer() {
+		return currentPlayer;
+	}
+
+	public Player getWinner() {
+		return winner;
 	}
 
 	public int getTurnNumber() {
