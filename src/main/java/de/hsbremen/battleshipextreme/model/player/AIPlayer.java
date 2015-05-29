@@ -23,11 +23,9 @@ public class AIPlayer extends Player {
 	private int currentEnemyIndex;
 
 	private Board enemyBoardRepresentation;
-
 	// enthält 4 Felder für jede Himmelsrichtung
 	private Field[] nextTargetsArray;
-
-	private Target currentTarget;
+	boolean attacksDirectionFirstTime;
 
 	private static final int NORTH = 0;
 	private static final int SOUTH = 1;
@@ -44,6 +42,7 @@ public class AIPlayer extends Player {
 		super(boardSize, destroyers, frigates, corvettes, submarines);
 		this.type = aiType;
 		this.name = aiType.toString();
+		attacksDirectionFirstTime = true;
 	}
 
 	public void placeShips() throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException {
@@ -83,90 +82,69 @@ public class AIPlayer extends Player {
 	}
 
 	private Target getNewTarget() throws Exception {
-		// Wenn es mehr als 2 Mitspieler gibt oder die KI mit einem Schuss
-		// gleichzeitig zwei Schiffe getroffen hat (nur mit Destroyer
-		// möglich), kann es sein, dass es getroffene Schiffe gibt, die sich
-		// die KI nicht gemerkt hat.
-		// Deshalb wird, wenn die KI keine vorgemerkten Ziele mehr hat, das
-		// Feld nach getroffenen Schiffen abgesucht
+		Target target;
 		ArrayList<Field> hitFields = lookForHitFields();
-
 		// wenn ein getroffenes Schiff gefunden wurde, dann plane die nächsten
 		// Schüsse und greife das gefundene Ziel an
 		if (hitFields.size() > 0) {
 			planNextShots(hitFields);
-			currentTarget = getNextTarget();
+			target = getNextTarget();
 		} else {
 			// wenn keine getroffenen Schiffe gefunden wurden
 			// zufällig schießen, Schuss merken
-			currentTarget = getRandomShot();
+			target = getRandomShot();
 		}
-		return currentTarget;
+		return target;
 	}
 
 	private Target getNextTarget() throws Exception {
 		int currentDirection = getCurrentDirection();
 
-		// wenn der letzte Schuss ein Treffer war, dann nach nächstem
-		// unbeschossenen Feld in selbe Richtung suchen und als nächstes Ziel
-		// speichern
-
-		// wenn es noch keinen Schuss gab, dann überspringen
-		// (kann der Fall sein, wenn die AI einen Treffer findet,
-		// der von einem anderen Spieler verursacht wurde)
-		if (currentTarget != null) {
-			Field lastFieldShotAt = enemyBoardRepresentation.getField(currentTarget.getX(), currentTarget.getY());
-
-			if (!isTargetDestroyed()) {
+		// wird eine Richtung zum ersten mal angegriffen?
+		if (!attacksDirectionFirstTime) {
+			// wenn nicht, dann prüfe, ob das letzte Ziel ein Treffer war oder
+			// das Schiff bereits zerstört wurde
+			Field lastFieldShotAt = enemyBoardRepresentation.getField(nextTargetsArray[currentDirection].getXPos(), nextTargetsArray[currentDirection].getYPos());
+			if (lastFieldShotAt.getState() != FieldState.Destroyed) {
 				if (lastFieldShotAt.getState() == FieldState.Hit) {
+					// wenn das letzte Ziel ein Treffer war, dann neues Ziel in
+					// gleiche Richtung setzen
 					int[] directionArray = getDirectionArray(currentDirection);
 					Field newTarget = findNextTarget(lastFieldShotAt, directionArray[0], directionArray[1]);
-					// neues Ziel in gleiche Richtung setzen
 					nextTargetsArray[currentDirection] = newTarget;
 
 				} else {
 					// wenn kein Treffer, dann Target löschen
 					nextTargetsArray[currentDirection] = null;
+					attacksDirectionFirstTime = true;
 				}
 			} else {
-				// Schiff zerstört, komplettes targetArray löschen,
-				// da die Spur nicht mehr verfolgt werden muss
+				// wenn Schiff zerstört wurde, dann neues Ziel suchen
 				nextTargetsArray = null;
+				attacksDirectionFirstTime = true;
+				return getNewTarget();
 			}
+
 		}
 
-		// wenn (noch) vorgemerkte Ziele vorhanden sind
-		if (hasTargets()) {
-			Field target;
-			currentDirection = getCurrentDirection();
-			// aktuelles Ziel ermitteln
-			target = nextTargetsArray[currentDirection];
-			// wenn Richtung Osten oder Westen, dann Ausrichtung horizontal,
-			// ansonsten vertikal
-			Orientation orientation = (currentDirection == EAST || currentDirection == WEST) ? Orientation.Horizontal : Orientation.Vertical;
+		Target target;
+		Field targetField;
+		currentDirection = getCurrentDirection();
+		// aktuelles Ziel ermitteln
+		targetField = nextTargetsArray[currentDirection];
+		// wenn Richtung Osten oder Westen, dann Ausrichtung horizontal,
+		// ansonsten vertikal
+		Orientation orientation = (currentDirection == EAST || currentDirection == WEST) ? Orientation.Horizontal : Orientation.Vertical;
 
-			// x und y abhängig von der Schussweite korrigieren, so dass
-			// möglichst viele Felder getroffen werden
-			int range = this.currentShip.getShootingRange() - 1;
-			int adjustedX = adjustX(target, currentDirection, range);
-			int adjustedY = adjustY(target, currentDirection, range);
-			currentTarget = new Target(adjustedX, adjustedY, orientation);
-		} else {
-			// wenn kein Ziel mehr vorhanden, neues Ziel suchen
-			currentTarget = null;
-			getNewTarget();
-		}
-		return currentTarget;
-	}
+		// x und y abhängig von der Schussweite korrigieren, so dass
+		// möglichst viele Felder getroffen werden
+		int range = this.currentShip.getShootingRange() - 1;
+		int adjustedX = adjustX(targetField, currentDirection, range);
+		int adjustedY = adjustY(targetField, currentDirection, range);
+		target = new Target(adjustedX, adjustedY, orientation);
+		attacksDirectionFirstTime = false;
 
-	private boolean isTargetDestroyed() throws FieldOutOfBoardException {
-		ArrayList<Field> hitFields = getHitFields();
-		for (Field f : hitFields) {
-			if (f.getState() == FieldState.Destroyed) {
-				return true;
-			}
-		}
-		return false;
+		return target;
 	}
 
 	private ArrayList<Field> lookForHitFields() throws FieldOutOfBoardException {
@@ -392,29 +370,6 @@ public class AIPlayer extends Player {
 			step++;
 		} while (!endLoop);
 		return target;
-	}
-
-	private ArrayList<Field> getHitFields() throws FieldOutOfBoardException {
-		// prüft ob ein zufälliger Schuss (teilweise) getroffen hat
-		// gibt den ersten gefundenen Treffer zurück
-		// gibt null zurück, wenn es keinen Treffer gab
-		int xDirection = currentTarget.getOrientation() == Orientation.Horizontal ? 1 : 0;
-		int yDirection = currentTarget.getOrientation() == Orientation.Vertical ? 1 : 0;
-		int x;
-		int y;
-		Field hitField = null;
-		ArrayList<Field> fields = new ArrayList<Field>();
-		for (int i = 0; i < this.currentShip.getShootingRange(); i++) {
-			x = currentTarget.getX() + i * xDirection;
-			y = currentTarget.getY() + i * yDirection;
-			if (enemyBoardRepresentation.containsFieldAtPosition(x, y)) {
-				hitField = enemyBoardRepresentation.getField(x, y);
-				if (hitField.hasShip()) {
-					fields.add(hitField);
-				}
-			}
-		}
-		return fields;
 	}
 
 	private Target getRandomShipPlacementTarget() {

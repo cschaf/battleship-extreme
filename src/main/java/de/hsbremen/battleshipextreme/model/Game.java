@@ -112,25 +112,28 @@ public class Game implements Serializable {
 		boolean wasShotPossible = false;
 		// AI soll Zug automatisch machen
 		AIPlayer ai = (AIPlayer) currentPlayer;
-		Player currentEnemy;
-		do {
-			do {
-				currentEnemy = players[ai.getCurrentEnemyIndex()];
-				// zufälligen Gegner auswählen, wenn die KI keine Spur verfolgt,
-				// ansonsten gemerkten Gegner beibehalten
-				if (!ai.hasTargets() || currentEnemy.hasLost() || ai.getType() == PlayerType.DUMB_AI) {
-					ai.setRandomEnemyIndex(players.length - 1);
-					currentEnemy = players[ai.getCurrentEnemyIndex()];
-				}
-			} while (currentEnemy.hasLost() || ai.equals(currentEnemy));
 
-			// Schiff auswählen
+		do {
+			Player currentEnemy = selectAiEnemy(ai);
 			ai.selectShip(ai.getAvailableShipsToShoot().get(0));
 			Target shot = ai.getTarget(currentEnemy.getFieldStates(false));
-
 			wasShotPossible = makeTurn(currentEnemy, shot.getX(), shot.getY(), shot.getOrientation());
 		} while (!wasShotPossible);
 
+	}
+
+	private Player selectAiEnemy(AIPlayer ai) {
+		Player currentEnemy;
+		do {
+			currentEnemy = players[ai.getCurrentEnemyIndex()];
+			// zufälligen Gegner auswählen, wenn die KI keine Spur verfolgt,
+			// ansonsten gemerkten Gegner beibehalten
+			if (!ai.hasTargets() || currentEnemy.hasLost() || ai.getType() == PlayerType.DUMB_AI || ai.equals(currentEnemy)) {
+				ai.setRandomEnemyIndex(players.length - 1);
+				currentEnemy = players[ai.getCurrentEnemyIndex()];
+			}
+		} while (currentEnemy.hasLost() || ai.equals(currentEnemy));
+		return currentEnemy;
 	}
 
 	public boolean makeTurn(Player enemy, int xPos, int yPos, Orientation orientation) throws FieldOutOfBoardException {
