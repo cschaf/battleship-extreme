@@ -6,6 +6,7 @@ import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 import de.hsbremen.battleshipextreme.network.eventhandling.ErrorHandler;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListener;
+import de.hsbremen.battleshipextreme.network.transfarableObject.Game;
 import de.hsbremen.battleshipextreme.server.listener.IClientConnectionListener;
 import de.hsbremen.battleshipextreme.server.listener.IClientObjectReceivedListener;
 import de.hsbremen.battleshipextreme.server.listener.IServerListener;
@@ -14,6 +15,7 @@ import javax.swing.event.EventListenerList;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by cschaf on 26.04.2015.
@@ -77,7 +79,8 @@ public class Server implements IDisposable {
         this.isRunning = false;
     }
 
-    public void unicast(){
+    public Vector<Game> getGames(){
+        return this.serverDispatcher.getGames();
     }
 
     public void broadcast(ITransferable object){

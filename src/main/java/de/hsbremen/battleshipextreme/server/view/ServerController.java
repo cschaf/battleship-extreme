@@ -47,12 +47,16 @@ public class ServerController {
         server.addClientConnectionListener(new IClientConnectionListener() {
             public void onClientHasConnected(EventArgs<ITransferable> eventArgs) {
                 gui.getTraMessages().append(eventArgs.getItem() + "\r\n");
+
             }
 
             public void onClientHasDisconnected(EventArgs<ITransferable> eventArgs) {
                 ClientInfo client = (ClientInfo) eventArgs.getItem();
                 gui.removeUserFromUserList(client);
                 gui.getTraMessages().append(client.getUsername() + ":" + client.getPort() + " has left\r\n");
+                gui.getListGames().setListData(server.getGames());
+                gui.getScrollPanelGames().revalidate();
+                gui.getScrollPanelGames().repaint();
             }
         });
 
@@ -70,7 +74,7 @@ public class ServerController {
                         break;
                     case Turn:
                         Turn turn = (Turn) receivedObject;
-                        gui.getTraMessages().append("New Turn was added, " + turn.getFrom().getName() + " attacked " + turn.getTo().getName() + " in game " + turn.getGameId()+ "\r\n");
+                        gui.getTraMessages().append("New Turn was added, " + turn.getFrom().getName() + " attacked " + turn.getTo().getName() + " in game " + turn.getGameId() + "\r\n");
                         break;
                     case Join:
                         Join join = (Join) receivedObject;
@@ -82,7 +86,6 @@ public class ServerController {
                         switch (info.getReason()) {
                             case Connect:
                                 gui.addUserToUserList(item);
-
                                 break;
                             case Disconnect:
                                 gui.removeUserFromUserList(info);
@@ -186,25 +189,49 @@ public class ServerController {
                 ListModel m = l.getModel();
                 int index = l.locationToIndex(e.getPoint());
                 if (index > -1) {
-                    Game item = (Game)m.getElementAt(index);
-                    String name = "<p width=\"300\">" + "Name: " + item.getName()+"</p>";
-                    String id = "<p width=\"300\">" + "ID: " + item.getId()+"</p>";
-                    String password = "<p width=\"300\">" + "Password: " + item.getPassword()+"</p>";
-                    String players = "<p width=\"300\">" + "Players: " + item.getJoinedPlayers().size() + " / 6"+"</p>";
-                    String createdAt = "<p width=\"300\">" + "Created at: " + item.getCreatedAt()+"</p>";
-                    l.setToolTipText("<html>" + name + id + password + players + createdAt +"</html>");
+                    Game item = (Game) m.getElementAt(index);
+                    String name = "<p width=\"300\">" + "Name: " + item.getName() + "</p>";
+                    String id = "<p width=\"300\">" + "ID: " + item.getId() + "</p>";
+                    String password = "<p width=\"300\">" + "Password: " + item.getPassword() + "</p>";
+                    String players = "<p width=\"300\">" + "Players: " + item.getJoinedPlayers().size() + " / 6" + "</p>";
+                    String createdAt = "<p width=\"300\">" + "Created at: " + item.getCreatedAt() + "</p>";
+                    l.setToolTipText("<html>" + name + id + password + players + createdAt + "</html>");
+                }
+            }
+        });
+
+
+        gui.getListUsers().addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent me) {
+                if (SwingUtilities.isRightMouseButton(me)    // if right mouse button clicked
+                        && !gui.getListUsers().isSelectionEmpty()            // and list selection is not empty
+                        && gui.getListUsers().locationToIndex(me.getPoint()) // and clicked point is
+                        == gui.getListUsers().getSelectedIndex()) {       //   inside selected item bounds
+                    gui.getUserPopupMenu().show(gui.getListUsers(), me.getX(), me.getY());
+                }
+            }
+        });
+
+        gui.getListGames().addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent me) {
+                if (SwingUtilities.isRightMouseButton(me)    // if right mouse button clicked
+                        && !gui.getListGames().isSelectionEmpty()            // and list selection is not empty
+                        && gui.getListGames().locationToIndex(me.getPoint()) // and clicked point is
+                        == gui.getListGames().getSelectedIndex()) {       //   inside selected item bounds
+                    gui.getGamePopupMenu().show(gui.getListGames(), me.getX(), me.getY());
                 }
             }
         });
     }
 
     private void broadcastMessage() {
-        if (!this.server.isRunning()) return;
+        if (!this.server.isRunning()) {
+            return;
+        }
         String message = gui.getTbxMessage().getText();
         ITransferable msg = TransferableObjectFactory.CreateMessage("Server: " + message);
         server.broadcast(msg);
         gui.getTbxMessage().setText("");
         gui.getTraMessages().append("Server (broadcast): " + message + "\r\n");
-
     }
 }

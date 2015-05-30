@@ -60,6 +60,18 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
             ITransferable user = TransferableObjectFactory.CreateClientInfo(clientHandler.getUsername(), clientHandler.getSocket().getInetAddress().getHostAddress(), clientHandler.getSocket().getPort());
             clientHasDisconnected(new EventArgs<ITransferable>(this, user));
         }
+        boolean found = false;
+        for (Game game: this.games){
+            for (int i= 0; i<game.getJoinedPlayers().size(); i++) {
+                    if (game.getJoinedPlayers().get(i) == clientHandler){
+                        game.getJoinedPlayers().remove(i);
+                        found = true;
+                        break;
+                    }
+            }
+            if (found) break;
+
+        }
     }
 
     public synchronized void dispatchObject(ITransferable transferableObject) {
@@ -252,5 +264,9 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     public int getMaxPlayers() {
         return maxPlayers;
+    }
+
+    public Vector<Game> getGames() {
+        return games;
     }
 }

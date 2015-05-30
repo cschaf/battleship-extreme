@@ -2,6 +2,7 @@ package de.hsbremen.battleshipextreme.server.view;
 
 import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Game;
+import de.hsbremen.battleshipextreme.server.ClientHandler;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -17,6 +18,11 @@ public class Gui extends JFrame {
     private JButton btnSend;
     private JScrollPane scrollPanelUsers;
     private JList listUsers;
+
+    public JScrollPane getScrollPanelGames() {
+        return scrollPanelGames;
+    }
+
     private JScrollPane scrollPanelGames;
     private JList listGames;
     private JTextArea traMessages;
@@ -26,6 +32,8 @@ public class Gui extends JFrame {
     private GroupBox boxMessages;
     private DefaultListModel<ClientJListItem> userModel;
     private DefaultListModel<Game> gameModel;
+    private JPopupMenu userPopupMenu;
+    private JPopupMenu gamePopupMenu;
 
     public Gui() {
         super("Server Gui");
@@ -64,7 +72,7 @@ public class Gui extends JFrame {
         traMessages = new JTextArea(10, 10);
         scrollPanelMessages = new JScrollPane(traMessages);
 
-        boxMessages = new GroupBox("Messages");
+        boxMessages = new GroupBox("Log");
         boxMessages.add(scrollPanelMessages);
 
         listUsers = new JList();
@@ -85,6 +93,14 @@ public class Gui extends JFrame {
         tbxMessage.setEnabled(false);
         btnSend = new JButton("Send");
         btnSend.setEnabled(false);
+
+        this.userPopupMenu = new JPopupMenu();
+        this.userPopupMenu.add(new JMenuItem("Kick"));
+        this.userPopupMenu.add(new JMenuItem("Ban"));
+
+        this.gamePopupMenu = new JPopupMenu();
+        this.gamePopupMenu.add(new JMenuItem("Close"));
+        this.gamePopupMenu.add(new JMenuItem("Details"));
     }
 
     public JPanel getPnlMain() {
@@ -155,8 +171,17 @@ public class Gui extends JFrame {
         }
     }
 
+    public JPopupMenu getUserPopupMenu() {
+        return userPopupMenu;
+    }
+
     public DefaultListModel<Game> getGameModel() {
         return gameModel;
     }
+
+    public JPopupMenu getGamePopupMenu() {
+        return gamePopupMenu;
+    }
+
 }
 
