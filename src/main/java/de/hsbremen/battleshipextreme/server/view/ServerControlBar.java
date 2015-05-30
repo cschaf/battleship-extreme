@@ -33,8 +33,9 @@ public class ServerControlBar extends JPanel {
         lblPort = new JLabel("Port:");
         tbxPort = new JTextField("1337");
         tbxPort.setPreferredSize(new Dimension(50, 22));
-                btnStart = new JButton("Start");
+        btnStart = new JButton("Start");
         btnStop = new JButton("Stop");
+        btnStop.setEnabled(false);
     }
 
     public JTextField getTbxPort(){
