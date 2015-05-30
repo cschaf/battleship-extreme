@@ -185,13 +185,11 @@ public class AIPlayer extends Player {
 		// versuche x-Koordinate anzupassen
 		if ((fieldShotAt.getXPos() + this.currentShip.getShootingRange() >= (boardSize)) && (orientation == Orientation.HORIZONTAL)) {
 			int overhang = (fieldShotAt.getXPos() + this.currentShip.getShootingRange()) - (boardSize);
-			System.out.println("o" + (overhang > 0));
 			adjustedX = adjustX(fieldShotAt, WEST, overhang);
 		}
 		// versuche y-Koordinate anzupassen
 		if ((fieldShotAt.getYPos() + this.currentShip.getShootingRange() >= (boardSize)) && (orientation == Orientation.VERTICAL)) {
 			int overhang = (fieldShotAt.getYPos() + this.currentShip.getShootingRange()) - (boardSize);
-			System.out.println("o" + (overhang > 0));
 			adjustedY = adjustY(fieldShotAt, NORTH, overhang);
 		}
 
