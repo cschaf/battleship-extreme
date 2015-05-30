@@ -7,13 +7,14 @@ import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.Socket;
 import java.util.Vector;
 
 /**
  * Created by cschaf on 26.04.2015.
  */
-public class ClientSender extends Thread implements IDisposable {
+public class ClientSender extends Thread implements IDisposable, Serializable {
     private Vector<ITransferable> objectQueue;
     private ServerDispatcher serverDispatcher;
     private ClientHandler clientHandler;

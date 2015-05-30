@@ -11,21 +11,26 @@ import de.hsbremen.battleshipextreme.server.listener.IClientObjectReceivedListen
 import de.hsbremen.battleshipextreme.server.listener.IServerListener;
 
 import javax.swing.event.EventListenerList;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Vector;
 
 /**
  * Created by cschaf on 25.04.2015.
  */
-public class ServerDispatcher extends Thread implements IDisposable {
+public class ServerDispatcher extends Thread implements IDisposable, Serializable {
     protected EventListenerList listeners;
     private Vector<ClientHandler> clients;
     private Vector<ITransferable> objectQueue;
     private Vector<Game> games;
     private boolean disposed;
     private ErrorHandler errorHandler;
+    private int maxPlayers;
+    private int maxGames;
 
     public ServerDispatcher(ErrorHandler errorHandler) {
+        this.maxGames = 2;
+        this.maxPlayers = 12;
         this.listeners = new EventListenerList();
         this.errorHandler = errorHandler;
         this.disposed = false;
@@ -54,7 +59,6 @@ public class ServerDispatcher extends Thread implements IDisposable {
             this.clients.removeElementAt(clientIndex);
             ITransferable user = TransferableObjectFactory.CreateClientInfo(clientHandler.getUsername(), clientHandler.getSocket().getInetAddress().getHostAddress(), clientHandler.getSocket().getPort());
             clientHasDisconnected(new EventArgs<ITransferable>(this, user));
-
         }
     }
 
@@ -189,7 +193,7 @@ public class ServerDispatcher extends Thread implements IDisposable {
         Turn turn = (Turn) receivedObject;
         boolean gameFound = false;
         for (Game game : this.games) {
-            for(ClientHandler client : game.getJoinedPlayers()){
+            for (ClientHandler client : game.getJoinedPlayers()) {
                 if (client == handler) {
                     game.addTurn(turn);
                     turn.setGameId(game.getId());
@@ -197,7 +201,7 @@ public class ServerDispatcher extends Thread implements IDisposable {
                     break;
                 }
             }
-            if(gameFound){
+            if (gameFound) {
                 this.multicast(turn, game.getJoinedPlayers());
                 break;
             }
@@ -210,21 +214,29 @@ public class ServerDispatcher extends Thread implements IDisposable {
         Join join = (Join) receivedObject;
         for (Game game : this.games) {
             if (join.getGameId().equals(game.getId())) {
-                game.addPlayer(clientHandler);
-                this.multicast(TransferableObjectFactory.CreateClientInfo(clientHandler.getUsername(), clientHandler.getSocket().getInetAddress().getHostAddress(), clientHandler.getSocket().getPort(), InfoSendingReason.Connect), game.getJoinedPlayers());
+                if (game.getJoinedPlayers().size() < game.getMaxPlayers()) {
+                    game.addPlayer(clientHandler);
+                    ITransferable info = TransferableObjectFactory.CreateClientInfo(clientHandler.getUsername(), clientHandler.getSocket().getInetAddress().getHostAddress(), clientHandler.getSocket().getPort(), InfoSendingReason.Connect);
+                    this.multicast(info, game.getJoinedPlayers());
+                } else {
+                    ITransferable msg = TransferableObjectFactory.CreateMessage("Game has no free slot available!");
+                    this.unicast(msg, clientHandler);
+                }
                 break;
             }
         }
+        join.setClient(clientHandler.getUsername());
+        objectReceived(new EventArgs<ITransferable>(this, join));
     }
 
     public void addServerListener(IServerListener listener) {
         this.listeners.add(IServerListener.class, listener);
     }
 
-
     public void removeServerListener(IServerListener listener) {
         this.listeners.remove(IServerListener.class, listener);
     }
+
     public void printInfo(EventArgs<ITransferable> eventArgs) {
         Object[] listeners = this.listeners.getListenerList();
         for (int i = 0; i < listeners.length; i = i + 2) {
@@ -232,5 +244,13 @@ public class ServerDispatcher extends Thread implements IDisposable {
                 ((IServerListener) listeners[i + 1]).onInfo(eventArgs);
             }
         }
+    }
+
+    public int getMaxGames() {
+        return maxGames;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
     }
 }

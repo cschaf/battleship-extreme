@@ -59,10 +59,8 @@ public class Listener extends Thread implements IDisposable {
             }
         } catch (IOException e) {
             errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Connection to server has been broken.")));
-            dispose();
         } catch (ClassNotFoundException e) {
             errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage(e.getMessage())));
-            dispose();
         }
     }
 

@@ -5,16 +5,17 @@ import de.hsbremen.battleshipextreme.network.TransferableType;
 import de.hsbremen.battleshipextreme.network.transfarableObject.TransferableObject;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.Socket;
 
 /**
  * Created by cschaf on 25.04.2015.
  * ClientHandler class contains information about a client, connected to the server.
  */
-public class ClientHandler extends TransferableObject implements IDisposable {
-    private Socket socket;
-    private ClientSender clientSender;
-    private ClientListener clientListener;
+public class ClientHandler extends TransferableObject implements IDisposable, Serializable {
+    private transient Socket socket;
+    private transient ClientSender clientSender;
+    private transient ClientListener clientListener;
     private String username;
 
     public ClientHandler(Socket socket) {

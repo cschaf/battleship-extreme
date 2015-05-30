@@ -21,7 +21,8 @@ public class Game extends TransferableObject {
     private ArrayList<Turn> turns;
 
     public Game(String name, Settings settings) {
-        this.id = UUID.randomUUID().toString();
+        //this.id = UUID.randomUUID().toString();
+        this.id = "123456";
         this.name = name;
         this.settings = settings;
         this.joinedPlayers = new ArrayList<ClientHandler>();
@@ -99,6 +100,10 @@ public class Game extends TransferableObject {
 
     @Override
     public String toString() {
-        return getName()+ " (" + this.getJoinedPlayers().size() + "/ 6)";
+        if(joinedPlayers != null){
+            return getName()+ " (" + this.getJoinedPlayers().size() + "/ " + getMaxPlayers() + ")";
+        }
+        return getName() + " ( ? / " + getMaxPlayers() + ")" ;
+
     }
 }

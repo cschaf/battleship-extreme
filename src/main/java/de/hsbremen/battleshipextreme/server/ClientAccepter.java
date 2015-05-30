@@ -29,16 +29,18 @@ public class ClientAccepter extends Thread implements IDisposable {
     public void run() {
         while (!this.disposed) {
             try {
-                Socket socket = serverSocket.accept();
-                ClientHandler clientHandler = new ClientHandler(socket);
-                ClientSender clientSender = new ClientSender(clientHandler, serverDispatcher);
-                ClientListener clientListener = new ClientListener(clientHandler, serverDispatcher);
+                if (serverDispatcher.getClients().size() < serverDispatcher.getMaxPlayers()) {
+                    Socket socket = serverSocket.accept();
+                    ClientHandler clientHandler = new ClientHandler(socket);
+                    ClientSender clientSender = new ClientSender(clientHandler, serverDispatcher);
+                    ClientListener clientListener = new ClientListener(clientHandler, serverDispatcher);
 
-                clientHandler.setClientListener(clientListener);
-                clientHandler.setClientSender(clientSender);
-                clientListener.start();
-                clientSender.start();
-                serverDispatcher.addClient(clientHandler);
+                    clientHandler.setClientListener(clientListener);
+                    clientHandler.setClientSender(clientSender);
+                    clientListener.start();
+                    clientSender.start();
+                    serverDispatcher.addClient(clientHandler);
+                }
             } catch (IOException e) {
                 this.serverDispatcher.getErrorHandler().errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Stopped listening for clients")));
             }

@@ -6,6 +6,7 @@ import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListener;
 import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Game;
+import de.hsbremen.battleshipextreme.network.transfarableObject.Join;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Turn;
 import de.hsbremen.battleshipextreme.server.Server;
 import de.hsbremen.battleshipextreme.server.listener.IClientConnectionListener;
@@ -70,6 +71,10 @@ public class ServerController {
                     case Turn:
                         Turn turn = (Turn) receivedObject;
                         gui.getTraMessages().append("New Turn was added, " + turn.getFrom().getName() + " attacked " + turn.getTo().getName() + " in game " + turn.getGameId()+ "\r\n");
+                        break;
+                    case Join:
+                        Join join = (Join) receivedObject;
+                        gui.getTraMessages().append(join.getClient() + " has joined game with id: " + join.getGameId() + "\r\n");
                         break;
                     case ClientInfo:
                         ClientInfo info = (ClientInfo) receivedObject;

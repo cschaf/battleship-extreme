@@ -52,6 +52,12 @@ public class Sender extends Thread implements IDisposable {
             this.out.writeObject(game);
             this.out.flush();
 
+            // Join
+
+            ITransferable join = TransferableObjectFactory.CreateJoin("123456");
+            this.out.writeObject(join);
+            this.out.flush();
+
             // Turn
             Player from = new HumanPlayer(5,1,0,0,0);
             Player to = new HumanPlayer(5,1,0,0,0);;
@@ -72,10 +78,13 @@ public class Sender extends Thread implements IDisposable {
             // Communication is broken
         } catch (InvalidNumberOfShipsException e) {
             e.printStackTrace();
+            this.dispose();
         } catch (InvalidPlayerNumberException e) {
             e.printStackTrace();
+            this.dispose();
         } catch (BoardTooSmallException e) {
             e.printStackTrace();
+            this.dispose();
         }
     }
 

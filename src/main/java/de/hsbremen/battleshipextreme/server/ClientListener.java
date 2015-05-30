@@ -10,12 +10,13 @@ import de.hsbremen.battleshipextreme.network.transfarableObject.Message;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.net.Socket;
 
 /**
  * Created by cschaf on 25.04.2015.
  */
-public class ClientListener extends Thread implements IDisposable {
+public class ClientListener extends Thread implements IDisposable,Serializable {
     private ServerDispatcher serverDispatcher;
     private ClientHandler clientHandler;
     private ObjectInputStream in;
