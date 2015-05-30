@@ -322,17 +322,17 @@ class ConsoleGame {
 		}
 		// TODO
 		// von AI beschossenes Board ausgeben
-		if (ai.getName().equals("SMART_AI1")) {
-			System.out.println(ai + " greift " + game.getPlayers()[ai.getCurrentEnemyIndex()] + " mit " + ai.getCurrentShip() + " an.");
-			System.out.println();
-			System.out.println("Board von " + game.getPlayers()[ai.getCurrentEnemyIndex()]);
-			try {
-				printBoard(game.getPlayers()[ai.getCurrentEnemyIndex()].getFieldStates(false));
-			} catch (FieldOutOfBoardException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+		// if (ai.getName().equals("SMART_AI1")) {
+		System.out.println(ai + " greift " + game.getPlayers()[ai.getCurrentEnemyIndex()] + " mit " + ai.getCurrentShip() + " an.");
+		System.out.println();
+		System.out.println("Board von " + game.getPlayers()[ai.getCurrentEnemyIndex()]);
+		try {
+			printBoard(game.getPlayers()[ai.getCurrentEnemyIndex()].getFieldStates(false));
+		} catch (FieldOutOfBoardException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
+		// }
 	}
 
 	private void makePlayerTurn() {
@@ -355,12 +355,7 @@ class ConsoleGame {
 				hasAttacked = true;
 				break;
 			case 2:
-				try {
-					saveGame();
-				} catch (FieldOutOfBoardException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				saveGame();
 				break;
 			case 3:
 				System.exit(0);
@@ -429,7 +424,7 @@ class ConsoleGame {
 		return enemies.get(readIntegerWithMinMax(0, enemies.size() - 1));
 	}
 
-	private void saveGame() throws FieldOutOfBoardException {
+	private void saveGame() {
 		try {
 			game.save(SAVEGAME_FILENAME);
 		} catch (Exception e) {
@@ -439,7 +434,6 @@ class ConsoleGame {
 		System.out.println();
 		System.out.println("Spiel gespeichert.");
 		System.out.println();
-		this.makePlayerTurn();
 	}
 
 	private void printBoards(FieldState[][] ownBoard, FieldState[][] enemyBoard) {

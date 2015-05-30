@@ -228,10 +228,8 @@ public class Game implements Serializable {
 	private void decreaseCurrentReloadTimeOfShips(Player player) {
 		Ship[] ships = player.getShips();
 		for (Ship ship : ships) {
-			if (!ship.equals(player.getCurrentShip()))
-				ship.decreaseCurrentReloadTime();
+			ship.decreaseCurrentReloadTime();
 		}
-		player.setCurrentShipToNull();
 	}
 
 	/**

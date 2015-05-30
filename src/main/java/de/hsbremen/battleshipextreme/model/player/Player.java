@@ -283,10 +283,4 @@ public abstract class Player implements Serializable {
 	public void setType(PlayerType type) {
 		this.type = type;
 	}
-
-	public void setCurrentShipToNull() {
-		this.currentShip = null;
-
-	}
-
 }

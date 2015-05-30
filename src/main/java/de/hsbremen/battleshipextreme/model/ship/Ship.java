@@ -11,7 +11,7 @@ public abstract class Ship implements Serializable {
 	protected boolean isPlaced;
 
 	public void shoot() {
-		currentReloadTime = maxReloadTime;
+		currentReloadTime = maxReloadTime + 1;
 	}
 
 	public void decreaseCurrentReloadTime() {
