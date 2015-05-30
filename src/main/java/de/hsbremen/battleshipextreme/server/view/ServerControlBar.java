@@ -53,4 +53,11 @@ public class ServerControlBar extends JPanel {
         return btnStop;
     }
 
+    public void setEnabledAfterStartStop(boolean state){
+        tbxIp.setEnabled(state);
+        tbxPort.setEnabled(state);
+        btnStart.setEnabled(state);
+        btnStop.setEnabled(!state);
+    }
+
 }

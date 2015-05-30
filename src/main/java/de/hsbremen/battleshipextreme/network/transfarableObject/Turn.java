@@ -50,4 +50,8 @@ public class Turn extends TransferableObject{
   public Orientation getOrientation(){
     return orientation;
   }
+
+  public void setGameId(String gameId) {
+    this.gameId = gameId;
+  }
 }

@@ -1,24 +1,19 @@
 package de.hsbremen.battleshipextreme.server.view;
 
 import de.hsbremen.battleshipextreme.network.ITransferable;
+import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListener;
 import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Game;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Turn;
-import de.hsbremen.battleshipextreme.server.ClientHandler;
-import de.hsbremen.battleshipextreme.server.ClientJListItem;
 import de.hsbremen.battleshipextreme.server.Server;
-import de.hsbremen.battleshipextreme.server.TestClient.ErrorListener;
 import de.hsbremen.battleshipextreme.server.listener.IClientConnectionListener;
 import de.hsbremen.battleshipextreme.server.listener.IClientObjectReceivedListener;
 import de.hsbremen.battleshipextreme.server.listener.IServerListener;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.*;
 
 /**
  * Created by cschaf on 28.05.2015.
@@ -26,13 +21,11 @@ import java.awt.event.WindowListener;
 public class ServerController {
     private Gui gui;
     private Server server;
-    private DefaultListModel<ClientJListItem> userModel;
-
 
     public ServerController(Gui gui, Server server) {
         this.gui = gui;
         this.server = server;
-        this.userModel = new DefaultListModel<ClientJListItem>();
+
         this.addGuiEvents();
         this.addServerEvents();
     }
@@ -56,8 +49,8 @@ public class ServerController {
             }
 
             public void onClientHasDisconnected(EventArgs<ITransferable> eventArgs) {
-                ClientInfo client = (ClientInfo)eventArgs.getItem();
-                removeClientItemFromUserList(client);
+                ClientInfo client = (ClientInfo) eventArgs.getItem();
+                gui.removeUserFromUserList(client);
                 gui.getTraMessages().append(client.getUsername() + ":" + client.getPort() + " has left\r\n");
             }
         });
@@ -71,21 +64,23 @@ public class ServerController {
                         break;
                     case Game:
                         Game game = (Game) receivedObject;
+                        gui.addGameToGameList(game);
+                        gui.getTraMessages().append("New Game was added, " + game.getName() + "(" + game.getId() + ")" + "\r\n");
                         break;
                     case Turn:
                         Turn turn = (Turn) receivedObject;
+                        gui.getTraMessages().append("New Turn was added, " + turn.getFrom().getName() + " attacked " + turn.getTo().getName() + " in game " + turn.getGameId()+ "\r\n");
                         break;
                     case ClientInfo:
                         ClientInfo info = (ClientInfo) receivedObject;
                         ClientJListItem item = new ClientJListItem(info.getIp(), info.getPort(), info.getUsername());
                         switch (info.getReason()) {
                             case Connect:
-                                userModel.addElement(item);
-                                gui.getListUsers().setModel(userModel);
+                                gui.addUserToUserList(item);
 
                                 break;
                             case Disconnect:
-                                removeClientItemFromUserList(info);
+                                gui.removeUserFromUserList(info);
                                 gui.getTraMessages().append(info.getUsername() + "(" + info.getPort() + ") has left \r\n");
                                 break;
                         }
@@ -95,26 +90,20 @@ public class ServerController {
         });
     }
 
-    private void removeClientItemFromUserList(ClientInfo item) {
-        for (int i =0; i < userModel.getSize(); i++){
-            String ip = userModel.getElementAt(i).getIp();
-            int port = userModel.getElementAt(i).getPort();
-            if(ip.equals(item.getIp()) && port == item.getPort()){
-                userModel.remove(i);
-            }
-        }
-    }
-
     private void addGuiEvents() {
         this.gui.getPnlServerControlBarPanel().getBtnStart().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 server.start();
+                gui.setControlsEnabledAfterStartStop(false);
             }
         });
 
         this.gui.getPnlServerControlBarPanel().getBtnStop().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 server.stop();
+                gui.setControlsEnabledAfterStartStop(true);
+                gui.getUserModel().removeAllElements();
+                gui.getGameModel().removeAllElements();
             }
         });
         this.gui.addWindowListener(new WindowListener() {
@@ -146,5 +135,71 @@ public class ServerController {
 
             }
         });
+
+        gui.getBtnSend().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                broadcastMessage();
+            }
+        });
+
+        gui.getTbxMessage().addKeyListener(new KeyListener() {
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    broadcastMessage();
+                }
+            }
+
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
+
+        gui.getListUsers().addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                JList l = (JList) e.getSource();
+                ListModel m = l.getModel();
+                int index = l.locationToIndex(e.getPoint());
+                if (index > -1) {
+                    ClientJListItem item = (ClientJListItem) m.getElementAt(index);
+                    String name = "<p width=\"200\">" + "Name: " + item.getName() + "</p>";
+                    String ip = "<p width=\"200\">" + "IP: " + item.getIp() + "</p>";
+                    String port = "<p width=\"200\">" + "Port: " + item.getPort() + "</p>";
+                    l.setToolTipText("<html>" + name + ip + port + "</html>");
+                }
+            }
+        });
+
+        gui.getListGames().addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                JList l = (JList) e.getSource();
+                ListModel m = l.getModel();
+                int index = l.locationToIndex(e.getPoint());
+                if (index > -1) {
+                    Game item = (Game)m.getElementAt(index);
+                    String name = "<p width=\"300\">" + "Name: " + item.getName()+"</p>";
+                    String id = "<p width=\"300\">" + "ID: " + item.getId()+"</p>";
+                    String password = "<p width=\"300\">" + "Password: " + item.getPassword()+"</p>";
+                    String players = "<p width=\"300\">" + "Players: " + item.getJoinedPlayers().size() + " / 6"+"</p>";
+                    String createdAt = "<p width=\"300\">" + "Created at: " + item.getCreatedAt()+"</p>";
+                    l.setToolTipText("<html>" + name + id + password + players + createdAt +"</html>");
+                }
+            }
+        });
+    }
+
+    private void broadcastMessage() {
+        if (!this.server.isRunning()) return;
+        String message = gui.getTbxMessage().getText();
+        ITransferable msg = TransferableObjectFactory.CreateMessage("Server: " + message);
+        server.broadcast(msg);
+        gui.getTbxMessage().setText("");
+        gui.getTraMessages().append("Server (broadcast): " + message + "\r\n");
+
     }
 }

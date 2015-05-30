@@ -1,5 +1,7 @@
 package de.hsbremen.battleshipextreme.server.view;
 
+import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
+import de.hsbremen.battleshipextreme.network.transfarableObject.Game;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -22,11 +24,15 @@ public class Gui extends JFrame {
     private GroupBox boxUsers;
     private GroupBox boxGames;
     private GroupBox boxMessages;
+    private DefaultListModel<ClientJListItem> userModel;
+    private DefaultListModel<Game> gameModel;
 
     public Gui() {
         super("Server Gui");
         this._initComponents();
         this._addComponents();
+        this.userModel = new DefaultListModel<ClientJListItem>();
+        this.gameModel = new DefaultListModel<Game>();
         setContentPane(pnlMain);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Dimension d = new Dimension(637, 500);
@@ -62,47 +68,95 @@ public class Gui extends JFrame {
         boxMessages.add(scrollPanelMessages);
 
         listUsers = new JList();
+        listUsers.setFixedCellWidth(256);
         scrollPanelUsers = new JScrollPane(listUsers);
 
         boxUsers = new GroupBox("Connected Users");
         boxUsers.add(scrollPanelUsers);
 
         listGames = new JList();
+        listGames.setFixedCellWidth(256);
         scrollPanelGames = new JScrollPane(listGames);
 
         boxGames = new GroupBox("Created Games");
         boxGames.add(scrollPanelGames);
 
         tbxMessage = new JTextField("");
+        tbxMessage.setEnabled(false);
         btnSend = new JButton("Send");
+        btnSend.setEnabled(false);
     }
 
-    public JPanel getPnlMain(){
+    public JPanel getPnlMain() {
         return pnlMain;
     }
 
-    public ServerControlBar getPnlServerControlBarPanel(){
+    public ServerControlBar getPnlServerControlBarPanel() {
         return pnlServerControlBarPanel;
     }
 
-    public JTextField getTbxMessage(){
+    public JTextField getTbxMessage() {
         return tbxMessage;
     }
 
-    public JButton getBtnSend(){
+    public JButton getBtnSend() {
         return btnSend;
     }
 
-    public JList getListUsers(){
+    public JList getListUsers() {
         return listUsers;
     }
 
-    public JList getListGames(){
+    public JList getListGames() {
         return listGames;
     }
 
-    public JTextArea getTraMessages(){
+    public JTextArea getTraMessages() {
         return traMessages;
+    }
+
+    public void addUserToUserList(ClientJListItem item) {
+        this.userModel.addElement(item);
+        getListUsers().setModel(this.userModel);
+    }
+
+    public void removeUserFromUserList(ClientInfo item) {
+        for (int i = 0; i < userModel.getSize(); i++) {
+            String ip = userModel.getElementAt(i).getIp();
+            int port = userModel.getElementAt(i).getPort();
+            if (ip.equals(item.getIp()) && port == item.getPort()) {
+                userModel.remove(i);
+            }
+        }
+    }
+
+    public void setControlsEnabledAfterStartStop(boolean state) {
+        this.pnlServerControlBarPanel.setEnabledAfterStartStop(state);
+        btnSend.setEnabled(!state);
+        tbxMessage.setEnabled(!state);
+    }
+
+    public DefaultListModel<ClientJListItem> getUserModel() {
+        return userModel;
+    }
+
+    public void addGameToGameList(Game item) {
+        this.gameModel.addElement(item);
+        getListGames().setModel(this.gameModel);
+    }
+
+    public void removeGameFromGameList(Game item) {
+        for (int i = 0; i < gameModel.getSize(); i++) {
+            String ip = gameModel.getElementAt(i).getId();
+            if (ip.equals(item.getId())) {
+                gameModel.remove(i);
+                break;
+            }
+        }
+    }
+
+    public DefaultListModel<Game> getGameModel() {
+        return gameModel;
     }
 }
 

@@ -192,6 +192,7 @@ public class ServerDispatcher extends Thread implements IDisposable {
             for(ClientHandler client : game.getJoinedPlayers()){
                 if (client == handler) {
                     game.addTurn(turn);
+                    turn.setGameId(game.getId());
                     gameFound = true;
                     break;
                 }
@@ -201,7 +202,8 @@ public class ServerDispatcher extends Thread implements IDisposable {
                 break;
             }
         }
-        objectReceived(new EventArgs<ITransferable>(this, receivedObject));
+
+        objectReceived(new EventArgs<ITransferable>(this, turn));
     }
 
     public void assignClientToGame(ClientHandler clientHandler, ITransferable receivedObject) {

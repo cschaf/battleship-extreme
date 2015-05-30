@@ -10,7 +10,6 @@ import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListen
  */
 public class ErrorListener implements IErrorListener {
 
-    @Override
     public void onError(EventArgs<ITransferable> eventArgs) {
         System.out.println(eventArgs.getItem());
     }

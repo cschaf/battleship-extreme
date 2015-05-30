@@ -1,4 +1,4 @@
-package de.hsbremen.battleshipextreme.server;
+package de.hsbremen.battleshipextreme.server.view;
 
 import java.awt.*;
 import java.io.Serializable;

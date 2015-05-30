@@ -47,16 +47,16 @@ public class Sender extends Thread implements IDisposable {
             this.out.flush();
 
             // Game
-/*            Settings settings = new Settings(1,1,0,5,1,0,0,0);
+            Settings settings = new Settings(2,0,0,10,1,0,0,0);
             ITransferable game = TransferableObjectFactory.CreateGame("Game 1", settings);
             this.out.writeObject(game);
-            this.out.flush();*/
+            this.out.flush();
 
             // Turn
             Player from = new HumanPlayer(5,1,0,0,0);
             Player to = new HumanPlayer(5,1,0,0,0);;
-            ITransferable game = TransferableObjectFactory.CreateTurn(from, to, 0,0, Orientation.Horizontal);
-            this.out.writeObject(game);
+            ITransferable trun = TransferableObjectFactory.CreateTurn(from, to, 0,0, Orientation.Horizontal);
+            this.out.writeObject(trun);
             this.out.flush();
 
             while (!isInterrupted() && !this.disposed) {
@@ -70,6 +70,12 @@ public class Sender extends Thread implements IDisposable {
         } catch (IOException ioe) {
             this.dispose();
             // Communication is broken
+        } catch (InvalidNumberOfShipsException e) {
+            e.printStackTrace();
+        } catch (InvalidPlayerNumberException e) {
+            e.printStackTrace();
+        } catch (BoardTooSmallException e) {
+            e.printStackTrace();
         }
     }
 

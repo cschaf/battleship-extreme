@@ -29,6 +29,7 @@ public class Server implements IDisposable {
     private ArrayList<IClientObjectReceivedListener> tempClientObjectReceivedListeners;
     private ArrayList<IServerListener> tempServerListeners;
     private ErrorHandler errorHandler;
+    private boolean isRunning;
 
     public Server(int port) {
         this.listeners = new EventListenerList();
@@ -37,14 +38,17 @@ public class Server implements IDisposable {
         this.tempClientConnectionListeners = new ArrayList<IClientConnectionListener>();
         this.tempServerListeners = new ArrayList<IServerListener>();
         this.port = port;
+        this.isRunning = false;
     }
 
     public void start() {
         try {
             serverSocket = new ServerSocket(port);
+            this.isRunning = true;
         } catch (IOException e) {
             errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Can not start listening on port " + port)));
             this.dispose();
+            this.isRunning = false;
             System.exit(-1);
         }
         // Start ServerDispatcher thread
@@ -70,6 +74,14 @@ public class Server implements IDisposable {
 
     public void stop() {
         this.dispose();
+        this.isRunning = false;
+    }
+
+    public void unicast(){
+    }
+
+    public void broadcast(ITransferable object){
+        this.serverDispatcher.broadcast(object, null);
     }
 
     public void addClientObjectReceivedListener(IClientObjectReceivedListener listener) {
@@ -131,5 +143,9 @@ public class Server implements IDisposable {
         } catch (IOException e) {
             errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Can not dispose Server")));
         }
+    }
+
+    public boolean isRunning() {
+        return isRunning;
     }
 }

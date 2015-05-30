@@ -26,7 +26,7 @@ public class Game extends TransferableObject {
         this.settings = settings;
         this.joinedPlayers = new ArrayList<ClientHandler>();
         this.maxPlayers = 6;
-        this.password = null;
+        this.password = "";
         this.isPrivate = false;
         this.turns = new ArrayList<Turn>();
     }
@@ -95,5 +95,10 @@ public class Game extends TransferableObject {
 
     public String getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return getName()+ " (" + this.getJoinedPlayers().size() + "/ 6)";
     }
 }

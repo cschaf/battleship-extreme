@@ -12,7 +12,6 @@ public class Join extends TransferableObject {
         this.gameId = gameId;
     }
 
-    @Override
     public TransferableType getType() {
         return TransferableType.Join;
     }
