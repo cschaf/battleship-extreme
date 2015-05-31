@@ -26,6 +26,7 @@ public class Game implements Serializable {
 	private int turnNumber;
 	private int roundNumber;
 	private int boardSize;
+	private GameState state;
 
 	public Game() {
 	}
@@ -54,6 +55,8 @@ public class Game implements Serializable {
 		boardSize = settings.getBoardSize();
 		turnNumber = 0;
 		currentPlayer = players[0];
+
+		state = GameState.PLACEMENT_PHASE;
 	}
 
 	private void createPlayers(Settings settings) {
@@ -112,6 +115,7 @@ public class Game implements Serializable {
 			x = xPos + i * xDirection;
 			y = yPos + i * yDirection;
 			boolean isShotPossible = enemy.markBoard(x, y);
+			System.out.println("range" + currentPlayer.getCurrentShip() + currentPlayer.getCurrentShip().getShootingRange());
 			if (i == 0) {
 				if (!isShotPossible) {
 					// erstes Feld belegt, Schuss nicht möglich
@@ -254,6 +258,15 @@ public class Game implements Serializable {
 		return enemies;
 	}
 
+	public Player getPlayerByName(String name) {
+		for (Player player : players) {
+			if (player.getName().equals(name)) {
+				return player;
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Returns true if the ships of all players have been placed. The method is
 	 * used to determine if a game is ready to start.
@@ -311,5 +324,13 @@ public class Game implements Serializable {
 
 	public int getBoardSize() {
 		return boardSize;
+	}
+
+	public GameState getState() {
+		return state;
+	}
+
+	public void setState(GameState state) {
+		this.state = state;
 	}
 }

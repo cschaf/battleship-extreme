@@ -15,6 +15,7 @@ import de.hsbremen.battleshipextreme.model.ship.Corvette;
 import de.hsbremen.battleshipextreme.model.ship.Destroyer;
 import de.hsbremen.battleshipextreme.model.ship.Frigate;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
+import de.hsbremen.battleshipextreme.model.ship.ShipType;
 import de.hsbremen.battleshipextreme.model.ship.Submarine;
 
 public abstract class Player implements Serializable {
@@ -285,4 +286,37 @@ public abstract class Player implements Serializable {
 	public void setType(PlayerType type) {
 		this.type = type;
 	}
+
+	public int getShipCount(ShipType shipType) {
+		int numberOfOccurences = 0;
+		for (Ship ship : ships) {
+			if (ship.getType() == shipType) {
+				if (!ship.isDestroyed() && ship.isPlaced()) {
+					numberOfOccurences++;
+				}
+			}
+		}
+		return numberOfOccurences;
+	}
+
+	public boolean setCurrentShipByType(ShipType shipType) {
+		ArrayList<Ship> availableShips = getAvailableShips(true);
+		for (Ship ship : availableShips) {
+			if (ship.getType() == shipType) {
+				currentShip = ship;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isShipOfTypeAvailable(ShipType shipType) {
+		for (Ship ship : ships) {
+			if (ship.getType() == shipType) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

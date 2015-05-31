@@ -332,6 +332,10 @@ public class GamePanel extends JPanel {
 		return comboBoxEnemySelection;
 	}
 
+	public void setComboBoxEnemySelection(JComboBox comboBoxEnemySelection) {
+		this.comboBoxEnemySelection = comboBoxEnemySelection;
+	}
+
 	public JButton getButtonApplyEnemy() {
 		return buttonApplyEnemy;
 	}
