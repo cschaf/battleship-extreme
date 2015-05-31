@@ -75,12 +75,17 @@ public class Server implements IDisposable {
     }
 
     public void stop() {
+        this.serverDispatcher.getGames().removeAllElements();
         this.dispose();
         this.isRunning = false;
     }
 
     public Vector<Game> getGames(){
         return this.serverDispatcher.getGames();
+    }
+
+    public Vector<ClientHandler> getClients(){
+        return this.serverDispatcher.getClients();
     }
 
     public void broadcast(ITransferable object){
@@ -150,5 +155,15 @@ public class Server implements IDisposable {
 
     public boolean isRunning() {
         return isRunning;
+    }
+
+    public void kickClient(String ip, int port) {
+        ClientHandler client = serverDispatcher.getClient(ip, port);
+        this.serverDispatcher.deleteClient(client);
+    }
+
+    public void banClient(String ip, int port) {
+        ClientHandler client = serverDispatcher.getClient(ip, port);
+        this.serverDispatcher.banClient(client);
     }
 }

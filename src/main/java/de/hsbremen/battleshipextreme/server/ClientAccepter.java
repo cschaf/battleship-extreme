@@ -39,6 +39,12 @@ public class ClientAccepter extends Thread implements IDisposable {
                     clientHandler.setClientSender(clientSender);
                     clientListener.start();
                     clientSender.start();
+                    boolean isBannded = serverDispatcher.isBanned(socket.getInetAddress().getHostAddress());
+                    if (isBannded){
+                        serverDispatcher.unicast(TransferableObjectFactory.CreateMessage("You are banned from this server!"), clientHandler);
+                        clientHandler.dispose();
+                        continue;
+                    }
                     serverDispatcher.addClient(clientHandler);
                 }
             } catch (IOException e) {

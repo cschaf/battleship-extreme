@@ -23,6 +23,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
     private Vector<ClientHandler> clients;
     private Vector<ITransferable> objectQueue;
     private Vector<Game> games;
+    private Vector<String> banList;
     private boolean disposed;
     private ErrorHandler errorHandler;
     private int maxPlayers;
@@ -37,6 +38,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         this.clients = new Vector<ClientHandler>();
         this.objectQueue = new Vector<ITransferable>();
         this.games = new Vector<Game>();
+        this.banList = new Vector<String>();
     }
 
     public Vector<ClientHandler> getClients() {
@@ -61,16 +63,18 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
             clientHasDisconnected(new EventArgs<ITransferable>(this, user));
         }
         boolean found = false;
-        for (Game game: this.games){
-            for (int i= 0; i<game.getJoinedPlayers().size(); i++) {
-                    if (game.getJoinedPlayers().get(i) == clientHandler){
-                        game.getJoinedPlayers().remove(i);
-                        found = true;
-                        break;
-                    }
+        for (Game game : this.games) {
+            for (int i = 0; i < game.getJoinedPlayers().size(); i++) {
+                if (game.getJoinedPlayers().get(i) == clientHandler) {
+                    game.getJoinedPlayers().remove(i);
+                    found = true;
+                    break;
+                }
             }
-            if (found) break;
-
+            if (found) {
+                clientHandler.dispose();
+                break;
+            }
         }
     }
 
@@ -258,6 +262,11 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         }
     }
 
+    public void banClient(ClientHandler client) {
+        this.banList.add(client.getSocket().getInetAddress().getHostAddress());
+        this.deleteClient(client);
+    }
+
     public int getMaxGames() {
         return maxGames;
     }
@@ -268,5 +277,27 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     public Vector<Game> getGames() {
         return games;
+    }
+
+    public Vector<String> getBanList() {
+        return banList;
+    }
+
+    public boolean isBanned(String hostAddress) {
+        for (int i = 0; i < banList.size(); i++) {
+            if (hostAddress.equals(banList.get(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public ClientHandler getClient(String ip, int port) {
+        for (ClientHandler client : getClients()) {
+            if (client.getSocket().getInetAddress().getHostAddress().equals(ip) && client.getSocket().getPort() == port) {
+                return client;
+            }
+        }
+        return null;
     }
 }

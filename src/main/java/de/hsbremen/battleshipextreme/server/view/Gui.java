@@ -18,11 +18,6 @@ public class Gui extends JFrame {
     private JButton btnSend;
     private JScrollPane scrollPanelUsers;
     private JList listUsers;
-
-    public JScrollPane getScrollPanelGames() {
-        return scrollPanelGames;
-    }
-
     private JScrollPane scrollPanelGames;
     private JList listGames;
     private JTextArea traMessages;
@@ -34,6 +29,10 @@ public class Gui extends JFrame {
     private DefaultListModel<Game> gameModel;
     private JPopupMenu userPopupMenu;
     private JPopupMenu gamePopupMenu;
+    private JMenuItem closeMenuItem;
+    private JMenuItem detailsMenuItem;
+    private JMenuItem kickMenuItem;
+    private JMenuItem banMenuItem;
 
     public Gui() {
         super("Server Gui");
@@ -95,12 +94,16 @@ public class Gui extends JFrame {
         btnSend.setEnabled(false);
 
         this.userPopupMenu = new JPopupMenu();
-        this.userPopupMenu.add(new JMenuItem("Kick"));
-        this.userPopupMenu.add(new JMenuItem("Ban"));
+        this.kickMenuItem = new JMenuItem("Kick");
+        this.userPopupMenu.add(this.kickMenuItem);
+        this.banMenuItem = new JMenuItem("Ban");
+        this.userPopupMenu.add(banMenuItem);
 
         this.gamePopupMenu = new JPopupMenu();
-        this.gamePopupMenu.add(new JMenuItem("Close"));
-        this.gamePopupMenu.add(new JMenuItem("Details"));
+        this.closeMenuItem = new JMenuItem("Close");
+        this.gamePopupMenu.add(closeMenuItem);
+        this.detailsMenuItem = new JMenuItem("Details");
+        this.gamePopupMenu.add(detailsMenuItem);
     }
 
     public JPanel getPnlMain() {
@@ -181,6 +184,29 @@ public class Gui extends JFrame {
 
     public JPopupMenu getGamePopupMenu() {
         return gamePopupMenu;
+    }
+
+    public JScrollPane getScrollPanelGames() {
+        return scrollPanelGames;
+    }
+
+    public JMenuItem getDetailsMenuItem() {
+        return detailsMenuItem;
+    }
+
+    public JMenuItem getKickMenuItem() {
+        return kickMenuItem;
+    }
+
+    public JMenuItem getBanMenuItem() {
+        return banMenuItem;
+    }
+
+    public JMenuItem getCloseMenuItem() {
+        return closeMenuItem;
+    }
+    public JScrollPane getScrollPanelUsers() {
+        return scrollPanelUsers;
     }
 
 }

@@ -47,16 +47,13 @@ public class ServerController {
         server.addClientConnectionListener(new IClientConnectionListener() {
             public void onClientHasConnected(EventArgs<ITransferable> eventArgs) {
                 gui.getTraMessages().append(eventArgs.getItem() + "\r\n");
-
             }
 
             public void onClientHasDisconnected(EventArgs<ITransferable> eventArgs) {
                 ClientInfo client = (ClientInfo) eventArgs.getItem();
                 gui.removeUserFromUserList(client);
                 gui.getTraMessages().append(client.getUsername() + ":" + client.getPort() + " has left\r\n");
-                gui.getListGames().setListData(server.getGames());
-                gui.getScrollPanelGames().revalidate();
-                gui.getScrollPanelGames().repaint();
+                refreshGameList();
             }
         });
 
@@ -71,6 +68,7 @@ public class ServerController {
                         Game game = (Game) receivedObject;
                         gui.addGameToGameList(game);
                         gui.getTraMessages().append("New Game was added, " + game.getName() + "(" + game.getId() + ")" + "\r\n");
+                        refreshGameList();
                         break;
                     case Turn:
                         Turn turn = (Turn) receivedObject;
@@ -98,6 +96,18 @@ public class ServerController {
         });
     }
 
+    private void refreshGameList() {
+        gui.getListGames().setListData(server.getGames());
+        gui.getScrollPanelGames().revalidate();
+        gui.getScrollPanelGames().repaint();
+    }
+
+    private void refreshUserList() {
+        gui.getListUsers().setListData(server.getClients());
+        gui.getScrollPanelUsers().revalidate();
+        gui.getScrollPanelUsers().repaint();
+    }
+
     private void addGuiEvents() {
         this.gui.getPnlServerControlBarPanel().getBtnStart().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -112,6 +122,7 @@ public class ServerController {
                 gui.setControlsEnabledAfterStartStop(true);
                 gui.getUserModel().removeAllElements();
                 gui.getGameModel().removeAllElements();
+                refreshGameList();
             }
         });
         this.gui.addWindowListener(new WindowListener() {
@@ -220,6 +231,34 @@ public class ServerController {
                         == gui.getListGames().getSelectedIndex()) {       //   inside selected item bounds
                     gui.getGamePopupMenu().show(gui.getListGames(), me.getX(), me.getY());
                 }
+            }
+        });
+
+        gui.getKickMenuItem().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ClientJListItem client = (ClientJListItem) gui.getListUsers().getSelectedValue();
+                server.kickClient(client.getIp(), client.getPort());
+                refreshUserList();
+            }
+        });
+
+        gui.getBanMenuItem().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ClientJListItem client = (ClientJListItem) gui.getListUsers().getSelectedValue();
+                server.banClient(client.getIp(), client.getPort());
+                refreshUserList();
+            }
+        });
+
+        gui.getCloseMenuItem().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                refreshGameList();
+            }
+        });
+
+        gui.getDetailsMenuItem().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                refreshGameList();
             }
         });
     }
