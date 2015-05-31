@@ -38,22 +38,21 @@ public class Settings {
 		this.submarines = 1;
 	}
 
-	public Settings(int players, int aiPlayers, int dumbAiPlayers,
-			int boardSize, int destroyers, int frigates, int corvettes,
-			int submarines) throws BoardTooSmallException,
-			InvalidPlayerNumberException, InvalidNumberOfShipsException {
-		validateNumberOfPlayers(players, aiPlayers, dumbAiPlayers);
-		validateNumberOfShips(destroyers, corvettes, frigates, submarines);
-		validateFieldSize(boardSize, destroyers, corvettes, frigates,
-				submarines);
+	public Settings(int players, int smartAiPlayers, int dumbAiPlayers, int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 		this.players = players;
-		this.smartAiPlayers = aiPlayers;
+		this.smartAiPlayers = smartAiPlayers;
 		this.dumbAiPlayers = dumbAiPlayers;
 		this.boardSize = boardSize;
 		this.destroyers = destroyers;
 		this.frigates = frigates;
 		this.corvettes = corvettes;
 		this.submarines = submarines;
+	}
+
+	public void validate() throws InvalidPlayerNumberException, InvalidNumberOfShipsException, BoardTooSmallException {
+		validateNumberOfPlayers(players, smartAiPlayers, dumbAiPlayers);
+		validateNumberOfShips(destroyers, corvettes, frigates, submarines);
+		validateFieldSize(boardSize, destroyers, corvettes, frigates, submarines);
 	}
 
 	public int getSmartAiPlayers() {
@@ -112,16 +111,12 @@ public class Settings {
 		this.submarines = submarines;
 	}
 
-	public static int getRequiredFields(int destroyers, int corvettes,
-			int frigates, int submarines) {
-		int requiredFields = destroyers * ((Settings.DESTROYER_SIZE + 1) * 2)
-				+ corvettes * ((Settings.DESTROYER_SIZE + 1) * 2) + frigates
-				* ((Settings.FRIGATE_SIZE + 1) * 2) + submarines
+	public static int getRequiredFields(int destroyers, int corvettes, int frigates, int submarines) {
+		int requiredFields = destroyers * ((Settings.DESTROYER_SIZE + 1) * 2) + corvettes * ((Settings.DESTROYER_SIZE + 1) * 2) + frigates * ((Settings.FRIGATE_SIZE + 1) * 2) + submarines
 				* ((Settings.SUBMARINE_SIZE + 1) * 2);
 		// Felder die leer sein sollen addieren
 		if (MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY > 0)
-			requiredFields += (int) Math
-					.floor((requiredFields / MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY));
+			requiredFields += (int) Math.floor((requiredFields / MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY));
 		return requiredFields;
 	}
 
@@ -133,26 +128,20 @@ public class Settings {
 			return size;
 	}
 
-	private void validateFieldSize(int boardSize, int destroyers,
-			int corvettes, int frigates, int submarines)
-			throws BoardTooSmallException {
-		int requiredFields = getRequiredFields(destroyers, corvettes, frigates,
-				submarines);
+	private void validateFieldSize(int boardSize, int destroyers, int corvettes, int frigates, int submarines) throws BoardTooSmallException {
+		int requiredFields = getRequiredFields(destroyers, corvettes, frigates, submarines);
 		int requiredBoardSize = getRequiredBoardSize(requiredFields);
-		if ((boardSize < requiredBoardSize) || (boardSize < MIN_BOARD_SIZE)
-				|| (boardSize > MAX_BOARD_SIZE))
+		if ((boardSize < requiredBoardSize) || (boardSize < MIN_BOARD_SIZE) || (boardSize > MAX_BOARD_SIZE))
 			throw new BoardTooSmallException();
 	}
 
-	private void validateNumberOfPlayers(int players, int smartAiPlayers,
-			int dumbAiPlayers) throws InvalidPlayerNumberException {
+	private void validateNumberOfPlayers(int players, int smartAiPlayers, int dumbAiPlayers) throws InvalidPlayerNumberException {
 		int numberOfPlayers = players + smartAiPlayers + dumbAiPlayers;
 		if ((numberOfPlayers < MIN_PLAYERS) || (numberOfPlayers > MAX_PLAYERS))
 			throw new InvalidPlayerNumberException(MIN_PLAYERS, MAX_PLAYERS);
 	}
 
-	private void validateNumberOfShips(int destroyers, int corvettes,
-			int frigates, int submarines) throws InvalidNumberOfShipsException {
+	private void validateNumberOfShips(int destroyers, int corvettes, int frigates, int submarines) throws InvalidNumberOfShipsException {
 		if (destroyers + corvettes + frigates + submarines <= 0)
 			throw new InvalidNumberOfShipsException();
 	}

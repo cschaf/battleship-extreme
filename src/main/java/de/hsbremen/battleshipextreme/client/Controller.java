@@ -1,61 +1,47 @@
 package de.hsbremen.battleshipextreme.client;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import de.hsbremen.battleshipextreme.model.Game;
+import de.hsbremen.battleshipextreme.model.Orientation;
+import de.hsbremen.battleshipextreme.model.Settings;
+import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
+import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.player.Player;
 
 public class Controller {
-	
+
 	private Game game;
 	private GUI gui;
-	
-	public Controller(Game game, GUI gui) {
+
+	public Controller(Game game) {
 		this.game = game;
-		this.gui = gui;
-		
-		gui.getPanelSettings().getTextFieldPlayers().setText(String.valueOf(game.getPlayers().length));
-		gui.getPanelSettings().getTextFieldDestroyers().setText("1");
-		gui.getPanelSettings().getTextFieldFrigates().setText("1");
-		gui.getPanelSettings().getTextFieldCorvettes().setText("1");
-		gui.getPanelSettings().getTextFieldSubmarines().setText("1");
-		gui.getPanelSettings().getTextFieldBoardSize().setText(String.valueOf(game.getBoardSize()));
-		
-		initEvents();
+		gui = new GUI(this, game);
+		gui.createView();
+		gui.createControls();
 	}
-	
-	private void initEvents() {
-		
-		gui.getMenuItemQuitGame().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
-		
-		gui.getPanelMainMenu().getButtonLocalGame().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				gui.showPanel(GUI.SETTINGS_PANEL);
-			}
-		});
-		
-		gui.getPanelSettings().getButtonApplySettings().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				if (areSettingsOK()) {
-					int size = Integer.parseInt(gui.getPanelSettings().getTextFieldBoardSize().getText().toString());
-					gui.getPanelGame().setPanelEnemyBoard(new BoardPanel("Enemy Board", size));
-					gui.getPanelGame().setPanelPlayerBoard(new BoardPanel("Your Board", size));
-					
-					gui.showPanel(GUI.GAME_PANEL);
-				}
-				
-			}
-		});
+
+	public void initializeGame(Settings settings) {
+		game.initialize(settings);
+		gui.createPlayerBoards(settings.getBoardSize());
+		gui.showPanel(GUI.GAME_PANEL);
 	}
-	
-	private boolean areSettingsOK() {
-		
-		return true;
+
+	public void ownBoardClicked(int xPos, int yPos, boolean isHorizontal) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException {
+		Orientation orientation = isHorizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+		System.out.println("gameready" + game.isReady());
+		if (!game.isReady()) {
+			Player currentPlayer = game.getCurrentPlayer();
+			currentPlayer.placeShip(xPos, yPos, orientation);
+			System.out.println("" + currentPlayer.getCurrentShip() + currentPlayer.getCurrentShip().isPlaced());
+			currentPlayer.nextShip();
+			System.out.println("" + currentPlayer.getCurrentShip() + currentPlayer.getCurrentShip().isPlaced());
+			if (currentPlayer.hasPlacedAllShips()) {
+				game.nextPlayer();
+			}
+		} else {
+			System.out.println("allShipsPlaced");
+		}
+		gui.updateBoard(true);
 	}
 
 }

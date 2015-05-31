@@ -72,15 +72,17 @@ class ConsoleGame {
 		// Spiel mit manuellen Einstellungen erzeugen
 		Settings settings = createSettings();
 		if (settings != null) {
-			game = new Game(settings);
+			game = new Game();
+			game.initialize(settings);
 			placeShips();
 		}
 	}
 
 	private void createAiGame(int numberOfSmartAis, int numberOfDumbAis) {
 		Settings settings = null;
+		settings = new Settings(0, numberOfSmartAis, numberOfDumbAis, 10, 1, 1, 1, 1);
 		try {
-			settings = new Settings(0, numberOfSmartAis, numberOfDumbAis, 10, 1, 1, 1, 1);
+			settings.validate();
 		} catch (BoardTooSmallException e) {
 			e.printStackTrace();
 		} catch (InvalidPlayerNumberException e) {
@@ -90,7 +92,8 @@ class ConsoleGame {
 		}
 
 		if (settings != null) {
-			game = new Game(settings);
+			game = new Game();
+			game.initialize(settings);
 			placeShips();
 		}
 	}
@@ -180,8 +183,11 @@ class ConsoleGame {
 			System.out.println("Die ermittelte Mindeströße des Boards übersteigt die maximale Größe von " + Settings.MAX_BOARD_SIZE + "!");
 		}
 
+		Settings settings = new Settings(players, aiPlayers, 0, boardSize, destroyers, frigates, corvettes, submarines);
+
 		try {
-			return new Settings(players, aiPlayers, 0, boardSize, destroyers, frigates, corvettes, submarines);
+			settings.validate();
+			return settings;
 		} catch (BoardTooSmallException e1) {
 			System.out.println("Das Board ist zu klein!");
 		} catch (InvalidPlayerNumberException e) {

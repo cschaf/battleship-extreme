@@ -36,80 +36,80 @@ public class GamePanel extends JPanel {
 	private JTextArea textAreaChatLog;
 	private JTextField textFieldChatMessage;
 	private JButton buttonSendMessage;
-	
+
 	private JLabel[] labelShipCount;
 	private JLabel[][] labelShip;
 	private JRadioButton[] radioButtonShipSelection;
 
-	//////////////////////////////////////////////////////////////////
+	// ////////////////////////////////////////////////////////////////
 	// Constructor
-	//////////////////////////////////////////////////////////////////
-	
-	public GamePanel(int boardSize) {
-		
+	// ////////////////////////////////////////////////////////////////
+
+	public GamePanel() {
+
 		this.setLayout(new BorderLayout());
-		
+
 		// Panel fuer die Spielsteuerung
 		this.add(createNavigationPanel(), BorderLayout.WEST);
-		
+
 		// Panel fuer die eigentliche Spielflaeche
 		panelGameArea = new JPanel(new BorderLayout());
 		this.add(panelGameArea);
-		
+
 		// Panel fuer die beiden Boards
 		panelBoards = new JPanel(new GridLayout(1, 2));
-		
+
 		// Label fuer die Spielinformationen
 		labelInfo = new JLabel("Hier stehen aktuelle Spielinformationen!", SwingConstants.CENTER);
 		labelInfo.setFont(new Font("Tahoma", Font.BOLD, 24));
 		labelInfo.setBackground(Color.orange);
 		labelInfo.setOpaque(true);
 		panelGameArea.add(labelInfo, BorderLayout.NORTH);
-		
+
 		// Spielbrett fuer den Gegner
-		panelEnemyBoard = new BoardPanel("Enemy", boardSize);
+		panelEnemyBoard = new BoardPanel("Enemy");
 		panelBoards.add(panelEnemyBoard);
-		
+
 		// Spielbrett fuer den Player
-		panelPlayerBoard = new BoardPanel("Yours", boardSize);
+		panelPlayerBoard = new BoardPanel("Yours");
 		panelBoards.add(panelPlayerBoard);
-		
+
 		// Panel fuer mit den Boards hinzufügen
 		panelGameArea.add(panelBoards);
 	}
-	
-	//////////////////////////////////////////////////////////////////
+
+	// ////////////////////////////////////////////////////////////////
 	// create Panels
-	//////////////////////////////////////////////////////////////////
-	
+	// ////////////////////////////////////////////////////////////////
+
 	private JPanel createNavigationPanel() {
 		JPanel panel = new JPanel(new GridBagLayout());
-		
+
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.NORTHWEST;
 		c.fill = GridBagConstraints.BOTH;
-		
+
 		// ship selection
 		c.weightx = 1;
 		c.weighty = 0;
 		c.gridx = 0;
 		c.gridy = 0;
-		
+
 		panel.add(createShipSelectionPanel(), c);
-		
+
 		// orientation panel
 		c.gridy++;
 		panel.add(createOrientationPanel(), c);
-		
+
 		// enemy panel
 		c.gridy++;
 		panel.add(createEnemySelectionPanel(), c);
-		
+
 		// game log panel
 		c.gridy++;
 		c.weighty = 1;
 		panel.add(createGameLogPanel(), c);
-		
+
 		// chat panel
 		c.gridy++;
 		c.weighty = .5;
@@ -121,7 +121,7 @@ public class GamePanel extends JPanel {
 	private JPanel createShipSelectionPanel() {
 		JPanel panel = new JPanel(new GridBagLayout());
 		panel.setBorder(BorderFactory.createTitledBorder("Your Ships"));
-		
+
 		// GridBagLayout Einschränkungen
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
@@ -131,7 +131,7 @@ public class GamePanel extends JPanel {
 
 		// Labels für die Anzahl der Schiffe
 		labelShipCount = new JLabel[4];
-		
+
 		for (int i = 0; i < labelShipCount.length; i++) {
 			c.insets = new Insets(0, 3, 0, 5);
 			c.gridx = 0;
@@ -187,30 +187,30 @@ public class GamePanel extends JPanel {
 
 		return panel;
 	}
-	
+
 	private JPanel createOrientationPanel() {
 		JPanel panel = new JPanel(new GridLayout(1, 2));
 		panel.setBorder(BorderFactory.createTitledBorder("Orientation"));
-		
+
 		radioButtonHorizontalOrientation = new JRadioButton("Horizontal");
 		radioButtonVerticalOrientation = new JRadioButton("Vertical");
-		
+
 		ButtonGroup group = new ButtonGroup();
 		group.add(radioButtonHorizontalOrientation);
 		group.add(radioButtonVerticalOrientation);
-		
+
 		radioButtonHorizontalOrientation.setSelected(true);
-		
+
 		panel.add(radioButtonHorizontalOrientation);
 		panel.add(radioButtonVerticalOrientation);
-		
+
 		return panel;
 	}
-	
+
 	private JPanel createEnemySelectionPanel() {
 		JPanel panel = new JPanel(new GridBagLayout());
 		panel.setBorder(BorderFactory.createTitledBorder("Enemys"));
-		
+
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.NORTHWEST;
 		c.fill = GridBagConstraints.BOTH;
@@ -218,38 +218,38 @@ public class GamePanel extends JPanel {
 		c.weighty = 0;
 		c.gridx = 0;
 		c.gridy = 0;
-		
+
 		comboBoxEnemySelection = new JComboBox();
 		panel.add(comboBoxEnemySelection, c);
-		
+
 		c.weightx = 0;
 		c.gridx++;
 		buttonApplyEnemy = new JButton("OK");
 		panel.add(buttonApplyEnemy, c);
-		
+
 		return panel;
 	}
-	
+
 	private JPanel createGameLogPanel() {
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.setBorder(BorderFactory.createTitledBorder("Game log"));
-		
+
 		textAreaGameLog = new JTextArea();
 		textAreaGameLog.setEditable(false);
 		textAreaGameLog.setRows(6);
 		textAreaGameLog.setLineWrap(true);
 		textAreaGameLog.setWrapStyleWord(true);
-		
+
 		JScrollPane scroll = new JScrollPane(textAreaGameLog);
 		panel.add(scroll);
-		
+
 		return panel;
 	}
-	
+
 	private JPanel createChatPanel() {
 		JPanel panel = new JPanel(new GridBagLayout());
 		panel.setBorder(BorderFactory.createTitledBorder("Chat"));
-		
+
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
 		c.anchor = GridBagConstraints.NORTHWEST;
@@ -260,42 +260,42 @@ public class GamePanel extends JPanel {
 		c.weightx = 1;
 		c.weighty = 1;
 		c.gridwidth = 2;
-		
+
 		textAreaChatLog = new JTextArea();
 		textAreaChatLog.setEditable(false);
 		textAreaChatLog.setRows(4);
 		textAreaChatLog.setLineWrap(true);
 		textAreaChatLog.setWrapStyleWord(true);
-		
+
 		JScrollPane scroll = new JScrollPane(this.textAreaChatLog);
 		panel.add(scroll, c);
-		
+
 		// Chat Message
 		c.gridx = 0;
 		c.gridy = 1;
 		c.weightx = 1;
 		c.weighty = 0;
 		c.gridwidth = 1;
-		
+
 		textFieldChatMessage = new JTextField();
 		panel.add(textFieldChatMessage, c);
-		
+
 		// send Button
 		c.gridx = 1;
 		c.gridy = 1;
 		c.weightx = 0;
 		c.weighty = 0;
-		
+
 		buttonSendMessage = new JButton("send");
 		panel.add(buttonSendMessage, c);
-		
+
 		return panel;
 	}
 
-	//////////////////////////////////////////////////////////////////
+	// ////////////////////////////////////////////////////////////////
 	// get, set Components
-	//////////////////////////////////////////////////////////////////
-	
+	// ////////////////////////////////////////////////////////////////
+
 	public JLabel getLabelInfo() {
 		return labelInfo;
 	}
@@ -309,7 +309,7 @@ public class GamePanel extends JPanel {
 		this.panelEnemyBoard = panelEnemyBoard;
 		panelBoards.add(this.panelEnemyBoard);
 	}
-	
+
 	public BoardPanel getPanelPlayerBoard() {
 		return panelPlayerBoard;
 	}
@@ -319,7 +319,7 @@ public class GamePanel extends JPanel {
 		this.panelPlayerBoard = panelPlayerBoard;
 		panelBoards.add(this.panelPlayerBoard);
 	}
-	
+
 	public JRadioButton getRadioButtonHorizontalOrientation() {
 		return radioButtonHorizontalOrientation;
 	}
@@ -351,9 +351,9 @@ public class GamePanel extends JPanel {
 	public JButton getButtonSendMessage() {
 		return buttonSendMessage;
 	}
-	
+
 	/* Ship Count Labels */
-	
+
 	public JLabel getLabelDestroyerShipCount() {
 		return labelShipCount[0];
 	}
@@ -371,25 +371,25 @@ public class GamePanel extends JPanel {
 	}
 
 	/* Ship Labels */
-	
+
 	public JLabel[] getLabelDestroyer() {
 		return labelShip[0];
 	}
-	
+
 	public JLabel[] getLabelFrigate() {
 		return labelShip[1];
 	}
-	
+
 	public JLabel[] getLabelCorvette() {
 		return labelShip[2];
 	}
-	
+
 	public JLabel[] getLabelSubmarine() {
 		return labelShip[3];
 	}
-	
+
 	/* Radio Buttons */
-	
+
 	public JRadioButton getRadioButtonDestroyer() {
 		return radioButtonShipSelection[0];
 	}

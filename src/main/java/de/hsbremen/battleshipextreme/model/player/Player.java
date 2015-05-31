@@ -177,8 +177,10 @@ public abstract class Player implements Serializable {
 	 */
 	public void nextShip() {
 		int currentShipIndex = Arrays.asList(this.ships).indexOf(this.currentShip);
-		currentShipIndex = (currentShipIndex >= this.ships.length - 1) ? currentShipIndex = 0 : currentShipIndex + 1;
-		this.currentShip = this.ships[currentShipIndex];
+		if (currentShipIndex < ships.length - 1) {
+			currentShipIndex++;
+			currentShip = ships[currentShipIndex];
+		}
 	}
 
 	/**

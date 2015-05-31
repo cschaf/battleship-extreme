@@ -27,13 +27,23 @@ public class Game implements Serializable {
 	private int roundNumber;
 	private int boardSize;
 
+	public Game() {
+	}
+
+	/**
+	 * This constructor is used when a game is loaded.
+	 */
+	public Game(String pathToSaveGame) throws Exception {
+		load(pathToSaveGame);
+	}
+
 	/**
 	 * Reads the settings and initializes the necessary game objects.
 	 * 
 	 * @param settings
 	 *            the game settings.
 	 */
-	public Game(Settings settings) {
+	public void initialize(Settings settings) {
 		createPlayers(settings);
 
 		// Spielernummern setzen
@@ -44,13 +54,6 @@ public class Game implements Serializable {
 		boardSize = settings.getBoardSize();
 		turnNumber = 0;
 		currentPlayer = players[0];
-	}
-
-	/**
-	 * This constructor is used when a game is loaded.
-	 */
-	public Game(String pathToSaveGame) throws Exception {
-		load(pathToSaveGame);
 	}
 
 	private void createPlayers(Settings settings) {
