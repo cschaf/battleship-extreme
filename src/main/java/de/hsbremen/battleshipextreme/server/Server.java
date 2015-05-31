@@ -2,6 +2,7 @@ package de.hsbremen.battleshipextreme.server;
 
 import de.hsbremen.battleshipextreme.network.IDisposable;
 import de.hsbremen.battleshipextreme.network.ITransferable;
+import de.hsbremen.battleshipextreme.network.InfoSendingReason;
 import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 import de.hsbremen.battleshipextreme.network.eventhandling.ErrorHandler;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
@@ -15,6 +16,7 @@ import javax.swing.event.EventListenerList;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -92,6 +94,10 @@ public class Server implements IDisposable {
         this.serverDispatcher.broadcast(object, null);
     }
 
+    public void multicast(ITransferable transferableObject, List<ClientHandler> clients){
+
+    }
+
     public void addClientObjectReceivedListener(IClientObjectReceivedListener listener) {
         if (this.serverDispatcher == null) {
             tempClientObjectReceivedListeners.add(listener);
@@ -165,5 +171,22 @@ public class Server implements IDisposable {
     public void banClient(String ip, int port) {
         ClientHandler client = serverDispatcher.getClient(ip, port);
         this.serverDispatcher.banClient(client);
+    }
+
+    public void removeGame(Game game) {
+        for (int i = 0; i<serverDispatcher.getGames().size(); i++){
+            if (this.serverDispatcher.getGames().get(i).getId().equals(game.getId())){
+                this.serverDispatcher.getGames().remove(i);
+                break;
+            }
+        }
+    }
+
+    public void removeClientsFromGame(String gameId ) {
+        Game game = this.serverDispatcher.getGameById(gameId);
+        if (game != null){
+            ITransferable serverInfo =  TransferableObjectFactory.CreateServerInfo(InfoSendingReason.GameClosed);
+            serverDispatcher.multicast(serverInfo, game.getJoinedPlayers());
+        }
     }
 }

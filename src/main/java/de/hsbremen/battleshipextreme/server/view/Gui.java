@@ -2,11 +2,11 @@ package de.hsbremen.battleshipextreme.server.view;
 
 import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Game;
-import de.hsbremen.battleshipextreme.server.ClientHandler;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 /**
  * Created by cschaf on 14.05.2015.
@@ -29,15 +29,21 @@ public class Gui extends JFrame {
     private DefaultListModel<Game> gameModel;
     private JPopupMenu userPopupMenu;
     private JPopupMenu gamePopupMenu;
-    private JMenuItem closeMenuItem;
-    private JMenuItem detailsMenuItem;
-    private JMenuItem kickMenuItem;
-    private JMenuItem banMenuItem;
+    private JMenuItem gameCloseMenuItem;
+    private JMenuItem gameDetailsMenuItem;
+    private JMenuItem userKckMenuItem;
+    private JMenuItem userBanMenuItem;
+
+    private JMenuItem exitMenuItem;
+    private JMenuItem refreshUserMenuItem;
+    private JMenuItem refreshGamesMenuItem;
+
 
     public Gui() {
         super("Server Gui");
         this._initComponents();
         this._addComponents();
+        this._createMenuBar();
         this.userModel = new DefaultListModel<ClientJListItem>();
         this.gameModel = new DefaultListModel<Game>();
         setContentPane(pnlMain);
@@ -94,16 +100,45 @@ public class Gui extends JFrame {
         btnSend.setEnabled(false);
 
         this.userPopupMenu = new JPopupMenu();
-        this.kickMenuItem = new JMenuItem("Kick");
-        this.userPopupMenu.add(this.kickMenuItem);
-        this.banMenuItem = new JMenuItem("Ban");
-        this.userPopupMenu.add(banMenuItem);
+        this.userKckMenuItem = new JMenuItem("Kick");
+        this.userPopupMenu.add(this.userKckMenuItem);
+        this.userBanMenuItem = new JMenuItem("Ban");
+        this.userPopupMenu.add(userBanMenuItem);
 
         this.gamePopupMenu = new JPopupMenu();
-        this.closeMenuItem = new JMenuItem("Close");
-        this.gamePopupMenu.add(closeMenuItem);
-        this.detailsMenuItem = new JMenuItem("Details");
-        this.gamePopupMenu.add(detailsMenuItem);
+        this.gameCloseMenuItem = new JMenuItem("Close");
+        this.gamePopupMenu.add(gameCloseMenuItem);
+        this.gameDetailsMenuItem = new JMenuItem("Details");
+        this.gamePopupMenu.add(gameDetailsMenuItem);
+    }
+
+    private void _createMenuBar() {
+
+        JMenuBar menubar = new JMenuBar();
+        JMenu file = new JMenu("File");
+        file.setMnemonic(KeyEvent.VK_F);
+
+        exitMenuItem = new JMenuItem("Exit");
+        exitMenuItem.setMnemonic(KeyEvent.VK_E);
+        exitMenuItem.setToolTipText("Exit application");
+        file.add(exitMenuItem);
+        menubar.add(file);
+
+        JMenu user = new JMenu("Users");
+        user.setMnemonic(KeyEvent.VK_U);
+        refreshUserMenuItem = new JMenuItem("Refresh");
+        refreshUserMenuItem.setToolTipText("Refresh userlist");
+        user.add(refreshUserMenuItem);
+        menubar.add(user);
+
+        JMenu games = new JMenu("Games");
+        user.setMnemonic(KeyEvent.VK_G);
+        refreshGamesMenuItem = new JMenuItem("Refresh");
+        refreshGamesMenuItem.setToolTipText("Refresh gamelist");
+        games.add(refreshGamesMenuItem);
+        menubar.add(games);
+
+        setJMenuBar(menubar);
     }
 
     public JPanel getPnlMain() {
@@ -190,24 +225,35 @@ public class Gui extends JFrame {
         return scrollPanelGames;
     }
 
-    public JMenuItem getDetailsMenuItem() {
-        return detailsMenuItem;
+    public JMenuItem getGameDetailsMenuItem() {
+        return gameDetailsMenuItem;
     }
 
-    public JMenuItem getKickMenuItem() {
-        return kickMenuItem;
+    public JMenuItem getUserKickMenuItem() {
+        return userKckMenuItem;
     }
 
-    public JMenuItem getBanMenuItem() {
-        return banMenuItem;
+    public JMenuItem getUserBanMenuItem() {
+        return userBanMenuItem;
     }
 
-    public JMenuItem getCloseMenuItem() {
-        return closeMenuItem;
+    public JMenuItem getGameCloseMenuItem() {
+        return gameCloseMenuItem;
     }
     public JScrollPane getScrollPanelUsers() {
         return scrollPanelUsers;
     }
 
+    public JMenuItem getExitMenuItem() {
+        return exitMenuItem;
+    }
+
+    public JMenuItem getRefreshUserMenuItem() {
+        return refreshUserMenuItem;
+    }
+
+    public JMenuItem getRefreshGamesMenuItem() {
+        return refreshGamesMenuItem;
+    }
 }
 

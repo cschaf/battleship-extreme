@@ -102,9 +102,9 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         }
     }
 
-    public synchronized void multicast(ITransferable transferableObject, List<ClientHandler> excludedClients) {
-        for (int i = 0; i < excludedClients.size(); i++) {
-            ClientHandler clientHandler = excludedClients.get(i);
+    public synchronized void multicast(ITransferable transferableObject, List<ClientHandler> clients) {
+        for (int i = 0; i < clients.size(); i++) {
+            ClientHandler clientHandler = clients.get(i);
             clientHandler.getClientSender().addObjectToQueue(transferableObject);
         }
     }
@@ -267,6 +267,15 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         this.deleteClient(client);
     }
 
+    public void removeClientFromBanList(String ip) {
+        for (int i= 0; i<banList.size(); i++){
+            if (ip.equals(banList.get(i))){
+                banList.remove(i);
+                break;
+            }
+        }
+    }
+
     public int getMaxGames() {
         return maxGames;
     }
@@ -296,6 +305,15 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         for (ClientHandler client : getClients()) {
             if (client.getSocket().getInetAddress().getHostAddress().equals(ip) && client.getSocket().getPort() == port) {
                 return client;
+            }
+        }
+        return null;
+    }
+
+    public Game getGameById(String id){
+        for (int i= 0; i < getGames().size(); i++){
+            if (getGames().get(i).getId().equals(id)){
+                return getGames().get(i);
             }
         }
         return null;

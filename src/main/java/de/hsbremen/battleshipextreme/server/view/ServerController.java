@@ -103,7 +103,7 @@ public class ServerController {
     }
 
     private void refreshUserList() {
-        gui.getListUsers().setListData(server.getClients());
+        gui.getListUsers().setListData(gui.getUserModel().toArray());
         gui.getScrollPanelUsers().revalidate();
         gui.getScrollPanelUsers().repaint();
     }
@@ -234,7 +234,7 @@ public class ServerController {
             }
         });
 
-        gui.getKickMenuItem().addActionListener(new ActionListener() {
+        gui.getUserKickMenuItem().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 ClientJListItem client = (ClientJListItem) gui.getListUsers().getSelectedValue();
                 server.kickClient(client.getIp(), client.getPort());
@@ -242,7 +242,7 @@ public class ServerController {
             }
         });
 
-        gui.getBanMenuItem().addActionListener(new ActionListener() {
+        gui.getUserBanMenuItem().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 ClientJListItem client = (ClientJListItem) gui.getListUsers().getSelectedValue();
                 server.banClient(client.getIp(), client.getPort());
@@ -250,15 +250,38 @@ public class ServerController {
             }
         });
 
-        gui.getCloseMenuItem().addActionListener(new ActionListener() {
+        gui.getGameCloseMenuItem().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Game game = (Game) gui.getListGames().getSelectedValue();
+                server.removeClientsFromGame(game.getId());
+                server.removeGame(game);
+                refreshGameList();
+            }
+        });
+
+        gui.getGameDetailsMenuItem().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // TODO
+                refreshGameList();
+            }
+        });
+
+        gui.getExitMenuItem().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                server.dispose();
+                System.exit(0);
+            }
+        });
+
+        gui.getRefreshGamesMenuItem().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 refreshGameList();
             }
         });
 
-        gui.getDetailsMenuItem().addActionListener(new ActionListener() {
+        gui.getRefreshUserMenuItem().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                refreshGameList();
+                refreshUserList();
             }
         });
     }

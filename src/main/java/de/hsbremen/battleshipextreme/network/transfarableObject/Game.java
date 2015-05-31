@@ -1,6 +1,7 @@
 package de.hsbremen.battleshipextreme.network.transfarableObject;
 
 import de.hsbremen.battleshipextreme.model.Settings;
+import de.hsbremen.battleshipextreme.network.IDisposable;
 import de.hsbremen.battleshipextreme.network.TransferableType;
 import de.hsbremen.battleshipextreme.server.ClientHandler;
 
