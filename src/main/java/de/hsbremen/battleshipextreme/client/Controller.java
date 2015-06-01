@@ -44,6 +44,13 @@ public class Controller {
 		setShipSelectionEnabled(false);
 		setDoneButtonEnabled(false);
 		setInfoLabelMessage(game.getCurrentPlayer() + " is placing ships ");
+
+		// wenn erster Spieler AI ist, automatisch anfangen
+		if (game.getCurrentPlayer().getType() == PlayerType.SMART_AI) {
+			placeAiShips();
+			updatePlayerBoard();
+			setDoneButtonEnabled(true);
+		}
 	}
 
 	private void addMenuListeners() {
@@ -53,45 +60,57 @@ public class Controller {
 			}
 		});
 
-		gui.getPanelMainMenu().getButtonLocalGame().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				gui.showPanel(GUI.SETTINGS_PANEL);
-			}
-		});
+		gui.getPanelMainMenu().getButtonLocalGame()
+				.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						gui.showPanel(GUI.SETTINGS_PANEL);
+					}
+				});
 
-		gui.getPanelMainMenu().getButtonMultiplayerGame().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				gui.showPanel(GUI.SERVER_CONNECTION_PANEL);
-			}
-		});
+		gui.getPanelMainMenu().getButtonMultiplayerGame()
+				.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						gui.showPanel(GUI.SERVER_CONNECTION_PANEL);
+					}
+				});
 
-		gui.getPanelSettings().getButtonApplySettings().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				SettingsPanel panelSettings = gui.getPanelSettings();
-				int players = Integer.parseInt(panelSettings.getTextFieldPlayers().getText());
-				int aiPlayers = Integer.parseInt(panelSettings.getTextFieldAiPlayers().getText());
-				int dumbAiPlayers = 0;
-				int boardSize = Integer.parseInt(panelSettings.getTextFieldBoardSize().getText());
-				int destroyers = Integer.parseInt(panelSettings.getTextFieldDestroyers().getText());
-				int frigates = Integer.parseInt(panelSettings.getTextFieldFrigates().getText());
-				int corvettes = Integer.parseInt(panelSettings.getTextFieldCorvettes().getText());
-				int submarines = Integer.parseInt(panelSettings.getTextFieldSubmarines().getText());
-				Settings settings = new Settings(players, aiPlayers, dumbAiPlayers, boardSize, destroyers, frigates, corvettes, submarines);
-				try {
-					settings.validate();
-					initializeGame(settings);
-				} catch (InvalidPlayerNumberException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (InvalidNumberOfShipsException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (BoardTooSmallException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
+		gui.getPanelSettings().getButtonApplySettings()
+				.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						SettingsPanel panelSettings = gui.getPanelSettings();
+						int players = Integer.parseInt(panelSettings
+								.getTextFieldPlayers().getText());
+						int aiPlayers = Integer.parseInt(panelSettings
+								.getTextFieldAiPlayers().getText());
+						int dumbAiPlayers = 0;
+						int boardSize = Integer.parseInt(panelSettings
+								.getTextFieldBoardSize().getText());
+						int destroyers = Integer.parseInt(panelSettings
+								.getTextFieldDestroyers().getText());
+						int frigates = Integer.parseInt(panelSettings
+								.getTextFieldFrigates().getText());
+						int corvettes = Integer.parseInt(panelSettings
+								.getTextFieldCorvettes().getText());
+						int submarines = Integer.parseInt(panelSettings
+								.getTextFieldSubmarines().getText());
+						Settings settings = new Settings(players, aiPlayers,
+								dumbAiPlayers, boardSize, destroyers, frigates,
+								corvettes, submarines);
+						try {
+							settings.validate();
+							initializeGame(settings);
+						} catch (InvalidPlayerNumberException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (InvalidNumberOfShipsException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (BoardTooSmallException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+				});
 	}
 
 	private void createBoardPanels(int boardSize) {
@@ -111,14 +130,18 @@ public class Controller {
 
 	private void addPlayerBoardListener() {
 		final GamePanel panelGame = gui.getPanelGame();
-		JButton[][] playerBoard = panelGame.getPanelPlayerBoard().getButtonsField();
+		JButton[][] playerBoard = panelGame.getPanelPlayerBoard()
+				.getButtonsField();
 		for (int i = 0; i < playerBoard.length; i++) {
 			for (int j = 0; j < playerBoard.length; j++) {
 				playerBoard[i][j].addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						FieldButton fieldButton = (FieldButton) e.getSource();
 						try {
-							placeShip(fieldButton.getxPos(), fieldButton.getyPos(), panelGame.getRadioButtonHorizontalOrientation().isSelected());
+							placeShip(fieldButton.getxPos(), fieldButton
+									.getyPos(), panelGame
+									.getRadioButtonHorizontalOrientation()
+									.isSelected());
 						} catch (ShipAlreadyPlacedException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -137,15 +160,22 @@ public class Controller {
 
 	private void addEnemyBoardListener() {
 		final GamePanel panelGame = gui.getPanelGame();
-		JButton[][] playerBoard = panelGame.getPanelEnemyBoard().getButtonsField();
+		JButton[][] playerBoard = panelGame.getPanelEnemyBoard()
+				.getButtonsField();
 		for (int i = 0; i < playerBoard.length; i++) {
 			for (int j = 0; j < playerBoard.length; j++) {
 				playerBoard[i][j].addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						FieldButton fieldButton = (FieldButton) e.getSource();
 						try {
-							makeTurn(panelGame.getComboBoxEnemySelection().getSelectedItem() + "", fieldButton.getxPos(), fieldButton.getyPos(), panelGame.getRadioButtonHorizontalOrientation()
-									.isSelected());
+							makeTurn(
+									panelGame.getComboBoxEnemySelection()
+											.getSelectedItem() + "",
+									fieldButton.getxPos(),
+									fieldButton.getyPos(),
+									panelGame
+											.getRadioButtonHorizontalOrientation()
+											.isSelected());
 						} catch (FieldOutOfBoardException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -158,32 +188,37 @@ public class Controller {
 	}
 
 	private void addShipSelectionListeners() {
-		gui.getPanelGame().getRadioButtonDestroyer().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				selectShip(ShipType.DESTROYER);
-			}
-		});
-		gui.getPanelGame().getRadioButtonFrigate().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				selectShip(ShipType.FRIGATE);
-			}
-		});
-		gui.getPanelGame().getRadioButtonCorvette().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				selectShip(ShipType.CORVETTE);
-			}
-		});
-		gui.getPanelGame().getRadioButtonSubmarine().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				selectShip(ShipType.SUBMARINE);
-			}
-		});
+		gui.getPanelGame().getRadioButtonDestroyer()
+				.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						selectShip(ShipType.DESTROYER);
+					}
+				});
+		gui.getPanelGame().getRadioButtonFrigate()
+				.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						selectShip(ShipType.FRIGATE);
+					}
+				});
+		gui.getPanelGame().getRadioButtonCorvette()
+				.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						selectShip(ShipType.CORVETTE);
+					}
+				});
+		gui.getPanelGame().getRadioButtonSubmarine()
+				.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						selectShip(ShipType.SUBMARINE);
+					}
+				});
 
 	}
 
 	private void addEnemySelectionListener() {
 		GamePanel panelGame = gui.getPanelGame();
-		final JComboBox<String> enemyComboBox = panelGame.getComboBoxEnemySelection();
+		final JComboBox<String> enemyComboBox = panelGame
+				.getComboBoxEnemySelection();
 		enemyComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				updateEnemyBoard();
@@ -195,7 +230,7 @@ public class Controller {
 		GamePanel panelGame = gui.getPanelGame();
 		panelGame.getDoneButton().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				done();
+				next();
 			}
 		});
 	}
@@ -204,8 +239,11 @@ public class Controller {
 		game.getCurrentPlayer().setCurrentShipByType(shipType);
 	}
 
-	private void placeShip(int xPos, int yPos, boolean isHorizontal) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException {
-		Orientation orientation = isHorizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+	private void placeShip(int xPos, int yPos, boolean isHorizontal)
+			throws ShipAlreadyPlacedException, FieldOutOfBoardException,
+			ShipOutOfBoardException {
+		Orientation orientation = isHorizontal ? Orientation.HORIZONTAL
+				: Orientation.VERTICAL;
 		Player currentPlayer = game.getCurrentPlayer();
 
 		boolean possible = currentPlayer.placeShip(xPos, yPos, orientation);
@@ -222,8 +260,10 @@ public class Controller {
 		updateShipSelection();
 	}
 
-	private boolean makeTurn(String enemyName, int xPos, int yPos, boolean isHorizontal) throws FieldOutOfBoardException {
-		Orientation orientation = isHorizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+	private boolean makeTurn(String enemyName, int xPos, int yPos,
+			boolean isHorizontal) throws FieldOutOfBoardException {
+		Orientation orientation = isHorizontal ? Orientation.HORIZONTAL
+				: Orientation.VERTICAL;
 		boolean possible = false;
 
 		Player enemy = game.getPlayerByName(enemyName);
@@ -234,39 +274,36 @@ public class Controller {
 			setDoneButtonEnabled(true);
 			setInfoLabelMessage(game.getCurrentPlayer() + " attacked " + enemy);
 		}
-
-		if (game.isGameover()) {
-			setInfoLabelMessage(game.getWinner() + " won ");
-		}
 		return possible;
 	}
 
-	private void done() {
+	private void next() {
 		if (!game.isGameover()) {
 			if (!game.isReady()) {
 				if (game.getCurrentPlayer().hasPlacedAllShips()) {
 					game.nextPlayer();
-					setInfoLabelMessage(game.getCurrentPlayer() + " is placing ships");
+					setInfoLabelMessage(game.getCurrentPlayer()
+							+ " is placing ships");
 					if (game.getCurrentPlayer().getType() == PlayerType.SMART_AI) {
 						placeAiShips();
 					} else {
 						setPlayerBoardEnabled(true);
 						setDoneButtonEnabled(false);
 					}
-
 				}
 			} else {
 				game.nextPlayer();
 				if (game.getCurrentPlayer().areAllShipsReloading()) {
-					setInfoLabelMessage("All ships of " + game.getCurrentPlayer() + " are reloading");
+					setInfoLabelMessage("All ships of "
+							+ game.getCurrentPlayer() + " are reloading");
 					setEnemyBoardEnabled(false);
 					setShipSelectionEnabled(false);
-
 				} else {
 					if (game.getCurrentPlayer().getType() == PlayerType.SMART_AI) {
 						makeAiTurn();
 					} else {
-						setInfoLabelMessage(game.getCurrentPlayer() + " is shooting");
+						setInfoLabelMessage(game.getCurrentPlayer()
+								+ " is shooting");
 						enableAvailableShips();
 						selectFirstAvailableShipType();
 						setEnemyBoardEnabled(true);
@@ -277,6 +314,8 @@ public class Controller {
 			updatePlayerBoard();
 			updateShipSelection();
 			updateEnemySelection();
+		} else {
+			setInfoLabelMessage(game.getWinner() + " won ");
 		}
 	}
 
@@ -305,8 +344,10 @@ public class Controller {
 		}
 		AIPlayer ai = (AIPlayer) game.getCurrentPlayer();
 		Player currentEnemy = game.getPlayers()[ai.getCurrentEnemyIndex()];
-		gui.getPanelGame().getComboBoxEnemySelection().setSelectedItem(currentEnemy.getName());
-		setInfoLabelMessage(game.getCurrentPlayer() + " attacks" + currentEnemy);
+		gui.getPanelGame().getComboBoxEnemySelection()
+				.setSelectedItem(currentEnemy.getName());
+		setInfoLabelMessage(game.getCurrentPlayer() + " attacks "
+				+ currentEnemy);
 		updateEnemyBoard();
 	}
 
@@ -315,7 +356,8 @@ public class Controller {
 	}
 
 	private void selectFirstAvailableShipType() {
-		ShipType availableShipType = game.getCurrentPlayer().getTypeOFirstAvailableShip();
+		ShipType availableShipType = game.getCurrentPlayer()
+				.getTypeOFirstAvailableShip();
 		switch (availableShipType) {
 		case DESTROYER:
 			gui.getPanelGame().getRadioButtonDestroyer().setSelected(true);
@@ -336,10 +378,14 @@ public class Controller {
 
 	private void updateShipSelection() {
 		GamePanel panelGame = gui.getPanelGame();
-		panelGame.getLabelDestroyerShipCount().setText("" + game.getCurrentPlayer().getShipCount(ShipType.DESTROYER));
-		panelGame.getLabelFrigateShipCount().setText("" + game.getCurrentPlayer().getShipCount(ShipType.FRIGATE));
-		panelGame.getLabelCorvetteShipCount().setText("" + game.getCurrentPlayer().getShipCount(ShipType.CORVETTE));
-		panelGame.getLabelSubmarineShipCount().setText("" + game.getCurrentPlayer().getShipCount(ShipType.SUBMARINE));
+		panelGame.getLabelDestroyerShipCount().setText(
+				"" + game.getCurrentPlayer().getShipCount(ShipType.DESTROYER));
+		panelGame.getLabelFrigateShipCount().setText(
+				"" + game.getCurrentPlayer().getShipCount(ShipType.FRIGATE));
+		panelGame.getLabelCorvetteShipCount().setText(
+				"" + game.getCurrentPlayer().getShipCount(ShipType.CORVETTE));
+		panelGame.getLabelSubmarineShipCount().setText(
+				"" + game.getCurrentPlayer().getShipCount(ShipType.SUBMARINE));
 	}
 
 	private void updateEnemySelection() {
@@ -371,7 +417,8 @@ public class Controller {
 		JButton[][] board;
 		FieldState[][] fieldStates = null;
 		board = panelGame.getPanelEnemyBoard().getButtonsField();
-		Player enemy = game.getPlayerByName("" + panelGame.getComboBoxEnemySelection().getSelectedItem());
+		Player enemy = game.getPlayerByName(""
+				+ panelGame.getComboBoxEnemySelection().getSelectedItem());
 		try {
 			if (enemy != null) {
 				fieldStates = enemy.getFieldStates(false);
@@ -423,11 +470,13 @@ public class Controller {
 	}
 
 	private void setPlayerBoardEnabled(boolean enabled) {
-		setBoardEnabled(gui.getPanelGame().getPanelPlayerBoard().getButtonsField(), enabled);
+		setBoardEnabled(gui.getPanelGame().getPanelPlayerBoard()
+				.getButtonsField(), enabled);
 	}
 
 	private void setEnemyBoardEnabled(boolean enabled) {
-		setBoardEnabled(gui.getPanelGame().getPanelEnemyBoard().getButtonsField(), enabled);
+		setBoardEnabled(gui.getPanelGame().getPanelEnemyBoard()
+				.getButtonsField(), enabled);
 	}
 
 	private void setDoneButtonEnabled(boolean enabled) {
@@ -437,10 +486,14 @@ public class Controller {
 	private void enableAvailableShips() {
 		GamePanel panelGame = gui.getPanelGame();
 		Player currentPlayer = game.getCurrentPlayer();
-		panelGame.getRadioButtonDestroyer().setEnabled(currentPlayer.isShipOfTypeAvailable(ShipType.DESTROYER));
-		panelGame.getRadioButtonFrigate().setEnabled(currentPlayer.isShipOfTypeAvailable(ShipType.FRIGATE));
-		panelGame.getRadioButtonCorvette().setEnabled(currentPlayer.isShipOfTypeAvailable(ShipType.CORVETTE));
-		panelGame.getRadioButtonSubmarine().setEnabled(currentPlayer.isShipOfTypeAvailable(ShipType.SUBMARINE));
+		panelGame.getRadioButtonDestroyer().setEnabled(
+				currentPlayer.isShipOfTypeAvailable(ShipType.DESTROYER));
+		panelGame.getRadioButtonFrigate().setEnabled(
+				currentPlayer.isShipOfTypeAvailable(ShipType.FRIGATE));
+		panelGame.getRadioButtonCorvette().setEnabled(
+				currentPlayer.isShipOfTypeAvailable(ShipType.CORVETTE));
+		panelGame.getRadioButtonSubmarine().setEnabled(
+				currentPlayer.isShipOfTypeAvailable(ShipType.SUBMARINE));
 	}
 
 	private void setShipSelectionEnabled(boolean enabled) {
