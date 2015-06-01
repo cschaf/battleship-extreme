@@ -263,7 +263,10 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
     }
 
     public void banClient(ClientHandler client) {
-        this.banList.add(client.getSocket().getInetAddress().getHostAddress());
+        String ip = client.getSocket().getInetAddress().getHostAddress();
+        if(!ip.equals("127.0.0.1") || !ip.equals("localhost")){
+            this.banList.add(ip);
+        }
         this.deleteClient(client);
     }
 
