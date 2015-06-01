@@ -28,7 +28,8 @@ public class GUI {
 	private SettingsPanel panelSettings;
 	private GamePanel panelGame;
 	private ServerConnectionPanel panelServerConnection;
-	private JMenuItem menuItemSaveGame, menuItemLoadGame, menuItemQuitGame;
+	private JMenuItem menuItemNewGame, menuItemSaveGame, menuItemLoadGame,
+			menuItemQuitGame;
 	private JMenuItem menuItemManual;
 
 	private JPanel cards;
@@ -82,10 +83,12 @@ public class GUI {
 		JMenu gameMenu = new JMenu("Game");
 		menuBar.add(gameMenu);
 
+		menuItemNewGame = new JMenuItem("New Game");
 		menuItemSaveGame = new JMenuItem("Save...");
 		menuItemLoadGame = new JMenuItem("Load...");
 		menuItemQuitGame = new JMenuItem("Quit");
 
+		gameMenu.add(menuItemNewGame);
 		gameMenu.add(menuItemSaveGame);
 		gameMenu.add(menuItemLoadGame);
 		gameMenu.add(menuItemQuitGame);
@@ -140,6 +143,10 @@ public class GUI {
 		return menuItemManual;
 	}
 
+	public JMenuItem getMenuItemNewGame() {
+		return menuItemNewGame;
+	}
+
 	// ////////////////////////////////////////////////////////////////
 	// methoden
 	// ////////////////////////////////////////////////////////////////
@@ -148,5 +155,4 @@ public class GUI {
 		CardLayout c1 = (CardLayout) cards.getLayout();
 		c1.show(cards, card);
 	}
-
 }

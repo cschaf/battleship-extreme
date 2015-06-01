@@ -35,14 +35,16 @@ public class AIPlayer extends Player {
 
 	private static final int MAX_TRIES_TO_PLACE_SHIP = 1000;
 
-	public AIPlayer(int boardSize, int destroyers, int frigates, int corvettes, int submarines, PlayerType aiType) {
+	public AIPlayer(int boardSize, int destroyers, int frigates, int corvettes,
+			int submarines, PlayerType aiType) {
 		super(boardSize, destroyers, frigates, corvettes, submarines);
 		this.type = aiType;
 		this.name = aiType.toString();
 		attacksDirectionFirstTime = true;
 	}
 
-	public void placeShips() throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException {
+	public void placeShips() throws ShipAlreadyPlacedException,
+			FieldOutOfBoardException, ShipOutOfBoardException {
 		boolean isItPossibleToPlaceShip;
 		int i = 0;
 		do {
@@ -52,8 +54,10 @@ public class AIPlayer extends Player {
 				isItPossibleToPlaceShip = false;
 				Target shot = getRandomShipPlacementTarget();
 				counter++;
-				isItPossibleToPlaceShip = placeShip(shot.getX(), shot.getY(), shot.getOrientation());
-			} while ((counter <= MAX_TRIES_TO_PLACE_SHIP) && (!isItPossibleToPlaceShip));
+				isItPossibleToPlaceShip = placeShip(shot.getX(), shot.getY(),
+						shot.getOrientation());
+			} while ((counter <= MAX_TRIES_TO_PLACE_SHIP)
+					&& (!isItPossibleToPlaceShip));
 
 			if (counter >= MAX_TRIES_TO_PLACE_SHIP) {
 				resetBoard();
@@ -101,13 +105,16 @@ public class AIPlayer extends Player {
 		if (!attacksDirectionFirstTime) {
 			// wenn nicht, dann prüfe, ob das letzte Ziel ein Treffer war oder
 			// das Schiff bereits zerstört wurde
-			Field lastFieldShotAt = enemyBoardRepresentation.getField(nextTargetsArray[currentDirection].getXPos(), nextTargetsArray[currentDirection].getYPos());
+			Field lastFieldShotAt = enemyBoardRepresentation.getField(
+					nextTargetsArray[currentDirection].getXPos(),
+					nextTargetsArray[currentDirection].getYPos());
 			if (lastFieldShotAt.getState() != FieldState.DESTROYED) {
 				if (lastFieldShotAt.getState() == FieldState.HIT) {
 					// wenn das letzte Ziel ein Treffer war, dann neues Ziel in
 					// gleiche Richtung setzen
 					int[] directionArray = getDirectionArray(currentDirection);
-					Field newTarget = findNextTarget(lastFieldShotAt, directionArray[0], directionArray[1]);
+					Field newTarget = findNextTarget(lastFieldShotAt,
+							directionArray[0], directionArray[1]);
 					nextTargetsArray[currentDirection] = newTarget;
 
 				} else {
@@ -124,24 +131,31 @@ public class AIPlayer extends Player {
 
 		}
 
-		Target target;
-		Field targetField;
-		currentDirection = getCurrentDirection();
-		// aktuelles Ziel ermitteln
-		targetField = nextTargetsArray[currentDirection];
-		// wenn Richtung Osten oder Westen, dann Ausrichtung horizontal,
-		// ansonsten vertikal
-		Orientation orientation = (currentDirection == EAST || currentDirection == WEST) ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+		// bei mehr als 2 Spielern kann es vorkommen, dass ein Ziel nicht mehr
+		// vorhanden ist
+		if (hasTargets()) {
+			Target target;
+			Field targetField;
+			currentDirection = getCurrentDirection();
+			// aktuelles Ziel ermitteln
+			targetField = nextTargetsArray[currentDirection];
+			// wenn Richtung Osten oder Westen, dann Ausrichtung horizontal,
+			// ansonsten vertikal
+			Orientation orientation = (currentDirection == EAST || currentDirection == WEST) ? Orientation.HORIZONTAL
+					: Orientation.VERTICAL;
 
-		// x und y abhängig von der Schussweite korrigieren, so dass
-		// möglichst viele Felder getroffen werden
-		int range = this.currentShip.getShootingRange() - 1;
-		int adjustedX = adjustX(targetField, currentDirection, range);
-		int adjustedY = adjustY(targetField, currentDirection, range);
-		target = new Target(adjustedX, adjustedY, orientation);
-		attacksDirectionFirstTime = false;
+			// x und y abhängig von der Schussweite korrigieren, so dass
+			// möglichst viele Felder getroffen werden
+			int range = this.currentShip.getShootingRange() - 1;
+			int adjustedX = adjustX(targetField, currentDirection, range);
+			int adjustedY = adjustY(targetField, currentDirection, range);
+			target = new Target(adjustedX, adjustedY, orientation);
+			attacksDirectionFirstTime = false;
 
-		return target;
+			return target;
+		} else {
+			return getNewTarget();
+		}
 	}
 
 	private ArrayList<Field> lookForHitFields() throws FieldOutOfBoardException {
@@ -164,9 +178,11 @@ public class AIPlayer extends Player {
 
 		// zufällig schießen
 		if (type == PlayerType.DUMB_AI) {
-			orientation = (createRandomNumber(0, 1) == 0) ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+			orientation = (createRandomNumber(0, 1) == 0) ? Orientation.HORIZONTAL
+					: Orientation.VERTICAL;
 			fieldShotAt = createRandomField(0, boardSize - 1, 0, boardSize - 1);
-			return new Target(fieldShotAt.getXPos(), fieldShotAt.getYPos(), orientation);
+			return new Target(fieldShotAt.getXPos(), fieldShotAt.getYPos(),
+					orientation);
 		}
 
 		// wiederhole die Erzeugung von zufälligen Koordinaten
@@ -174,7 +190,8 @@ public class AIPlayer extends Player {
 		// Schiff angrenzt,
 		// (zwischen den Schiffen muss immer ein Feld frei sein)
 		do {
-			orientation = (createRandomNumber(0, 1) == 0) ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+			orientation = (createRandomNumber(0, 1) == 0) ? Orientation.HORIZONTAL
+					: Orientation.VERTICAL;
 			fieldShotAt = createRandomField(0, boardSize - 1, 0, boardSize - 1);
 		} while (surroundingFieldContainsShip(fieldShotAt));
 
@@ -183,20 +200,25 @@ public class AIPlayer extends Player {
 		int adjustedX = fieldShotAt.getXPos();
 		int adjustedY = fieldShotAt.getYPos();
 		// versuche x-Koordinate anzupassen
-		if ((fieldShotAt.getXPos() + this.currentShip.getShootingRange() >= (boardSize)) && (orientation == Orientation.HORIZONTAL)) {
-			int overhang = (fieldShotAt.getXPos() + this.currentShip.getShootingRange()) - (boardSize);
+		if ((fieldShotAt.getXPos() + this.currentShip.getShootingRange() >= (boardSize))
+				&& (orientation == Orientation.HORIZONTAL)) {
+			int overhang = (fieldShotAt.getXPos() + this.currentShip
+					.getShootingRange()) - (boardSize);
 			adjustedX = adjustX(fieldShotAt, WEST, overhang);
 		}
 		// versuche y-Koordinate anzupassen
-		if ((fieldShotAt.getYPos() + this.currentShip.getShootingRange() >= (boardSize)) && (orientation == Orientation.VERTICAL)) {
-			int overhang = (fieldShotAt.getYPos() + this.currentShip.getShootingRange()) - (boardSize);
+		if ((fieldShotAt.getYPos() + this.currentShip.getShootingRange() >= (boardSize))
+				&& (orientation == Orientation.VERTICAL)) {
+			int overhang = (fieldShotAt.getYPos() + this.currentShip
+					.getShootingRange()) - (boardSize);
 			adjustedY = adjustY(fieldShotAt, NORTH, overhang);
 		}
 
 		return new Target(adjustedX, adjustedY, orientation);
 	}
 
-	private boolean surroundingFieldContainsShip(Field fieldShotAt) throws FieldOutOfBoardException {
+	private boolean surroundingFieldContainsShip(Field fieldShotAt)
+			throws FieldOutOfBoardException {
 		// prüft ob ein umliegendes Feld schon ein zerstörtes Schiff beinhaltet
 		int[] directions = new int[2];
 		int x;
@@ -206,7 +228,8 @@ public class AIPlayer extends Player {
 			x = fieldShotAt.getXPos() + directions[0];
 			y = fieldShotAt.getYPos() + directions[1];
 			if (enemyBoardRepresentation.containsFieldAtPosition(x, y)) {
-				FieldState actualFieldState = enemyBoardRepresentation.getField(x, y).getState();
+				FieldState actualFieldState = enemyBoardRepresentation
+						.getField(x, y).getState();
 				if (actualFieldState == FieldState.DESTROYED) {
 					return true;
 				}
@@ -216,7 +239,8 @@ public class AIPlayer extends Player {
 		return false;
 	}
 
-	private int adjustX(Field target, int currentDirection, int range) throws FieldOutOfBoardException {
+	private int adjustX(Field target, int currentDirection, int range)
+			throws FieldOutOfBoardException {
 		// wenn Richtung Westen, dann gehe Schussweite nach links um mehr
 		// Felder zu treffen
 		int adjustedX = target.getXPos();
@@ -224,8 +248,10 @@ public class AIPlayer extends Player {
 
 		if (currentDirection == WEST) {
 			for (int i = 0; i < range; i++) {
-				if (enemyBoardRepresentation.containsFieldAtPosition(adjustedX - 1, targetYPos)) {
-					if (!enemyBoardRepresentation.getField(adjustedX - 1, target.getYPos()).isHit()) {
+				if (enemyBoardRepresentation.containsFieldAtPosition(
+						adjustedX - 1, targetYPos)) {
+					if (!enemyBoardRepresentation.getField(adjustedX - 1,
+							target.getYPos()).isHit()) {
 						adjustedX -= 1;
 
 					} else
@@ -236,15 +262,18 @@ public class AIPlayer extends Player {
 		return adjustedX;
 	}
 
-	private int adjustY(Field target, int currentDirection, int range) throws FieldOutOfBoardException {
+	private int adjustY(Field target, int currentDirection, int range)
+			throws FieldOutOfBoardException {
 		// wenn Richtung Norden, um Schussweite hoch gehen, um mehr Felder zu
 		// treffen
 		int adjustedY = target.getYPos();
 		int targetXPos = target.getXPos();
 		if (currentDirection == NORTH) {
 			for (int i = 0; i < range; i++) {
-				if (enemyBoardRepresentation.containsFieldAtPosition(targetXPos, adjustedY - 1)) {
-					if (!enemyBoardRepresentation.getField(targetXPos, adjustedY - 1).isHit()) {
+				if (enemyBoardRepresentation.containsFieldAtPosition(
+						targetXPos, adjustedY - 1)) {
+					if (!enemyBoardRepresentation.getField(targetXPos,
+							adjustedY - 1).isHit()) {
 						adjustedY -= 1;
 					} else
 						break;
@@ -270,13 +299,15 @@ public class AIPlayer extends Player {
 	private int getCurrentDirection() {
 		// ermittle aktuelle Himmelsrichtung
 		int currentDirection = 0;
-		while ((currentDirection < 4) && (this.nextTargetsArray[currentDirection] == null)) {
+		while ((currentDirection < 4)
+				&& (this.nextTargetsArray[currentDirection] == null)) {
 			currentDirection++;
 		}
 		return currentDirection;
 	}
 
-	private void planNextShots(ArrayList<Field> hitFields) throws FieldOutOfBoardException {
+	private void planNextShots(ArrayList<Field> hitFields)
+			throws FieldOutOfBoardException {
 		boolean isHorizontalHit = false;
 		boolean isVerticalHit = false;
 
@@ -285,9 +316,15 @@ public class AIPlayer extends Player {
 		if (hitFields.size() > 1) {
 
 			// liegen die Felder horizontal aneinander?
-			isHorizontalHit = hitFields.get(0).getYPos() == hitFields.get(1).getYPos() && ((Math.abs(hitFields.get(0).getXPos() - hitFields.get(1).getXPos()) == 1));
+			isHorizontalHit = hitFields.get(0).getYPos() == hitFields.get(1)
+					.getYPos()
+					&& ((Math.abs(hitFields.get(0).getXPos()
+							- hitFields.get(1).getXPos()) == 1));
 			// liegen die Felder vertikal aneinander
-			isVerticalHit = hitFields.get(0).getXPos() == hitFields.get(1).getXPos() && ((Math.abs(hitFields.get(0).getYPos() - hitFields.get(1).getYPos()) == 1));
+			isVerticalHit = hitFields.get(0).getXPos() == hitFields.get(1)
+					.getXPos()
+					&& ((Math.abs(hitFields.get(0).getYPos()
+							- hitFields.get(1).getYPos()) == 1));
 		}
 		// bekommt ein getroffenes Feld übergeben und guckt in alle
 		// Himmelsrichtungen nach potenziellen Zielen
@@ -297,13 +334,16 @@ public class AIPlayer extends Player {
 		for (int i = 0; i < 4; i++) {
 			directions = getDirectionArray(i);
 			if (!isHorizontalHit && !isVerticalHit) {
-				target = findNextTarget(hitFields.get(0), directions[0], directions[1]);
+				target = findNextTarget(hitFields.get(0), directions[0],
+						directions[1]);
 			}
 			if (isHorizontalHit && (i == EAST || i == WEST)) {
-				target = findNextTarget(hitFields.get(0), directions[0], directions[1]);
+				target = findNextTarget(hitFields.get(0), directions[0],
+						directions[1]);
 			}
 			if (isVerticalHit && (i == NORTH || i == SOUTH)) {
-				target = findNextTarget(hitFields.get(0), directions[0], directions[1]);
+				target = findNextTarget(hitFields.get(0), directions[0],
+						directions[1]);
 			}
 			// wenn potenzielles Ziel gefunden, dann Feld merken
 			nextTargetsArray[i] = target;
@@ -335,7 +375,8 @@ public class AIPlayer extends Player {
 		return null;
 	}
 
-	private Field findNextTarget(Field field, int xDirection, int yDirection) throws FieldOutOfBoardException {
+	private Field findNextTarget(Field field, int xDirection, int yDirection)
+			throws FieldOutOfBoardException {
 		// sucht nach dem nächsten Feld als potenzielles Ziel, ausgehend vom
 		// übergebenen Feld
 		int step = 0;
@@ -348,7 +389,8 @@ public class AIPlayer extends Player {
 			y = field.getYPos() + step * yDirection;
 			if (enemyBoardRepresentation.containsFieldAtPosition(x, y)) {
 				target = enemyBoardRepresentation.getField(x, y);
-				if ((target.getState() == FieldState.MISSED) || (target.getState() == FieldState.DESTROYED)) {
+				if ((target.getState() == FieldState.MISSED)
+						|| (target.getState() == FieldState.DESTROYED)) {
 					// wenn Schiff verfehlt oder zerstört wurde, Ziel nicht
 					// merken, Schleife abbrechen
 					target = null;
@@ -372,7 +414,8 @@ public class AIPlayer extends Player {
 	private Target getRandomShipPlacementTarget() {
 		// zufällige Position generieren
 		Orientation orientation;
-		orientation = (createRandomNumber(0, 1) == 0) ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+		orientation = (createRandomNumber(0, 1) == 0) ? Orientation.HORIZONTAL
+				: Orientation.VERTICAL;
 		int xMax;
 		int yMax;
 		if (orientation == Orientation.HORIZONTAL) {
@@ -402,7 +445,8 @@ public class AIPlayer extends Player {
 	}
 
 	// baut anhand der bekannten Fieldstates eine Nachbildung des Boards
-	private Board buildBoardRepresentation(FieldState[][] fieldStates) throws FieldOutOfBoardException {
+	private Board buildBoardRepresentation(FieldState[][] fieldStates)
+			throws FieldOutOfBoardException {
 		enemyBoardRepresentation = new Board(fieldStates.length);
 		for (int i = 0; i < fieldStates.length; i++) {
 			for (int j = 0; j < fieldStates[i].length; j++) {

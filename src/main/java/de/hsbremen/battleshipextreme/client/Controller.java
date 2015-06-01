@@ -33,18 +33,18 @@ public class Controller {
 		addMenuListeners();
 	}
 
-	private void initializeGame(Settings settings) {
+	private void initializeGame(Settings settings) throws Exception {
 		game.initialize(settings);
 		createBoardPanels(settings.getBoardSize());
 		addGameListeners();
 		gui.showPanel(GUI.GAME_PANEL);
+
 		updateEnemyBoard();
 		updatePlayerBoard();
 		setEnemyBoardEnabled(false);
 		setShipSelectionEnabled(false);
 		setDoneButtonEnabled(false);
 		setInfoLabelMessage(game.getCurrentPlayer() + " is placing ships ");
-
 		// wenn erster Spieler AI ist, automatisch anfangen
 		if (game.getCurrentPlayer().getType() == PlayerType.SMART_AI) {
 			placeAiShips();
@@ -53,7 +53,51 @@ public class Controller {
 		}
 	}
 
+	private void loadGame() {
+		try {
+			game.load(Settings.SAVEGAME_FILENAME);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		createBoardPanels(game.getBoardSize());
+		addGameListeners();
+		gui.showPanel(GUI.GAME_PANEL);
+		updateEnemyBoard();
+		updatePlayerBoard();
+	}
+
 	private void addMenuListeners() {
+		gui.getMenuItemNewGame().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+			}
+		});
+
+		gui.getMenuItemSaveGame().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					game.save(Settings.SAVEGAME_FILENAME);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+
+		gui.getMenuItemLoadGame().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					loadGame();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				System.out.println("Game loaded");
+
+			}
+		});
+
 		gui.getMenuItemQuitGame().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.exit(0);
@@ -98,7 +142,6 @@ public class Controller {
 								corvettes, submarines);
 						try {
 							settings.validate();
-							initializeGame(settings);
 						} catch (InvalidPlayerNumberException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -106,6 +149,13 @@ public class Controller {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						} catch (BoardTooSmallException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+
+						try {
+							initializeGame(settings);
+						} catch (Exception e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
