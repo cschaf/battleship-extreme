@@ -55,6 +55,14 @@ public class Listener extends Thread implements IDisposable {
                         Turn turn = (Turn)receivedObj;
                         turnObjectReceived(new EventArgs<Turn>(this, turn));
                         break;
+                    case ServerInfo:
+                        ServerInfo serverInfo = (ServerInfo)receivedObj;
+                        switch (serverInfo.getReason()){
+                            case GameClosed:
+                                errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Your game has been closed!")));
+                                break;
+                        }
+                        break;
                 }
             }
         } catch (IOException e) {

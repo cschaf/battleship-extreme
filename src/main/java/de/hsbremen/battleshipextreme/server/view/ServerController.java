@@ -183,13 +183,14 @@ public class ServerController {
                 JList l = (JList) e.getSource();
                 ListModel m = l.getModel();
                 int index = l.locationToIndex(e.getPoint());
-                if (index > -1) {
+                if (index > -1 && m.getSize() > 0) {
                     ClientJListItem item = (ClientJListItem) m.getElementAt(index);
                     String name = "<p width=\"200\">" + "Name: " + item.getName() + "</p>";
                     String ip = "<p width=\"200\">" + "IP: " + item.getIp() + "</p>";
                     String port = "<p width=\"200\">" + "Port: " + item.getPort() + "</p>";
                     l.setToolTipText("<html>" + name + ip + port + "</html>");
                 }
+                else l.setToolTipText("");
             }
         });
 
@@ -199,7 +200,7 @@ public class ServerController {
                 JList l = (JList) e.getSource();
                 ListModel m = l.getModel();
                 int index = l.locationToIndex(e.getPoint());
-                if (index > -1) {
+                if (index > -1 && m.getSize() > 0) {
                     Game item = (Game) m.getElementAt(index);
                     String name = "<p width=\"300\">" + "Name: " + item.getName() + "</p>";
                     String id = "<p width=\"300\">" + "ID: " + item.getId() + "</p>";
@@ -208,6 +209,7 @@ public class ServerController {
                     String createdAt = "<p width=\"300\">" + "Created at: " + item.getCreatedAt() + "</p>";
                     l.setToolTipText("<html>" + name + id + password + players + createdAt + "</html>");
                 }
+                else l.setToolTipText(null);
             }
         });
 
