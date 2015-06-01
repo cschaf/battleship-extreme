@@ -30,6 +30,8 @@ public class ServerControlBar extends JPanel {
         setLayout(new MigLayout());
         lblIp = new JLabel("IP:");
         tbxIp = new JTextField("127.0.0.1");
+        tbxIp.setEditable(false);
+        tbxIp.setBackground(Color.white);
         lblPort = new JLabel("Port:");
         tbxPort = new JTextField("1337");
         tbxPort.setPreferredSize(new Dimension(50, 22));

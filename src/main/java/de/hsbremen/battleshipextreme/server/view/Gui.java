@@ -75,6 +75,7 @@ public class Gui extends JFrame {
         pnlServerControlBarPanel = new ServerControlBar();
 
         traMessages = new JTextArea(10, 10);
+        traMessages.setEditable(false);
         scrollPanelMessages = new JScrollPane(traMessages);
 
         boxMessages = new GroupBox("Log");
