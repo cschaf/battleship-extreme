@@ -8,7 +8,7 @@ public class Corvette extends Ship {
 		this.size = Settings.CORVETTE_SIZE;
 		this.shootingRange = 1;
 		this.maxReloadTime = 1;
-		this.type = ShipType.Corvette;
+		this.type = ShipType.CORVETTE;
 	}
 
 }

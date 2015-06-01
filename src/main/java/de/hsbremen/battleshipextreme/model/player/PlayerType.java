@@ -1,5 +1,5 @@
 package de.hsbremen.battleshipextreme.model.player;
 
 public enum PlayerType {
-	AI, HUMAN
+	DUMB_AI, SMART_AI, HUMAN
 }

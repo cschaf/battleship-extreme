@@ -2,11 +2,6 @@ package de.hsbremen.battleshipextreme.model.ship;
 
 import java.io.Serializable;
 
-import de.hsbremen.battleshipextreme.model.Board;
-import de.hsbremen.battleshipextreme.model.Field;
-import de.hsbremen.battleshipextreme.model.Orientation;
-import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
-
 public abstract class Ship implements Serializable {
 	protected int size;
 	protected int shootingRange;
@@ -15,50 +10,20 @@ public abstract class Ship implements Serializable {
 	protected ShipType type;
 	protected boolean isPlaced;
 
-	public boolean shoot(Board boardShotAt, Field field, Orientation orientation) throws Exception {
-		if (!field.isHit()) {
-			fireShot(field, orientation, boardShotAt);
-			return true;
-		}
-		return false;
-	}
-
-	private void fireShot(Field field, Orientation orientation, Board boardShotAt) throws FieldOutOfBoardException {
-		int xDirection = orientation == Orientation.Horizontal ? 1 : 0;
-		int yDirection = orientation == Orientation.Vertical ? 1 : 0;
-		int x;
-		int y;
-		for (int i = 0; i < this.shootingRange; i++) {
-			x = field.getXPos() + i * xDirection;
-			y = field.getYPos() + i * yDirection;
-			// Schüsse ignorieren, die außerhalb des Feldes liegen
-			if (boardShotAt.containsFieldAtPosition(x, y)) {
-				Field fieldShotAt = boardShotAt.getField(x, y);
-				// wenn Board schon beschossen wurde, dann Schuss ignorieren
-				if (!fieldShotAt.isHit()) {
-					// wenn das Feld auf das geschossen wurde ein Schiff hat,
-					// dann ein Leben vom Schiff abziehen
-					if (fieldShotAt.hasShip()) {
-						Ship ship = fieldShotAt.getShip();
-						ship.setSize(ship.getSize() - 1);
-					}
-					fieldShotAt.setHit(true);
-				}
-				this.currentReloadTime = this.maxReloadTime;
-			}
-		}
+	public void shoot() {
+		currentReloadTime = maxReloadTime + 1;
 	}
 
 	public void decreaseCurrentReloadTime() {
-		if (this.currentReloadTime > 0)
-			this.currentReloadTime--;
+		if (currentReloadTime > 0)
+			currentReloadTime--;
 	}
 
 	public boolean isReloading() {
 		return currentReloadTime > 0;
 	}
 
-	public void setPlaced() {
+	public void place() {
 		this.isPlaced = true;
 	}
 
@@ -70,8 +35,9 @@ public abstract class Ship implements Serializable {
 		return size <= 0;
 	}
 
-	public void setSize(int size) {
-		this.size = size;
+	public void decreaseSize() {
+		if (size > 0)
+			size--;
 	}
 
 	public int getSize() {
@@ -100,6 +66,5 @@ public abstract class Ship implements Serializable {
 
 	public void setPlaced(boolean isPlaced) {
 		this.isPlaced = isPlaced;
-
 	}
 }
