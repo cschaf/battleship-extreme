@@ -17,7 +17,9 @@ import de.hsbremen.battleshipextreme.model.exception.InvalidNumberOfShipsExcepti
 import de.hsbremen.battleshipextreme.model.exception.InvalidPlayerNumberException;
 import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
 import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.player.AIPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
+import de.hsbremen.battleshipextreme.model.player.PlayerType;
 import de.hsbremen.battleshipextreme.model.ship.ShipType;
 
 public class Controller {
@@ -28,115 +30,23 @@ public class Controller {
 	public Controller(Game game, GUI gui) {
 		this.game = game;
 		this.gui = gui;
-		createMenuControls();
+		addMenuListeners();
 	}
 
 	private void initializeGame(Settings settings) {
 		game.initialize(settings);
 		createBoardPanels(settings.getBoardSize());
+		addGameListeners();
 		gui.showPanel(GUI.GAME_PANEL);
 		updateEnemyBoard();
 		updatePlayerBoard();
-		updateShipSelection();
 		setEnemyBoardEnabled(false);
 		setShipSelectionEnabled(false);
-		gui.getPanelGame().getDoneButton().setEnabled(false);
-		gui.getPanelGame().getLabelInfo().setText(game.getCurrentPlayer() + " is placing ships ");
+		setDoneButtonEnabled(false);
+		setInfoLabelMessage(game.getCurrentPlayer() + " is placing ships ");
 	}
 
-	private void placeShip(int xPos, int yPos, boolean isHorizontal) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException {
-		Orientation orientation = isHorizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL;
-		Player currentPlayer = game.getCurrentPlayer();
-
-		boolean possible = currentPlayer.placeShip(xPos, yPos, orientation);
-		if (possible)
-			currentPlayer.nextShip();
-
-		if (currentPlayer.hasPlacedAllShips()) {
-			setPlayerBoardEnabled(false);
-			gui.getPanelGame().getDoneButton().setEnabled(true);
-			gui.getPanelGame().getLabelInfo().setText(game.getCurrentPlayer() + " placed all ships");
-		}
-
-		updatePlayerBoard();
-		updateShipSelection();
-	}
-
-	private boolean selectShip(ShipType shipType) {
-		return game.getCurrentPlayer().setCurrentShipByType(shipType);
-	}
-
-	private boolean makeTurn(String enemyName, int xPos, int yPos, boolean isHorizontal) throws FieldOutOfBoardException {
-		Orientation orientation = isHorizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL;
-		boolean possible = false;
-
-		Player enemy = game.getPlayerByName(enemyName);
-		possible = game.makeTurn(enemy, xPos, yPos, orientation);
-		if (possible) {
-			updateEnemyBoard();
-			setEnemyBoardEnabled(false);
-			gui.getPanelGame().getDoneButton().setEnabled(true);
-			gui.getPanelGame().getLabelInfo().setText(game.getCurrentPlayer() + " attacked " + enemy);
-
-		}
-
-		if (game.isGameover()) {
-			gui.getPanelGame().getLabelInfo().setText(game.getWinner() + " won ");
-		}
-		return possible;
-	}
-
-	private void done() {
-		if (!game.isGameover()) {
-			if (!game.isReady()) {
-				if (game.getCurrentPlayer().hasPlacedAllShips()) {
-					game.nextPlayer();
-					gui.getPanelGame().getLabelInfo().setText(game.getCurrentPlayer() + " is placing ships");
-					setPlayerBoardEnabled(true);
-					gui.getPanelGame().getDoneButton().setEnabled(false);
-				}
-			} else {
-				game.nextPlayer();
-				if (game.getCurrentPlayer().areAllShipsReloading()) {
-					gui.getPanelGame().getLabelInfo().setText("All ships of " + game.getCurrentPlayer() + " are reloading");
-					setEnemyBoardEnabled(false);
-					setShipSelectionEnabled(false);
-
-				} else {
-					gui.getPanelGame().getLabelInfo().setText(game.getCurrentPlayer() + " is shooting");
-					enableAvailableShips();
-					selectFirstAvailableShipType();
-					setEnemyBoardEnabled(true);
-					gui.getPanelGame().getDoneButton().setEnabled(false);
-				}
-			}
-			updatePlayerBoard();
-			updateShipSelection();
-			updateEnemySelection();
-		}
-	}
-
-	private void selectFirstAvailableShipType() {
-		ShipType availableShipType = game.getCurrentPlayer().getTypeOFirstAvailableShip();
-		switch (availableShipType) {
-		case DESTROYER:
-			gui.getPanelGame().getRadioButtonDestroyer().setSelected(true);
-			break;
-		case CORVETTE:
-			gui.getPanelGame().getRadioButtonCorvette().setSelected(true);
-			break;
-		case FRIGATE:
-			gui.getPanelGame().getRadioButtonFrigate().setSelected(true);
-			break;
-		case SUBMARINE:
-			gui.getPanelGame().getRadioButtonSubmarine().setSelected(true);
-		default:
-			break;
-		}
-		selectShip(availableShipType);
-	}
-
-	private void createMenuControls() {
+	private void addMenuListeners() {
 		gui.getMenuItemQuitGame().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.exit(0);
@@ -153,7 +63,7 @@ public class Controller {
 			public void actionPerformed(ActionEvent e) {
 				SettingsPanel panelSettings = gui.getPanelSettings();
 				int players = Integer.parseInt(panelSettings.getTextFieldPlayers().getText());
-				int aiPlayers = 0;
+				int aiPlayers = Integer.parseInt(panelSettings.getTextFieldAiPlayers().getText());
 				int dumbAiPlayers = 0;
 				int boardSize = Integer.parseInt(panelSettings.getTextFieldBoardSize().getText());
 				int destroyers = Integer.parseInt(panelSettings.getTextFieldDestroyers().getText());
@@ -174,7 +84,6 @@ public class Controller {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-
 			}
 		});
 	}
@@ -184,7 +93,9 @@ public class Controller {
 		panelGame.getPanelPlayerBoard().createBoardPanel(boardSize);
 		panelGame.getPanelEnemyBoard().createBoardPanel(boardSize);
 		gui.getFrame().pack();
+	}
 
+	private void addGameListeners() {
 		addPlayerBoardListener();
 		addEnemyBoardListener();
 		addShipSelectionListeners();
@@ -281,7 +192,140 @@ public class Controller {
 				done();
 			}
 		});
+	}
 
+	private void selectShip(ShipType shipType) {
+		game.getCurrentPlayer().setCurrentShipByType(shipType);
+	}
+
+	private void placeShip(int xPos, int yPos, boolean isHorizontal) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException {
+		Orientation orientation = isHorizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+		Player currentPlayer = game.getCurrentPlayer();
+
+		boolean possible = currentPlayer.placeShip(xPos, yPos, orientation);
+		if (possible)
+			currentPlayer.nextShip();
+
+		if (currentPlayer.hasPlacedAllShips()) {
+			setPlayerBoardEnabled(false);
+			setDoneButtonEnabled(true);
+			setInfoLabelMessage(game.getCurrentPlayer() + " placed all ships");
+		}
+
+		updatePlayerBoard();
+		updateShipSelection();
+	}
+
+	private boolean makeTurn(String enemyName, int xPos, int yPos, boolean isHorizontal) throws FieldOutOfBoardException {
+		Orientation orientation = isHorizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+		boolean possible = false;
+
+		Player enemy = game.getPlayerByName(enemyName);
+		possible = game.makeTurn(enemy, xPos, yPos, orientation);
+		if (possible) {
+			updateEnemyBoard();
+			setEnemyBoardEnabled(false);
+			setDoneButtonEnabled(true);
+			setInfoLabelMessage(game.getCurrentPlayer() + " attacked " + enemy);
+		}
+
+		if (game.isGameover()) {
+			setInfoLabelMessage(game.getWinner() + " won ");
+		}
+		return possible;
+	}
+
+	private void done() {
+		if (!game.isGameover()) {
+			if (!game.isReady()) {
+				if (game.getCurrentPlayer().hasPlacedAllShips()) {
+					game.nextPlayer();
+					setInfoLabelMessage(game.getCurrentPlayer() + " is placing ships");
+					if (game.getCurrentPlayer().getType() == PlayerType.SMART_AI) {
+						placeAiShips();
+					} else {
+						setPlayerBoardEnabled(true);
+						setDoneButtonEnabled(false);
+					}
+
+				}
+			} else {
+				game.nextPlayer();
+				if (game.getCurrentPlayer().areAllShipsReloading()) {
+					setInfoLabelMessage("All ships of " + game.getCurrentPlayer() + " are reloading");
+					setEnemyBoardEnabled(false);
+					setShipSelectionEnabled(false);
+
+				} else {
+					if (game.getCurrentPlayer().getType() == PlayerType.SMART_AI) {
+						makeAiTurn();
+					} else {
+						setInfoLabelMessage(game.getCurrentPlayer() + " is shooting");
+						enableAvailableShips();
+						selectFirstAvailableShipType();
+						setEnemyBoardEnabled(true);
+						gui.getPanelGame().getDoneButton().setEnabled(false);
+					}
+				}
+			}
+			updatePlayerBoard();
+			updateShipSelection();
+			updateEnemySelection();
+		}
+	}
+
+	private void placeAiShips() {
+		AIPlayer ai = (AIPlayer) game.getCurrentPlayer();
+		try {
+			ai.placeShips();
+		} catch (ShipAlreadyPlacedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FieldOutOfBoardException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ShipOutOfBoardException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void makeAiTurn() {
+		try {
+			game.makeAiTurn();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		AIPlayer ai = (AIPlayer) game.getCurrentPlayer();
+		Player currentEnemy = game.getPlayers()[ai.getCurrentEnemyIndex()];
+		gui.getPanelGame().getComboBoxEnemySelection().setSelectedItem(currentEnemy.getName());
+		setInfoLabelMessage(game.getCurrentPlayer() + " attacks" + currentEnemy);
+		updateEnemyBoard();
+	}
+
+	private void setInfoLabelMessage(String message) {
+		gui.getPanelGame().getLabelInfo().setText(message);
+	}
+
+	private void selectFirstAvailableShipType() {
+		ShipType availableShipType = game.getCurrentPlayer().getTypeOFirstAvailableShip();
+		switch (availableShipType) {
+		case DESTROYER:
+			gui.getPanelGame().getRadioButtonDestroyer().setSelected(true);
+			break;
+		case CORVETTE:
+			gui.getPanelGame().getRadioButtonCorvette().setSelected(true);
+			break;
+		case FRIGATE:
+			gui.getPanelGame().getRadioButtonFrigate().setSelected(true);
+			break;
+		case SUBMARINE:
+			gui.getPanelGame().getRadioButtonSubmarine().setSelected(true);
+		default:
+			break;
+		}
+		selectShip(availableShipType);
 	}
 
 	private void updateShipSelection() {
@@ -378,6 +422,10 @@ public class Controller {
 
 	private void setEnemyBoardEnabled(boolean enabled) {
 		setBoardEnabled(gui.getPanelGame().getPanelEnemyBoard().getButtonsField(), enabled);
+	}
+
+	private void setDoneButtonEnabled(boolean enabled) {
+		gui.getPanelGame().getDoneButton().setEnabled(enabled);
 	}
 
 	private void enableAvailableShips() {

@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 public class SettingsPanel extends JPanel {
 
 	private JLabel labelPlayers;
+	private JLabel labelAiPlayers;
 	private JLabel labelDestroyers;
 	private JLabel labelFrigates;
 	private JLabel labelCorvettes;
@@ -19,6 +20,7 @@ public class SettingsPanel extends JPanel {
 	private JLabel labelBoardSize;
 
 	private JTextField textFieldPlayers;
+	private JTextField textFieldAiPlayers;
 	private JTextField textFieldDestroyers;
 	private JTextField textFieldFrigates;
 	private JTextField textFieldCorvettes;
@@ -41,6 +43,10 @@ public class SettingsPanel extends JPanel {
 
 		labelPlayers = new JLabel("Players: ");
 		this.add(labelPlayers, c);
+
+		c.gridy++;
+		labelAiPlayers = new JLabel("Ai-Players: ");
+		this.add(labelAiPlayers, c);
 
 		c.gridy++;
 		labelDestroyers = new JLabel("Destroyers: ");
@@ -68,6 +74,10 @@ public class SettingsPanel extends JPanel {
 
 		textFieldPlayers = new JTextField(10);
 		this.add(textFieldPlayers, c);
+
+		c.gridy++;
+		textFieldAiPlayers = new JTextField(10);
+		this.add(textFieldAiPlayers, c);
 
 		c.gridy++;
 		textFieldDestroyers = new JTextField(10);
@@ -125,6 +135,10 @@ public class SettingsPanel extends JPanel {
 
 	public JTextField getTextFieldPlayers() {
 		return textFieldPlayers;
+	}
+
+	public JTextField getTextFieldAiPlayers() {
+		return textFieldAiPlayers;
 	}
 
 	public JTextField getTextFieldDestroyers() {

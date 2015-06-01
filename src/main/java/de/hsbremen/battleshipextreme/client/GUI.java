@@ -58,6 +58,7 @@ public class GUI {
 		frame.add(cards);
 
 		panelSettings.getTextFieldPlayers().setText("2");
+		panelSettings.getTextFieldAiPlayers().setText("2");
 		panelSettings.getTextFieldDestroyers().setText("1");
 		panelSettings.getTextFieldFrigates().setText("1");
 		panelSettings.getTextFieldCorvettes().setText("1");
