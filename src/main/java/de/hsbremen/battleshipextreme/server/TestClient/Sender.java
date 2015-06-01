@@ -76,15 +76,6 @@ public class Sender extends Thread implements IDisposable {
         } catch (IOException ioe) {
             this.dispose();
             // Communication is broken
-        } catch (InvalidNumberOfShipsException e) {
-            e.printStackTrace();
-            this.dispose();
-        } catch (InvalidPlayerNumberException e) {
-            e.printStackTrace();
-            this.dispose();
-        } catch (BoardTooSmallException e) {
-            e.printStackTrace();
-            this.dispose();
         }
     }
 

@@ -14,6 +14,7 @@ public class GUI {
 	public final static String MAIN_MENU_PANEL = "card with main menu panel";
 	public final static String SETTINGS_PANEL = "card with settings panel";
 	public final static String GAME_PANEL = "card with game panel";
+	public final static String SERVER_CONNECTION_PANEL = "card with server connection panel";
 
 	public final static Color EMPTY_COLOR = new Color(135, 206, 250);
 	public final static Color HAS_SHIP_COLOR = Color.black;
@@ -26,6 +27,7 @@ public class GUI {
 	private MainMenuPanel panelMainMenu;
 	private SettingsPanel panelSettings;
 	private GamePanel panelGame;
+	private ServerConnectionPanel panelServerConnection;
 	private JMenuItem menuItemSaveGame, menuItemLoadGame, menuItemQuitGame;
 	private JMenuItem menuItemManual;
 
@@ -49,11 +51,14 @@ public class GUI {
 		panelMainMenu = new MainMenuPanel();
 		panelSettings = new SettingsPanel();
 		panelGame = new GamePanel();
+		panelServerConnection = new ServerConnectionPanel();
 
 		cards = new JPanel(new CardLayout());
+
 		cards.add(panelMainMenu, MAIN_MENU_PANEL);
 		cards.add(panelSettings, SETTINGS_PANEL);
 		cards.add(panelGame, GAME_PANEL);
+		cards.add(panelServerConnection, SERVER_CONNECTION_PANEL);
 
 		frame.add(cards);
 
@@ -112,6 +117,10 @@ public class GUI {
 
 	public GamePanel getPanelGame() {
 		return panelGame;
+	}
+
+	public ServerConnectionPanel getPanelServerConnection() {
+		return panelServerConnection;
 	}
 
 	public JMenuItem getMenuItemSaveGame() {

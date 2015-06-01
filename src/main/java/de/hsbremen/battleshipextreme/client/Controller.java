@@ -149,6 +149,12 @@ public class Controller {
 			}
 		});
 
+		gui.getPanelMainMenu().getButtonMultiplayerGame().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gui.showPanel(GUI.SERVER_CONNECTION_PANEL);
+			}
+		});
+
 		gui.getPanelSettings().getButtonApplySettings().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				SettingsPanel panelSettings = gui.getPanelSettings();
@@ -174,7 +180,6 @@ public class Controller {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-
 			}
 		});
 	}
