@@ -1,10 +1,10 @@
 package de.hsbremen.battleshipextreme.model;
-
+import java.io.Serializable;
 import de.hsbremen.battleshipextreme.model.exception.BoardTooSmallException;
 import de.hsbremen.battleshipextreme.model.exception.InvalidNumberOfShipsException;
 import de.hsbremen.battleshipextreme.model.exception.InvalidPlayerNumberException;
 
-public class Settings {
+public class Settings implements Serializable{
 	private int players;
 	private int smartAiPlayers;
 	private int dumbAiPlayers;

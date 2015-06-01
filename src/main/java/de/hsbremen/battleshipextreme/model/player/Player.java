@@ -74,8 +74,6 @@ public abstract class Player implements Serializable {
 	 * Check if its possible to place the ship. If not, throw exception. If yes,
 	 * place the ship and call the nextShip-method.
 	 * 
-	 * @param ship
-	 *            the ship to attack.
 	 * @param xPos
 	 *            the first x-coordinate of the field to place the ship on.
 	 * @param yPos
