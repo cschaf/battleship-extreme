@@ -61,7 +61,7 @@ public class Sender extends Thread implements IDisposable {
             // Turn
             Player from = new HumanPlayer(5,1,0,0,0);
             Player to = new HumanPlayer(5,1,0,0,0);;
-            ITransferable trun = TransferableObjectFactory.CreateTurn(from, to, 0,0, Orientation.Horizontal);
+            ITransferable trun = TransferableObjectFactory.CreateTurn(from, to, 0,0, Orientation.HORIZONTAL);
             this.out.writeObject(trun);
             this.out.flush();
 

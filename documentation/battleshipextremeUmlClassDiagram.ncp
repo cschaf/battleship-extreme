@@ -7,7 +7,7 @@
       <Entity type="Class">
         <Name>Board</Name>
         <Access>Public</Access>
-        <Location left="704" top="52" />
+        <Location left="705" top="52" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private int size</Member>
@@ -19,18 +19,17 @@
       <Entity type="Class">
         <Name>Player</Name>
         <Access>Public</Access>
-        <Location left="399" top="52" />
+        <Location left="348" top="29" />
         <Size width="285" height="366" />
         <Collapsed>False</Collapsed>
         <Member type="Field">protected Ship[] ships</Member>
-        <Member type="Field">protected Board publicBoard</Member>
-        <Member type="Field">protected Board privateBoard</Member>
+        <Member type="Field">protected Board board</Member>
         <Member type="Field">private String name</Member>
         <Member type="Field">private Ship currentShip</Member>
         <Member type="Field">private PlayerType type</Member>
         <Member type="Method">public void placeShip(Ship ship, int xPos, int yPos, Orientation orientation)</Member>
         <Member type="Constructor">public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines)</Member>
-        <Member type="Method">public boolean markPublicBoard(int xPos, int yPos)</Member>
+        <Member type="Method">public boolean markBoard(int xPos, int yPos)</Member>
         <Member type="Method">public boolean hasPlacedAllShips()</Member>
         <Member type="Method">public boolean areAllShipsPlaced()</Member>
         <Member type="Method">public void resetBoard()</Member>
@@ -39,12 +38,13 @@
         <Member type="Method">public boolean setCurrentShip()</Member>
         <Member type="Method">public boolean areAllShipsReloading()</Member>
         <Member type="Method">public boolean hasLost()</Member>
+        <Member type="Method">public void getFieldStates()</Member>
         <Modifier>Abstract</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>Game</Name>
         <Access>Public</Access>
-        <Location left="55" top="10" />
+        <Location left="41" top="18" />
         <Size width="226" height="383" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private Player currentPlayer</Member>
@@ -70,7 +70,7 @@
       <Entity type="Class">
         <Name>HumanPlayer</Name>
         <Access>Public</Access>
-        <Location left="399" top="574" />
+        <Location left="447" top="592" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -153,7 +153,7 @@
       <Entity type="Class">
         <Name>Settings</Name>
         <Access>Public</Access>
-        <Location left="75" top="443" />
+        <Location left="54" top="431" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private int players</Member>
