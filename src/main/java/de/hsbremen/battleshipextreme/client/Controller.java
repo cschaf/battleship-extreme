@@ -35,11 +35,12 @@ public class Controller {
 		game.initialize(settings);
 		createBoardPanels(settings.getBoardSize());
 		gui.showPanel(GUI.GAME_PANEL);
-		setEnemyBoardEnabled(false);
 		updateEnemyBoard();
 		updatePlayerBoard();
 		updateShipSelection();
+		setEnemyBoardEnabled(false);
 		setShipSelectionEnabled(false);
+		gui.getPanelGame().getDoneButton().setEnabled(false);
 		gui.getPanelGame().getLabelInfo().setText(game.getCurrentPlayer() + " is placing ships ");
 	}
 
@@ -53,6 +54,7 @@ public class Controller {
 
 		if (currentPlayer.hasPlacedAllShips()) {
 			setPlayerBoardEnabled(false);
+			gui.getPanelGame().getDoneButton().setEnabled(true);
 			gui.getPanelGame().getLabelInfo().setText(game.getCurrentPlayer() + " placed all ships");
 		}
 
@@ -73,7 +75,9 @@ public class Controller {
 		if (possible) {
 			updateEnemyBoard();
 			setEnemyBoardEnabled(false);
+			gui.getPanelGame().getDoneButton().setEnabled(true);
 			gui.getPanelGame().getLabelInfo().setText(game.getCurrentPlayer() + " attacked " + enemy);
+
 		}
 
 		if (game.isGameover()) {
@@ -89,6 +93,7 @@ public class Controller {
 					game.nextPlayer();
 					gui.getPanelGame().getLabelInfo().setText(game.getCurrentPlayer() + " is placing ships");
 					setPlayerBoardEnabled(true);
+					gui.getPanelGame().getDoneButton().setEnabled(false);
 				}
 			} else {
 				game.nextPlayer();
@@ -96,11 +101,13 @@ public class Controller {
 					gui.getPanelGame().getLabelInfo().setText("All ships of " + game.getCurrentPlayer() + " are reloading");
 					setEnemyBoardEnabled(false);
 					setShipSelectionEnabled(false);
+
 				} else {
 					gui.getPanelGame().getLabelInfo().setText(game.getCurrentPlayer() + " is shooting");
 					enableAvailableShips();
 					selectFirstAvailableShipType();
 					setEnemyBoardEnabled(true);
+					gui.getPanelGame().getDoneButton().setEnabled(false);
 				}
 			}
 			updatePlayerBoard();
