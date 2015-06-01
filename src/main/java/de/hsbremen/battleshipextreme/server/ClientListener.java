@@ -7,6 +7,7 @@ import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Game;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Message;
+import de.hsbremen.battleshipextreme.network.transfarableObject.ServerInfo;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -48,6 +49,14 @@ public class ClientListener extends Thread implements IDisposable,Serializable {
                         break;
                     case Game:
                         this.serverDispatcher.addGame(receivedObject);
+                        break;
+
+                    case ServerInfo:
+                        ServerInfo serverInfo = (ServerInfo) receivedObject;
+                        switch (serverInfo.getReason()){
+                            case GameList:
+                                this.serverDispatcher.sendGameList(clientHandler);
+                        }
                         break;
                     case Turn:
                         this.serverDispatcher.addTurn(this.clientHandler, receivedObject);

@@ -1,12 +1,5 @@
 package de.hsbremen.battleshipextreme.client;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-
 import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Game;
 import de.hsbremen.battleshipextreme.model.Orientation;
@@ -18,20 +11,40 @@ import de.hsbremen.battleshipextreme.model.exception.InvalidPlayerNumberExceptio
 import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
 import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.player.AIPlayer;
+import de.hsbremen.battleshipextreme.model.exception.*;
+import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener;
+import de.hsbremen.battleshipextreme.model.network.NetworkClient;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.player.PlayerType;
 import de.hsbremen.battleshipextreme.model.ship.ShipType;
+import de.hsbremen.battleshipextreme.network.ITransferable;
+import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
+import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListener;
+import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
+import de.hsbremen.battleshipextreme.network.transfarableObject.GameList;
+import de.hsbremen.battleshipextreme.network.transfarableObject.Message;
+import de.hsbremen.battleshipextreme.network.transfarableObject.Turn;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Vector;
 
 public class Controller {
 
-	private Game game;
-	private GUI gui;
-
-	public Controller(Game game, GUI gui) {
-		this.game = game;
-		this.gui = gui;
+    private Game game;
+    private NetworkClient network;
+    private GUI gui;
+	
+    public Controller(Game game, NetworkClient network, GUI gui) {
+        this.game = game;
+        this.network = network;
+        this.gui = gui;
 		addMenuListeners();
-	}
+        addServerConnectionListener();
+        addNetworkListeners();
+    }
 
 	private void initializeGame(Settings settings) throws Exception {
 		game.initialize(settings);
@@ -67,6 +80,52 @@ public class Controller {
 		updatePlayerBoard();
 	}
 
+	private void addNetworkListeners() {
+		network.addErrorListener(new IErrorListener() {
+			public void onError(EventArgs<ITransferable> eventArgs) {
+				JOptionPane.showMessageDialog(gui.getFrame(), eventArgs.getItem(), "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		});
+
+		network.addServerObjectReceivedListener(new IServerObjectReceivedListener() {
+			public void onObjectReceived(EventArgs<ITransferable> eventArgs) {
+
+			}
+
+			public void onMessageObjectReceived(EventArgs<Message> eventArgs) {
+
+			}
+
+			public void onClientInfoObjectReceived(EventArgs<ClientInfo> eventArgs) {
+				switch (eventArgs.getItem().getReason()){
+					case Connect:
+						break;
+					case Disconnect:
+
+						break;
+				}
+			}
+
+			public void onGameObjectReceived(EventArgs<de.hsbremen.battleshipextreme.network.transfarableObject.Game> eventArgs) {
+
+			}
+
+			public void onTurnObjectReceived(EventArgs<Turn> eventArgs) {
+
+			}
+
+			public void onGameListObjectReceived(EventArgs<GameList> eventArgs) {
+				for (int i = gui.getPanelServerConnection().getPnlServerGameBrowser().getTblModel().getRowCount()- 1; i >= 0; i--) {
+					gui.getPanelServerConnection().getPnlServerGameBrowser().getTblModel().removeRow(i);
+				}
+
+				for (Vector row : eventArgs.getItem().getGameList()){
+					gui.getPanelServerConnection().getPnlServerGameBrowser().getTblModel().addRow(row);
+				}
+			}
+		});
+	}
+	
 	private void addMenuListeners() {
 		gui.getMenuItemNewGame().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -111,6 +170,12 @@ public class Controller {
 					}
 				});
 
+		gui.getPanelMainMenu().getButtonMultiplayerGame().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gui.showPanel(GUI.SERVER_CONNECTION_PANEL);
+			}
+		});
+
 		gui.getPanelMainMenu().getButtonMultiplayerGame()
 				.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -122,24 +187,15 @@ public class Controller {
 				.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						SettingsPanel panelSettings = gui.getPanelSettings();
-						int players = Integer.parseInt(panelSettings
-								.getTextFieldPlayers().getText());
-						int aiPlayers = Integer.parseInt(panelSettings
-								.getTextFieldAiPlayers().getText());
+						int players = Integer.parseInt(panelSettings.getTextFieldPlayers().getText());
+						int aiPlayers = Integer.parseInt(panelSettings.getTextFieldAiPlayers().getText());
 						int dumbAiPlayers = 0;
-						int boardSize = Integer.parseInt(panelSettings
-								.getTextFieldBoardSize().getText());
-						int destroyers = Integer.parseInt(panelSettings
-								.getTextFieldDestroyers().getText());
-						int frigates = Integer.parseInt(panelSettings
-								.getTextFieldFrigates().getText());
-						int corvettes = Integer.parseInt(panelSettings
-								.getTextFieldCorvettes().getText());
-						int submarines = Integer.parseInt(panelSettings
-								.getTextFieldSubmarines().getText());
-						Settings settings = new Settings(players, aiPlayers,
-								dumbAiPlayers, boardSize, destroyers, frigates,
-								corvettes, submarines);
+						int boardSize = Integer.parseInt(panelSettings.getTextFieldBoardSize().getText());
+						int destroyers = Integer.parseInt(panelSettings.getTextFieldDestroyers().getText());
+						int frigates = Integer.parseInt(panelSettings.getTextFieldFrigates().getText());
+						int corvettes = Integer.parseInt(panelSettings.getTextFieldCorvettes().getText());
+						int submarines = Integer.parseInt(panelSettings.getTextFieldSubmarines().getText());
+						Settings settings = new Settings(players, aiPlayers, dumbAiPlayers, boardSize, destroyers, frigates, corvettes, submarines);
 						try {
 							settings.validate();
 						} catch (InvalidPlayerNumberException e1) {
@@ -190,8 +246,7 @@ public class Controller {
 						try {
 							placeShip(fieldButton.getxPos(), fieldButton
 									.getyPos(), panelGame
-									.getRadioButtonHorizontalOrientation()
-									.isSelected());
+									.getRadioButtonHorizontalOrientation().isSelected());
 						} catch (ShipAlreadyPlacedException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -224,8 +279,7 @@ public class Controller {
 									fieldButton.getxPos(),
 									fieldButton.getyPos(),
 									panelGame
-											.getRadioButtonHorizontalOrientation()
-											.isSelected());
+											.getRadioButtonHorizontalOrientation().isSelected());
 						} catch (FieldOutOfBoardException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -262,7 +316,6 @@ public class Controller {
 						selectShip(ShipType.SUBMARINE);
 					}
 				});
-
 	}
 
 	private void addEnemySelectionListener() {
@@ -545,6 +598,38 @@ public class Controller {
 				currentPlayer.isShipOfTypeAvailable(ShipType.CORVETTE));
 		panelGame.getRadioButtonSubmarine().setEnabled(
 				currentPlayer.isShipOfTypeAvailable(ShipType.SUBMARINE));
+	}
+
+	private void addServerConnectionListener() {
+
+		gui.getPanelServerConnection().getPnlServerConnectionBar().getBtnConnect().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (!network.isConnected()) {
+					network.connect();
+					network.getSender().sendLogin(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
+				}
+			}
+		});
+
+		gui.getPanelServerConnection().getPnlServerConnectionBar().getBtnDisconnect().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (network.isConnected()) {
+					network.disconnect();
+				}
+			}
+		});
+
+		gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnRefresh().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				network.getSender().requestGameList();
+			}
+		});
+
+		gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnBack().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gui.showPanel(GUI.MAIN_MENU_PANEL);
+			}
+		});
 	}
 
 	private void setShipSelectionEnabled(boolean enabled) {

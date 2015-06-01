@@ -5,6 +5,8 @@ import de.hsbremen.battleshipextreme.model.Settings;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.network.transfarableObject.*;
 
+import java.util.Vector;
+
 /**
  * Created by cschaf on 26.04.2015.
  */
@@ -33,6 +35,9 @@ public class TransferableObjectFactory {
         return new Join(id);
     }
 
+    public static ITransferable CreateGameList(Vector<Vector> gameList) {
+        return new GameList(gameList);
+    }
 
     public static ITransferable CreateTurn(Player from, Player to, int fieldX, int fieldY, Orientation orientation) {
         return new Turn(from, to, fieldX, fieldY, orientation);
