@@ -70,8 +70,8 @@ public class Controller {
 
 		Player enemy = game.getPlayerByName(enemyName);
 		possible = game.makeTurn(enemy, xPos, yPos, orientation);
-		updateEnemyBoard();
 		if (possible) {
+			updateEnemyBoard();
 			setEnemyBoardEnabled(false);
 			gui.getPanelGame().getLabelInfo().setText(game.getCurrentPlayer() + " attacked " + enemy);
 		}
