@@ -311,12 +311,21 @@ public abstract class Player implements Serializable {
 	}
 
 	public boolean isShipOfTypeAvailable(ShipType shipType) {
-		for (Ship ship : ships) {
+		ArrayList<Ship> availableshShips = getAvailableShips(true);
+		for (Ship ship : availableshShips) {
 			if (ship.getType() == shipType) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public ShipType getTypeOFirstAvailableShip() {
+		ArrayList<Ship> availableshShips = getAvailableShips(true);
+		for (Ship ship : availableshShips) {
+			return ship.getType();
+		}
+		return null;
 	}
 
 }

@@ -1,6 +1,7 @@
 package de.hsbremen.battleshipextreme.client;
 
 import java.awt.CardLayout;
+import java.awt.Color;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -13,6 +14,13 @@ public class GUI {
 	public final static String MAIN_MENU_PANEL = "card with main menu panel";
 	public final static String SETTINGS_PANEL = "card with settings panel";
 	public final static String GAME_PANEL = "card with game panel";
+
+	public final static Color EMPTY_COLOR = new Color(135, 206, 250);
+	public final static Color HAS_SHIP_COLOR = Color.black;
+	public final static Color HIT_COLOR = Color.orange;
+	public final static Color DESTROYED_COLOR = Color.red;
+	public final static Color MISSED_COLOR = Color.blue;
+	public final static Color UNKNOWN_COLOR = Color.gray;
 
 	private JFrame frame;
 	private MainMenuPanel panelMainMenu;

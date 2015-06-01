@@ -1,6 +1,5 @@
 package de.hsbremen.battleshipextreme.client;
 
-import java.awt.Color;
 import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
@@ -55,7 +54,7 @@ public class BoardPanel extends JPanel {
 			// Buttons hinzufuegen
 			for (int x = 0; x < buttonsField[y].length; x++) {
 				buttonsField[y][x] = new FieldButton(x, y);
-				buttonsField[y][x].setBackground(new Color(135, 206, 250));
+				buttonsField[y][x].setBackground(GUI.UNKNOWN_COLOR);
 				this.add(buttonsField[y][x]);
 			}
 		}

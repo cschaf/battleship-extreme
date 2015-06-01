@@ -27,6 +27,7 @@ public class GamePanel extends JPanel {
 	private JPanel panelBoards;
 	private BoardPanel panelEnemyBoard;
 	private BoardPanel panelPlayerBoard;
+	private JButton doneButton;
 
 	private JRadioButton radioButtonHorizontalOrientation;
 	private JRadioButton radioButtonVerticalOrientation;
@@ -65,6 +66,9 @@ public class GamePanel extends JPanel {
 		labelInfo.setBackground(Color.orange);
 		labelInfo.setOpaque(true);
 		panelGameArea.add(labelInfo, BorderLayout.NORTH);
+
+		doneButton = new JButton("Done");
+		panelGameArea.add(doneButton, BorderLayout.SOUTH);
 
 		// Spielbrett fuer den Gegner
 		panelEnemyBoard = new BoardPanel("Enemy");
@@ -396,6 +400,10 @@ public class GamePanel extends JPanel {
 
 	public JRadioButton getRadioButtonDestroyer() {
 		return radioButtonShipSelection[0];
+	}
+
+	public JButton getDoneButton() {
+		return doneButton;
 	}
 
 	public JRadioButton getRadioButtonFrigate() {

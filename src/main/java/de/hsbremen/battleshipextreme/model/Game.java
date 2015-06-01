@@ -112,7 +112,6 @@ public class Game implements Serializable {
 			x = xPos + i * xDirection;
 			y = yPos + i * yDirection;
 			boolean isShotPossible = enemy.markBoard(x, y);
-			System.out.println("range" + currentPlayer.getCurrentShip() + currentPlayer.getCurrentShip().getShootingRange());
 			if (i == 0) {
 				if (!isShotPossible) {
 					// erstes Feld belegt, Schuss nicht möglich
