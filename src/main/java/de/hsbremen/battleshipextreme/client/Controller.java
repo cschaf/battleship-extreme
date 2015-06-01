@@ -55,12 +55,6 @@ public class Controller {
 			setPlayerBoardEnabled(false);
 		}
 
-		if (game.isReady()) {
-			setPlayerBoardEnabled(false);
-			setEnemyBoardEnabled(true);
-			updateEnemySelection();
-		}
-
 		updatePlayerBoard();
 		updateShipSelection();
 	}
