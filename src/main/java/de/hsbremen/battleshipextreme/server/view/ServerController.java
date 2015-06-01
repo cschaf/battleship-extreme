@@ -268,6 +268,13 @@ public class ServerController {
             }
         });
 
+        gui.getGameSendMessageMenuItem().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // TODO
+                refreshGameList();
+            }
+        });
+
         gui.getExitMenuItem().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 server.dispose();

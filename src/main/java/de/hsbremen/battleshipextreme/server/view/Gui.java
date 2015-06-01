@@ -37,6 +37,7 @@ public class Gui extends JFrame {
     private JMenuItem exitMenuItem;
     private JMenuItem refreshUserMenuItem;
     private JMenuItem refreshGamesMenuItem;
+    private JMenuItem gameSendMessageMenuItem;
 
 
     public Gui() {
@@ -107,10 +108,15 @@ public class Gui extends JFrame {
         this.userPopupMenu.add(userBanMenuItem);
 
         this.gamePopupMenu = new JPopupMenu();
-        this.gameCloseMenuItem = new JMenuItem("Close");
-        this.gamePopupMenu.add(gameCloseMenuItem);
+        this.gameSendMessageMenuItem = new JMenuItem("Send Message");
+        this.gameSendMessageMenuItem.setEnabled(false);
         this.gameDetailsMenuItem = new JMenuItem("Details");
+        this.gameDetailsMenuItem.setEnabled(false);
+        this.gameCloseMenuItem = new JMenuItem("Close");
+
+        this.gamePopupMenu.add(gameSendMessageMenuItem);
         this.gamePopupMenu.add(gameDetailsMenuItem);
+        this.gamePopupMenu.add(gameCloseMenuItem);
     }
 
     private void _createMenuBar() {
@@ -240,6 +246,10 @@ public class Gui extends JFrame {
 
     public JMenuItem getGameCloseMenuItem() {
         return gameCloseMenuItem;
+    }
+
+    public JMenuItem getGameSendMessageMenuItem() {
+        return gameSendMessageMenuItem;
     }
     public JScrollPane getScrollPanelUsers() {
         return scrollPanelUsers;
