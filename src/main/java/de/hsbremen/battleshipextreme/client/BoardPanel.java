@@ -47,7 +47,7 @@ public class BoardPanel extends JPanel {
 			this.add(new JLabel(Character.toString(c++), SwingConstants.CENTER));
 		}
 
-		buttonsField = new JButton[boardSize][boardSize];
+		buttonsField = new FieldButton[boardSize][boardSize];
 
 		for (int y = 0; y < buttonsField.length; y++) {
 			// Nummerierung jeweils erste Spalte

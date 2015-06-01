@@ -26,7 +26,6 @@ public class Game implements Serializable {
 	private int turnNumber;
 	private int roundNumber;
 	private int boardSize;
-	private GameState state;
 
 	public Game() {
 	}
@@ -55,8 +54,6 @@ public class Game implements Serializable {
 		boardSize = settings.getBoardSize();
 		turnNumber = 0;
 		currentPlayer = players[0];
-
-		state = GameState.PLACEMENT_PHASE;
 	}
 
 	private void createPlayers(Settings settings) {
@@ -324,13 +321,5 @@ public class Game implements Serializable {
 
 	public int getBoardSize() {
 		return boardSize;
-	}
-
-	public GameState getState() {
-		return state;
-	}
-
-	public void setState(GameState state) {
-		this.state = state;
 	}
 }
