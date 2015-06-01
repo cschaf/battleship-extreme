@@ -53,6 +53,7 @@ public class Controller {
 
 		if (currentPlayer.hasPlacedAllShips()) {
 			setPlayerBoardEnabled(false);
+			gui.getPanelGame().getLabelInfo().setText(game.getCurrentPlayer() + " placed all ships");
 		}
 
 		updatePlayerBoard();
@@ -72,6 +73,7 @@ public class Controller {
 		updateEnemyBoard();
 		if (possible) {
 			setEnemyBoardEnabled(false);
+			gui.getPanelGame().getLabelInfo().setText(game.getCurrentPlayer() + " attacked " + enemy);
 		}
 
 		if (game.isGameover()) {
