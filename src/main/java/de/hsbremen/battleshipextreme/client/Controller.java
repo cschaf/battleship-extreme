@@ -343,6 +343,7 @@ public class Controller {
 				}
 			} else {
 				game.nextPlayer();
+				updateEnemySelection();
 				if (game.getCurrentPlayer().areAllShipsReloading()) {
 					setInfoLabelMessage("All ships of "
 							+ game.getCurrentPlayer() + " are reloading");
@@ -363,7 +364,7 @@ public class Controller {
 			}
 			updatePlayerBoard();
 			updateShipSelection();
-			updateEnemySelection();
+
 		} else {
 			setInfoLabelMessage(game.getWinner() + " won ");
 		}
