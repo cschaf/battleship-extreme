@@ -36,7 +36,7 @@ public class Controller {
     private Game game;
     private NetworkClient network;
     private GUI gui;
-	
+
     public Controller(Game game, NetworkClient network, GUI gui) {
         this.game = game;
         this.network = network;
@@ -323,19 +323,19 @@ public class Controller {
 		final JComboBox<String> enemyComboBox = panelGame
 				.getComboBoxEnemySelection();
 		enemyComboBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				updateEnemyBoard();
-			}
-		});
+            public void actionPerformed(ActionEvent e) {
+                updateEnemyBoard();
+            }
+        });
 	}
 
 	private void addDoneButtonListener() {
 		GamePanel panelGame = gui.getPanelGame();
 		panelGame.getDoneButton().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				next();
-			}
-		});
+            public void actionPerformed(ActionEvent e) {
+                next();
+            }
+        });
 	}
 
 	private void selectShip(ShipType shipType) {
@@ -488,8 +488,7 @@ public class Controller {
 				"" + game.getCurrentPlayer().getShipCount(ShipType.FRIGATE));
 		panelGame.getLabelCorvetteShipCount().setText(
 				"" + game.getCurrentPlayer().getShipCount(ShipType.CORVETTE));
-		panelGame.getLabelSubmarineShipCount().setText(
-				"" + game.getCurrentPlayer().getShipCount(ShipType.SUBMARINE));
+		panelGame.getLabelSubmarineShipCount().setText("" + game.getCurrentPlayer().getShipCount(ShipType.SUBMARINE));
 	}
 
 	private void updateEnemySelection() {
@@ -614,6 +613,7 @@ public class Controller {
 		gui.getPanelServerConnection().getPnlServerConnectionBar().getBtnDisconnect().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (network.isConnected()) {
+                    // TODO logoff
 					network.disconnect();
 				}
 			}
@@ -630,6 +630,12 @@ public class Controller {
 				gui.showPanel(GUI.MAIN_MENU_PANEL);
 			}
 		});
+
+        gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnCreate().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                gui.showPanel(GUI.SETTINGS_PANEL);
+            }
+        });
 	}
 
 	private void setShipSelectionEnabled(boolean enabled) {

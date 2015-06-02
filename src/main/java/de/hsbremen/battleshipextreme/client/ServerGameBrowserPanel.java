@@ -15,6 +15,7 @@ public class ServerGameBrowserPanel extends JPanel {
     private JButton btnRefresh;
     private JButton btnBack;
     private JButton btnJoin;
+    private JButton btnCreate;
     private JTable tblGames;
     private DefaultTableModel tblModel;
     private JScrollPane spnlGames;
@@ -27,6 +28,7 @@ public class ServerGameBrowserPanel extends JPanel {
 
     private void _initComponents() {
         btnJoin = new JButton("Join");
+        btnCreate = new JButton("Create");
         btnRefresh = new JButton("Refresh List");
         btnBack = new JButton("Back");
 
@@ -41,12 +43,18 @@ public class ServerGameBrowserPanel extends JPanel {
         tblModel.addColumn("Name");
         tblModel.addColumn("Player");
         tblModel.addColumn("Password");
+        tblModel.addColumn("ID");
         return tblModel;
     }
 
+    public JButton getBtnCreate() {
+        return btnCreate;
+    }
+
     private void _addComponents() {
-        this.add(spnlGames, "spanx 3, pushx, pushy, growx, growy,  wrap");
+        this.add(spnlGames, "spanx 4, pushx, pushy, growx, growy,  wrap");
         this.add(btnBack, "sg btn, growx, pushx");
+        this.add(btnCreate, "sg btn, growx, pushx");
         this.add(btnJoin, "sg btn, growx, pushx");
         this.add(btnRefresh, "sg btn, growx, pushx");
     }
