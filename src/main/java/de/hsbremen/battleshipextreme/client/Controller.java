@@ -71,6 +71,11 @@ public class Controller {
 		}
 
 		initializeGameView();
+
+		// TODO evtl. in der game.save-methode speichern, ob ein Zug ausgeführt
+		// wurde oder nicht
+		// Zur Zeit wird angenommen, dass der spieler vor dem Speichern seinen
+		// Zug ausgeführt hat.
 		setPlayerBoardEnabled(false);
 		setDoneButtonEnabled(true);
 		setInfoLabelMessage(game.getCurrentPlayer() + " made his turn");
@@ -81,6 +86,8 @@ public class Controller {
 		gui.showPanel(GUI.GAME_PANEL);
 		updateEnemyBoard();
 		updatePlayerBoard();
+		updateEnemySelection();
+		setEnemySelectionEnabled(false);
 		setEnemyBoardEnabled(false);
 		setShipSelectionEnabled(false);
 		setDoneButtonEnabled(false);
@@ -434,6 +441,7 @@ public class Controller {
 					}
 				}
 			} else {
+				setEnemySelectionEnabled(true);
 				setSaveButtonEnabled(true);
 				game.nextPlayer();
 				updateEnemySelection();
@@ -637,6 +645,10 @@ public class Controller {
 
 	private void setSaveButtonEnabled(boolean enabled) {
 		gui.getMenuItemSaveGame().setEnabled(enabled);
+	}
+
+	private void setEnemySelectionEnabled(boolean enabled) {
+		gui.getPanelGame().getComboBoxEnemySelection().setEnabled(enabled);
 	}
 
 }
