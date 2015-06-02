@@ -12,7 +12,7 @@ public interface IServerObjectReceivedListener extends EventListener{
     void onObjectReceived(EventArgs<ITransferable> eventArgs);
     void onMessageObjectReceived(EventArgs<Message> eventArgs);
     void onClientInfoObjectReceived(EventArgs<ClientInfo> eventArgs);
-    void onGameObjectReceived(EventArgs<Game> eventArgs);
+    void onGameObjectReceived(EventArgs<NetGame> eventArgs);
     void onTurnObjectReceived(EventArgs<Turn> eventArgs);
     void onGameListObjectReceived(EventArgs<GameList> eventArgs);
 }

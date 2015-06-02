@@ -3,7 +3,7 @@ package de.hsbremen.battleshipextreme.server;
 import de.hsbremen.battleshipextreme.network.*;
 import de.hsbremen.battleshipextreme.network.eventhandling.ErrorHandler;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
-import de.hsbremen.battleshipextreme.network.transfarableObject.Game;
+import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Join;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Turn;
 import de.hsbremen.battleshipextreme.server.listener.IClientConnectionListener;
@@ -22,7 +22,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
     protected EventListenerList listeners;
     private Vector<ClientHandler> clients;
     private Vector<ITransferable> objectQueue;
-    private Vector<Game> games;
+    private Vector<NetGame> netGames;
     private Vector<String> banList;
     private boolean disposed;
     private ErrorHandler errorHandler;
@@ -37,7 +37,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         this.disposed = false;
         this.clients = new Vector<ClientHandler>();
         this.objectQueue = new Vector<ITransferable>();
-        this.games = new Vector<Game>();
+        this.netGames = new Vector<NetGame>();
         this.banList = new Vector<String>();
     }
 
@@ -63,10 +63,10 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
             clientHasDisconnected(new EventArgs<ITransferable>(this, user));
         }
         boolean found = false;
-        for (Game game : this.games) {
-            for (int i = 0; i < game.getJoinedPlayers().size(); i++) {
-                if (game.getJoinedPlayers().get(i) == clientHandler) {
-                    game.getJoinedPlayers().remove(i);
+        for (NetGame netGame : this.netGames) {
+            for (int i = 0; i < netGame.getJoinedPlayers().size(); i++) {
+                if (netGame.getJoinedPlayers().get(i) == clientHandler) {
+                    netGame.getJoinedPlayers().remove(i);
                     found = true;
                     break;
                 }
@@ -186,10 +186,10 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
             this.errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Couldn't create new game!")));
             return;
         }
-        Game game = (Game) receivedObject;
-        this.games.add(game);
-        objectReceived(new EventArgs<ITransferable>(this, game));
-        this.broadcast(game, null);
+        NetGame netGame = (NetGame) receivedObject;
+        this.netGames.add(netGame);
+        objectReceived(new EventArgs<ITransferable>(this, netGame));
+        this.broadcast(netGame, null);
     }
 
     public synchronized void deleteGame(ITransferable receivedObject) {
@@ -198,9 +198,9 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
             return;
         }
 
-        int gameIndex = this.games.indexOf(receivedObject);
+        int gameIndex = this.netGames.indexOf(receivedObject);
         if (gameIndex != -1) {
-            this.games.removeElementAt(gameIndex);
+            this.netGames.removeElementAt(gameIndex);
             objectReceived(new EventArgs<ITransferable>(this, receivedObject));
         }
     }
@@ -208,17 +208,17 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
     public synchronized void addTurn(ClientHandler handler, ITransferable receivedObject) {
         Turn turn = (Turn) receivedObject;
         boolean gameFound = false;
-        for (Game game : this.games) {
-            for (ClientHandler client : game.getJoinedPlayers()) {
+        for (NetGame netGame : this.netGames) {
+            for (ClientHandler client : netGame.getJoinedPlayers()) {
                 if (client == handler) {
-                    game.addTurn(turn);
-                    turn.setGameId(game.getId());
+                    netGame.addTurn(turn);
+                    turn.setGameId(netGame.getId());
                     gameFound = true;
                     break;
                 }
             }
             if (gameFound) {
-                this.multicast(turn, game.getJoinedPlayers());
+                this.multicast(turn, netGame.getJoinedPlayers());
                 break;
             }
         }
@@ -228,12 +228,12 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     public void assignClientToGame(ClientHandler clientHandler, ITransferable receivedObject) {
         Join join = (Join) receivedObject;
-        for (Game game : this.games) {
-            if (join.getGameId().equals(game.getId())) {
-                if (game.getJoinedPlayers().size() < game.getMaxPlayers()) {
-                    game.addPlayer(clientHandler);
+        for (NetGame netGame : this.netGames) {
+            if (join.getGameId().equals(netGame.getId())) {
+                if (netGame.getJoinedPlayers().size() < netGame.getMaxPlayers()) {
+                    netGame.addPlayer(clientHandler);
                     ITransferable info = TransferableObjectFactory.CreateClientInfo(clientHandler.getUsername(), clientHandler.getSocket().getInetAddress().getHostAddress(), clientHandler.getSocket().getPort(), InfoSendingReason.Connect);
-                    this.multicast(info, game.getJoinedPlayers());
+                    this.multicast(info, netGame.getJoinedPlayers());
                 } else {
                     ITransferable msg = TransferableObjectFactory.CreateMessage("Game has no free slot available!");
                     this.unicast(msg, clientHandler);
@@ -287,8 +287,8 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         return maxPlayers;
     }
 
-    public Vector<Game> getGames() {
-        return games;
+    public Vector<NetGame> getNetGames() {
+        return netGames;
     }
 
     public Vector<String> getBanList() {
@@ -313,25 +313,17 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         return null;
     }
 
-    public Game getGameById(String id){
-        for (int i= 0; i < getGames().size(); i++){
-            if (getGames().get(i).getId().equals(id)){
-                return getGames().get(i);
+    public NetGame getGameById(String id){
+        for (int i= 0; i < getNetGames().size(); i++){
+            if (getNetGames().get(i).getId().equals(id)){
+                return getNetGames().get(i);
             }
         }
         return null;
     }
 
     public void sendGameList(ClientHandler clientHandler) {
-        Vector<Vector> gameList = new Vector<Vector>();
-        for (Game game : this.getGames()){
-            Vector row = new Vector();
-            row.add(game.getName());
-            row.add(game.getJoinedPlayers().size() + " / " + game.getMaxPlayers());
-            row.add(game.isPrivate());
-            gameList.addElement(row);
-        }
-        ITransferable games = TransferableObjectFactory.CreateGameList(gameList);
+        ITransferable games = TransferableObjectFactory.CreateGameList(getNetGames());
         this.unicast(games, clientHandler);
     }
 }

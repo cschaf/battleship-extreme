@@ -28,10 +28,12 @@ import de.hsbremen.battleshipextreme.model.ship.ShipType;
 import de.hsbremen.battleshipextreme.network.ITransferable;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListener;
-import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
-import de.hsbremen.battleshipextreme.network.transfarableObject.GameList;
-import de.hsbremen.battleshipextreme.network.transfarableObject.Message;
-import de.hsbremen.battleshipextreme.network.transfarableObject.Turn;
+import de.hsbremen.battleshipextreme.network.transfarableObject.*;import de.hsbremen.battleshipextreme.network.transfarableObject.*;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class Controller {
 
@@ -305,51 +307,49 @@ public class Controller {
 		});
 	}
 
-	private void addNetworkListeners() {
-		network.addErrorListener(new IErrorListener() {
-			public void onError(EventArgs<ITransferable> eventArgs) {
-				JOptionPane.showMessageDialog(gui.getFrame(), eventArgs.getItem(), "Error", JOptionPane.ERROR_MESSAGE);
-			}
-		});
 
-		network.addServerObjectReceivedListener(new IServerObjectReceivedListener() {
-			public void onObjectReceived(EventArgs<ITransferable> eventArgs) {
+    private void addNetworkListeners() {
+        network.addErrorListener(new IErrorListener() {
+            public void onError(EventArgs<ITransferable> eventArgs) {
+                JOptionPane.showMessageDialog(gui.getFrame(), eventArgs.getItem(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
 
-			}
+        network.addServerObjectReceivedListener(new IServerObjectReceivedListener() {
+            public void onObjectReceived(EventArgs<ITransferable> eventArgs) {
 
-			public void onMessageObjectReceived(EventArgs<Message> eventArgs) {
+            }
 
-			}
+            public void onMessageObjectReceived(EventArgs<Message> eventArgs) {
 
-			public void onClientInfoObjectReceived(EventArgs<ClientInfo> eventArgs) {
-				switch (eventArgs.getItem().getReason()) {
-				case Connect:
-					break;
-				case Disconnect:
+            }
 
-					break;
-				}
-			}
+            public void onClientInfoObjectReceived(EventArgs<ClientInfo> eventArgs) {
+                switch (eventArgs.getItem().getReason()) {
+                    case Connect:
+                        break;
+                    case Disconnect:
 
-			public void onGameObjectReceived(EventArgs<de.hsbremen.battleshipextreme.network.transfarableObject.Game> eventArgs) {
+                        break;
+                }
+            }
 
-			}
+            public void onGameObjectReceived(EventArgs<NetGame> eventArgs) {
 
-			public void onTurnObjectReceived(EventArgs<Turn> eventArgs) {
+            }
 
-			}
+            public void onTurnObjectReceived(EventArgs<Turn> eventArgs) {
 
-			public void onGameListObjectReceived(EventArgs<GameList> eventArgs) {
-				for (int i = gui.getPanelServerConnection().getPnlServerGameBrowser().getTblModel().getRowCount() - 1; i >= 0; i--) {
-					gui.getPanelServerConnection().getPnlServerGameBrowser().getTblModel().removeRow(i);
-				}
+            }
 
-				for (Vector row : eventArgs.getItem().getGameList()) {
-					gui.getPanelServerConnection().getPnlServerGameBrowser().getTblModel().addRow(row);
-				}
-			}
-		});
-	}
+            public void onGameListObjectReceived(EventArgs<GameList> eventArgs) {
+                gui.getPanelServerConnection().getPnlServerGameBrowser().getTblModel().removeAllGames();
+                for (NetGame game : eventArgs.getItem().getNetGameList()) {
+                    gui.getPanelServerConnection().getPnlServerGameBrowser().addGameToTable(game);
+                }
+            }
+        });
+    }
 
 	private void addServerConnectionListener() {
 

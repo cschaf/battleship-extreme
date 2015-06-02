@@ -5,7 +5,6 @@ import de.hsbremen.battleshipextreme.network.ITransferable;
 import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
-import de.hsbremen.battleshipextreme.network.transfarableObject.Game;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Message;
 import de.hsbremen.battleshipextreme.network.transfarableObject.ServerInfo;
 

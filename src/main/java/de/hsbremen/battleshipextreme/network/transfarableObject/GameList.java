@@ -8,18 +8,18 @@ import java.util.Vector;
  * Created by cschaf on 02.06.2015.
  */
 public class GameList extends TransferableObject {
-    private Vector<Vector> gameList;
+    private Vector<NetGame> netGameList;
 
-    public GameList(Vector<Vector> gameList) {
+    public GameList(Vector<NetGame> netGameList) {
 
-        this.gameList = gameList;
+        this.netGameList = netGameList;
     }
 
     public TransferableType getType() {
         return TransferableType.GameList;
     }
 
-    public Vector<Vector> getGameList() {
-        return gameList;
+    public Vector<NetGame> getNetGameList() {
+        return netGameList;
     }
 }

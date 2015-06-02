@@ -7,7 +7,7 @@ import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 import de.hsbremen.battleshipextreme.network.eventhandling.ErrorHandler;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListener;
-import de.hsbremen.battleshipextreme.network.transfarableObject.Game;
+import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 import de.hsbremen.battleshipextreme.server.listener.IClientConnectionListener;
 import de.hsbremen.battleshipextreme.server.listener.IClientObjectReceivedListener;
 import de.hsbremen.battleshipextreme.server.listener.IServerListener;
@@ -77,13 +77,13 @@ public class Server implements IDisposable {
     }
 
     public void stop() {
-        this.serverDispatcher.getGames().removeAllElements();
+        this.serverDispatcher.getNetGames().removeAllElements();
         this.dispose();
         this.isRunning = false;
     }
 
-    public Vector<Game> getGames() {
-        return this.serverDispatcher.getGames();
+    public Vector<NetGame> getGames() {
+        return this.serverDispatcher.getNetGames();
     }
 
     public Vector<ClientHandler> getClients() {
@@ -172,20 +172,20 @@ public class Server implements IDisposable {
         this.serverDispatcher.banClient(client);
     }
 
-    public void removeGame(Game game) {
-        for (int i = 0; i < serverDispatcher.getGames().size(); i++) {
-            if (this.serverDispatcher.getGames().get(i).getId().equals(game.getId())) {
-                this.serverDispatcher.getGames().remove(i);
+    public void removeGame(NetGame netGame) {
+        for (int i = 0; i < serverDispatcher.getNetGames().size(); i++) {
+            if (this.serverDispatcher.getNetGames().get(i).getId().equals(netGame.getId())) {
+                this.serverDispatcher.getNetGames().remove(i);
                 break;
             }
         }
     }
 
     public void removeClientsFromGame(String gameId) {
-        Game game = this.serverDispatcher.getGameById(gameId);
-        if (game != null) {
+        NetGame netGame = this.serverDispatcher.getGameById(gameId);
+        if (netGame != null) {
             ITransferable serverInfo = TransferableObjectFactory.CreateServerInfo(InfoSendingReason.GameClosed);
-            serverDispatcher.multicast(serverInfo, game.getJoinedPlayers());
+            serverDispatcher.multicast(serverInfo, netGame.getJoinedPlayers());
         }
     }
 }

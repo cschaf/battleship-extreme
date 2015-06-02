@@ -47,8 +47,8 @@ public class Listener extends Thread implements IDisposable {
                         clientInfoObjectReceived(new EventArgs<ClientInfo>(this, clientInfo));
                         break;
                     case Game:
-                        Game game = (Game)receivedObj;
-                        gameObjectReceived(new EventArgs<Game>(this, game));
+                        NetGame netGame = (NetGame)receivedObj;
+                        gameObjectReceived(new EventArgs<NetGame>(this, netGame));
                         break;
 
                     case GameList:
@@ -103,7 +103,7 @@ public class Listener extends Thread implements IDisposable {
         }
     }
 
-    private void gameObjectReceived(EventArgs<Game> eventArgs) {
+    private void gameObjectReceived(EventArgs<NetGame> eventArgs) {
         Object[] listeners = this.listeners.getListenerList();
         for (int i = 0; i < listeners.length; i = i+2) {
             if (listeners[i] == IServerObjectReceivedListener.class) {

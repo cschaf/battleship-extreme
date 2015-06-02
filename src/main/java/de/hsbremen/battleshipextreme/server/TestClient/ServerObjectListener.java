@@ -32,15 +32,15 @@ public class ServerObjectListener implements IServerObjectReceivedListener {
         }
     }
 
-    public void onGameObjectReceived(EventArgs<Game> eventArgs) {
-        Game game = eventArgs.getItem();
+    public void onGameObjectReceived(EventArgs<NetGame> eventArgs) {
+        NetGame netGame = eventArgs.getItem();
         System.out.println("--- New Game");
-        System.out.println("Name: " + game.getName());
-        System.out.println("Destroyers: " + game.getSettings().getDestroyers());
-        System.out.println("Corvettes: " + game.getSettings().getCorvettes());
-        System.out.println("Frigates: " + game.getSettings().getFrigates());
-        System.out.println("Submarines: " + game.getSettings().getSubmarines());
-        System.out.println("Boardsize: " + game.getSettings().getBoardSize());
+        System.out.println("Name: " + netGame.getName());
+        System.out.println("Destroyers: " + netGame.getSettings().getDestroyers());
+        System.out.println("Corvettes: " + netGame.getSettings().getCorvettes());
+        System.out.println("Frigates: " + netGame.getSettings().getFrigates());
+        System.out.println("Submarines: " + netGame.getSettings().getSubmarines());
+        System.out.println("Boardsize: " + netGame.getSettings().getBoardSize());
         System.out.println("--- end ---");
     }
 

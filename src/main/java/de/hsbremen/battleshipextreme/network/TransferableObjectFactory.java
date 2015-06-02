@@ -28,14 +28,14 @@ public class TransferableObjectFactory {
     }
 
     public static ITransferable CreateGame(String name, Settings settings) {
-        return new Game(name, settings);
+        return new NetGame(name, settings);
     }
 
     public static ITransferable CreateJoin(String id) {
         return new Join(id);
     }
 
-    public static ITransferable CreateGameList(Vector<Vector> gameList) {
+    public static ITransferable CreateGameList(Vector<NetGame> gameList) {
         return new GameList(gameList);
     }
 

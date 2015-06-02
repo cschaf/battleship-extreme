@@ -2,7 +2,7 @@ package de.hsbremen.battleshipextreme.server.listener;
 
 import de.hsbremen.battleshipextreme.network.ITransferable;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
-import de.hsbremen.battleshipextreme.network.transfarableObject.Game;
+import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Turn;
 
 /**
@@ -19,8 +19,8 @@ public class ClientObjectReceivedListener implements IClientObjectReceivedListen
                 System.out.println(receivedObject);
                 break;
             case Game:
-                Game game = (Game) receivedObject;
-                System.out.println("New game settings has been received for game " + game.getName());
+                NetGame netGame = (NetGame) receivedObject;
+                System.out.println("New game settings has been received for game " + netGame.getName());
                 break;
             case Turn:
                 Turn turn = (Turn) receivedObject;

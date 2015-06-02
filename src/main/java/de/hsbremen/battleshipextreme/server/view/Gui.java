@@ -1,7 +1,7 @@
 package de.hsbremen.battleshipextreme.server.view;
 
 import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
-import de.hsbremen.battleshipextreme.network.transfarableObject.Game;
+import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -26,7 +26,7 @@ public class Gui extends JFrame {
     private GroupBox boxGames;
     private GroupBox boxMessages;
     private DefaultListModel<ClientJListItem> userModel;
-    private DefaultListModel<Game> gameModel;
+    private DefaultListModel<NetGame> gameModel;
     private JPopupMenu userPopupMenu;
     private JPopupMenu gamePopupMenu;
     private JMenuItem gameCloseMenuItem;
@@ -46,7 +46,7 @@ public class Gui extends JFrame {
         this._addComponents();
         this._createMenuBar();
         this.userModel = new DefaultListModel<ClientJListItem>();
-        this.gameModel = new DefaultListModel<Game>();
+        this.gameModel = new DefaultListModel<NetGame>();
         setContentPane(pnlMain);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Dimension d = new Dimension(637, 500);
@@ -201,12 +201,12 @@ public class Gui extends JFrame {
         return userModel;
     }
 
-    public void addGameToGameList(Game item) {
+    public void addGameToGameList(NetGame item) {
         this.gameModel.addElement(item);
         getListGames().setModel(this.gameModel);
     }
 
-    public void removeGameFromGameList(Game item) {
+    public void removeGameFromGameList(NetGame item) {
         for (int i = 0; i < gameModel.getSize(); i++) {
             String ip = gameModel.getElementAt(i).getId();
             if (ip.equals(item.getId())) {
@@ -220,7 +220,7 @@ public class Gui extends JFrame {
         return userPopupMenu;
     }
 
-    public DefaultListModel<Game> getGameModel() {
+    public DefaultListModel<NetGame> getGameModel() {
         return gameModel;
     }
 

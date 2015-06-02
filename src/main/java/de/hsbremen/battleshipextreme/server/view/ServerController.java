@@ -5,7 +5,7 @@ import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListener;
 import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
-import de.hsbremen.battleshipextreme.network.transfarableObject.Game;
+import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Join;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Turn;
 import de.hsbremen.battleshipextreme.server.Server;
@@ -65,9 +65,9 @@ public class ServerController {
                         gui.getTraMessages().append(eventArgs.getItem().toString() + "\r\n");
                         break;
                     case Game:
-                        Game game = (Game) receivedObject;
-                        gui.addGameToGameList(game);
-                        gui.getTraMessages().append("New Game was added, " + game.getName() + "(" + game.getId() + ")" + "\r\n");
+                        NetGame netGame = (NetGame) receivedObject;
+                        gui.addGameToGameList(netGame);
+                        gui.getTraMessages().append("New Game was added, " + netGame.getName() + "(" + netGame.getId() + ")" + "\r\n");
                         refreshGameList();
                         break;
                     case Turn:
@@ -201,7 +201,7 @@ public class ServerController {
                 ListModel m = l.getModel();
                 int index = l.locationToIndex(e.getPoint());
                 if (index > -1 && m.getSize() > 0) {
-                    Game item = (Game) m.getElementAt(index);
+                    NetGame item = (NetGame) m.getElementAt(index);
                     String name = "<p width=\"300\">" + "Name: " + item.getName() + "</p>";
                     String id = "<p width=\"300\">" + "ID: " + item.getId() + "</p>";
                     String password = "<p width=\"300\">" + "Password: " + item.getPassword() + "</p>";
@@ -254,9 +254,9 @@ public class ServerController {
 
         gui.getGameCloseMenuItem().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Game game = (Game) gui.getListGames().getSelectedValue();
-                server.removeClientsFromGame(game.getId());
-                server.removeGame(game);
+                NetGame netGame = (NetGame) gui.getListGames().getSelectedValue();
+                server.removeClientsFromGame(netGame.getId());
+                server.removeGame(netGame);
                 refreshGameList();
             }
         });

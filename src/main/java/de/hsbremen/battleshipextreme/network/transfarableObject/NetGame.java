@@ -11,7 +11,7 @@ import java.util.UUID;
 /**
  * Created by cschaf on 30.04.2015.
  */
-public class Game extends TransferableObject {
+public class NetGame extends TransferableObject {
     private String id;
     private String name;
     private Settings settings;
@@ -21,7 +21,7 @@ public class Game extends TransferableObject {
     private boolean isPrivate;
     private ArrayList<Turn> turns;
 
-    public Game(String name, Settings settings) {
+    public NetGame(String name, Settings settings) {
         //this.id = UUID.randomUUID().toString();
         this.id = "123456";
         this.name = name;

@@ -1,10 +1,9 @@
 package de.hsbremen.battleshipextreme.client;
 
+import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.util.Vector;
 
 /**
  * Created by cschaf on 01.06.2015.
@@ -15,7 +14,7 @@ public class ServerGameBrowserPanel extends JPanel {
     private JButton btnJoin;
     private JButton btnCreate;
     private JTable tblGames;
-    private DefaultTableModel tblModel;
+    private GameListModel tblModel;
     private JScrollPane spnlGames;
 
     public ServerGameBrowserPanel() {
@@ -30,19 +29,10 @@ public class ServerGameBrowserPanel extends JPanel {
         btnRefresh = new JButton("Refresh List");
         btnBack = new JButton("Back");
 
-        tblModel = _setupGameTableModel();
+        tblModel = new GameListModel();
         tblGames = new JTable(tblModel);
         spnlGames = new JScrollPane(tblGames);
         tblGames.setShowGrid(true);
-    }
-
-    private DefaultTableModel _setupGameTableModel() {
-        DefaultTableModel tblModel = new DefaultTableModel();
-        tblModel.addColumn("Name");
-        tblModel.addColumn("Player");
-        tblModel.addColumn("Password");
-        tblModel.addColumn("ID");
-        return tblModel;
     }
 
     public JButton getBtnCreate() {
@@ -57,19 +47,11 @@ public class ServerGameBrowserPanel extends JPanel {
         this.add(btnRefresh, "sg btn, growx, pushx");
     }
 
-    public void addGameToTable(String name, String player, boolean password) {
-        Vector row = new Vector();
-        row.add(name);
-        row.add(player);
-        String isPassword = "no";
-        if (password) {
-            isPassword = "yes";
-        }
-        row.add(isPassword);
-        tblModel.addRow(row);
+    public void addGameToTable(NetGame netGame) {
+        tblModel.addGame(netGame);
     }
 
-    public DefaultTableModel getTblModel() {
+    public GameListModel getTblModel() {
         return tblModel;
     }
 
