@@ -2,6 +2,7 @@ package de.hsbremen.battleshipextreme.server;
 
 import de.hsbremen.battleshipextreme.network.IDisposable;
 import de.hsbremen.battleshipextreme.network.ITransferable;
+import de.hsbremen.battleshipextreme.network.InfoSendingReason;
 import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
@@ -65,6 +66,7 @@ public class ClientListener extends Thread implements IDisposable,Serializable {
                         switch (info.getReason()) {
                             case Connect:
                                 clientHandler.setUsername(info.getUsername());
+                                this.serverDispatcher.unicast(TransferableObjectFactory.CreateServerInfo(InfoSendingReason.Connect),clientHandler);
                                 break;
                         }
                         this.serverDispatcher.printInfo(new EventArgs<ITransferable>(this, new Message(info.getIp() + ":" + info.getPort() + " has named to " + info.getUsername() + "(" + info.getPort() + ")")));

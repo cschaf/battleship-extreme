@@ -65,6 +65,9 @@ public class Listener extends Thread implements IDisposable {
                             case GameClosed:
                                 errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Your game has been closed!")));
                                 break;
+                            default:
+                                serverInfoObjectReceived(new EventArgs<ServerInfo>(this, serverInfo));
+                                break;
                         }
                         break;
                 }
@@ -126,6 +129,15 @@ public class Listener extends Thread implements IDisposable {
         for (int i = 0; i < listeners.length; i = i+2) {
             if (listeners[i] == IServerObjectReceivedListener.class) {
                 ((IServerObjectReceivedListener) listeners[i+1]).onTurnObjectReceived(eventArgs);
+            }
+        }
+    }
+
+    private void serverInfoObjectReceived(EventArgs<ServerInfo> eventArgs) {
+        Object[] listeners = this.listeners.getListenerList();
+        for (int i = 0; i < listeners.length; i = i+2) {
+            if (listeners[i] == IServerObjectReceivedListener.class) {
+                ((IServerObjectReceivedListener) listeners[i+1]).onServerInfoObjectReceived(eventArgs);
             }
         }
     }

@@ -38,7 +38,7 @@ public class Controller {
         this.gui = gui;
         addMenuListeners();
         addServerConnectionListener();
-        addNetworkListeners();
+        //addNetworkListeners();
         addServerGameBrowserListeners();
     }
 
@@ -301,12 +301,14 @@ public class Controller {
         network.addErrorListener(new IErrorListener() {
             public void onError(EventArgs<ITransferable> eventArgs) {
                 JOptionPane.showMessageDialog(gui.getFrame(), eventArgs.getItem(), "Error", JOptionPane.ERROR_MESSAGE);
+                gui.getPanelServerConnection().getPnlServerConnectionBar().setEnabledAfterStartStop(true);
+                gui.getPanelServerConnection().getPnlServerGameBrowser().getTblModel().removeAllGames();
             }
         });
 
         network.addServerObjectReceivedListener(new IServerObjectReceivedListener() {
             public void onObjectReceived(EventArgs<ITransferable> eventArgs) {
-
+                JOptionPane.showMessageDialog(gui.getFrame(), eventArgs.getItem(), "Info", JOptionPane.INFORMATION_MESSAGE);
             }
 
             public void onMessageObjectReceived(EventArgs<Message> eventArgs) {
@@ -335,6 +337,17 @@ public class Controller {
                 gui.getPanelServerConnection().getPnlServerGameBrowser().getTblModel().removeAllGames();
                 for (NetGame game : eventArgs.getItem().getNetGameList()) {
                     gui.getPanelServerConnection().getPnlServerGameBrowser().addGameToTable(game);
+                }
+            }
+
+            public void onServerInfoObjectReceived(EventArgs<ServerInfo> eventArgs) {
+                ServerInfo info = eventArgs.getItem();
+                switch (info.getReason()){
+                    case Connect:
+                        gui.getPanelServerConnection().getPnlServerConnectionBar().setEnabledAfterStartStop(false);
+                        network.getSender().requestGameList();
+                        resizeServerGameListColumns();
+                        break;
                 }
             }
         });
@@ -606,6 +619,7 @@ public class Controller {
         gui.getPanelServerConnection().getPnlServerConnectionBar().getBtnConnect().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (!network.isConnected()) {
+                    addNetworkListeners();
                     network.connect();
                     network.getSender().sendLogin(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
                 }
@@ -624,7 +638,7 @@ public class Controller {
         gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnRefresh().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 network.getSender().requestGameList();
-                ResizeServerGameListColumns();
+                resizeServerGameListColumns();
             }
         });
 
@@ -654,7 +668,7 @@ public class Controller {
             }
 
             public void columnMarginChanged(ChangeEvent e) {
-                ResizeServerGameListColumns();
+                resizeServerGameListColumns();
             }
 
             public void columnSelectionChanged(ListSelectionEvent e) {
@@ -663,7 +677,7 @@ public class Controller {
         });
     }
 
-    private void ResizeServerGameListColumns() {
+    private void resizeServerGameListColumns() {
         JTable tbl = gui.getPanelServerConnection().getPnlServerGameBrowser().getTblGames();
         Dimension tableSize = tbl.getSize();
         tbl.getColumn("Name").setWidth(Math.round((tableSize.width - 195)));

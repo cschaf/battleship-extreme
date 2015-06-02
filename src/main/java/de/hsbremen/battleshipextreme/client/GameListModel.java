@@ -72,5 +72,6 @@ public class GameListModel extends AbstractTableModel {
         for (int i = 0; i < netGames.size(); i++) {
             netGames.remove(i);
         }
+        fireTableDataChanged();
     }
 }

@@ -70,4 +70,12 @@ public class ServerConnectionBarPanel extends JPanel{
     public JButton getBtnConnect() {
         return btnConnect;
     }
+
+    public void setEnabledAfterStartStop(boolean state){
+        tbxIp.setEnabled(state);
+        tbxPort.setEnabled(state);
+        tbxUsername.setEnabled(state);
+        btnConnect.setEnabled(state);
+        btnDisconnect.setEnabled(!state);
+    }
 }

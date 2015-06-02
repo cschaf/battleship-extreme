@@ -1,4 +1,4 @@
-package de.hsbremen.battleshipextreme;
+package test.java.de.hsbremen.battleshipextreme;
 
 import de.hsbremen.battleshipextreme.model.player.HumanPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;

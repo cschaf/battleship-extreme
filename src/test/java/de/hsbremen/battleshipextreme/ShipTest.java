@@ -1,4 +1,4 @@
-package de.hsbremen.battleshipextreme;
+package test.java.de.hsbremen.battleshipextreme;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

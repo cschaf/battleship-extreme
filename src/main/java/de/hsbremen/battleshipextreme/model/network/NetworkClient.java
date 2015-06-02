@@ -21,11 +21,6 @@ public class NetworkClient implements IDisposable {
     private ObjectInputStream in = null;
     private ObjectOutputStream out = null;
     private Socket socket = null;
-
-    public Sender getSender() {
-        return sender;
-    }
-
     private Sender sender = null;
     private Listener listener = null;
     private String username = "Player";
@@ -133,5 +128,9 @@ public class NetworkClient implements IDisposable {
 
     public boolean isConnected() {
         return isConnected;
+    }
+
+    public Sender getSender() {
+        return sender;
     }
 }
