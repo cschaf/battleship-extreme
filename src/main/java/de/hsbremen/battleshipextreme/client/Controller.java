@@ -90,12 +90,14 @@ public class Controller {
 		gui.getMenuItemMainMenu().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				gui.showPanel(GUI.MAIN_MENU_PANEL);
+				setSaveButtonEnabled(false);
 			}
 		});
 
 		gui.getMenuItemNewGame().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				gui.showPanel(GUI.SETTINGS_PANEL);
+				setSaveButtonEnabled(false);
 			}
 		});
 
