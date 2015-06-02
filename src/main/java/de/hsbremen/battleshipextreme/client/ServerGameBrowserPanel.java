@@ -31,6 +31,7 @@ public class ServerGameBrowserPanel extends JPanel {
 
         tblModel = new GameListModel();
         tblGames = new JTable(tblModel);
+        tblGames.getColumn("PW").setCellRenderer(new IconTableCellRenderer());
         spnlGames = new JScrollPane(tblGames);
         tblGames.setShowGrid(true);
     }
