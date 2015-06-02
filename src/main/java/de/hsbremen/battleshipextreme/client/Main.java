@@ -8,6 +8,5 @@ public class Main {
 		Game game = new Game();
 		GUI gui = new GUI();
 		Controller controller = new Controller(game, gui);
-
 	}
 }

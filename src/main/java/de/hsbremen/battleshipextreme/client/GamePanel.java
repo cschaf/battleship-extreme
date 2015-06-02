@@ -71,11 +71,11 @@ public class GamePanel extends JPanel {
 		panelGameArea.add(doneButton, BorderLayout.SOUTH);
 
 		// Spielbrett fuer den Gegner
-		panelEnemyBoard = new BoardPanel("Enemy");
+		panelEnemyBoard = new BoardPanel();
 		panelBoards.add(panelEnemyBoard);
 
 		// Spielbrett fuer den Player
-		panelPlayerBoard = new BoardPanel("Yours");
+		panelPlayerBoard = new BoardPanel();
 		panelBoards.add(panelPlayerBoard);
 
 		// Panel fuer mit den Boards hinzufügen

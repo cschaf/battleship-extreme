@@ -13,13 +13,7 @@ public class BoardPanel extends JPanel {
 	private JButton[][] buttonsField;
 	private String title;
 
-	public BoardPanel(String title) {
-
-		this.title = title;
-
-	}
-
-	public void createBoardPanel(int boardSize) {
+	public void initializeBoardPanel(String title, int boardSize) {
 		// ohne Nummerierung
 		// this.setBorder(BorderFactory.createTitledBorder(this.title));
 		// this.setLayout(new GridLayout(boardSize, boardSize));
@@ -32,6 +26,7 @@ public class BoardPanel extends JPanel {
 		// this.add(buttonsField[y][x]);
 		// }
 		// }
+		this.title = title;
 
 		// mit Nummerierung
 		this.setBorder(BorderFactory.createTitledBorder(this.title));

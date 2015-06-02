@@ -28,8 +28,7 @@ public class GUI {
 	private SettingsPanel panelSettings;
 	private GamePanel panelGame;
 	private ServerConnectionPanel panelServerConnection;
-	private JMenuItem menuItemNewGame, menuItemSaveGame, menuItemLoadGame,
-			menuItemQuitGame;
+	private JMenuItem menuItemMainMenu, menuItemNewGame, menuItemSaveGame, menuItemLoadGame, menuItemQuitGame;
 	private JMenuItem menuItemManual;
 
 	private JPanel cards;
@@ -83,11 +82,13 @@ public class GUI {
 		JMenu gameMenu = new JMenu("Game");
 		menuBar.add(gameMenu);
 
+		menuItemMainMenu = new JMenuItem("Main Menu");
 		menuItemNewGame = new JMenuItem("New Game");
 		menuItemSaveGame = new JMenuItem("Save...");
 		menuItemLoadGame = new JMenuItem("Load...");
 		menuItemQuitGame = new JMenuItem("Quit");
 
+		gameMenu.add(menuItemMainMenu);
 		gameMenu.add(menuItemNewGame);
 		gameMenu.add(menuItemSaveGame);
 		gameMenu.add(menuItemLoadGame);
@@ -99,6 +100,8 @@ public class GUI {
 
 		menuItemManual = new JMenuItem("Manual");
 		helpMenu.add(menuItemManual);
+
+		menuItemSaveGame.setEnabled(false);
 
 		return menuBar;
 	}
@@ -145,6 +148,10 @@ public class GUI {
 
 	public JMenuItem getMenuItemNewGame() {
 		return menuItemNewGame;
+	}
+
+	public JMenuItem getMenuItemMainMenu() {
+		return menuItemMainMenu;
 	}
 
 	// ////////////////////////////////////////////////////////////////
