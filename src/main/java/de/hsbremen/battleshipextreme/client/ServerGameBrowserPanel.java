@@ -4,8 +4,6 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
 import java.util.Vector;
 
 /**
@@ -59,13 +57,12 @@ public class ServerGameBrowserPanel extends JPanel {
         this.add(btnRefresh, "sg btn, growx, pushx");
     }
 
-
-    public void addGameToTable(String name, String player, boolean password){
+    public void addGameToTable(String name, String player, boolean password) {
         Vector row = new Vector();
         row.add(name);
         row.add(player);
         String isPassword = "no";
-        if (password){
+        if (password) {
             isPassword = "yes";
         }
         row.add(isPassword);
@@ -91,5 +88,4 @@ public class ServerGameBrowserPanel extends JPanel {
     public JButton getBtnRefresh() {
         return btnRefresh;
     }
-
 }
