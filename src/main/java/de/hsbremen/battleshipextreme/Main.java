@@ -130,7 +130,8 @@ class ConsoleGame {
 	private void tryToLoadGame() {
 		// gespeichertes Spiel fortsetzen
 		try {
-			game = new Game(SAVEGAME_FILENAME);
+			game = new Game();
+			game.load(SAVEGAME_FILENAME);
 		} catch (Exception e) {
 			System.out.println("Spiel konnte nicht geladen werden");
 			game = null;
