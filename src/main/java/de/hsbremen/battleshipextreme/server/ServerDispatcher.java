@@ -321,4 +321,17 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         }
         return null;
     }
+
+    public void sendGameList(ClientHandler clientHandler) {
+        Vector<Vector> gameList = new Vector<Vector>();
+        for (Game game : this.getGames()){
+            Vector row = new Vector();
+            row.add(game.getName());
+            row.add(game.getJoinedPlayers().size() + " / " + game.getMaxPlayers());
+            row.add(game.isPrivate());
+            gameList.addElement(row);
+        }
+        ITransferable games = TransferableObjectFactory.CreateGameList(gameList);
+        this.unicast(games, clientHandler);
+    }
 }

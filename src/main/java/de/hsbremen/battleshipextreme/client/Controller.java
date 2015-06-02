@@ -1,12 +1,5 @@
 package de.hsbremen.battleshipextreme.client;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-
 import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Game;
 import de.hsbremen.battleshipextreme.model.Orientation;
@@ -21,6 +14,19 @@ import de.hsbremen.battleshipextreme.model.player.AIPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.player.PlayerType;
 import de.hsbremen.battleshipextreme.model.ship.ShipType;
+import de.hsbremen.battleshipextreme.network.ITransferable;
+import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
+import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListener;
+import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
+import de.hsbremen.battleshipextreme.network.transfarableObject.GameList;
+import de.hsbremen.battleshipextreme.network.transfarableObject.Message;
+import de.hsbremen.battleshipextreme.network.transfarableObject.Turn;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Vector;
 
 public class Controller {
 
@@ -80,9 +86,28 @@ public class Controller {
 
 		gui.getMenuItemNewGame().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+        gui.getMenuItemSaveGame().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    game.save(Settings.SAVEGAME_FILENAME);
+                } catch (Exception e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+            }
+        });
 				gui.showPanel(GUI.SETTINGS_PANEL);
-			}
-		});
+        gui.getMenuItemLoadGame().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    loadGame();
+                } catch (Exception e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+                System.out.println("Game loaded");
+            }
+        });
 
 		gui.getMenuItemSaveGame().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

@@ -28,4 +28,12 @@ public class ServerConnectionPanel extends JPanel {
         add(pnlServerConnectionBar, "spanx 3, growx, pushx, wrap");
         add(pnlServerGameBrowser, "spanx 3, growx, growy, pushx, pushy, wrap");
     }
+
+    public ServerConnectionBarPanel getPnlServerConnectionBar() {
+        return pnlServerConnectionBar;
+    }
+
+    public ServerGameBrowserPanel getPnlServerGameBrowser() {
+        return pnlServerGameBrowser;
+    }
 }

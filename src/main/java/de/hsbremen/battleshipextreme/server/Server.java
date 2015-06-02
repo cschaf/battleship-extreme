@@ -82,19 +82,19 @@ public class Server implements IDisposable {
         this.isRunning = false;
     }
 
-    public Vector<Game> getGames(){
+    public Vector<Game> getGames() {
         return this.serverDispatcher.getGames();
     }
 
-    public Vector<ClientHandler> getClients(){
+    public Vector<ClientHandler> getClients() {
         return this.serverDispatcher.getClients();
     }
 
-    public void broadcast(ITransferable object){
+    public void broadcast(ITransferable object) {
         this.serverDispatcher.broadcast(object, null);
     }
 
-    public void multicast(ITransferable transferableObject, List<ClientHandler> clients){
+    public void multicast(ITransferable transferableObject, List<ClientHandler> clients) {
 
     }
 
@@ -142,7 +142,6 @@ public class Server implements IDisposable {
         this.errorHandler.removeErrorListener(listener);
     }
 
-
     public void dispose() {
         try {
             if (this.clientAccepter != null) {
@@ -174,18 +173,18 @@ public class Server implements IDisposable {
     }
 
     public void removeGame(Game game) {
-        for (int i = 0; i<serverDispatcher.getGames().size(); i++){
-            if (this.serverDispatcher.getGames().get(i).getId().equals(game.getId())){
+        for (int i = 0; i < serverDispatcher.getGames().size(); i++) {
+            if (this.serverDispatcher.getGames().get(i).getId().equals(game.getId())) {
                 this.serverDispatcher.getGames().remove(i);
                 break;
             }
         }
     }
 
-    public void removeClientsFromGame(String gameId ) {
+    public void removeClientsFromGame(String gameId) {
         Game game = this.serverDispatcher.getGameById(gameId);
-        if (game != null){
-            ITransferable serverInfo =  TransferableObjectFactory.CreateServerInfo(InfoSendingReason.GameClosed);
+        if (game != null) {
+            ITransferable serverInfo = TransferableObjectFactory.CreateServerInfo(InfoSendingReason.GameClosed);
             serverDispatcher.multicast(serverInfo, game.getJoinedPlayers());
         }
     }
