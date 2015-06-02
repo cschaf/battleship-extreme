@@ -4,6 +4,7 @@ import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import java.text.SimpleDateFormat;
 import java.util.Vector;
 
 /**
@@ -12,6 +13,7 @@ import java.util.Vector;
 public class GameListModel extends AbstractTableModel {
     private Vector<NetGame> netGames;
     private String[] columns;
+    private SimpleDateFormat timeFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
     private ImageIcon iconIsPrivate = new ImageIcon(getClass().getResource("/privateGame.gif"));
     private ImageIcon iconIsPublic = new ImageIcon(getClass().getResource("/publicGame.gif"));
 
@@ -36,7 +38,7 @@ public class GameListModel extends AbstractTableModel {
                 return netGames.get(rowIndex).getJoinedPlayers().size() + " / " + netGames.get(rowIndex).getMaxPlayers();
 
             case 2:
-                return netGames.get(rowIndex).getCreatedAt();
+                return timeFormatter.format(netGames.get(rowIndex).getCreatedAt());
 
             case 3:
                 if (netGames.get(rowIndex).isPrivate()) {
