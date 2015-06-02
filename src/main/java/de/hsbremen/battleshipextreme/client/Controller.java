@@ -1,5 +1,14 @@
 package de.hsbremen.battleshipextreme.client;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Vector;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+
 import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Game;
 import de.hsbremen.battleshipextreme.model.Orientation;
@@ -10,6 +19,8 @@ import de.hsbremen.battleshipextreme.model.exception.InvalidNumberOfShipsExcepti
 import de.hsbremen.battleshipextreme.model.exception.InvalidPlayerNumberException;
 import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
 import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener;
+import de.hsbremen.battleshipextreme.model.network.NetworkClient;
 import de.hsbremen.battleshipextreme.model.player.AIPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.player.PlayerType;
@@ -22,21 +33,19 @@ import de.hsbremen.battleshipextreme.network.transfarableObject.GameList;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Message;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Turn;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Vector;
-
 public class Controller {
 
 	private Game game;
 	private GUI gui;
+	private NetworkClient network;
 
-	public Controller(Game game, GUI gui) {
+	public Controller(Game game, NetworkClient network, GUI gui) {
 		this.game = game;
+		this.network = network;
 		this.gui = gui;
-		addListeners();
+		addMenuListeners();
+		addServerConnectionListener();
+		addNetworkListeners();
 	}
 
 	private void initializeGame(Settings settings) throws Exception {
@@ -77,7 +86,7 @@ public class Controller {
 		setDoneButtonEnabled(false);
 	}
 
-	private void addListeners() {
+	private void addMenuListeners() {
 		gui.getMenuItemMainMenu().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				gui.showPanel(GUI.MAIN_MENU_PANEL);
@@ -86,28 +95,9 @@ public class Controller {
 
 		gui.getMenuItemNewGame().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-        gui.getMenuItemSaveGame().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    game.save(Settings.SAVEGAME_FILENAME);
-                } catch (Exception e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
-            }
-        });
 				gui.showPanel(GUI.SETTINGS_PANEL);
-        gui.getMenuItemLoadGame().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    loadGame();
-                } catch (Exception e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
-                System.out.println("Game loaded");
-            }
-        });
+			}
+		});
 
 		gui.getMenuItemSaveGame().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -302,6 +292,91 @@ public class Controller {
 		panelGame.getDoneButton().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				next();
+			}
+		});
+	}
+
+	private void addNetworkListeners() {
+		network.addErrorListener(new IErrorListener() {
+			public void onError(EventArgs<ITransferable> eventArgs) {
+				JOptionPane.showMessageDialog(gui.getFrame(), eventArgs.getItem(), "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		});
+
+		network.addServerObjectReceivedListener(new IServerObjectReceivedListener() {
+			public void onObjectReceived(EventArgs<ITransferable> eventArgs) {
+
+			}
+
+			public void onMessageObjectReceived(EventArgs<Message> eventArgs) {
+
+			}
+
+			public void onClientInfoObjectReceived(EventArgs<ClientInfo> eventArgs) {
+				switch (eventArgs.getItem().getReason()) {
+				case Connect:
+					break;
+				case Disconnect:
+
+					break;
+				}
+			}
+
+			public void onGameObjectReceived(EventArgs<de.hsbremen.battleshipextreme.network.transfarableObject.Game> eventArgs) {
+
+			}
+
+			public void onTurnObjectReceived(EventArgs<Turn> eventArgs) {
+
+			}
+
+			public void onGameListObjectReceived(EventArgs<GameList> eventArgs) {
+				for (int i = gui.getPanelServerConnection().getPnlServerGameBrowser().getTblModel().getRowCount() - 1; i >= 0; i--) {
+					gui.getPanelServerConnection().getPnlServerGameBrowser().getTblModel().removeRow(i);
+				}
+
+				for (Vector row : eventArgs.getItem().getGameList()) {
+					gui.getPanelServerConnection().getPnlServerGameBrowser().getTblModel().addRow(row);
+				}
+			}
+		});
+	}
+
+	private void addServerConnectionListener() {
+
+		gui.getPanelServerConnection().getPnlServerConnectionBar().getBtnConnect().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (!network.isConnected()) {
+					network.connect();
+					network.getSender().sendLogin(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
+				}
+			}
+		});
+
+		gui.getPanelServerConnection().getPnlServerConnectionBar().getBtnDisconnect().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (network.isConnected()) {
+					// TODO logoff
+					network.disconnect();
+				}
+			}
+		});
+
+		gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnRefresh().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				network.getSender().requestGameList();
+			}
+		});
+
+		gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnBack().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gui.showPanel(GUI.MAIN_MENU_PANEL);
+			}
+		});
+
+		gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnCreate().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gui.showPanel(GUI.SETTINGS_PANEL);
 			}
 		});
 	}
