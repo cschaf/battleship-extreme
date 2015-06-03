@@ -44,7 +44,6 @@ public class GUI extends BasicTabbedPaneUI {
 	private JPanel cards;
 
 	public GUI() {
-
 		setDefaultLookAndFeel();
 
 		frame = new JFrame("Battleship-Extreme");
@@ -58,6 +57,8 @@ public class GUI extends BasicTabbedPaneUI {
 		// frame.setMinimumSize(new Dimension(1500, 640));
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+
+		scaleIcons();
 	}
 
 	private void setDefaultLookAndFeel() {
@@ -72,6 +73,13 @@ public class GUI extends BasicTabbedPaneUI {
 			// If Nimbus is not available, you can set the GUI to another look
 			// and feel.
 		}
+	}
+
+	private void scaleIcons() {
+		hitIcon = getScaledIcon(hitIcon);
+		missedIcon = getScaledIcon(missedIcon);
+		destroyedIcon = getScaledIcon(destroyedIcon);
+		shipIcon = getScaledIcon(shipIcon);
 	}
 
 	private void initComponents() {
@@ -191,19 +199,19 @@ public class GUI extends BasicTabbedPaneUI {
 	}
 
 	public ImageIcon getHitIcon() {
-		return getScaledIcon(hitIcon);
+		return hitIcon;
 	}
 
 	public ImageIcon getDestroyedIcon() {
-		return getScaledIcon(destroyedIcon);
+		return destroyedIcon;
 	}
 
 	public ImageIcon getMissedIcon() {
-		return getScaledIcon(missedIcon);
+		return missedIcon;
 	}
 
 	public ImageIcon getShipIcon() {
-		return getScaledIcon(shipIcon);
+		return shipIcon;
 	}
 
 	/**
@@ -213,9 +221,7 @@ public class GUI extends BasicTabbedPaneUI {
 	 * @return
 	 */
 	private ImageIcon getScaledIcon(ImageIcon icon) {
-		int height = (int) Math.floor(panelGame.getPanelPlayerBoard().getButtonFieldByIndex(0, 0).getSize().getHeight());
-		int width = (int) Math.floor(panelGame.getPanelPlayerBoard().getButtonFieldByIndex(0, 0).getSize().getWidth());
-		return new ImageIcon(icon.getImage().getScaledInstance(height, width, java.awt.Image.SCALE_SMOOTH));
+		return new ImageIcon(icon.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH));
 	}
 
 	// ////////////////////////////////////////////////////////////////
