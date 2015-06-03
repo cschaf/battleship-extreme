@@ -303,7 +303,7 @@ public class Controller {
 
 	private void addDoneButtonListener() {
 		GamePanel panelGame = gui.getPanelGame();
-		panelGame.getDoneButton().addActionListener(new ActionListener() {
+		panelGame.getButtonDone().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				next();
 			}
@@ -434,7 +434,7 @@ public class Controller {
 						enableAvailableShips();
 						selectFirstAvailableShipType();
 						setEnemyBoardEnabled(true);
-						gui.getPanelGame().getDoneButton().setEnabled(false);
+						gui.getPanelGame().getButtonDone().setEnabled(false);
 					}
 				}
 			}
@@ -552,7 +552,7 @@ public class Controller {
 	}
 
 	private void setDoneButtonEnabled(boolean enabled) {
-		gui.getPanelGame().getDoneButton().setEnabled(enabled);
+		gui.getPanelGame().getButtonDone().setEnabled(enabled);
 	}
 
 	private void setShipSelectionEnabled(boolean enabled) {
