@@ -130,18 +130,18 @@ public class GUI extends BasicTabbedPaneUI {
 		gameMenu.add(menuItemLoadGame);
 		gameMenu.add(menuItemQuitGame);
 
+		// Window Menue
+		JMenu windowMenu = new JMenu("Window");
+		menuBar.add(windowMenu);
+		menuItemNextLookAndFeel = new JMenuItem("Next Theme");
+		windowMenu.add(menuItemNextLookAndFeel);
+
 		// Help Menue
 		JMenu helpMenu = new JMenu("Help");
 		menuBar.add(helpMenu);
 
 		menuItemManual = new JMenuItem("Manual");
 		helpMenu.add(menuItemManual);
-
-		// Window Menue
-		JMenu windowMenu = new JMenu("Window");
-		menuBar.add(windowMenu);
-		menuItemNextLookAndFeel = new JMenuItem("Next Theme");
-		windowMenu.add(menuItemNextLookAndFeel);
 
 		return menuBar;
 	}
