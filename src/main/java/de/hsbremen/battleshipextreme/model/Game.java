@@ -26,6 +26,7 @@ public class Game implements Serializable {
 	private int turnNumber;
 	private int roundNumber;
 	private int boardSize;
+	private boolean hasCurrentPlayerMadeTurn;
 
 	/**
 	 * Reads the settings and initializes the necessary game objects.
@@ -43,6 +44,7 @@ public class Game implements Serializable {
 
 		boardSize = settings.getBoardSize();
 		turnNumber = 0;
+		roundNumber = 0;
 		currentPlayer = players[0];
 	}
 
@@ -51,25 +53,16 @@ public class Game implements Serializable {
 		int numberOfHumanPlayers = settings.getPlayers();
 		int numberOfAIPlayers = settings.getSmartAiPlayers();
 		int numberOfDumbAiPlayers = settings.getDumbAiPlayers();
-		int numberOfPlayers = numberOfAIPlayers + numberOfHumanPlayers
-				+ numberOfDumbAiPlayers;
+		int numberOfPlayers = numberOfAIPlayers + numberOfHumanPlayers + numberOfDumbAiPlayers;
 		players = new Player[numberOfPlayers];
 		for (int i = 0; i < numberOfPlayers; i++) {
 			if (i < numberOfHumanPlayers) {
-				players[i] = new HumanPlayer(settings.getBoardSize(),
-						settings.getDestroyers(), settings.getFrigates(),
-						settings.getCorvettes(), settings.getSubmarines());
+				players[i] = new HumanPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
 			} else {
 				if (i < numberOfAIPlayers + numberOfHumanPlayers) {
-					players[i] = new AIPlayer(settings.getBoardSize(),
-							settings.getDestroyers(), settings.getFrigates(),
-							settings.getCorvettes(), settings.getSubmarines(),
-							PlayerType.SMART_AI);
+					players[i] = new AIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines(), PlayerType.SMART_AI);
 				} else {
-					players[i] = new AIPlayer(settings.getBoardSize(),
-							settings.getDestroyers(), settings.getFrigates(),
-							settings.getCorvettes(), settings.getSubmarines(),
-							PlayerType.DUMB_AI);
+					players[i] = new AIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines(), PlayerType.DUMB_AI);
 				}
 			}
 		}
@@ -84,8 +77,7 @@ public class Game implements Serializable {
 			Player currentEnemy = selectAiEnemy(ai);
 			ai.selectShip(ai.getAvailableShips(true).get(0));
 			Target shot = ai.getTarget(currentEnemy.getFieldStates(false));
-			wasShotPossible = makeTurn(currentEnemy, shot.getX(), shot.getY(),
-					shot.getOrientation());
+			wasShotPossible = makeTurn(currentEnemy, shot.getX(), shot.getY(), shot.getOrientation());
 		} while (!wasShotPossible);
 	}
 
@@ -95,9 +87,7 @@ public class Game implements Serializable {
 			currentEnemy = players[ai.getCurrentEnemyIndex()];
 			// zufälligen Gegner auswählen, wenn die KI keine Spur verfolgt,
 			// ansonsten gemerkten Gegner beibehalten
-			if (!ai.hasTargets() || currentEnemy.hasLost()
-					|| ai.getType() == PlayerType.DUMB_AI
-					|| ai.equals(currentEnemy)) {
+			if (!ai.hasTargets() || currentEnemy.hasLost() || ai.getType() == PlayerType.DUMB_AI || ai.equals(currentEnemy)) {
 				ai.setRandomEnemyIndex(players.length - 1);
 				currentEnemy = players[ai.getCurrentEnemyIndex()];
 			}
@@ -105,8 +95,7 @@ public class Game implements Serializable {
 		return currentEnemy;
 	}
 
-	public boolean makeTurn(Player enemy, int xPos, int yPos,
-			Orientation orientation) throws FieldOutOfBoardException {
+	public boolean makeTurn(Player enemy, int xPos, int yPos, Orientation orientation) throws FieldOutOfBoardException {
 		int xDirection = orientation == Orientation.HORIZONTAL ? 1 : 0;
 		int yDirection = orientation == Orientation.VERTICAL ? 1 : 0;
 		int x;
@@ -123,6 +112,7 @@ public class Game implements Serializable {
 			}
 		}
 		currentPlayer.getCurrentShip().shoot();
+		hasCurrentPlayerMadeTurn = true;
 		return true;
 	}
 
@@ -168,6 +158,7 @@ public class Game implements Serializable {
 			winner = game.winner;
 			turnNumber = game.turnNumber;
 			boardSize = game.boardSize;
+			hasCurrentPlayerMadeTurn = game.hasCurrentPlayerMadeTurn;
 			save.close();
 		} catch (Exception ex1) {
 			throw ex1;
@@ -222,11 +213,11 @@ public class Game implements Serializable {
 		int currentPlayerIndex = Arrays.asList(players).indexOf(currentPlayer);
 		// wenn letzter Spieler im Array, dann Index wieder auf 0 setzen,
 		// ansonsten hochzählen
-		currentPlayerIndex = (currentPlayerIndex >= players.length - 1) ? currentPlayerIndex = 0
-				: currentPlayerIndex + 1;
+		currentPlayerIndex = (currentPlayerIndex >= players.length - 1) ? currentPlayerIndex = 0 : currentPlayerIndex + 1;
 		if (currentPlayerIndex == 0)
 			roundNumber++;
 		currentPlayer = players[currentPlayerIndex];
+		hasCurrentPlayerMadeTurn = false;
 	}
 
 	/**
@@ -325,5 +316,9 @@ public class Game implements Serializable {
 
 	public int getBoardSize() {
 		return boardSize;
+	}
+
+	public boolean hasCurrentPlayerMadeTurn() {
+		return hasCurrentPlayerMadeTurn;
 	}
 }
