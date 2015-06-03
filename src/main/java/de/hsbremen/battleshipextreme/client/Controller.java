@@ -183,6 +183,12 @@ public class Controller {
 			}
 		});
 
+		gui.getPanelMainMenu().getButtonQuitGame().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+
 		addNextLookAndFeelListener();
 		addApplySettingsListener();
 		addShipSelectionListeners();
