@@ -1,5 +1,7 @@
 package de.hsbremen.battleshipextreme.client;
 
+import java.awt.Dimension;
+
 import javax.swing.JButton;
 
 public class FieldButton extends JButton {
@@ -24,5 +26,10 @@ public class FieldButton extends JButton {
 
 	public int getyPos() {
 		return yPos;
+	}
+
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(40, 40);
 	}
 }

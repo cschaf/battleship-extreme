@@ -89,7 +89,6 @@ public class Controller {
 		setDoneButtonEnabled(hasMadeTurn);
 		String message = hasMadeTurn ? game.getCurrentPlayer() + " has made his Turn" : game.getCurrentPlayer() + " is shooting";
 		setInfoLabelMessage(message);
-
 	}
 
 	private void initializeGameView() {
@@ -219,7 +218,7 @@ public class Controller {
 					e1.printStackTrace();
 				}
 				SwingUtilities.updateComponentTreeUI(gui.getFrame());
-				gui.getFrame().pack();
+				// gui.getFrame().pack();
 			}
 		});
 	}
