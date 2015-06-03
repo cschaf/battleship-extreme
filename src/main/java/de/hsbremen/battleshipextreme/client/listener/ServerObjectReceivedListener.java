@@ -2,6 +2,7 @@ package de.hsbremen.battleshipextreme.client.listener;
 
 import de.hsbremen.battleshipextreme.client.Controller;
 import de.hsbremen.battleshipextreme.client.GUI;
+import de.hsbremen.battleshipextreme.model.Settings;
 import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener;
 import de.hsbremen.battleshipextreme.model.network.NetworkClient;
 import de.hsbremen.battleshipextreme.network.ITransferable;
@@ -44,7 +45,14 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
     }
 
     public void onGameObjectReceived(EventArgs<NetGame> eventArgs) {
-
+        NetGame game = eventArgs.getItem();
+        Settings settings = game.getSettings();
+        try {
+            ctrl.initializeGame(settings);
+        } catch (Exception e) {
+            // TODO
+            e.printStackTrace();
+        }
     }
 
     public void onTurnObjectReceived(EventArgs<Turn> eventArgs) {
@@ -65,9 +73,6 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 gui.getPanelServerConnection().getPnlServerConnectionBar().setEnabledAfterStartStop(false);
                 network.getSender().requestGameList();
                 ctrl.resizeServerGameListColumns();
-                break;
-            case Join:
-                gui.showPanel(GUI.GAME_PANEL);
                 break;
         }
     }

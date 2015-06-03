@@ -1,5 +1,6 @@
 package de.hsbremen.battleshipextreme.server;
 
+import de.hsbremen.battleshipextreme.model.Settings;
 import de.hsbremen.battleshipextreme.network.IDisposable;
 import de.hsbremen.battleshipextreme.network.ITransferable;
 import de.hsbremen.battleshipextreme.network.InfoSendingReason;
@@ -186,6 +187,14 @@ public class Server implements IDisposable {
         if (netGame != null) {
             ITransferable serverInfo = TransferableObjectFactory.CreateServerInfo(InfoSendingReason.GameClosed);
             serverDispatcher.multicast(serverInfo, netGame.getJoinedPlayers());
+        }
+    }
+
+    public void createStandardGame() {
+        if (isRunning()) {
+            Settings settings = new Settings(2, 0, 0, 15, 1, 2, 2, 1);
+            NetGame game = new NetGame("Server Game", settings);
+            serverDispatcher.addGame(game);
         }
     }
 }

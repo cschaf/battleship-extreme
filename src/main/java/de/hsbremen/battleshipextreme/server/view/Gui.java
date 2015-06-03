@@ -30,6 +30,7 @@ public class Gui extends JFrame {
     private JPopupMenu userPopupMenu;
     private JPopupMenu gamePopupMenu;
     private JMenuItem gameCloseMenuItem;
+    private JMenuItem createStandardGameMenuItem;
     private JMenuItem gameDetailsMenuItem;
     private JMenuItem userKckMenuItem;
     private JMenuItem userBanMenuItem;
@@ -143,6 +144,11 @@ public class Gui extends JFrame {
         refreshGamesMenuItem = new JMenuItem("Refresh");
         refreshGamesMenuItem.setToolTipText("Refresh gamelist");
         games.add(refreshGamesMenuItem);
+
+        createStandardGameMenuItem = new JMenuItem("Create standard game");
+        createStandardGameMenuItem.setToolTipText("Create a standard game");
+        games.add(createStandardGameMenuItem);
+
         menubar.add(games);
 
         setJMenuBar(menubar);
@@ -175,6 +181,15 @@ public class Gui extends JFrame {
     public JTextArea getTraMessages() {
         return traMessages;
     }
+
+    public JMenuItem getUserKckMenuItem() {
+        return userKckMenuItem;
+    }
+
+    public JMenuItem getCreateStandardGameMenuItem() {
+        return createStandardGameMenuItem;
+    }
+
 
     public void addUserToUserList(ClientJListItem item) {
         this.userModel.addElement(item);

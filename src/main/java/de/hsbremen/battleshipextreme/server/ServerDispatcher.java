@@ -228,10 +228,12 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     public void assignClientToGame(ClientHandler clientHandler, ITransferable receivedObject) {
         Join join = (Join) receivedObject;
+        NetGame jGame = null;
         for (NetGame netGame : this.netGames) {
             if (join.getGameId().equals(netGame.getId())) {
                 if (netGame.getJoinedPlayers().size() < netGame.getMaxPlayers()) {
                     netGame.addPlayer(clientHandler);
+                    jGame = netGame;
                     ITransferable info = TransferableObjectFactory.CreateClientInfo(clientHandler.getUsername(), clientHandler.getSocket().getInetAddress().getHostAddress(), clientHandler.getSocket().getPort(), InfoSendingReason.Connect);
                     this.multicast(info, netGame.getJoinedPlayers());
                 } else {
@@ -243,6 +245,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         }
         join.setClient(clientHandler.getUsername());
         objectReceived(new EventArgs<ITransferable>(this, join));
+        unicast(TransferableObjectFactory.CreateGame(jGame.getName(), jGame.getSettings()), clientHandler);
     }
 
     public void addServerListener(IServerListener listener) {

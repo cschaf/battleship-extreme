@@ -20,6 +20,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 public class Controller {
@@ -37,12 +39,11 @@ public class Controller {
         this.network = network;
         this.gui = gui;
         addMenuListeners();
-
         addServerConnectionListener();
         addServerGameBrowserListeners();
     }
 
-    private void initializeGame(Settings settings) throws Exception {
+    public void initializeGame(Settings settings) throws Exception {
         if (settings != null) {
             game.initialize(settings);
         }
@@ -632,7 +633,6 @@ public class Controller {
                     //network.setUsername(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
                     // Verbinde zum Server
                     network.connect();
-                    addServerConnectionListener();
                     // Sende login
                     network.getSender().sendLogin(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
                 }
@@ -665,11 +665,41 @@ public class Controller {
                 gui.showPanel(GUI.SETTINGS_PANEL);
             }
         });
+
+        gui.getPanelGame().getButtonSendMessage().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                sendMessage();
+            }
+        });
+
+        gui.getPanelGame().getTextFieldChatMessage().addKeyListener(new KeyListener() {
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    sendMessage();
+                }
+            }
+
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
+    }
+
+    private void sendMessage() {
+        String username = gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText();
+        String msg = gui.getPanelGame().getTextFieldChatMessage().getText();
+        network.getSender().sendMessage(username, msg);
+        gui.getPanelGame().getTextFieldChatMessage().setText("");
     }
 
     private void addServerGameBrowserListeners() {
         this.serverGameBrowserListener = new ServerGameBrowserListener(this);
         gui.getPanelServerConnection().getPnlServerGameBrowser().getTblGames().getColumnModel().addColumnModelListener(serverGameBrowserListener);
+        gui.getPanelServerConnection().getPnlServerGameBrowser().getTblGames().addMouseListener(serverGameBrowserListener);
     }
 
     private void removeServerGameBrowserListeners() {
@@ -683,5 +713,9 @@ public class Controller {
         tbl.getColumn("Player").setWidth(43);
         tbl.getColumn("Created at").setWidth(127);
         tbl.getColumn("PW").setWidth(25);
+    }
+
+    public void join(String id) {
+        network.join(id);
     }
 }

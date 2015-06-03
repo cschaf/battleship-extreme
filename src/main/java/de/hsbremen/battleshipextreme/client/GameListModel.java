@@ -60,8 +60,8 @@ public class GameListModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    public void getGame(int rowIndex) {
-        this.netGames.get(rowIndex);
+    public NetGame getGame(int rowIndex) {
+        return this.netGames.get(rowIndex);
     }
 
     public String getColumnName(int columnIndex) {

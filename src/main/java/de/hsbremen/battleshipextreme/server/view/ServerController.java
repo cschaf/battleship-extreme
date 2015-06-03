@@ -293,6 +293,12 @@ public class ServerController {
                 refreshUserList();
             }
         });
+
+        gui.getCreateStandardGameMenuItem().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                server.createStandardGame();
+            }
+        });
     }
 
     private void broadcastMessage() {

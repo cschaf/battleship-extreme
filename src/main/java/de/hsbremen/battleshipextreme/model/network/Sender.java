@@ -27,7 +27,7 @@ public class Sender extends Thread implements IDisposable {
     public void run() {
         try {
             while (!isInterrupted() && !this.disposed) {
-                Thread.sleep(100);
+                Thread.sleep(1000);
             }
         } catch (InterruptedException e) {
             this.dispose();
@@ -64,5 +64,14 @@ public class Sender extends Thread implements IDisposable {
 
     public void dispose() {
         this.disposed = true;
+    }
+
+    public void sendJoin(String id) {
+        try {
+            this.out.writeObject(TransferableObjectFactory.CreateJoin(id));
+            this.out.flush();
+        } catch (IOException e) {
+            this.dispose();
+        }
     }
 }

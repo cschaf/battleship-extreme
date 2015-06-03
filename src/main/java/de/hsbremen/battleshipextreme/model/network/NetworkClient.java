@@ -135,4 +135,8 @@ public class NetworkClient implements IDisposable {
     public Sender getSender() {
         return sender;
     }
+
+    public void join(String id) {
+        this.sender.sendJoin(id);
+    }
 }
