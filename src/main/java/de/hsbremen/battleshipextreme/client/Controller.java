@@ -62,7 +62,7 @@ public class Controller {
 		}
 
 		initializeGameView();
-		setInfoLabelMessage(game.getCurrentPlayer() + " is placing ships ");
+
 		// wenn erster Spieler AI ist, automatisch anfangen
 		if (game.getCurrentPlayer().getType() == PlayerType.SMART_AI) {
 			placeAiShips();
@@ -78,6 +78,7 @@ public class Controller {
 		}
 
 		initializeGameView();
+
 		boolean hasMadeTurn = game.hasCurrentPlayerMadeTurn();
 		setPlayerBoardEnabled(false);
 		setEnemySelectionEnabled(true);
@@ -98,6 +99,7 @@ public class Controller {
 		setEnemyBoardEnabled(false);
 		setShipSelectionEnabled(false);
 		setDoneButtonEnabled(false);
+		setInfoLabelMessage(game.getCurrentPlayer() + " is placing ships ");
 	}
 
 	private void addMenuListeners() {
