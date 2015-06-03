@@ -3,13 +3,17 @@ package de.hsbremen.battleshipextreme.client;
 import java.awt.CardLayout;
 import java.awt.Color;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
-public class GUI {
+public class GUI extends BasicTabbedPaneUI {
 
 	public final static String MAIN_MENU_PANEL = "card with main menu panel";
 	public final static String SETTINGS_PANEL = "card with settings panel";
@@ -23,6 +27,11 @@ public class GUI {
 	public final static Color MISSED_COLOR = Color.blue;
 	public final static Color UNKNOWN_COLOR = Color.gray;
 
+	private ImageIcon hitIcon = new ImageIcon(getClass().getResource("/hit.png"));
+	private ImageIcon missedIcon = new ImageIcon(getClass().getResource("/missed.png"));
+	private ImageIcon destroyedIcon = new ImageIcon(getClass().getResource("/destroyed.png"));
+	private ImageIcon shipIcon = new ImageIcon(getClass().getResource("/ship.png"));
+
 	private JFrame frame;
 	private MainMenuPanel panelMainMenu;
 	private SettingsPanel panelSettings;
@@ -30,10 +39,14 @@ public class GUI {
 	private ServerConnectionPanel panelServerConnection;
 	private JMenuItem menuItemMainMenu, menuItemNewGame, menuItemSaveGame, menuItemLoadGame, menuItemQuitGame;
 	private JMenuItem menuItemManual;
+	private JMenuItem menuItemNextLookAndFeel;
 
 	private JPanel cards;
 
 	public GUI() {
+
+		setDefaultLookAndFeel();
+
 		frame = new JFrame("Battleship-Extreme");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// frame.setResizable(false);
@@ -45,6 +58,20 @@ public class GUI {
 		// frame.setMinimumSize(new Dimension(1500, 640));
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+	}
+
+	private void setDefaultLookAndFeel() {
+		try {
+			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+				if ("Nimbus".equals(info.getName())) {
+					UIManager.setLookAndFeel(info.getClassName());
+					break;
+				}
+			}
+		} catch (Exception e) {
+			// If Nimbus is not available, you can set the GUI to another look
+			// and feel.
+		}
 	}
 
 	private void initComponents() {
@@ -85,6 +112,7 @@ public class GUI {
 		menuItemMainMenu = new JMenuItem("Main Menu");
 		menuItemNewGame = new JMenuItem("New Game");
 		menuItemSaveGame = new JMenuItem("Save...");
+		menuItemSaveGame.setEnabled(false);
 		menuItemLoadGame = new JMenuItem("Load...");
 		menuItemQuitGame = new JMenuItem("Quit");
 
@@ -101,7 +129,11 @@ public class GUI {
 		menuItemManual = new JMenuItem("Manual");
 		helpMenu.add(menuItemManual);
 
-		menuItemSaveGame.setEnabled(false);
+		// Window Menue
+		JMenu windowMenu = new JMenu("Window");
+		menuBar.add(windowMenu);
+		menuItemNextLookAndFeel = new JMenuItem("Next Theme");
+		windowMenu.add(menuItemNextLookAndFeel);
 
 		return menuBar;
 	}
@@ -152,6 +184,38 @@ public class GUI {
 
 	public JMenuItem getMenuItemMainMenu() {
 		return menuItemMainMenu;
+	}
+
+	public JMenuItem getMenuItemNextLookAndFeel() {
+		return menuItemNextLookAndFeel;
+	}
+
+	public ImageIcon getHitIcon() {
+		return getScaledIcon(hitIcon);
+	}
+
+	public ImageIcon getDestroyedIcon() {
+		return getScaledIcon(destroyedIcon);
+	}
+
+	public ImageIcon getMissedIcon() {
+		return getScaledIcon(missedIcon);
+	}
+
+	public ImageIcon getShipIcon() {
+		return getScaledIcon(shipIcon);
+	}
+
+	/**
+	 * Scales the button according to the current fieldButton-size.
+	 * 
+	 * @param icon
+	 * @return
+	 */
+	private ImageIcon getScaledIcon(ImageIcon icon) {
+		int height = (int) Math.floor(panelGame.getPanelPlayerBoard().getButtonFieldByIndex(0, 0).getSize().getHeight());
+		int width = (int) Math.floor(panelGame.getPanelPlayerBoard().getButtonFieldByIndex(0, 0).getSize().getWidth());
+		return new ImageIcon(icon.getImage().getScaledInstance(height, width, java.awt.Image.SCALE_SMOOTH));
 	}
 
 	// ////////////////////////////////////////////////////////////////

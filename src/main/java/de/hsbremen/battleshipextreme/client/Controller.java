@@ -9,6 +9,9 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
@@ -102,6 +105,19 @@ public class Controller {
 		setInfoLabelMessage(game.getCurrentPlayer() + " is placing ships ");
 	}
 
+	private void createBoardPanels(int boardSize) {
+		GamePanel panelGame = gui.getPanelGame();
+		if (panelGame.getPanelPlayerBoard().getComponentCount() > 0) {
+			panelGame.getPanelPlayerBoard().removeAll();
+			panelGame.getPanelEnemyBoard().removeAll();
+		}
+		panelGame.getPanelPlayerBoard().initializeBoardPanel("You", boardSize);
+		panelGame.getPanelEnemyBoard().initializeBoardPanel("Enemy", boardSize);
+		gui.getFrame().pack();
+		addPlayerBoardListener();
+		addEnemyBoardListener();
+	}
+
 	private void addMenuListeners() {
 		gui.getMenuItemMainMenu().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -168,23 +184,44 @@ public class Controller {
 			}
 		});
 
+		addNextLookAndFeelListener();
 		addApplySettingsListener();
 		addShipSelectionListeners();
 		addEnemySelectionListener();
 		addDoneButtonListener();
 	}
 
-	private void createBoardPanels(int boardSize) {
-		GamePanel panelGame = gui.getPanelGame();
-		if (panelGame.getPanelPlayerBoard().getComponentCount() > 0) {
-			panelGame.getPanelPlayerBoard().removeAll();
-			panelGame.getPanelEnemyBoard().removeAll();
-		}
-		panelGame.getPanelPlayerBoard().initializeBoardPanel("You", boardSize);
-		panelGame.getPanelEnemyBoard().initializeBoardPanel("Enemy", boardSize);
-		gui.getFrame().pack();
-		addPlayerBoardListener();
-		addEnemyBoardListener();
+	private void addNextLookAndFeelListener() {
+		gui.getMenuItemNextLookAndFeel().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int i;
+				UIManager.LookAndFeelInfo[] lafInfo = UIManager.getInstalledLookAndFeels();
+				for (i = 0; i < lafInfo.length; i++) {
+					if (lafInfo[i].getClassName() == UIManager.getLookAndFeel().getClass().getName()) {
+						break;
+					}
+				}
+				i = (i >= lafInfo.length - 1) ? i = 0 : i + 1;
+				try {
+					UIManager.setLookAndFeel(lafInfo[i].getClassName());
+
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (InstantiationException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IllegalAccessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (UnsupportedLookAndFeelException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				SwingUtilities.updateComponentTreeUI(gui.getFrame());
+				gui.getFrame().pack();
+			}
+		});
 	}
 
 	private void addPlayerBoardListener() {
@@ -584,24 +621,25 @@ public class Controller {
 				if (f != null) {
 					switch (fieldStates[i][j]) {
 					case DESTROYED:
-						board[i][j].setBackground(GUI.DESTROYED_COLOR);
+						board[i][j].setIcon(gui.getDestroyedIcon());
 						break;
 					case HIT:
-						board[i][j].setBackground(GUI.HIT_COLOR);
+						board[i][j].setIcon(gui.getHitIcon());
 						break;
 					case MISSED:
-						board[i][j].setBackground(GUI.MISSED_COLOR);
+						board[i][j].setIcon(gui.getMissedIcon());
 						break;
 					case HAS_SHIP:
-						board[i][j].setBackground(GUI.HAS_SHIP_COLOR);
+						board[i][j].setIcon(gui.getShipIcon());
 						break;
 					case IS_EMPTY:
-						board[i][j].setBackground(GUI.EMPTY_COLOR);
+						board[i][j].setIcon(null);
 					default:
 						break;
 					}
 				} else {
-					board[i][j].setBackground(GUI.UNKNOWN_COLOR);
+					// board[i][j].setBackground(GUI.UNKNOWN_COLOR);
+					board[i][j].setIcon(null);
 				}
 			}
 		}

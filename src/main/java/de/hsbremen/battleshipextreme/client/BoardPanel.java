@@ -1,16 +1,13 @@
 package de.hsbremen.battleshipextreme.client;
 
-import java.awt.GridLayout;
-
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 public class BoardPanel extends JPanel {
 
-	private JButton[][] buttonsField;
+	private FieldButton[][] buttonsField;
 	private String title;
 
 	public void initializeBoardPanel(String title, int boardSize) {
@@ -30,7 +27,7 @@ public class BoardPanel extends JPanel {
 
 		// mit Nummerierung
 		this.setBorder(BorderFactory.createTitledBorder(this.title));
-		this.setLayout(new GridLayout(boardSize + 1, boardSize + 1));
+		this.setLayout(new SquareGridLayout(boardSize + 1, boardSize + 1));
 
 		// leeres Label (oben Links)
 		this.add(new JLabel());
@@ -49,17 +46,17 @@ public class BoardPanel extends JPanel {
 			// Buttons hinzufuegen
 			for (int x = 0; x < buttonsField[y].length; x++) {
 				buttonsField[y][x] = new FieldButton(x, y);
-				buttonsField[y][x].setBackground(GUI.UNKNOWN_COLOR);
+				buttonsField[y][x].setBackground(GUI.EMPTY_COLOR);
 				this.add(buttonsField[y][x]);
 			}
 		}
 	}
 
-	public JButton[][] getButtonsField() {
+	public FieldButton[][] getButtonsField() {
 		return buttonsField;
 	}
 
-	public JButton getButtonFieldByIndex(int x, int y) {
+	public FieldButton getButtonFieldByIndex(int x, int y) {
 		return buttonsField[y][x];
 	}
 

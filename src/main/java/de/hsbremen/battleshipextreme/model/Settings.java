@@ -24,7 +24,7 @@ public class Settings implements Serializable {
 	private static final float MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY = 0.0f;
 
 	public static final int MIN_BOARD_SIZE = 5;
-	public static final int MAX_BOARD_SIZE = 20;
+	public static final int MAX_BOARD_SIZE = 40;
 
 	public static final int MIN_PLAYERS = 2;
 	public static final int MAX_PLAYERS = 6;
@@ -42,9 +42,7 @@ public class Settings implements Serializable {
 		this.submarines = 1;
 	}
 
-	public Settings(int players, int smartAiPlayers, int dumbAiPlayers,
-			int boardSize, int destroyers, int frigates, int corvettes,
-			int submarines) {
+	public Settings(int players, int smartAiPlayers, int dumbAiPlayers, int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 		this.players = players;
 		this.smartAiPlayers = smartAiPlayers;
 		this.dumbAiPlayers = dumbAiPlayers;
@@ -55,12 +53,10 @@ public class Settings implements Serializable {
 		this.submarines = submarines;
 	}
 
-	public void validate() throws InvalidPlayerNumberException,
-			InvalidNumberOfShipsException, BoardTooSmallException {
+	public void validate() throws InvalidPlayerNumberException, InvalidNumberOfShipsException, BoardTooSmallException {
 		validateNumberOfPlayers(players, smartAiPlayers, dumbAiPlayers);
 		validateNumberOfShips(destroyers, corvettes, frigates, submarines);
-		validateFieldSize(boardSize, destroyers, corvettes, frigates,
-				submarines);
+		validateFieldSize(boardSize, destroyers, corvettes, frigates, submarines);
 	}
 
 	public int getSmartAiPlayers() {
@@ -119,16 +115,12 @@ public class Settings implements Serializable {
 		this.submarines = submarines;
 	}
 
-	public static int getRequiredFields(int destroyers, int corvettes,
-			int frigates, int submarines) {
-		int requiredFields = destroyers * ((Settings.DESTROYER_SIZE + 1) * 2)
-				+ corvettes * ((Settings.DESTROYER_SIZE + 1) * 2) + frigates
-				* ((Settings.FRIGATE_SIZE + 1) * 2) + submarines
+	public static int getRequiredFields(int destroyers, int corvettes, int frigates, int submarines) {
+		int requiredFields = destroyers * ((Settings.DESTROYER_SIZE + 1) * 2) + corvettes * ((Settings.DESTROYER_SIZE + 1) * 2) + frigates * ((Settings.FRIGATE_SIZE + 1) * 2) + submarines
 				* ((Settings.SUBMARINE_SIZE + 1) * 2);
 		// Felder die leer sein sollen addieren
 		if (MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY > 0)
-			requiredFields += (int) Math
-					.floor((requiredFields / MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY));
+			requiredFields += (int) Math.floor((requiredFields / MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY));
 		return requiredFields;
 	}
 
@@ -140,26 +132,20 @@ public class Settings implements Serializable {
 			return size;
 	}
 
-	private void validateFieldSize(int boardSize, int destroyers,
-			int corvettes, int frigates, int submarines)
-			throws BoardTooSmallException {
-		int requiredFields = getRequiredFields(destroyers, corvettes, frigates,
-				submarines);
+	private void validateFieldSize(int boardSize, int destroyers, int corvettes, int frigates, int submarines) throws BoardTooSmallException {
+		int requiredFields = getRequiredFields(destroyers, corvettes, frigates, submarines);
 		int requiredBoardSize = getRequiredBoardSize(requiredFields);
-		if ((boardSize < requiredBoardSize) || (boardSize < MIN_BOARD_SIZE)
-				|| (boardSize > MAX_BOARD_SIZE))
+		if ((boardSize < requiredBoardSize) || (boardSize < MIN_BOARD_SIZE) || (boardSize > MAX_BOARD_SIZE))
 			throw new BoardTooSmallException();
 	}
 
-	private void validateNumberOfPlayers(int players, int smartAiPlayers,
-			int dumbAiPlayers) throws InvalidPlayerNumberException {
+	private void validateNumberOfPlayers(int players, int smartAiPlayers, int dumbAiPlayers) throws InvalidPlayerNumberException {
 		int numberOfPlayers = players + smartAiPlayers + dumbAiPlayers;
 		if ((numberOfPlayers < MIN_PLAYERS) || (numberOfPlayers > MAX_PLAYERS))
 			throw new InvalidPlayerNumberException(MIN_PLAYERS, MAX_PLAYERS);
 	}
 
-	private void validateNumberOfShips(int destroyers, int corvettes,
-			int frigates, int submarines) throws InvalidNumberOfShipsException {
+	private void validateNumberOfShips(int destroyers, int corvettes, int frigates, int submarines) throws InvalidNumberOfShipsException {
 		if (destroyers + corvettes + frigates + submarines <= 0)
 			throw new InvalidNumberOfShipsException();
 	}

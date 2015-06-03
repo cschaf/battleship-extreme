@@ -9,7 +9,13 @@ public class FieldButton extends JButton {
 	public FieldButton(int xPos, int yPos) {
 		this.xPos = xPos;
 		this.yPos = yPos;
-		setOpaque(true);
+
+		// setBorderPainted(false);
+		// setBorder(null);
+		// button.setFocusable(false);
+		// setMargin(new Insets(0, 0, 0, 0));
+		// setContentAreaFilled(false);
+
 	}
 
 	public int getxPos() {
