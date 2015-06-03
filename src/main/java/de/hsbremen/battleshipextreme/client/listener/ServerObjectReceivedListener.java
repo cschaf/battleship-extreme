@@ -56,6 +56,8 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
     }
 
     public void onTurnObjectReceived(EventArgs<Turn> eventArgs) {
+        Turn turn = eventArgs.getItem();
+        gui.getPanelGame().getTextAreaGameLog().append(turn.getFrom().getName() + " attacked " + turn.getTo().getName() + " " +turn.getOrientation().toString() + " at field " + turn.getFieldX() + " / " + turn.getFieldY() + "\r\n");
 
     }
 
