@@ -166,43 +166,7 @@ public class Controller {
 			}
 		});
 
-		gui.getPanelSettings().getButtonApplySettings().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				SettingsPanel panelSettings = gui.getPanelSettings();
-				int players = Integer.parseInt(panelSettings.getTextFieldPlayers().getText());
-				int aiPlayers = Integer.parseInt(panelSettings.getTextFieldAiPlayers().getText());
-				int dumbAiPlayers = 0;
-				int boardSize = Integer.parseInt(panelSettings.getTextFieldBoardSize().getText());
-				int destroyers = Integer.parseInt(panelSettings.getTextFieldDestroyers().getText());
-				int frigates = Integer.parseInt(panelSettings.getTextFieldFrigates().getText());
-				int corvettes = Integer.parseInt(panelSettings.getTextFieldCorvettes().getText());
-				int submarines = Integer.parseInt(panelSettings.getTextFieldSubmarines().getText());
-				Settings settings = new Settings(players, aiPlayers, dumbAiPlayers, boardSize, destroyers, frigates, corvettes, submarines);
-				boolean valid = false;
-				try {
-					settings.validate();
-					valid = true;
-				} catch (InvalidPlayerNumberException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (InvalidNumberOfShipsException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (BoardTooSmallException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				if (valid) {
-					try {
-						initializeGame(settings);
-					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				}
-			}
-		});
-
+		addApplySettingsListener();
 		addShipSelectionListeners();
 		addEnemySelectionListener();
 		addDoneButtonListener();
@@ -266,6 +230,45 @@ public class Controller {
 				});
 			}
 		}
+	}
+
+	private void addApplySettingsListener() {
+		gui.getPanelSettings().getButtonApplySettings().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SettingsPanel panelSettings = gui.getPanelSettings();
+				int players = Integer.parseInt(panelSettings.getTextFieldPlayers().getText());
+				int aiPlayers = Integer.parseInt(panelSettings.getTextFieldAiPlayers().getText());
+				int dumbAiPlayers = 0;
+				int boardSize = Integer.parseInt(panelSettings.getTextFieldBoardSize().getText());
+				int destroyers = Integer.parseInt(panelSettings.getTextFieldDestroyers().getText());
+				int frigates = Integer.parseInt(panelSettings.getTextFieldFrigates().getText());
+				int corvettes = Integer.parseInt(panelSettings.getTextFieldCorvettes().getText());
+				int submarines = Integer.parseInt(panelSettings.getTextFieldSubmarines().getText());
+				Settings settings = new Settings(players, aiPlayers, dumbAiPlayers, boardSize, destroyers, frigates, corvettes, submarines);
+				boolean valid = false;
+				try {
+					settings.validate();
+					valid = true;
+				} catch (InvalidPlayerNumberException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (InvalidNumberOfShipsException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (BoardTooSmallException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				if (valid) {
+					try {
+						initializeGame(settings);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
 	}
 
 	private void addShipSelectionListeners() {
