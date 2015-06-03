@@ -7,7 +7,6 @@ import de.hsbremen.battleshipextreme.network.eventhandling.ErrorHandler;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListener;
 
-import javax.swing.event.EventListenerList;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -15,30 +14,31 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class NetworkClient implements IDisposable {
-    protected EventListenerList listeners = new EventListenerList();
-    private String serverIp = "localhost";
-    private int serverPort = 1337;
-    private ObjectInputStream in = null;
-    private ObjectOutputStream out = null;
-    private Socket socket = null;
-    private Sender sender = null;
-    private Listener listener = null;
-    private String username = "Player";
-    private ErrorHandler errorHandler = null;
+    private String serverIp;
+    private int serverPort;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
+    private Socket socket;
+    private Sender sender;
+    private Listener listener;
+    //private String username;
+    private ErrorHandler errorHandler;
     private ArrayList<IServerObjectReceivedListener> tempServerObjectReceivedListeners;
     private boolean isConnected;
 
-    public NetworkClient(String serverIp, int serverPort, String username) {
-        this.serverIp = serverIp;
-        this.serverPort = serverPort;
-        this.username = username;
+    public NetworkClient() {
+        serverIp = "localhost";
+        //username = "Player";
+        serverPort = 1337;
         this.errorHandler = new ErrorHandler();
         this.tempServerObjectReceivedListeners = new ArrayList<IServerObjectReceivedListener>();
     }
 
-    public NetworkClient() {
-        this.errorHandler = new ErrorHandler();
-        this.tempServerObjectReceivedListeners = new ArrayList<IServerObjectReceivedListener>();
+    public NetworkClient(String serverIp, int serverPort, String username) {
+        this();
+        this.serverIp = serverIp;
+        this.serverPort = serverPort;
+        //this.username = username;
     }
 
     public void addErrorListener(IErrorListener listener) {
@@ -64,7 +64,7 @@ public class NetworkClient implements IDisposable {
     /**
      * Connect to Server
      */
-    public void connect(){
+    public void connect() {
         try {
             socket = new Socket(serverIp, serverPort);
             in = new ObjectInputStream(socket.getInputStream());
@@ -87,28 +87,30 @@ public class NetworkClient implements IDisposable {
         this.listener.start();
     }
 
-    public void disconnect() {
-        this.dispose();
-        isConnected = false;
-    }
-
     public void dispose() {
         try {
             if (this.listener != null) {
                 this.listener.dispose();
+                this.listener = null;
             }
             if (this.sender != null) {
                 this.sender.dispose();
+                this.sender = null;
             }
             if (this.out != null) {
                 this.out.close();
+                this.out = null;
             }
             if (this.in != null) {
                 this.in.close();
+                this.in = null;
             }
             if (this.socket != null) {
                 this.socket.close();
+                this.socket = null;
             }
+            isConnected = false;
+
         } catch (IOException e) {
             errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Could not dispose clientobject")));
         }
@@ -122,9 +124,9 @@ public class NetworkClient implements IDisposable {
         this.serverPort = port;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+//    public void setUsername(String username) {
+//        this.username = username;
+//    }
 
     public boolean isConnected() {
         return isConnected;

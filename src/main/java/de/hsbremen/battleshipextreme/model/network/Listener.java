@@ -1,7 +1,5 @@
 package de.hsbremen.battleshipextreme.model.network;
 
-
-
 import de.hsbremen.battleshipextreme.network.IDisposable;
 import de.hsbremen.battleshipextreme.network.ITransferable;
 import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
@@ -18,28 +16,30 @@ import java.io.ObjectInputStream;
  */
 public class Listener extends Thread implements IDisposable {
     private final ErrorHandler errorHandler;
-    protected EventListenerList listeners = new EventListenerList();
-    private ObjectInputStream in = null;
+    protected EventListenerList listeners;
+    private ObjectInputStream in;
     private boolean disposed;
-    public Listener(ObjectInputStream in, ErrorHandler errorHandler){
-        this.errorHandler = errorHandler;
-        this.disposed = false;
-        this.in = in;
+
+    public Listener(ObjectInputStream in, ErrorHandler errorHandler) {
         this.setName("Client-Listenerthread");
+        this.listeners = new EventListenerList();
+        this.errorHandler = errorHandler;
+        this.in = in;
+        this.disposed = false;
     }
 
-    public void run(){
+    public void run() {
         try {
             ITransferable receivedObj;
             while (!this.disposed && (receivedObj = (ITransferable) in.readObject()) != null) {
                 objectReceived(new EventArgs<ITransferable>(this, receivedObj));
-                switch (receivedObj.getType()){
+                switch (receivedObj.getType()) {
                     case Message:
-                        Message message = (Message)receivedObj;
+                        Message message = (Message) receivedObj;
                         messageObjectReceived(new EventArgs<Message>(this, message));
                         break;
                     case ClientMessage:
-                        ClientMessage clientMessage = (ClientMessage)receivedObj;
+                        ClientMessage clientMessage = (ClientMessage) receivedObj;
                         messageObjectReceived(new EventArgs<Message>(this, clientMessage));
                         break;
                     case ClientInfo:
@@ -47,21 +47,21 @@ public class Listener extends Thread implements IDisposable {
                         clientInfoObjectReceived(new EventArgs<ClientInfo>(this, clientInfo));
                         break;
                     case Game:
-                        NetGame netGame = (NetGame)receivedObj;
+                        NetGame netGame = (NetGame) receivedObj;
                         gameObjectReceived(new EventArgs<NetGame>(this, netGame));
                         break;
 
                     case GameList:
-                        GameList gameList = (GameList)receivedObj;
+                        GameList gameList = (GameList) receivedObj;
                         gameListObjectReceived(new EventArgs<GameList>(this, gameList));
                         break;
                     case Turn:
-                        Turn turn = (Turn)receivedObj;
+                        Turn turn = (Turn) receivedObj;
                         turnObjectReceived(new EventArgs<Turn>(this, turn));
                         break;
                     case ServerInfo:
-                        ServerInfo serverInfo = (ServerInfo)receivedObj;
-                        switch (serverInfo.getReason()){
+                        ServerInfo serverInfo = (ServerInfo) receivedObj;
+                        switch (serverInfo.getReason()) {
                             case GameClosed:
                                 errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Your game has been closed!")));
                                 break;
@@ -76,10 +76,10 @@ public class Listener extends Thread implements IDisposable {
             errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Connection to server has been broken.")));
         } catch (ClassNotFoundException e) {
             errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage(e.getMessage())));
+        } catch (Exception e){
+            errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage(e.getMessage())));
         }
     }
-
-
 
     public void addServerObjectReceivedListener(IServerObjectReceivedListener listener) {
         this.listeners.add(IServerObjectReceivedListener.class, listener);
@@ -91,62 +91,63 @@ public class Listener extends Thread implements IDisposable {
 
     private void objectReceived(EventArgs<ITransferable> eventArgs) {
         Object[] listeners = this.listeners.getListenerList();
-        for (int i = 0; i < listeners.length; i = i+2) {
+        for (int i = 0; i < listeners.length; i = i + 2) {
             if (listeners[i] == IServerObjectReceivedListener.class) {
-                ((IServerObjectReceivedListener) listeners[i+1]).onObjectReceived(eventArgs);
+                ((IServerObjectReceivedListener) listeners[i + 1]).onObjectReceived(eventArgs);
             }
         }
     }
+
     private void messageObjectReceived(EventArgs<Message> eventArgs) {
         Object[] listeners = this.listeners.getListenerList();
-        for (int i = 0; i < listeners.length; i = i+2) {
+        for (int i = 0; i < listeners.length; i = i + 2) {
             if (listeners[i] == IServerObjectReceivedListener.class) {
-                ((IServerObjectReceivedListener) listeners[i+1]).onMessageObjectReceived(eventArgs);
+                ((IServerObjectReceivedListener) listeners[i + 1]).onMessageObjectReceived(eventArgs);
             }
         }
     }
 
     private void gameObjectReceived(EventArgs<NetGame> eventArgs) {
         Object[] listeners = this.listeners.getListenerList();
-        for (int i = 0; i < listeners.length; i = i+2) {
+        for (int i = 0; i < listeners.length; i = i + 2) {
             if (listeners[i] == IServerObjectReceivedListener.class) {
-                ((IServerObjectReceivedListener) listeners[i+1]).onGameObjectReceived(eventArgs);
+                ((IServerObjectReceivedListener) listeners[i + 1]).onGameObjectReceived(eventArgs);
             }
         }
     }
 
     private void gameListObjectReceived(EventArgs<GameList> eventArgs) {
         Object[] listeners = this.listeners.getListenerList();
-        for (int i = 0; i < listeners.length; i = i+2) {
+        for (int i = 0; i < listeners.length; i = i + 2) {
             if (listeners[i] == IServerObjectReceivedListener.class) {
-                ((IServerObjectReceivedListener) listeners[i+1]).onGameListObjectReceived(eventArgs);
+                ((IServerObjectReceivedListener) listeners[i + 1]).onGameListObjectReceived(eventArgs);
             }
         }
     }
 
     private void turnObjectReceived(EventArgs<Turn> eventArgs) {
         Object[] listeners = this.listeners.getListenerList();
-        for (int i = 0; i < listeners.length; i = i+2) {
+        for (int i = 0; i < listeners.length; i = i + 2) {
             if (listeners[i] == IServerObjectReceivedListener.class) {
-                ((IServerObjectReceivedListener) listeners[i+1]).onTurnObjectReceived(eventArgs);
+                ((IServerObjectReceivedListener) listeners[i + 1]).onTurnObjectReceived(eventArgs);
             }
         }
     }
 
     private void serverInfoObjectReceived(EventArgs<ServerInfo> eventArgs) {
         Object[] listeners = this.listeners.getListenerList();
-        for (int i = 0; i < listeners.length; i = i+2) {
+        for (int i = 0; i < listeners.length; i = i + 2) {
             if (listeners[i] == IServerObjectReceivedListener.class) {
-                ((IServerObjectReceivedListener) listeners[i+1]).onServerInfoObjectReceived(eventArgs);
+                ((IServerObjectReceivedListener) listeners[i + 1]).onServerInfoObjectReceived(eventArgs);
             }
         }
     }
 
     private void clientInfoObjectReceived(EventArgs<ClientInfo> eventArgs) {
         Object[] listeners = this.listeners.getListenerList();
-        for (int i = 0; i < listeners.length; i = i+2) {
+        for (int i = 0; i < listeners.length; i = i + 2) {
             if (listeners[i] == IServerObjectReceivedListener.class) {
-                ((IServerObjectReceivedListener) listeners[i+1]).onClientInfoObjectReceived(eventArgs);
+                ((IServerObjectReceivedListener) listeners[i + 1]).onClientInfoObjectReceived(eventArgs);
             }
         }
     }

@@ -18,19 +18,19 @@ public class Sender extends Thread implements IDisposable {
     private boolean disposed;
 
     public Sender(Socket socket, ObjectOutputStream out) {
+        this.setName("Client-Senderthread");
         this.disposed = false;
         this.socket = socket;
         this.out = out;
-        this.setName("Client-Senderthread");
     }
 
     public void run() {
         try {
             while (!isInterrupted() && !this.disposed) {
-                Thread.sleep(1000);
+                Thread.sleep(100);
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            this.dispose();
         }
     }
 
@@ -53,7 +53,7 @@ public class Sender extends Thread implements IDisposable {
         }
     }
 
-    public void requestGameList(){
+    public void requestGameList() {
         try {
             this.out.writeObject(TransferableObjectFactory.CreateServerInfo(InfoSendingReason.GameList));
             this.out.flush();
