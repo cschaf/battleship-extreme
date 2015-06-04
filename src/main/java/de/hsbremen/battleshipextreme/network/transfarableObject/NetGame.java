@@ -22,8 +22,7 @@ public class NetGame extends TransferableObject {
     private ArrayList<Turn> turns;
 
     public NetGame(String name, Settings settings) {
-        //this.id = UUID.randomUUID().toString();
-        this.id = "123456";
+        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.settings = settings;
         this.joinedPlayers = new ArrayList<ClientHandler>();

@@ -63,19 +63,25 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
             clientHasDisconnected(new EventArgs<ITransferable>(this, user));
         }
         boolean found = false;
+        NetGame foundGame = null;
         for (NetGame netGame : this.netGames) {
             for (int i = 0; i < netGame.getJoinedPlayers().size(); i++) {
                 if (netGame.getJoinedPlayers().get(i) == clientHandler) {
                     netGame.getJoinedPlayers().remove(i);
                     found = true;
+                    foundGame = netGame;
                     break;
                 }
             }
             if (found) {
+                ITransferable disconnect = TransferableObjectFactory.CreateClientInfo(clientHandler.getUsername(), clientHandler.getSocket().getInetAddress().getHostAddress(),clientHandler.getSocket().getPort(),InfoSendingReason.Disconnect);
                 clientHandler.dispose();
+                multicast(disconnect, foundGame.getJoinedPlayers());
                 break;
             }
         }
+
+
     }
 
     public synchronized void dispatchObject(ITransferable transferableObject) {
