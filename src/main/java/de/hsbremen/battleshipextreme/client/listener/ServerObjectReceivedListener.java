@@ -2,14 +2,11 @@ package de.hsbremen.battleshipextreme.client.listener;
 
 import de.hsbremen.battleshipextreme.client.Controller;
 import de.hsbremen.battleshipextreme.client.GUI;
-import de.hsbremen.battleshipextreme.model.Settings;
 import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener;
 import de.hsbremen.battleshipextreme.model.network.NetworkClient;
 import de.hsbremen.battleshipextreme.network.ITransferable;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.transfarableObject.*;
-
-import javax.swing.*;
 
 /**
  * Created by cschaf on 03.06.2015.
@@ -49,18 +46,18 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
         ctrl.initializeClientAfterJoined(game);
     }
 
-
     public void onTurnObjectReceived(EventArgs<Turn> eventArgs) {
         Turn turn = eventArgs.getItem();
         gui.getPanelGame().getTextAreaGameLog().append(turn.getFrom().getName() + " attacked " + turn.getTo().getName() + " " + turn.getOrientation().toString() + " at field " + turn.getFieldX() + " / " + turn.getFieldY() + "\r\n");
-
     }
 
     public void onGameListObjectReceived(EventArgs<GameList> eventArgs) {
+        GameList list = eventArgs.getItem();
         gui.getPanelServerConnection().getPnlServerGameBrowser().getTblModel().removeAllGames();
-        for (NetGame game : eventArgs.getItem().getNetGameList()) {
+        for (NetGame game : list.getNetGameList()) {
             gui.getPanelServerConnection().getPnlServerGameBrowser().addGameToTable(game);
         }
+        ctrl.resizeServerGameListColumns();
     }
 
     public void onServerInfoObjectReceived(EventArgs<ServerInfo> eventArgs) {
@@ -69,7 +66,6 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
             case Connect:
                 gui.getPanelServerConnection().getPnlServerConnectionBar().setEnabledAfterStartStop(false);
                 network.getSender().requestGameList();
-                ctrl.resizeServerGameListColumns();
                 break;
         }
     }

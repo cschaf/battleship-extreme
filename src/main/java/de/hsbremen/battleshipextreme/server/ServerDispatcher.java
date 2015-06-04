@@ -41,7 +41,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         this.banList = new Vector<String>();
     }
 
-    public Vector<ClientHandler> getClients() {
+    public synchronized Vector<ClientHandler> getClients() {
         return this.clients;
     }
 
@@ -195,7 +195,8 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         NetGame netGame = (NetGame) receivedObject;
         this.netGames.add(netGame);
         objectReceived(new EventArgs<ITransferable>(this, netGame));
-        this.broadcast(netGame, null);
+        ITransferable gameList = TransferableObjectFactory.CreateGameList(this.netGames);
+        broadcast(gameList, null);
     }
 
     public synchronized void deleteGame(ITransferable receivedObject) {
@@ -232,7 +233,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         objectReceived(new EventArgs<ITransferable>(this, turn));
     }
 
-    public void assignClientToGame(ClientHandler clientHandler, ITransferable receivedObject) {
+    public synchronized void assignClientToGame(ClientHandler clientHandler, ITransferable receivedObject) {
         Join join = (Join) receivedObject;
         NetGame jGame = null;
         for (NetGame netGame : this.netGames) {
@@ -296,7 +297,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         return maxPlayers;
     }
 
-    public Vector<NetGame> getNetGames() {
+    public synchronized Vector<NetGame> getNetGames() {
         return netGames;
     }
 
@@ -313,7 +314,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         return false;
     }
 
-    public ClientHandler getClient(String ip, int port) {
+    public synchronized ClientHandler getClient(String ip, int port) {
         for (ClientHandler client : getClients()) {
             if (client.getSocket().getInetAddress().getHostAddress().equals(ip) && client.getSocket().getPort() == port) {
                 return client;
@@ -322,7 +323,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         return null;
     }
 
-    public NetGame getGameById(String id){
+    public synchronized NetGame getGameById(String id){
         for (int i= 0; i < getNetGames().size(); i++){
             if (getNetGames().get(i).getId().equals(id)){
                 return getNetGames().get(i);
@@ -331,8 +332,8 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         return null;
     }
 
-    public void sendGameList(ClientHandler clientHandler) {
-        ITransferable games = TransferableObjectFactory.CreateGameList(getNetGames());
+    public synchronized void sendGameList(ClientHandler clientHandler) {
+        ITransferable games = TransferableObjectFactory.CreateGameList(this.netGames);
         this.unicast(games, clientHandler);
     }
 }

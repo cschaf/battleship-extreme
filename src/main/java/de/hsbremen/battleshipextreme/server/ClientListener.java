@@ -50,7 +50,6 @@ public class ClientListener extends Thread implements IDisposable,Serializable {
                     case Game:
                         this.serverDispatcher.addGame(receivedObject);
                         break;
-
                     case ServerInfo:
                         ServerInfo serverInfo = (ServerInfo) receivedObject;
                         switch (serverInfo.getReason()){

@@ -8,7 +8,6 @@ public class Main {
     public static void main(String[] args) {
         Game game = new Game();
         GUI gui = new GUI();
-        NetworkClient network = new NetworkClient();
-        Controller controller = new Controller(game, network, gui);
+        Controller controller = new Controller(game, gui);
     }
 }

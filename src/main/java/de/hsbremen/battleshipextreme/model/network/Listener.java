@@ -15,7 +15,7 @@ import java.io.ObjectInputStream;
  * Created by cschaf on 15.05.2015.
  */
 public class Listener extends Thread implements IDisposable {
-    private final ErrorHandler errorHandler;
+    private ErrorHandler errorHandler;
     protected EventListenerList listeners;
     private ObjectInputStream in;
     private boolean disposed;
@@ -31,7 +31,8 @@ public class Listener extends Thread implements IDisposable {
     public void run() {
         try {
             ITransferable receivedObj;
-            while (!this.disposed && (receivedObj = (ITransferable) in.readObject()) != null) {
+            while (!isInterrupted() && !this.disposed) {
+                receivedObj = (ITransferable) in.readObject();
                 objectReceived(new EventArgs<ITransferable>(this, receivedObj));
                 switch (receivedObj.getType()) {
                     case Message:
@@ -75,8 +76,6 @@ public class Listener extends Thread implements IDisposable {
         } catch (IOException e) {
             errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Connection to server has been broken.")));
         } catch (ClassNotFoundException e) {
-            errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage(e.getMessage())));
-        } catch (Exception e){
             errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage(e.getMessage())));
         }
     }
@@ -154,5 +153,10 @@ public class Listener extends Thread implements IDisposable {
 
     public void dispose() {
         this.disposed = true;
+        this.listeners = null;
+
+    }
+    public boolean isDisposed() {
+        return disposed;
     }
 }

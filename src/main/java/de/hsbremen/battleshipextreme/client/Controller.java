@@ -16,7 +16,6 @@ import de.hsbremen.battleshipextreme.model.player.PlayerType;
 import de.hsbremen.battleshipextreme.model.ship.ShipType;
 import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListener;
 import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
-import de.hsbremen.battleshipextreme.server.ClientHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,10 +35,17 @@ public class Controller {
     private IErrorListener serverErrorListener;
     private ServerGameBrowserListener serverGameBrowserListener;
 
-    public Controller(Game game, NetworkClient network, GUI gui) {
+    public Controller(Game game, GUI gui) {
         this.game = game;
-        this.network = network;
         this.gui = gui;
+        this.network = new NetworkClient();
+
+        this.serverErrorListener = new ServerErrorListener(this.gui);
+        this.serverObjectReceivedListener = new ServerObjectReceivedListener(this.gui, network, this);
+
+
+        addServerErrorListeners();
+
         addMenuListeners();
         addServerConnectionListener();
         addServerGameBrowserListeners();
@@ -342,12 +348,10 @@ public class Controller {
     }
 
     private void addServerObjectReceivedListeners() {
-        this.serverObjectReceivedListener = new ServerObjectReceivedListener(gui, network, this);
         network.addServerObjectReceivedListener(serverObjectReceivedListener);
     }
 
     private void addServerErrorListeners() {
-        this.serverErrorListener = new ServerErrorListener(gui);
         network.addErrorListener(serverErrorListener);
     }
 
@@ -625,34 +629,29 @@ public class Controller {
 
         gui.getPanelServerConnection().getPnlServerConnectionBar().getBtnConnect().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (!network.isConnected()) {
-                    network = new NetworkClient();
-                    addServerErrorListeners();
-                    addServerObjectReceivedListeners();
-                    // hole Verbindungsdaten
-                    network.setIp(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxIp().getText());
-                    network.setPort(Integer.parseInt(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxPort().getText()));
-                    //network.setUsername(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
-                    // Verbinde zum Server
-                    network.connect();
-                    // Sende login
-                    network.getSender().sendLogin(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
-                }
+                addServerObjectReceivedListeners();
+                // hole Verbindungsdaten
+                network.setIp(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxIp().getText());
+                network.setPort(Integer.parseInt(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxPort().getText()));
+                // Verbinde zum Server
+                network.connect();
+                // Sende login
+                network.getSender().sendLogin(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
             }
         });
 
         gui.getPanelServerConnection().getPnlServerConnectionBar().getBtnDisconnect().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (network.isConnected()) {
-                    network.dispose();
-                }
+                removeServerObjectReceivedListeners();
+                network.dispose();
+                gui.getPanelServerConnection().getPnlServerConnectionBar().setEnabledAfterStartStop(true);
+                gui.getPanelServerConnection().getPnlServerGameBrowser().getTblModel().removeAllGames();
             }
         });
 
         gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnRefresh().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 network.getSender().requestGameList();
-                resizeServerGameListColumns();
             }
         });
 
@@ -671,6 +670,17 @@ public class Controller {
         gui.getPanelGame().getButtonSendMessage().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 sendMessage();
+            }
+        });
+
+        gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnJoin().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int rowIndex = gui.getPanelServerConnection().getPnlServerGameBrowser().getTblGames().getSelectedRow();
+                if (rowIndex > -1) {
+                    GameListModel model = (GameListModel) gui.getPanelServerConnection().getPnlServerGameBrowser().getTblGames().getModel();
+                    NetGame game = model.getGame(rowIndex);
+                    join(game.getId());
+                }
             }
         });
 
@@ -711,10 +721,10 @@ public class Controller {
     public void resizeServerGameListColumns() {
         JTable tbl = gui.getPanelServerConnection().getPnlServerGameBrowser().getTblGames();
         Dimension tableSize = tbl.getSize();
-        tbl.getColumn("Name").setWidth(Math.round((tableSize.width - 195)));
-        tbl.getColumn("Player").setWidth(43);
+        tbl.getColumn("Name").setWidth(Math.round((tableSize.width - 202)));
+        tbl.getColumn("Player").setWidth(45);
         tbl.getColumn("Created at").setWidth(127);
-        tbl.getColumn("PW").setWidth(25);
+        tbl.getColumn("PW").setWidth(30);
     }
 
     public void join(String id) {
@@ -728,7 +738,6 @@ public class Controller {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     private void updateNetworkEnemyCombobox(NetGame game) {

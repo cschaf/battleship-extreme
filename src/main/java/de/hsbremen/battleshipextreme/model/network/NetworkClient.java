@@ -21,24 +21,21 @@ public class NetworkClient implements IDisposable {
     private Socket socket;
     private Sender sender;
     private Listener listener;
-    //private String username;
     private ErrorHandler errorHandler;
     private ArrayList<IServerObjectReceivedListener> tempServerObjectReceivedListeners;
     private boolean isConnected;
 
     public NetworkClient() {
         serverIp = "localhost";
-        //username = "Player";
         serverPort = 1337;
         this.errorHandler = new ErrorHandler();
         this.tempServerObjectReceivedListeners = new ArrayList<IServerObjectReceivedListener>();
     }
 
-    public NetworkClient(String serverIp, int serverPort, String username) {
+    public NetworkClient(String serverIp, int serverPort) {
         this();
         this.serverIp = serverIp;
         this.serverPort = serverPort;
-        //this.username = username;
     }
 
     public void addErrorListener(IErrorListener listener) {
@@ -50,7 +47,7 @@ public class NetworkClient implements IDisposable {
     }
 
     public void addServerObjectReceivedListener(IServerObjectReceivedListener listener) {
-        if (this.listener == null) {
+        if (this.listener == null ||  this.listener.isDisposed()) {
             tempServerObjectReceivedListeners.add(listener);
         } else {
             this.listener.addServerObjectReceivedListener(listener);
@@ -91,24 +88,22 @@ public class NetworkClient implements IDisposable {
         try {
             if (this.listener != null) {
                 this.listener.dispose();
-                this.listener = null;
             }
+
             if (this.sender != null) {
                 this.sender.dispose();
-                this.sender = null;
             }
             if (this.out != null) {
                 this.out.close();
-                this.out = null;
             }
+
             if (this.in != null) {
                 this.in.close();
-                this.in = null;
             }
             if (this.socket != null) {
                 this.socket.close();
-                this.socket = null;
             }
+
             isConnected = false;
 
         } catch (IOException e) {
@@ -124,9 +119,6 @@ public class NetworkClient implements IDisposable {
         this.serverPort = port;
     }
 
-//    public void setUsername(String username) {
-//        this.username = username;
-//    }
 
     public boolean isConnected() {
         return isConnected;
