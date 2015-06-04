@@ -15,6 +15,8 @@ import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.player.PlayerType;
 import de.hsbremen.battleshipextreme.model.ship.ShipType;
 import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListener;
+import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
+import de.hsbremen.battleshipextreme.server.ClientHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -717,5 +719,24 @@ public class Controller {
 
     public void join(String id) {
         network.join(id);
+    }
+
+    public void initializeClientAfterJoined(NetGame game) {
+        updateNetworkEnemyCombobox(game);
+        try {
+            initializeGame(game.getSettings());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void updateNetworkEnemyCombobox(NetGame game) {
+/*        JComboBox<String> enemyComboBox = gui.getPanelGame().getComboBoxEnemySelection();
+        enemyComboBox.removeAllItems();
+        for (ClientHandler client: game.getJoinedPlayers()){
+            this.game.getPlayers()[]
+            enemyComboBox.addItem(enemy.getName());
+        }*/
     }
 }

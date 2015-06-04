@@ -46,18 +46,13 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
 
     public void onGameObjectReceived(EventArgs<NetGame> eventArgs) {
         NetGame game = eventArgs.getItem();
-        Settings settings = game.getSettings();
-        try {
-            ctrl.initializeGame(settings);
-        } catch (Exception e) {
-            // TODO
-            e.printStackTrace();
-        }
+        ctrl.initializeClientAfterJoined(game);
     }
+
 
     public void onTurnObjectReceived(EventArgs<Turn> eventArgs) {
         Turn turn = eventArgs.getItem();
-        gui.getPanelGame().getTextAreaGameLog().append(turn.getFrom().getName() + " attacked " + turn.getTo().getName() + " " +turn.getOrientation().toString() + " at field " + turn.getFieldX() + " / " + turn.getFieldY() + "\r\n");
+        gui.getPanelGame().getTextAreaGameLog().append(turn.getFrom().getName() + " attacked " + turn.getTo().getName() + " " + turn.getOrientation().toString() + " at field " + turn.getFieldX() + " / " + turn.getFieldY() + "\r\n");
 
     }
 
