@@ -52,8 +52,8 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
     }
 
     public void onGameListObjectReceived(EventArgs<GameList> eventArgs) {
-        GameList list = eventArgs.getItem();
         gui.getPanelServerConnection().getPnlServerGameBrowser().getTblModel().removeAllGames();
+        GameList list = eventArgs.getItem();
         for (NetGame game : list.getNetGameList()) {
             gui.getPanelServerConnection().getPnlServerGameBrowser().addGameToTable(game);
         }

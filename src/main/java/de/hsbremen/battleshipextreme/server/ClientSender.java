@@ -47,6 +47,7 @@ public class ClientSender extends Thread implements IDisposable, Serializable {
 
     private void send(ITransferable transferableObject) {
         try {
+            this.out.reset();
             this.out.writeObject(transferableObject);
             this.out.flush();
         } catch (IOException e) {
