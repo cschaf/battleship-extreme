@@ -67,7 +67,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         for (NetGame netGame : this.netGames) {
             for (int i = 0; i < netGame.getJoinedPlayers().size(); i++) {
                 if (netGame.getJoinedPlayers().get(i) == clientHandler) {
-                    netGame.getJoinedPlayers().remove(i);
+                    netGame.removePlayer(clientHandler);
                     found = true;
                     foundGame = netGame;
                     break;

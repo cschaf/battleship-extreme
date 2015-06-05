@@ -77,16 +77,15 @@ public class NetGame extends TransferableObject {
     }
 
     public void removePlayer(ClientHandler player) {
-        if (players.containsValue(player)) {
-            int index = -1;
+            int index =  -1;
             for (Map.Entry<Integer, ClientHandler> entry : players.entrySet()) {
-                if (entry.getValue().equals(player)) {
-                    index = entry.getKey();
+                ClientHandler value = entry.getValue();
+                if (value!=null){
+                    if (value == player)index = entry.getKey();
                 }
             }
             players.put(index, null);
             clientIds.add(index);
-        }
     }
 
     public Settings getSettings() {

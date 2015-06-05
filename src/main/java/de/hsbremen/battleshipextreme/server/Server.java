@@ -194,6 +194,7 @@ public class Server implements IDisposable {
         if (isRunning()) {
             Settings settings = new Settings(2, 0, 0, 15, 1, 2, 2, 1);
             NetGame game = new NetGame("Server Game", settings);
+            game.setPassword("123456");
             serverDispatcher.addGame(game);
         }
     }

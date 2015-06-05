@@ -2,6 +2,7 @@ package de.hsbremen.battleshipextreme.client.listener;
 
 import de.hsbremen.battleshipextreme.client.Controller;
 import de.hsbremen.battleshipextreme.client.GameListModel;
+import de.hsbremen.battleshipextreme.client.PasswordInputPanel;
 import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 
 import javax.swing.*;
@@ -46,7 +47,29 @@ public class ServerGameBrowserListener implements TableColumnModelListener, Mous
             int rowIndex = target.getSelectedRow();
             GameListModel model = (GameListModel) target.getModel();
             NetGame game = model.getGame(rowIndex);
-            ctrl.join(game.getId());
+            if (game.isPrivate()) {
+                PasswordInputPanel panel = new PasswordInputPanel();
+                String[] options = new String[]{"OK", "Cancel"};
+                int option = JOptionPane.showOptionDialog(null, panel, "Password for " + game.getName(),
+                        JOptionPane.OK_OPTION, JOptionPane.PLAIN_MESSAGE,
+                        null, options, options[0]);
+                // pressing OK button
+                if (option == JOptionPane.OK_OPTION)
+                {
+                    char[] password = panel.getTbxPassword().getPassword();
+                    String strPassword = new String(password);
+
+                    if (strPassword.equals(game.getPassword())) {
+                        ctrl.join(game.getId());
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(null, "Wrong password!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                }
+            } else {
+                ctrl.join(game.getId());
+            }
         }
     }
 
