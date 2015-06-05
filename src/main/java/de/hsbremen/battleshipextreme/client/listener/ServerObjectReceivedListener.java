@@ -44,6 +44,7 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
     public void onGameObjectReceived(EventArgs<NetGame> eventArgs) {
         NetGame game = eventArgs.getItem();
         ctrl.initializeClientAfterJoined(game);
+        // disable all controls till game ready to start
         ctrl.setBoardsEnabled(false);
         gui.getPanelGame().getLabelInfo().setText("Waiting for other players...");
     }
