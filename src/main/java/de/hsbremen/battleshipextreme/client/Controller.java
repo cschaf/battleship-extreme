@@ -748,4 +748,10 @@ public class Controller {
             enemyComboBox.addItem(enemy.getName());
         }*/
     }
+
+    public void setBoardsEnabled(boolean state){
+        setEnemyBoardEnabled(state);
+        setPlayerBoardEnabled(state);
+
+    }
 }

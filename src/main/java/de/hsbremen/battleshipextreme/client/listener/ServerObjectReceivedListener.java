@@ -44,6 +44,8 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
     public void onGameObjectReceived(EventArgs<NetGame> eventArgs) {
         NetGame game = eventArgs.getItem();
         ctrl.initializeClientAfterJoined(game);
+        ctrl.setBoardsEnabled(false);
+        gui.getPanelGame().getLabelInfo().setText("Waiting for other players...");
     }
 
     public void onTurnObjectReceived(EventArgs<Turn> eventArgs) {
@@ -68,5 +70,10 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 network.getSender().requestGameList();
                 break;
         }
+    }
+
+    public void onPlayerBoardsObjectReceived(EventArgs<PlayerBoards> eventArgs) {
+        PlayerBoards boards = eventArgs.getItem();
+        //TODO
     }
 }
