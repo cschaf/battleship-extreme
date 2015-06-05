@@ -1,5 +1,6 @@
 package de.hsbremen.battleshipextreme.model.network;
 
+import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.network.IDisposable;
 import de.hsbremen.battleshipextreme.network.ITransferable;
 import de.hsbremen.battleshipextreme.network.InfoSendingReason;
@@ -69,6 +70,17 @@ public class Sender extends Thread implements IDisposable {
     public void sendJoin(String id) {
         try {
             this.out.writeObject(TransferableObjectFactory.CreateJoin(id));
+            this.out.flush();
+        } catch (IOException e) {
+            this.dispose();
+        }
+    }
+
+    public void sendBoard(FieldState[][] tempPlayerBoard) {
+
+        try {
+            ITransferable board = TransferableObjectFactory.CreateClientBoard(tempPlayerBoard);
+            this.out.writeObject(board);
             this.out.flush();
         } catch (IOException e) {
             this.dispose();

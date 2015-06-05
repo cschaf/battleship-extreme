@@ -22,6 +22,15 @@ public class NetGame extends TransferableObject {
     private boolean isPrivate;
     private ArrayList<Turn> turns;
 
+    public ClientGameIndexQueue<Integer> getClientTurnOrder() {
+        return clientTurnOrder;
+    }
+
+    public HashMap<Integer, ClientHandler> getPlayers() {
+
+        return players;
+    }
+
     public NetGame(String name, Settings settings) {
         this.id = UUID.randomUUID().toString();
         this.name = name;

@@ -70,6 +70,15 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 gui.getPanelServerConnection().getPnlServerConnectionBar().setEnabledAfterStartStop(false);
                 network.getSender().requestGameList();
                 break;
+            case ReadyForPlacement:
+                gui.getPanelGame().getLabelInfo().setText("Ships will be placed...");
+                break;
+            case PlaceYourShips:
+                ctrl.setPlayerBoardEnabled(true);
+                break;
+
+            case GameReady:
+                break;
         }
     }
 

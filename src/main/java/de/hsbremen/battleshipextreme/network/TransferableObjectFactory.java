@@ -1,5 +1,6 @@
 package de.hsbremen.battleshipextreme.network;
 
+import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.Settings;
 import de.hsbremen.battleshipextreme.model.player.Player;
@@ -41,6 +42,10 @@ public class TransferableObjectFactory {
 
     public static ITransferable CreateTurn(Player from, Player to, int fieldX, int fieldY, Orientation orientation) {
         return new Turn(from, to, fieldX, fieldY, orientation);
+    }
+
+    public static ITransferable CreateClientBoard(FieldState[][] board) {
+        return new ClientBoard(board);
     }
 
     public static ITransferable CreateServerInfo(InfoSendingReason reason) {

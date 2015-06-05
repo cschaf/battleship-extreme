@@ -5,6 +5,7 @@ import de.hsbremen.battleshipextreme.network.ITransferable;
 import de.hsbremen.battleshipextreme.network.InfoSendingReason;
 import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
+import de.hsbremen.battleshipextreme.network.transfarableObject.ClientBoard;
 import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Message;
 import de.hsbremen.battleshipextreme.network.transfarableObject.ServerInfo;
@@ -60,6 +61,13 @@ public class ClientListener extends Thread implements IDisposable,Serializable {
                     case Turn:
                         this.serverDispatcher.addTurn(this.clientHandler, receivedObject);
                         break;
+
+                    case ClientBoard:
+                        // shipboard from client received
+                        ClientBoard board = (ClientBoard) receivedObject;
+                        this.serverDispatcher.addClientBoardToGame(clientHandler, board);
+                        break;
+
                     case ClientInfo:
                         ClientInfo info = (ClientInfo) receivedObject;
                         switch (info.getReason()) {

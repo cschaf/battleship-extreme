@@ -3,6 +3,7 @@ package de.hsbremen.battleshipextreme.server;
 import de.hsbremen.battleshipextreme.network.*;
 import de.hsbremen.battleshipextreme.network.eventhandling.ErrorHandler;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
+import de.hsbremen.battleshipextreme.network.transfarableObject.ClientBoard;
 import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Join;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Turn;
@@ -253,6 +254,37 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         join.setClient(clientHandler.getUsername());
         objectReceived(new EventArgs<ITransferable>(this, join));
         unicast(TransferableObjectFactory.CreateGame(jGame.getName(), jGame.getSettings()), clientHandler);
+
+        if (jGame.getJoinedPlayers().size() == jGame.getMaxPlayers()){
+            this.sendReadyForPlacement(jGame);
+            this.initializeNextShipPlacement(jGame);
+        }
+
+    }
+
+    private void initializeNextShipPlacement(NetGame game) {
+        // get next client id for ship placement
+        int nextPlayer = game.getClientTurnOrder().next();
+        ClientHandler client = game.getPlayers().get(nextPlayer);
+
+        // Allow client to olace his ships
+        this.sendPlaceYourShips(client);
+
+        // add client id again to the queue for next round
+        game.getClientTurnOrder().add(nextPlayer);
+    }
+
+    private void sendPlaceYourShips(ClientHandler client) {
+        ITransferable info = TransferableObjectFactory.CreateServerInfo(InfoSendingReason.PlaceYourShips);
+        this.unicast(info, client);
+    }
+
+    private void sendReadyForPlacement(NetGame game) {
+        ITransferable games = TransferableObjectFactory.CreateServerInfo(InfoSendingReason.ReadyForPlacement);
+        this.multicast(games, game.getJoinedPlayers());
+    }
+
+    private void sendGameReady(NetGame game) {
     }
 
     public void addServerListener(IServerListener listener) {
@@ -335,5 +367,10 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
     public synchronized void sendGameList(ClientHandler clientHandler) {
         ITransferable games = TransferableObjectFactory.CreateGameList(this.netGames);
         this.unicast(games, clientHandler);
+    }
+
+    public void addClientBoardToGame(ClientHandler clientHandler, ClientBoard board) {
+        // füge das Board zu den anderen Boards (Eigenschaft muss noch hinzugefügt werden) hinzu
+        // und sende dem nächsten client ein readytoPlace...
     }
 }
