@@ -1,12 +1,11 @@
 package de.hsbremen.battleshipextreme.network.transfarableObject;
 
 import de.hsbremen.battleshipextreme.model.Settings;
-import de.hsbremen.battleshipextreme.network.IDisposable;
 import de.hsbremen.battleshipextreme.network.TransferableType;
+import de.hsbremen.battleshipextreme.network.ClientGameIndexQueue;
 import de.hsbremen.battleshipextreme.server.ClientHandler;
 
-import java.util.ArrayList;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by cschaf on 30.04.2015.
@@ -15,7 +14,9 @@ public class NetGame extends TransferableObject {
     private String id;
     private String name;
     private Settings settings;
-    private ArrayList<ClientHandler> joinedPlayers;
+    private HashMap<Integer, ClientHandler> players;
+    private ArrayList<Integer> clientIds;
+    private ClientGameIndexQueue<Integer> clientTurnOrder;
     private int maxPlayers;
     private String password;
     private boolean isPrivate;
@@ -25,11 +26,19 @@ public class NetGame extends TransferableObject {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.settings = settings;
-        this.joinedPlayers = new ArrayList<ClientHandler>();
-        this.maxPlayers = 6;
+        this.players = new HashMap<Integer, ClientHandler>();
+        this.maxPlayers = settings.getPlayers();
         this.password = "";
         this.isPrivate = false;
         this.turns = new ArrayList<Turn>();
+        this.clientIds = new ArrayList<Integer>();
+        this.clientTurnOrder = new ClientGameIndexQueue<Integer>();
+        for (int i = 0; i < maxPlayers; i++) {
+            clientTurnOrder.add(i);
+            clientIds.add(i);
+            players.put(i, null);
+        }
+
     }
 
     public TransferableType getType() {
@@ -41,25 +50,42 @@ public class NetGame extends TransferableObject {
     }
 
     public ArrayList<ClientHandler> getJoinedPlayers() {
-        return joinedPlayers;
+        ArrayList<ClientHandler> result = new ArrayList<ClientHandler>();
+        for (int clientIndex : players.keySet()) {
+            if (players.get(clientIndex) != null) {
+                result.add(players.get(clientIndex));
+            }
+        }
+        return result;
     }
 
     public void addPlayer(ClientHandler player) {
-        if (this.joinedPlayers.size() < this.maxPlayers) {
-            this.joinedPlayers.add(player);
+        if (!this.isGameFull()) {
+            this.players.put(clientIds.get(0), player);
+            this.clientIds.remove(clientIds.get(0));
         }
     }
 
-    public void removePlayer(ClientHandler player) {
-        ClientHandler removeClient = null;
-        for (ClientHandler each : this.joinedPlayers) {
-            if (each == player) {
-                removeClient = each;
-                break;
+    private boolean isGameFull() {
+        int number = 0;
+        for (int clientIndex : players.keySet()) {
+            if (players.get(clientIndex) != null) {
+                number++;
             }
         }
-        if (removeClient != null) {
-            this.joinedPlayers.remove(removeClient);
+        return number >= maxPlayers;
+    }
+
+    public void removePlayer(ClientHandler player) {
+        if (players.containsValue(player)) {
+            int index = -1;
+            for (Map.Entry<Integer, ClientHandler> entry : players.entrySet()) {
+                if (entry.getValue().equals(player)) {
+                    index = entry.getKey();
+                }
+            }
+            players.put(index, null);
+            clientIds.add(index);
         }
     }
 
@@ -100,10 +126,7 @@ public class NetGame extends TransferableObject {
 
     @Override
     public String toString() {
-        if(joinedPlayers != null){
-            return getName()+ " (" + this.getJoinedPlayers().size() + "/ " + getMaxPlayers() + ")";
-        }
-        return getName() + " ( ? / " + getMaxPlayers() + ")" ;
 
+        return getName() + " (" + this.getJoinedPlayers().size() + "/ " + getMaxPlayers() + ")";
     }
 }

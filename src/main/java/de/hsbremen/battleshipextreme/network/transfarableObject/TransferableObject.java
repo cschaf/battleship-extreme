@@ -37,6 +37,6 @@ public abstract class TransferableObject implements Serializable, ITransferable 
 
     @Override
     public String toString() {
-        return "created at: " + this.getCreatedAt();
+        return this.getType().toString() + " created at: " + this.getCreatedAt();
     }
 }
