@@ -2,6 +2,7 @@ package de.hsbremen.battleshipextreme.client.listener;
 
 import de.hsbremen.battleshipextreme.client.Controller;
 import de.hsbremen.battleshipextreme.client.GUI;
+import de.hsbremen.battleshipextreme.model.Game;
 import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener;
 import de.hsbremen.battleshipextreme.model.network.NetworkClient;
 import de.hsbremen.battleshipextreme.network.ITransferable;
@@ -13,11 +14,13 @@ import de.hsbremen.battleshipextreme.network.transfarableObject.*;
  */
 public class ServerObjectReceivedListener implements IServerObjectReceivedListener {
     private GUI gui;
+    private Game game;
     private NetworkClient network;
     private Controller ctrl;
 
-    public ServerObjectReceivedListener(GUI gui, NetworkClient network, Controller ctrl) {
+    public ServerObjectReceivedListener(GUI gui, Game game, NetworkClient network, Controller ctrl) {
         this.gui = gui;
+        this.game = game;
         this.network = network;
         this.ctrl = ctrl;
     }
@@ -84,6 +87,6 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
 
     public void onPlayerBoardsObjectReceived(EventArgs<PlayerBoards> eventArgs) {
         PlayerBoards boards = eventArgs.getItem();
-        //TODO
+        game.setPlayerBoards(boards.getBoards());
     }
 }

@@ -1,5 +1,7 @@
 package de.hsbremen.battleshipextreme.server;
 
+import de.hsbremen.battleshipextreme.model.Board;
+import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.network.*;
 import de.hsbremen.battleshipextreme.network.eventhandling.ErrorHandler;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
@@ -13,6 +15,7 @@ import de.hsbremen.battleshipextreme.server.listener.IServerListener;
 
 import javax.swing.event.EventListenerList;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -285,6 +288,10 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
     }
 
     private void sendGameReady(NetGame game) {
+        ITransferable rdy = TransferableObjectFactory.CreatePlayerBoards(game.getAllBoards());
+        // send Boards to all players
+        this.multicast(rdy, game.getJoinedPlayers());
+        game.setGameToReady();
     }
 
     public void addServerListener(IServerListener listener) {
@@ -370,7 +377,32 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
     }
 
     public void addClientBoardToGame(ClientHandler clientHandler, ClientBoard board) {
-        // füge das Board zu den anderen Boards (Eigenschaft muss noch hinzugefügt werden) hinzu
-        // und sende dem nächsten client ein readytoPlace...
+        // fÃ¼ge das Board zu den anderen Boards (Eigenschaft muss noch hinzugefÃ¼gt werden) hinzu
+        // und sende dem nÃ¼chsten client ein readytoPlace...
+        NetGame game = getGameByClient(clientHandler);
+        if (game != null && !game.getReady()){
+            boolean allShipsSet = game.haveAllPlayersSetTheirShips();
+            if (!allShipsSet){
+                game.addBoard(clientHandler, board);
+                // send place ships to next player
+                initializeNextShipPlacement(game);
+                allShipsSet = game.haveAllPlayersSetTheirShips();
+                // send to all player all Boards
+                if (allShipsSet) sendGameReady(game);
+            }
+
+        }
+
+    }
+
+    private NetGame getGameByClient(ClientHandler client) {
+        for (NetGame game : netGames){
+            for (ClientHandler clientHandler : game.getJoinedPlayers()){
+                if (clientHandler.equals(client)){
+                    return game;
+                }
+            }
+        }
+        return null;
     }
 }

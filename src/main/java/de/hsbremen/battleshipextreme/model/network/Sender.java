@@ -1,6 +1,6 @@
 package de.hsbremen.battleshipextreme.model.network;
 
-import de.hsbremen.battleshipextreme.model.FieldState;
+import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.network.IDisposable;
 import de.hsbremen.battleshipextreme.network.ITransferable;
 import de.hsbremen.battleshipextreme.network.InfoSendingReason;
@@ -28,7 +28,7 @@ public class Sender extends Thread implements IDisposable {
     public void run() {
         try {
             while (!isInterrupted() && !this.disposed) {
-                Thread.sleep(1000);
+                Thread.sleep(100);
             }
         } catch (InterruptedException e) {
             this.dispose();
@@ -37,26 +37,34 @@ public class Sender extends Thread implements IDisposable {
 
     public void sendMessage(String username, String message) {
         ITransferable sender = TransferableObjectFactory.CreateClientInfo(username, socket.getInetAddress().getHostAddress(), socket.getLocalPort());
-        try {
-            this.out.writeObject(TransferableObjectFactory.CreateClientMessage(message, sender));
-            this.out.flush();
-        } catch (IOException e) {
-            this.dispose();
-        }
+        ITransferable object = TransferableObjectFactory.CreateClientMessage(message, sender);
+        send(object);
     }
 
     public void sendLogin(String username) {
-        try {
-            this.out.writeObject(TransferableObjectFactory.CreateClientInfo(username, socket.getInetAddress().getHostAddress(), socket.getLocalPort(), InfoSendingReason.Connect));
-            this.out.flush();
-        } catch (IOException e) {
-            this.dispose();
-        }
+        ITransferable object = TransferableObjectFactory.CreateClientInfo(username, socket.getInetAddress().getHostAddress(), socket.getLocalPort(), InfoSendingReason.Connect);
+        send(object);
     }
 
     public void requestGameList() {
+        ITransferable object = TransferableObjectFactory.CreateServerInfo(InfoSendingReason.GameList);
+        send(object);
+    }
+
+    public void sendJoin(String id) {
+        ITransferable object = TransferableObjectFactory.CreateJoin(id);
+        send(object);
+    }
+
+    public void sendBoard(Board playerBoard) {
+        ITransferable object = TransferableObjectFactory.CreateClientBoard(playerBoard);
+        this.send(object);
+    }
+
+    public void send(ITransferable object) {
         try {
-            this.out.writeObject(TransferableObjectFactory.CreateServerInfo(InfoSendingReason.GameList));
+            this.out.reset();
+            this.out.writeObject(object);
             this.out.flush();
         } catch (IOException e) {
             this.dispose();
@@ -65,25 +73,5 @@ public class Sender extends Thread implements IDisposable {
 
     public void dispose() {
         this.disposed = true;
-    }
-
-    public void sendJoin(String id) {
-        try {
-            this.out.writeObject(TransferableObjectFactory.CreateJoin(id));
-            this.out.flush();
-        } catch (IOException e) {
-            this.dispose();
-        }
-    }
-
-    public void sendBoard(FieldState[][] tempPlayerBoard) {
-
-        try {
-            ITransferable board = TransferableObjectFactory.CreateClientBoard(tempPlayerBoard);
-            this.out.writeObject(board);
-            this.out.flush();
-        } catch (IOException e) {
-            this.dispose();
-        }
     }
 }

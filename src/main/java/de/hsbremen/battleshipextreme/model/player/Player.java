@@ -326,4 +326,11 @@ public abstract class Player implements Serializable {
 		return null;
 	}
 
+	public Board getBoard() {
+		return board;
+	}
+
+	public void setBoard(Board board) {
+		this.board = board;
+	}
 }

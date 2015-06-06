@@ -1,11 +1,13 @@
 package de.hsbremen.battleshipextreme.network;
 
+import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.Settings;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.network.transfarableObject.*;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 /**
@@ -40,11 +42,15 @@ public class TransferableObjectFactory {
         return new GameList(gameList);
     }
 
+    public static ITransferable CreatePlayerBoards(ArrayList<Board> boards) {
+        return new PlayerBoards(boards);
+    }
+
     public static ITransferable CreateTurn(Player from, Player to, int fieldX, int fieldY, Orientation orientation) {
         return new Turn(from, to, fieldX, fieldY, orientation);
     }
 
-    public static ITransferable CreateClientBoard(FieldState[][] board) {
+    public static ITransferable CreateClientBoard(Board board) {
         return new ClientBoard(board);
     }
 

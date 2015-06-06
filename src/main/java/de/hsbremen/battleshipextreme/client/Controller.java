@@ -3,7 +3,10 @@ package de.hsbremen.battleshipextreme.client;
 import de.hsbremen.battleshipextreme.client.listener.ServerErrorListener;
 import de.hsbremen.battleshipextreme.client.listener.ServerGameBrowserListener;
 import de.hsbremen.battleshipextreme.client.listener.ServerObjectReceivedListener;
-import de.hsbremen.battleshipextreme.model.*;
+import de.hsbremen.battleshipextreme.model.FieldState;
+import de.hsbremen.battleshipextreme.model.Game;
+import de.hsbremen.battleshipextreme.model.Orientation;
+import de.hsbremen.battleshipextreme.model.Settings;
 import de.hsbremen.battleshipextreme.model.exception.*;
 import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener;
 import de.hsbremen.battleshipextreme.model.network.NetworkClient;
@@ -40,7 +43,7 @@ public class Controller {
         this.network = new NetworkClient();
 
         this.serverErrorListener = new ServerErrorListener(this.gui);
-        this.serverObjectReceivedListener = new ServerObjectReceivedListener(this.gui, network, this);
+        this.serverObjectReceivedListener = new ServerObjectReceivedListener(this.gui, game, network, this);
 
 
         addServerErrorListeners();
@@ -230,7 +233,7 @@ public class Controller {
                         FieldButton fieldButton = (FieldButton) e.getSource();
                         try {
                             boolean placed = placeShip(fieldButton.getxPos(), fieldButton.getyPos(), panelGame.getRadioButtonHorizontalOrientation().isSelected());
-                            if (placed){
+                            if (placed) {
                                 setAtTempBoard(fieldButton.getxPos(), fieldButton.getyPos(), panelGame.getRadioButtonHorizontalOrientation().isSelected(), game.getCurrentPlayer().getCurrentShip().getSize());
                             }
                         } catch (ShipAlreadyPlacedException e1) {
@@ -250,17 +253,15 @@ public class Controller {
     }
 
     private void setAtTempBoard(int xPos, int yPos, boolean isHorizontal, int shipSize) {
-        if (isHorizontal){
-            for (int i = xPos; i < xPos + shipSize; i++){
+        if (isHorizontal) {
+            for (int i = xPos; i < xPos + shipSize; i++) {
                 tempPlayerBoard[i][yPos] = FieldState.HAS_SHIP;
             }
-        }
-        else {
-            for (int i = yPos; i < yPos + shipSize; i++){
+        } else {
+            for (int i = yPos; i < yPos + shipSize; i++) {
                 tempPlayerBoard[xPos][i] = FieldState.HAS_SHIP;
             }
         }
-
     }
 
     private void addEnemyBoardListener() {
@@ -431,30 +432,11 @@ public class Controller {
             if (!game.isReady()) {
                 if (game.getCurrentPlayer().hasPlacedAllShips()) {
                     // Schicke jetzt das Board an den Server
-                    network.getSender().sendBoard(tempPlayerBoard);
-
+                    network.getSender().sendBoard(game.getCurrentPlayer().getBoard());
+                    setBoardsEnabled(false);
                 }
             } else {
                 // alle Spieler habe ihre Schiffe gesetzt
-                setEnemySelectionEnabled(true);
-                setSaveButtonEnabled(true);
-                game.nextPlayer();
-                updateEnemySelection();
-                if (game.getCurrentPlayer().areAllShipsReloading()) {
-                    setInfoLabelMessage("All ships of " + game.getCurrentPlayer() + " are reloading");
-                    setEnemyBoardEnabled(false);
-                    setShipSelectionEnabled(false);
-                } else {
-                    if (game.getCurrentPlayer().getType() == PlayerType.SMART_AI) {
-                        makeAiTurn();
-                    } else {
-                        setInfoLabelMessage(game.getCurrentPlayer() + " is shooting");
-                        enableAvailableShips();
-                        selectFirstAvailableShipType();
-                        setEnemyBoardEnabled(true);
-                        gui.getPanelGame().getButtonDone().setEnabled(false);
-                    }
-                }
             }
             updatePlayerBoard();
             updateShipSelection();
@@ -814,6 +796,5 @@ public class Controller {
     public void setBoardsEnabled(boolean state) {
         setEnemyBoardEnabled(state);
         setPlayerBoardEnabled(state);
-
     }
 }

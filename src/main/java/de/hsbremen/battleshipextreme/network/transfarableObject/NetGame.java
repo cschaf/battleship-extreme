@@ -1,11 +1,16 @@
 package de.hsbremen.battleshipextreme.network.transfarableObject;
 
+import de.hsbremen.battleshipextreme.model.Board;
+import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Settings;
-import de.hsbremen.battleshipextreme.network.TransferableType;
 import de.hsbremen.battleshipextreme.network.ClientGameIndexQueue;
+import de.hsbremen.battleshipextreme.network.TransferableType;
 import de.hsbremen.battleshipextreme.server.ClientHandler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by cschaf on 30.04.2015.
@@ -21,15 +26,7 @@ public class NetGame extends TransferableObject {
     private String password;
     private boolean isPrivate;
     private ArrayList<Turn> turns;
-
-    public ClientGameIndexQueue<Integer> getClientTurnOrder() {
-        return clientTurnOrder;
-    }
-
-    public HashMap<Integer, ClientHandler> getPlayers() {
-
-        return players;
-    }
+    private boolean ready;
 
     public NetGame(String name, Settings settings) {
         this.id = UUID.randomUUID().toString();
@@ -42,12 +39,13 @@ public class NetGame extends TransferableObject {
         this.turns = new ArrayList<Turn>();
         this.clientIds = new ArrayList<Integer>();
         this.clientTurnOrder = new ClientGameIndexQueue<Integer>();
+        this.ready = false;
+
         for (int i = 0; i < maxPlayers; i++) {
             clientTurnOrder.add(i);
             clientIds.add(i);
             players.put(i, null);
         }
-
     }
 
     public TransferableType getType() {
@@ -86,15 +84,24 @@ public class NetGame extends TransferableObject {
     }
 
     public void removePlayer(ClientHandler player) {
-            int index =  -1;
-            for (Map.Entry<Integer, ClientHandler> entry : players.entrySet()) {
-                ClientHandler value = entry.getValue();
-                if (value!=null){
-                    if (value == player)index = entry.getKey();
-                }
-            }
+        int index = getIndexByClient(player);
+        if (index > -1) {
             players.put(index, null);
             clientIds.add(index);
+        }
+    }
+
+    public int getIndexByClient(ClientHandler handler) {
+        int index = -1;
+        for (Map.Entry<Integer, ClientHandler> entry : players.entrySet()) {
+            ClientHandler value = entry.getValue();
+            if (value != null) {
+                if (value == handler) {
+                    index = entry.getKey();
+                }
+            }
+        }
+        return index;
     }
 
     public Settings getSettings() {
@@ -132,9 +139,58 @@ public class NetGame extends TransferableObject {
         return id;
     }
 
+    public ClientGameIndexQueue<Integer> getClientTurnOrder() {
+        return clientTurnOrder;
+    }
+
+    public HashMap<Integer, ClientHandler> getPlayers() {
+
+        return players;
+    }
+
+    public void addBoard(ClientHandler clientHandler, ClientBoard board) {
+        int index = getIndexByClient(clientHandler);
+        if (index > -1) {
+            ClientHandler clientHandler1 =  players.get(index);
+            clientHandler.setOwnBoard(board.getBoard());
+            players.put(index, clientHandler1);
+        }
+    }
+
+    public ArrayList<Board> getAllBoards(){
+        ArrayList<Board> result = new ArrayList<Board>();
+        for (Map.Entry<Integer, ClientHandler> entry : players.entrySet()) {
+            ClientHandler value = entry.getValue();
+            if (value != null) {
+                result.add(value.getOwnBoard());
+            }
+        }
+        return result;
+    }
+
+    public boolean haveAllPlayersSetTheirShips() {
+        for (Map.Entry<Integer, ClientHandler> entry : players.entrySet()) {
+            ClientHandler value = entry.getValue();
+            if (value != null) {
+                if (value.getOwnBoard() == null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public void setGameToReady() {
+        this.ready = true;
+    }
+
     @Override
     public String toString() {
 
         return getName() + " (" + this.getJoinedPlayers().size() + "/ " + getMaxPlayers() + ")";
+    }
+
+    public boolean getReady() {
+        return ready;
     }
 }
