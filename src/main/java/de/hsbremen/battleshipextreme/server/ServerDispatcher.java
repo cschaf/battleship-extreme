@@ -5,13 +5,11 @@ import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.network.*;
 import de.hsbremen.battleshipextreme.network.eventhandling.ErrorHandler;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
-import de.hsbremen.battleshipextreme.network.transfarableObject.ClientBoard;
-import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
-import de.hsbremen.battleshipextreme.network.transfarableObject.Join;
-import de.hsbremen.battleshipextreme.network.transfarableObject.Turn;
+import de.hsbremen.battleshipextreme.network.transfarableObject.*;
 import de.hsbremen.battleshipextreme.server.listener.IClientConnectionListener;
 import de.hsbremen.battleshipextreme.server.listener.IClientObjectReceivedListener;
 import de.hsbremen.battleshipextreme.server.listener.IServerListener;
+import sun.nio.ch.Net;
 
 import javax.swing.event.EventListenerList;
 import java.io.Serializable;
@@ -404,5 +402,15 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
             }
         }
         return null;
+    }
+
+    public void sendNameList(ClientHandler client) {
+        NetGame game = getGameByClient(client);
+        ArrayList<String> names = new ArrayList<String>();
+        for (ClientHandler handler : game.getJoinedPlayers()){
+            names.add(handler.getUsername());
+        }
+        ITransferable object = TransferableObjectFactory.CreatePlayerNames(names);
+        this.unicast(object, client);
     }
 }

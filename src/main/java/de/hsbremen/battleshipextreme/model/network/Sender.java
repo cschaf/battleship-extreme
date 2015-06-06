@@ -51,6 +51,11 @@ public class Sender extends Thread implements IDisposable {
         send(object);
     }
 
+    public void requestNameList() {
+        ITransferable object = TransferableObjectFactory.CreateServerInfo(InfoSendingReason.PlayerNames);
+        send(object);
+    }
+
     public void sendJoin(String id) {
         ITransferable object = TransferableObjectFactory.CreateJoin(id);
         send(object);

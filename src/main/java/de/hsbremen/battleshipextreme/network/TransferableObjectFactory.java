@@ -57,4 +57,8 @@ public class TransferableObjectFactory {
     public static ITransferable CreateServerInfo(InfoSendingReason reason) {
         return new ServerInfo(reason);
     }
+
+    public static ITransferable CreatePlayerNames(ArrayList<String> names) {
+        return new PlayerNames(names);
+    }
 }

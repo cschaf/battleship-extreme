@@ -56,10 +56,17 @@ public class Listener extends Thread implements IDisposable {
                         GameList gameList = (GameList) receivedObj;
                         gameListObjectReceived(new EventArgs<GameList>(this, gameList));
                         break;
+
+                    case PlayerNames:
+                        PlayerNames playerNames = (PlayerNames) receivedObj;
+                        playerNamesObjectReceived(new EventArgs<PlayerNames>(this, playerNames));
+                        break;
+
                     case Turn:
                         Turn turn = (Turn) receivedObj;
                         turnObjectReceived(new EventArgs<Turn>(this, turn));
                         break;
+
                     case PlayerBoards:
                         PlayerBoards boards = (PlayerBoards) receivedObj;
                         playerBoardsObjectReceived(new EventArgs<PlayerBoards>(this, boards));
@@ -160,6 +167,15 @@ public class Listener extends Thread implements IDisposable {
         for (int i = 0; i < listeners.length; i = i + 2) {
             if (listeners[i] == IServerObjectReceivedListener.class) {
                 ((IServerObjectReceivedListener) listeners[i + 1]).onPlayerBoardsObjectReceived(eventArgs);
+            }
+        }
+    }
+
+    private void playerNamesObjectReceived(EventArgs<PlayerNames> eventArgs) {
+        Object[] listeners = this.listeners.getListenerList();
+        for (int i = 0; i < listeners.length; i = i + 2) {
+            if (listeners[i] == IServerObjectReceivedListener.class) {
+                ((IServerObjectReceivedListener) listeners[i + 1]).onPlayerNamesObjectReceived(eventArgs);
             }
         }
     }

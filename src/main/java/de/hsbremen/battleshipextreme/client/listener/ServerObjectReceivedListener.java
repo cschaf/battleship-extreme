@@ -50,6 +50,7 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
         // disable all controls till game ready to start
         ctrl.setBoardsEnabled(false);
         gui.getPanelGame().getLabelInfo().setText("Waiting for other players...");
+
     }
 
     public void onTurnObjectReceived(EventArgs<Turn> eventArgs) {
@@ -75,12 +76,13 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 break;
             case ReadyForPlacement:
                 gui.getPanelGame().getLabelInfo().setText("Ships will be placed...");
+                network.getSender().requestNameList();
                 break;
             case PlaceYourShips:
                 ctrl.setPlayerBoardEnabled(true);
                 break;
-
             case GameReady:
+
                 break;
         }
     }
@@ -89,5 +91,9 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
         PlayerBoards boards = eventArgs.getItem();
         game.setPlayerBoards(boards.getBoards());
         ctrl.nextOnline();
+    }
+
+    public void onPlayerNamesObjectReceived(EventArgs<PlayerNames> eventArgs) {
+        ctrl.setPlayerNames(eventArgs.getItem().getNames());
     }
 }
