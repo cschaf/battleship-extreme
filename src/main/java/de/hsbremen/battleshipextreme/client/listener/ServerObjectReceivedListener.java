@@ -88,5 +88,6 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
     public void onPlayerBoardsObjectReceived(EventArgs<PlayerBoards> eventArgs) {
         PlayerBoards boards = eventArgs.getItem();
         game.setPlayerBoards(boards.getBoards());
+        ctrl.nextOnline();
     }
 }

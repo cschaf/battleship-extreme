@@ -35,8 +35,6 @@ public class Controller {
     private IErrorListener serverErrorListener;
     private ServerGameBrowserListener serverGameBrowserListener;
 
-    private FieldState[][] tempPlayerBoard;
-
     public Controller(Game game, GUI gui) {
         this.game = game;
         this.gui = gui;
@@ -56,7 +54,6 @@ public class Controller {
     public void initializeGame(Settings settings) throws Exception {
         if (settings != null) {
             game.initialize(settings);
-            tempPlayerBoard = new FieldState[game.getBoardSize()][game.getBoardSize()];
         }
 
         initializeGameView();
@@ -232,10 +229,7 @@ public class Controller {
                     public void actionPerformed(ActionEvent e) {
                         FieldButton fieldButton = (FieldButton) e.getSource();
                         try {
-                            boolean placed = placeShip(fieldButton.getxPos(), fieldButton.getyPos(), panelGame.getRadioButtonHorizontalOrientation().isSelected());
-                            if (placed) {
-                                setAtTempBoard(fieldButton.getxPos(), fieldButton.getyPos(), panelGame.getRadioButtonHorizontalOrientation().isSelected(), game.getCurrentPlayer().getCurrentShip().getSize());
-                            }
+                            placeShip(fieldButton.getxPos(), fieldButton.getyPos(), panelGame.getRadioButtonHorizontalOrientation().isSelected());
                         } catch (ShipAlreadyPlacedException e1) {
                             // TODO Auto-generated catch block
                             e1.printStackTrace();
@@ -248,18 +242,6 @@ public class Controller {
                         }
                     }
                 });
-            }
-        }
-    }
-
-    private void setAtTempBoard(int xPos, int yPos, boolean isHorizontal, int shipSize) {
-        if (isHorizontal) {
-            for (int i = xPos; i < xPos + shipSize; i++) {
-                tempPlayerBoard[i][yPos] = FieldState.HAS_SHIP;
-            }
-        } else {
-            for (int i = yPos; i < yPos + shipSize; i++) {
-                tempPlayerBoard[xPos][i] = FieldState.HAS_SHIP;
             }
         }
     }
@@ -361,7 +343,6 @@ public class Controller {
         panelGame.getButtonDone().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (network.isConnected()) {
-                    tempPlayerBoard = null;
                     nextOnline();
                 } else {
                     next();
@@ -390,7 +371,7 @@ public class Controller {
         game.getCurrentPlayer().setCurrentShipByType(shipType);
     }
 
-    private boolean placeShip(int xPos, int yPos, boolean isHorizontal) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException {
+    private void placeShip(int xPos, int yPos, boolean isHorizontal) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException {
         Orientation orientation = isHorizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL;
         Player currentPlayer = game.getCurrentPlayer();
 
@@ -407,8 +388,6 @@ public class Controller {
 
         updatePlayerBoard();
         updateShipSelection();
-
-        return true;
     }
 
     private boolean makeTurn(String enemyName, int xPos, int yPos, boolean isHorizontal) throws FieldOutOfBoardException {
@@ -426,16 +405,19 @@ public class Controller {
         return possible;
     }
 
-    private void nextOnline() {
-        tempPlayerBoard = new FieldState[game.getBoardSize()][game.getBoardSize()];
+    public void nextOnline() {
         if (!game.isGameover()) {
             if (!game.isReady()) {
                 if (game.getCurrentPlayer().hasPlacedAllShips()) {
                     // Schicke jetzt das Board an den Server
                     network.getSender().sendBoard(game.getCurrentPlayer().getBoard());
                     setBoardsEnabled(false);
+                    gui.getPanelGame().getButtonDone().setEnabled(false);
                 }
             } else {
+                setInfoLabelMessage("All players have set their ships!");
+                setBoardsEnabled(false);
+                gui.getPanelGame().getButtonDone().setEnabled(false);
                 // alle Spieler habe ihre Schiffe gesetzt
             }
             updatePlayerBoard();
