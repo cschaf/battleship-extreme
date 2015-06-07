@@ -5,6 +5,7 @@ import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.Settings;
 import de.hsbremen.battleshipextreme.model.player.Player;
+import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.network.transfarableObject.*;
 
 import java.util.ArrayList;
@@ -48,6 +49,10 @@ public class TransferableObjectFactory {
 
     public static ITransferable CreateTurn(Player from, Player to, int fieldX, int fieldY, Orientation orientation) {
         return new Turn(from, to, fieldX, fieldY, orientation);
+    }
+
+    public static ITransferable CreateTurn(String attackedPlayerName, int fieldX, int fieldY, boolean isHorizontal, Ship currentShip) {
+        return new Turn(attackedPlayerName, fieldX, fieldY, isHorizontal, currentShip);
     }
 
     public static ITransferable CreateClientBoard(Board board) {

@@ -1,6 +1,7 @@
 package de.hsbremen.battleshipextreme.model.network;
 
 import de.hsbremen.battleshipextreme.model.Board;
+import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.network.IDisposable;
 import de.hsbremen.battleshipextreme.network.ITransferable;
 import de.hsbremen.battleshipextreme.network.InfoSendingReason;
@@ -78,5 +79,10 @@ public class Sender extends Thread implements IDisposable {
 
     public void dispose() {
         this.disposed = true;
+    }
+
+    public void sendTurn(String playerName, int xPos, int yPos, boolean isHorizontal, Ship currentShip) {
+        ITransferable object = TransferableObjectFactory.CreateTurn(playerName, xPos, yPos, isHorizontal, currentShip);
+        send(object);
     }
 }

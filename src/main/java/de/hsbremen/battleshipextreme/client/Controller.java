@@ -13,10 +13,10 @@ import de.hsbremen.battleshipextreme.model.network.NetworkClient;
 import de.hsbremen.battleshipextreme.model.player.AIPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.player.PlayerType;
+import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.model.ship.ShipType;
 import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListener;
 import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
-import de.hsbremen.battleshipextreme.server.ClientHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -255,11 +255,21 @@ public class Controller {
                 playerBoard[i][j].addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         FieldButton fieldButton = (FieldButton) e.getSource();
-                        try {
-                            makeTurn(panelGame.getComboBoxEnemySelection().getSelectedItem() + "", fieldButton.getxPos(), fieldButton.getyPos(), panelGame.getRadioButtonHorizontalOrientation().isSelected());
-                        } catch (FieldOutOfBoardException e1) {
-                            // TODO Auto-generated catch block
-                            e1.printStackTrace();
+                        if (network.isConnected()) {
+                            String attackedPlayerName = panelGame.getComboBoxEnemySelection().getSelectedItem().toString();
+                            int xPos = fieldButton.getxPos();
+                            int yPos = fieldButton.getyPos();
+                            boolean isHorizontal = panelGame.getRadioButtonHorizontalOrientation().isSelected();
+                            Ship currentShip = game.getCurrentPlayer().getCurrentShip();
+                            network.getSender().sendTurn(attackedPlayerName, xPos, yPos, isHorizontal, currentShip);
+                        }
+                        else {
+                            try {
+                                makeTurn(panelGame.getComboBoxEnemySelection().getSelectedItem() + "", fieldButton.getxPos(), fieldButton.getyPos(), panelGame.getRadioButtonHorizontalOrientation().isSelected());
+                            } catch (FieldOutOfBoardException e1) {
+                                // TODO Auto-generated catch block
+                                e1.printStackTrace();
+                            }
                         }
                     }
                 });
@@ -368,7 +378,7 @@ public class Controller {
         network.removeServerObjectReceivedListener(serverObjectReceivedListener);
     }
 
-    private void selectShip(ShipType shipType) {
+    public void selectShip(ShipType shipType) {
         game.getCurrentPlayer().setCurrentShipByType(shipType);
     }
 
@@ -391,7 +401,7 @@ public class Controller {
         updateShipSelection();
     }
 
-    private boolean makeTurn(String enemyName, int xPos, int yPos, boolean isHorizontal) throws FieldOutOfBoardException {
+    public boolean makeTurn(String enemyName, int xPos, int yPos, boolean isHorizontal) throws FieldOutOfBoardException {
         Orientation orientation = isHorizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL;
         boolean possible = false;
 
@@ -416,10 +426,11 @@ public class Controller {
                     gui.getPanelGame().getButtonDone().setEnabled(false);
                 }
             } else {
-                setInfoLabelMessage("All players have set their ships!");
+                // alle Spieler habe ihre Schiffe gesetzt
                 setBoardsEnabled(false);
                 gui.getPanelGame().getButtonDone().setEnabled(false);
-                // alle Spieler habe ihre Schiffe gesetzt
+                // send klicked field data to server
+
             }
             updatePlayerBoard();
             updateShipSelection();
@@ -534,7 +545,7 @@ public class Controller {
         panelGame.getLabelSubmarineShipCount().setText("" + game.getCurrentPlayer().getShipCount(ShipType.SUBMARINE));
     }
 
-    private void updateEnemySelection() {
+    public void updateEnemySelection() {
         GamePanel panelGame = gui.getPanelGame();
         ArrayList<Player> enemies = game.getEnemiesOfCurrentPlayer();
         JComboBox<String> enemyComboBox = panelGame.getComboBoxEnemySelection();
@@ -591,7 +602,7 @@ public class Controller {
         gui.getMenuItemSaveGame().setEnabled(enabled);
     }
 
-    private void setEnemySelectionEnabled(boolean enabled) {
+    public void setEnemySelectionEnabled(boolean enabled) {
         gui.getPanelGame().getComboBoxEnemySelection().setEnabled(enabled);
     }
 
@@ -772,7 +783,7 @@ public class Controller {
     }
 
     public void setPlayerNames(ArrayList<String> names) {
-        for(int i= 0; i<game.getPlayers().length; i++){
+        for (int i = 0; i < game.getPlayers().length; i++) {
             game.getPlayers()[i].setName(names.get(i));
         }
         updateEnemySelection();

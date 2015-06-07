@@ -3,6 +3,7 @@ package de.hsbremen.battleshipextreme.client.listener;
 import de.hsbremen.battleshipextreme.client.Controller;
 import de.hsbremen.battleshipextreme.client.GUI;
 import de.hsbremen.battleshipextreme.model.Game;
+import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener;
 import de.hsbremen.battleshipextreme.model.network.NetworkClient;
 import de.hsbremen.battleshipextreme.network.ITransferable;
@@ -55,6 +56,13 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
 
     public void onTurnObjectReceived(EventArgs<Turn> eventArgs) {
         Turn turn = eventArgs.getItem();
+        ctrl.selectShip(turn.getCurrentShip().getType());
+        try {
+            ctrl.makeTurn(turn.getAttackedPlayerName(), turn.getFieldX(), turn.getFieldY(), turn.isHorizontal());
+        } catch (FieldOutOfBoardException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public void onGameListObjectReceived(EventArgs<GameList> eventArgs) {
@@ -84,6 +92,8 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 break;
             case MakeTurn:
                 ctrl.setEnemyBoardEnabled(true);
+                ctrl.setEnemySelectionEnabled(true);
+                ctrl.updateEnemySelection();
                 break;
         }
     }

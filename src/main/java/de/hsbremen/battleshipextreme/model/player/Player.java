@@ -329,4 +329,8 @@ public abstract class Player implements Serializable {
         }
         this.board = board;
     }
+
+    public void setCurrentShip(Ship currentShip) {
+        this.currentShip = currentShip;
+    }
 }
