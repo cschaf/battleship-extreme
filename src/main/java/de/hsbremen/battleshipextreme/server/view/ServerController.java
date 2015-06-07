@@ -72,7 +72,7 @@ public class ServerController {
                         break;
                     case Turn:
                         Turn turn = (Turn) receivedObject;
-                        gui.getTraMessages().append("New Turn was added, " + turn.getFrom().getName() + " attacked " + turn.getTo().getName() + " in game " + turn.getGameId() + "\r\n");
+                        gui.getTraMessages().append("New Turn was added, " + turn.getAttackedPlayerName() + " was attacked in game " + turn.getGameId() + "\r\n");
                         break;
                     case Join:
                         Join join = (Join) receivedObject;
