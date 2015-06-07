@@ -1,15 +1,15 @@
 package de.hsbremen.battleshipextreme.server;
 
-import de.hsbremen.battleshipextreme.model.Board;
-import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.network.*;
 import de.hsbremen.battleshipextreme.network.eventhandling.ErrorHandler;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
-import de.hsbremen.battleshipextreme.network.transfarableObject.*;
+import de.hsbremen.battleshipextreme.network.transfarableObject.ClientBoard;
+import de.hsbremen.battleshipextreme.network.transfarableObject.Join;
+import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
+import de.hsbremen.battleshipextreme.network.transfarableObject.Turn;
 import de.hsbremen.battleshipextreme.server.listener.IClientConnectionListener;
 import de.hsbremen.battleshipextreme.server.listener.IClientObjectReceivedListener;
 import de.hsbremen.battleshipextreme.server.listener.IServerListener;
-import sun.nio.ch.Net;
 
 import javax.swing.event.EventListenerList;
 import java.io.Serializable;
@@ -76,14 +76,12 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
                 }
             }
             if (found) {
-                ITransferable disconnect = TransferableObjectFactory.CreateClientInfo(clientHandler.getUsername(), clientHandler.getSocket().getInetAddress().getHostAddress(),clientHandler.getSocket().getPort(),InfoSendingReason.Disconnect);
+                ITransferable disconnect = TransferableObjectFactory.CreateClientInfo(clientHandler.getUsername(), clientHandler.getSocket().getInetAddress().getHostAddress(), clientHandler.getSocket().getPort(), InfoSendingReason.Disconnect);
                 clientHandler.dispose();
                 multicast(disconnect, foundGame.getJoinedPlayers());
                 break;
             }
         }
-
-
     }
 
     public synchronized void dispatchObject(ITransferable transferableObject) {
@@ -256,11 +254,10 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         objectReceived(new EventArgs<ITransferable>(this, join));
         unicast(TransferableObjectFactory.CreateGame(jGame.getName(), jGame.getSettings()), clientHandler);
 
-        if (jGame.getJoinedPlayers().size() == jGame.getMaxPlayers()){
+        if (jGame.getJoinedPlayers().size() == jGame.getMaxPlayers()) {
             this.sendReadyForPlacement(jGame);
             this.initializeNextShipPlacement(jGame);
         }
-
     }
 
     private void initializeNextShipPlacement(NetGame game) {
@@ -275,6 +272,23 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         game.getClientTurnOrder().add(nextPlayer);
     }
 
+    private void initializeNextTurn(NetGame game) {
+        // get next client id for ship placement
+        int nextPlayer = game.getClientTurnOrder().next();
+        ClientHandler client = game.getPlayers().get(nextPlayer);
+
+        // Allow client to make his turn
+        this.sendMakeTurn(client);
+
+        // add client id again to the queue for next round
+        game.getClientTurnOrder().add(nextPlayer);
+    }
+
+    private void sendMakeTurn(ClientHandler client) {
+        ITransferable info = TransferableObjectFactory.CreateServerInfo(InfoSendingReason.MakeTurn);
+        unicast(info, client);
+    }
+
     private void sendPlaceYourShips(ClientHandler client) {
         ITransferable info = TransferableObjectFactory.CreateServerInfo(InfoSendingReason.PlaceYourShips);
         this.unicast(info, client);
@@ -282,13 +296,15 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     private void sendReadyForPlacement(NetGame game) {
         ITransferable games = TransferableObjectFactory.CreateServerInfo(InfoSendingReason.ReadyForPlacement);
-        this.multicast(games, game.getJoinedPlayers());
+        multicast(games, game.getJoinedPlayers());
+        sendNameList(game);
     }
 
     private void sendGameReady(NetGame game) {
         ITransferable rdy = TransferableObjectFactory.CreatePlayerBoards(game.getAllBoards());
         // send Boards to all players
-        this.multicast(rdy, game.getJoinedPlayers());
+        multicast(rdy, game.getJoinedPlayers());
+        // sends all Player names to the clients for combobox
         game.setGameToReady();
     }
 
@@ -311,15 +327,15 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     public void banClient(ClientHandler client) {
         String ip = client.getSocket().getInetAddress().getHostAddress();
-        if(!ip.equals("127.0.0.1") || !ip.equals("localhost")){
+        if (!ip.equals("127.0.0.1") || !ip.equals("localhost")) {
             this.banList.add(ip);
         }
         this.deleteClient(client);
     }
 
     public void removeClientFromBanList(String ip) {
-        for (int i= 0; i<banList.size(); i++){
-            if (ip.equals(banList.get(i))){
+        for (int i = 0; i < banList.size(); i++) {
+            if (ip.equals(banList.get(i))) {
                 banList.remove(i);
                 break;
             }
@@ -360,9 +376,9 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         return null;
     }
 
-    public synchronized NetGame getGameById(String id){
-        for (int i= 0; i < getNetGames().size(); i++){
-            if (getNetGames().get(i).getId().equals(id)){
+    public synchronized NetGame getGameById(String id) {
+        for (int i = 0; i < getNetGames().size(); i++) {
+            if (getNetGames().get(i).getId().equals(id)) {
                 return getNetGames().get(i);
             }
         }
@@ -375,28 +391,29 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
     }
 
     public void addClientBoardToGame(ClientHandler clientHandler, ClientBoard board) {
-        // füge das Board zu den anderen Boards (Eigenschaft muss noch hinzugefügt werden) hinzu
-        // und sende dem nüchsten client ein readytoPlace...
         NetGame game = getGameByClient(clientHandler);
-        if (game != null && !game.getReady()){
+        if (game != null && !game.getReady()) {
             boolean allShipsSet = game.haveAllPlayersSetTheirShips();
-            if (!allShipsSet){
+            if (!allShipsSet) {
                 game.addBoard(clientHandler, board);
                 // send place ships to next player
-                initializeNextShipPlacement(game);
                 allShipsSet = game.haveAllPlayersSetTheirShips();
                 // send to all player all Boards
-                if (allShipsSet) sendGameReady(game);
+                if (allShipsSet) {
+                    sendGameReady(game);
+                    initializeNextTurn(game);
+                } else {
+                    // send place your ships to next player
+                    initializeNextShipPlacement(game);
+                }
             }
-
         }
-
     }
 
     private NetGame getGameByClient(ClientHandler client) {
-        for (NetGame game : netGames){
-            for (ClientHandler clientHandler : game.getJoinedPlayers()){
-                if (clientHandler.equals(client)){
+        for (NetGame game : netGames) {
+            for (ClientHandler clientHandler : game.getJoinedPlayers()) {
+                if (clientHandler.equals(client)) {
                     return game;
                 }
             }
@@ -407,10 +424,19 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
     public void sendNameList(ClientHandler client) {
         NetGame game = getGameByClient(client);
         ArrayList<String> names = new ArrayList<String>();
-        for (ClientHandler handler : game.getJoinedPlayers()){
+        for (ClientHandler handler : game.getJoinedPlayers()) {
             names.add(handler.getUsername());
         }
         ITransferable object = TransferableObjectFactory.CreatePlayerNames(names);
         this.unicast(object, client);
+    }
+
+    public void sendNameList(NetGame game) {
+        ArrayList<String> names = new ArrayList<String>();
+        for (ClientHandler handler : game.getJoinedPlayers()) {
+            names.add(handler.getUsername());
+        }
+        ITransferable object = TransferableObjectFactory.CreatePlayerNames(names);
+        this.multicast(object, game.getJoinedPlayers());
     }
 }

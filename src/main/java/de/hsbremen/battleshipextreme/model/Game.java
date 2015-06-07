@@ -265,6 +265,10 @@ public class Game implements Serializable {
         return numberOfPlayersLeft <= 1;
     }
 
+    public void setCurrentPlayer(Player currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
+
     public Player[] getPlayers() {
         return players;
     }

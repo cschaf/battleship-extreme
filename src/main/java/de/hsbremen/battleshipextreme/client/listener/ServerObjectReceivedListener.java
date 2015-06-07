@@ -55,7 +55,6 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
 
     public void onTurnObjectReceived(EventArgs<Turn> eventArgs) {
         Turn turn = eventArgs.getItem();
-        gui.getPanelGame().getTextAreaGameLog().append(turn.getFrom().getName() + " attacked " + turn.getTo().getName() + " " + turn.getOrientation().toString() + " at field " + turn.getFieldX() + " / " + turn.getFieldY() + "\r\n");
     }
 
     public void onGameListObjectReceived(EventArgs<GameList> eventArgs) {
@@ -76,13 +75,15 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 break;
             case ReadyForPlacement:
                 gui.getPanelGame().getLabelInfo().setText("Ships will be placed...");
-                network.getSender().requestNameList();
                 break;
             case PlaceYourShips:
                 ctrl.setPlayerBoardEnabled(true);
                 break;
             case GameReady:
-
+                game.setCurrentPlayer(game.getPlayers()[0]);
+                break;
+            case MakeTurn:
+                ctrl.setEnemyBoardEnabled(true);
                 break;
         }
     }

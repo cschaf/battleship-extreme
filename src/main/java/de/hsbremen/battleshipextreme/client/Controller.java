@@ -639,7 +639,7 @@ public class Controller {
         setBoardEnabled(gui.getPanelGame().getPanelPlayerBoard().getButtonsField(), enabled);
     }
 
-    private void setEnemyBoardEnabled(boolean enabled) {
+    public void setEnemyBoardEnabled(boolean enabled) {
         setBoardEnabled(gui.getPanelGame().getPanelEnemyBoard().getButtonsField(), enabled);
     }
 
