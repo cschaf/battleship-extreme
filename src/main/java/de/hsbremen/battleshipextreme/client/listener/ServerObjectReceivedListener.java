@@ -57,12 +57,17 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
     public void onTurnObjectReceived(EventArgs<Turn> eventArgs) {
         Turn turn = eventArgs.getItem();
         ctrl.selectShip(turn.getCurrentShip().getType());
+        //ctrl.setEnemyBoardEnabled(true);
         try {
-            ctrl.makeTurn(turn.getAttackedPlayerName(), turn.getFieldX(), turn.getFieldY(), turn.isHorizontal());
+            ctrl.makeOnlineTurn(turn.getAttackingPlayerName(), turn.getAttackedPlayerName(), turn.getFieldX(), turn.getFieldY(), turn.isHorizontal());
         } catch (FieldOutOfBoardException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        game.nextPlayer();
+        //ctrl.setEnemyBoardEnabled(false);
+        //gui.getPanelGame().getButtonDone().setEnabled(false);
+
     }
 
     public void onGameListObjectReceived(EventArgs<GameList> eventArgs) {
@@ -89,11 +94,10 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 break;
             case GameReady:
                 game.setCurrentPlayer(game.getPlayers()[0]);
+                ctrl.setEnemySelectionEnabled(true);
                 break;
             case MakeTurn:
                 ctrl.setEnemyBoardEnabled(true);
-                ctrl.setEnemySelectionEnabled(true);
-                ctrl.updateEnemySelection();
                 break;
         }
     }

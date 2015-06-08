@@ -15,6 +15,8 @@ import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.player.PlayerType;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.model.ship.ShipType;
+import de.hsbremen.battleshipextreme.network.ITransferable;
+import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListener;
 import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 
@@ -35,6 +37,7 @@ public class Controller {
     private IServerObjectReceivedListener serverObjectReceivedListener;
     private IErrorListener serverErrorListener;
     private ServerGameBrowserListener serverGameBrowserListener;
+    private ITransferable lastTurn;
 
     public Controller(Game game, GUI gui) {
         this.game = game;
@@ -256,14 +259,16 @@ public class Controller {
                     public void actionPerformed(ActionEvent e) {
                         FieldButton fieldButton = (FieldButton) e.getSource();
                         if (network.isConnected()) {
+                            String attackingPlayerName = game.getCurrentPlayer().getName();
                             String attackedPlayerName = panelGame.getComboBoxEnemySelection().getSelectedItem().toString();
                             int xPos = fieldButton.getxPos();
                             int yPos = fieldButton.getyPos();
                             boolean isHorizontal = panelGame.getRadioButtonHorizontalOrientation().isSelected();
                             Ship currentShip = game.getCurrentPlayer().getCurrentShip();
-                            network.getSender().sendTurn(attackedPlayerName, xPos, yPos, isHorizontal, currentShip);
-                        }
-                        else {
+                            lastTurn = TransferableObjectFactory.CreateTurn(attackingPlayerName, attackedPlayerName, xPos, yPos, isHorizontal, currentShip);
+                            setEnemyBoardEnabled(false);
+                            gui.getPanelGame().getButtonDone().setEnabled(true);
+                        } else {
                             try {
                                 makeTurn(panelGame.getComboBoxEnemySelection().getSelectedItem() + "", fieldButton.getxPos(), fieldButton.getyPos(), panelGame.getRadioButtonHorizontalOrientation().isSelected());
                             } catch (FieldOutOfBoardException e1) {
@@ -416,6 +421,27 @@ public class Controller {
         return possible;
     }
 
+    public boolean makeOnlineTurn(String attackingPlayerName, String enemyName, int xPos, int yPos, boolean isHorizontal) throws FieldOutOfBoardException {
+        Orientation orientation = isHorizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+        boolean possible = false;
+
+        Player enemy = game.getPlayerByName(enemyName);
+        possible = game.makeTurn(enemy, xPos, yPos, orientation);
+        // Hier wird noch nicht alles richtig angezeigt!
+        if (possible) {
+            if (enemy.getName().equals(game.getConnectedAsPlayer())){
+                updatePlayerBoard(game.getConnectedAsPlayer());
+            }
+
+            if(game.getConnectedAsPlayer().equals(attackingPlayerName)){
+                updateEnemyBoard();
+            }
+
+            setInfoLabelMessage(game.getCurrentPlayer() + " attacked " + enemy);
+        }
+        return possible;
+    }
+
     public void nextOnline() {
         if (!game.isGameover()) {
             if (!game.isReady()) {
@@ -429,11 +455,25 @@ public class Controller {
                 // alle Spieler habe ihre Schiffe gesetzt
                 setBoardsEnabled(false);
                 gui.getPanelGame().getButtonDone().setEnabled(false);
-                // send klicked field data to server
+                if (lastTurn != null){
+                    network.getSender().sendTurn(lastTurn);
+                    lastTurn = null;
+                    //game.nextPlayer();
+                }
 
+//                updateEnemySelection();
+/*                if (game.getCurrentPlayer().areAllShipsReloading()) {
+                    setInfoLabelMessage("All ships of " + game.getCurrentPlayer() + " are reloading");
+                    setEnemyBoardEnabled(false);
+                    setShipSelectionEnabled(false);
+                } else {
+                    setInfoLabelMessage(game.getCurrentPlayer() + " is shooting");
+                    enableAvailableShips();
+                    selectFirstAvailableShipType();
+                    setEnemyBoardEnabled(true);
+                    gui.getPanelGame().getButtonDone().setEnabled(false);
+                }*/
             }
-            updatePlayerBoard();
-            updateShipSelection();
         } else {
             setInfoLabelMessage(game.getWinner() + " won ");
         }
@@ -555,7 +595,17 @@ public class Controller {
         }
     }
 
-    private void updatePlayerBoard() {
+    public void updateEnemyOnlineSelection(String playerName) {
+        GamePanel panelGame = gui.getPanelGame();
+        ArrayList<Player> enemies = game.getEnemiesOfPlayer(playerName);
+        JComboBox<String> enemyComboBox = panelGame.getComboBoxEnemySelection();
+        enemyComboBox.removeAllItems();
+        for (Player enemy : enemies) {
+            enemyComboBox.addItem(enemy.getName());
+        }
+    }
+
+    public void updatePlayerBoard() {
         GamePanel panelGame = gui.getPanelGame();
         JButton[][] board;
         FieldState[][] fieldStates = null;
@@ -569,7 +619,21 @@ public class Controller {
         }
     }
 
-    private void updateEnemyBoard() {
+    public void updatePlayerBoard(String playerName) {
+        GamePanel panelGame = gui.getPanelGame();
+        JButton[][] board;
+        FieldState[][] fieldStates = null;
+        board = panelGame.getPanelPlayerBoard().getButtonsField();
+        try {
+            fieldStates = game.getPlayerByName(playerName).getFieldStates(true);
+            updateBoardColors(board, fieldStates);
+        } catch (FieldOutOfBoardException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void updateEnemyBoard() {
         GamePanel panelGame = gui.getPanelGame();
         JButton[][] board;
         FieldState[][] fieldStates = null;
@@ -675,6 +739,7 @@ public class Controller {
                 network.connect();
                 // Sende login
                 network.getSender().sendLogin(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
+                game.setConnectedAsPlayer(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
             }
         });
 
@@ -786,6 +851,6 @@ public class Controller {
         for (int i = 0; i < game.getPlayers().length; i++) {
             game.getPlayers()[i].setName(names.get(i));
         }
-        updateEnemySelection();
+        updateEnemyOnlineSelection(game.getConnectedAsPlayer());
     }
 }

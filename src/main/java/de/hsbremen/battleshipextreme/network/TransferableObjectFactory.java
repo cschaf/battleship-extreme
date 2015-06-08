@@ -47,12 +47,8 @@ public class TransferableObjectFactory {
         return new PlayerBoards(boards);
     }
 
-    public static ITransferable CreateTurn(Player from, Player to, int fieldX, int fieldY, Orientation orientation) {
-        return new Turn(from, to, fieldX, fieldY, orientation);
-    }
-
-    public static ITransferable CreateTurn(String attackedPlayerName, int fieldX, int fieldY, boolean isHorizontal, Ship currentShip) {
-        return new Turn(attackedPlayerName, fieldX, fieldY, isHorizontal, currentShip);
+    public static ITransferable CreateTurn(String attackingPlayerName, String attackedPlayerName, int fieldX, int fieldY, boolean isHorizontal, Ship currentShip) {
+        return new Turn(attackingPlayerName, attackedPlayerName, fieldX, fieldY, isHorizontal, currentShip);
     }
 
     public static ITransferable CreateClientBoard(Board board) {

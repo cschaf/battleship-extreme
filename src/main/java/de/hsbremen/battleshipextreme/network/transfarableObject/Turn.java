@@ -1,7 +1,5 @@
 package de.hsbremen.battleshipextreme.network.transfarableObject;
 
-import de.hsbremen.battleshipextreme.model.Orientation;
-import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.network.TransferableType;
 
@@ -10,24 +8,15 @@ import de.hsbremen.battleshipextreme.network.TransferableType;
  */
 public class Turn extends TransferableObject {
     private String gameId;
-    private Player from;
-    private Player to;
+    private String attackingPlayerName;
     private String attackedPlayerName;
     private int fieldX;
     private int fieldY;
     private boolean isHorizontal;
     private Ship currentShip;
-    private Orientation orientation;
 
-    public Turn(Player from, Player to, int fieldX, int fieldY, Orientation orientation) {
-        this.from = from;
-        this.to = to;
-        this.fieldX = fieldX;
-        this.fieldY = fieldY;
-        this.orientation = orientation;
-    }
-
-    public Turn(String attackedPlayerName, int fieldX, int fieldY, boolean isHorizontal, Ship currentShip) {
+    public Turn(String attackingPlayerName, String attackedPlayerName, int fieldX, int fieldY, boolean isHorizontal, Ship currentShip) {
+        this.attackingPlayerName = attackingPlayerName;
         this.attackedPlayerName = attackedPlayerName;
         this.fieldX = fieldX;
         this.fieldY = fieldY;
@@ -37,14 +26,6 @@ public class Turn extends TransferableObject {
 
     public TransferableType getType() {
         return TransferableType.Turn;
-    }
-
-    public Player getFrom() {
-        return from;
-    }
-
-    public Player getTo() {
-        return to;
     }
 
     public String getGameId() {
@@ -63,11 +44,6 @@ public class Turn extends TransferableObject {
         return fieldY;
     }
 
-    public Orientation getOrientation() {
-        return orientation;
-    }
-
-
     public String getAttackedPlayerName() {
         return attackedPlayerName;
     }
@@ -78,5 +54,9 @@ public class Turn extends TransferableObject {
 
     public Ship getCurrentShip() {
         return currentShip;
+    }
+
+    public String getAttackingPlayerName() {
+        return attackingPlayerName;
     }
 }

@@ -48,11 +48,12 @@ public class ServerObjectListener implements IServerObjectReceivedListener {
         Turn turn = eventArgs.getItem();
         System.out.println("--- New Turn");
         System.out.println("GameID: : " + turn.getGameId());
-        System.out.println("From-Name: " + turn.getFrom().getName());
-        System.out.println("To-Name: " + turn.getTo().getName());
+        System.out.println("From-Name: " + turn.getAttackingPlayerName());
+        System.out.println("To-Name: " + turn.getAttackedPlayerName());
         System.out.println("Field X: " + turn.getFieldX());
         System.out.println("Field Y : " + turn.getFieldY());
-        System.out.println("Orientation : " + turn.getOrientation());
+        String orientation = turn.isHorizontal() ? "Horizontal" : "Vertical";
+        System.out.println("Orientation : " + orientation);
         System.out.println("--- end ---");
     }
 }

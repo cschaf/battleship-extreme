@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Game implements Serializable {
+    private String connectedAsPlayer;
     private Player[] players;
     private Player currentPlayer;
     private Player winner;
@@ -223,6 +224,24 @@ public class Game implements Serializable {
         return enemies;
     }
 
+    /**
+     * Provides a list of enemies the current player may attack. Players that
+     * are lost or equal to the current player are filtered.
+     * @return an ArrayList of Players
+     */
+    public ArrayList<Player> getEnemiesOfPlayer(String name) {
+        // angreifbare Gegner des currentPlayers zurückgeben
+        ArrayList<Player> enemies = new ArrayList<Player>();
+        for (int i = 0; i < players.length; i++) {
+            if (!players[i].hasLost()) {
+                if (!players[i].getName().equals(name)) {
+                    enemies.add(players[i]);
+                }
+            }
+        }
+        return enemies;
+    }
+
     public Player getPlayerByName(String name) {
         for (Player player : players) {
             if (player.getName().equals(name)) {
@@ -301,5 +320,13 @@ public class Game implements Serializable {
         for (int i = 0; i < players.length; i++) {
 			players[i].setBoard(playerBoards.get(i));
         }
+    }
+
+    public String getConnectedAsPlayer() {
+        return connectedAsPlayer;
+    }
+
+    public void setConnectedAsPlayer(String connectedAsPlayer) {
+        this.connectedAsPlayer = connectedAsPlayer;
     }
 }

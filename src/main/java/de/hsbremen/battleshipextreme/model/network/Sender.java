@@ -81,8 +81,12 @@ public class Sender extends Thread implements IDisposable {
         this.disposed = true;
     }
 
-    public void sendTurn(String playerName, int xPos, int yPos, boolean isHorizontal, Ship currentShip) {
-        ITransferable object = TransferableObjectFactory.CreateTurn(playerName, xPos, yPos, isHorizontal, currentShip);
+    public void sendTurn(String attackingPlayerName, String attackedPlayerName, int xPos, int yPos, boolean isHorizontal, Ship currentShip) {
+        ITransferable object = TransferableObjectFactory.CreateTurn(attackingPlayerName, attackedPlayerName, xPos, yPos, isHorizontal, currentShip);
         send(object);
+    }
+
+    public void sendTurn(ITransferable turn) {
+        send(turn);
     }
 }

@@ -214,20 +214,12 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     public synchronized void addTurn(ClientHandler handler, ITransferable receivedObject) {
         Turn turn = (Turn) receivedObject;
-        boolean gameFound = false;
-        for (NetGame netGame : this.netGames) {
-            for (ClientHandler client : netGame.getJoinedPlayers()) {
-                if (client == handler) {
-                    netGame.addTurn(turn);
-                    turn.setGameId(netGame.getId());
-                    gameFound = true;
-                    break;
-                }
-            }
-            if (gameFound) {
-                this.multicast(turn, netGame.getJoinedPlayers());
-                break;
-            }
+        NetGame netGame = getGameByClient(handler);
+        if (netGame != null) {
+            netGame.addTurn(turn);
+            turn.setGameId(netGame.getId());
+            this.multicast(turn, netGame.getJoinedPlayers());
+            initializeNextTurn(netGame);
         }
 
         objectReceived(new EventArgs<ITransferable>(this, turn));
@@ -272,7 +264,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         game.getClientTurnOrder().add(nextPlayer);
     }
 
-    private void initializeNextTurn(NetGame game) {
+    public void initializeNextTurn(NetGame game) {
         // get next client id for ship placement
         int nextPlayer = game.getClientTurnOrder().next();
         ClientHandler client = game.getPlayers().get(nextPlayer);
@@ -410,7 +402,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         }
     }
 
-    private NetGame getGameByClient(ClientHandler client) {
+    public NetGame getGameByClient(ClientHandler client) {
         for (NetGame game : netGames) {
             for (ClientHandler clientHandler : game.getJoinedPlayers()) {
                 if (clientHandler.equals(client)) {
