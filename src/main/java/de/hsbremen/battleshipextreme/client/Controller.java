@@ -38,6 +38,7 @@ public class Controller {
     private IErrorListener serverErrorListener;
     private ServerGameBrowserListener serverGameBrowserListener;
     private ITransferable lastTurn;
+    private boolean playerIsReloading;
 
     public Controller(Game game, GUI gui) {
         this.game = game;
@@ -458,21 +459,12 @@ public class Controller {
                 if (lastTurn != null){
                     network.getSender().sendTurn(lastTurn);
                     lastTurn = null;
-                    //game.nextPlayer();
                 }
 
-//                updateEnemySelection();
-/*                if (game.getCurrentPlayer().areAllShipsReloading()) {
-                    setInfoLabelMessage("All ships of " + game.getCurrentPlayer() + " are reloading");
-                    setEnemyBoardEnabled(false);
-                    setShipSelectionEnabled(false);
-                } else {
-                    setInfoLabelMessage(game.getCurrentPlayer() + " is shooting");
-                    enableAvailableShips();
-                    selectFirstAvailableShipType();
-                    setEnemyBoardEnabled(true);
-                    gui.getPanelGame().getButtonDone().setEnabled(false);
-                }*/
+                if(playerIsReloading){
+                    network.getSender().sendPlayerIsReloading();
+                    playerIsReloading = false;
+                }
             }
         } else {
             setInfoLabelMessage(game.getWinner() + " won ");
@@ -650,7 +642,7 @@ public class Controller {
         }
     }
 
-    private void setDoneButtonEnabled(boolean enabled) {
+    public void setDoneButtonEnabled(boolean enabled) {
         gui.getPanelGame().getButtonDone().setEnabled(enabled);
     }
 
@@ -852,5 +844,23 @@ public class Controller {
             game.getPlayers()[i].setName(names.get(i));
         }
         updateEnemyOnlineSelection(game.getConnectedAsPlayer());
+    }
+
+    public boolean checkIfShipReloading() {
+        if (game.getCurrentPlayer().areAllShipsReloading()) {
+            setInfoLabelMessage("All ships of " + game.getCurrentPlayer() + " are reloading");
+            setEnemyBoardEnabled(false);
+            setShipSelectionEnabled(false);
+            return true;
+        } else {
+            setInfoLabelMessage(game.getCurrentPlayer() + " is shooting");
+            enableAvailableShips();
+            selectFirstAvailableShipType();
+            return false;
+        }
+    }
+
+    public void setPlayerIsReloading(boolean playerIsReloading) {
+        this.playerIsReloading = playerIsReloading;
     }
 }

@@ -51,13 +51,11 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
         // disable all controls till game ready to start
         ctrl.setBoardsEnabled(false);
         gui.getPanelGame().getLabelInfo().setText("Waiting for other players...");
-
     }
 
     public void onTurnObjectReceived(EventArgs<Turn> eventArgs) {
         Turn turn = eventArgs.getItem();
         ctrl.selectShip(turn.getCurrentShip().getType());
-        //ctrl.setEnemyBoardEnabled(true);
         try {
             ctrl.makeOnlineTurn(turn.getAttackingPlayerName(), turn.getAttackedPlayerName(), turn.getFieldX(), turn.getFieldY(), turn.isHorizontal());
         } catch (FieldOutOfBoardException e) {
@@ -65,7 +63,6 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
             e.printStackTrace();
         }
         game.nextPlayer();
-
     }
 
     public void onGameListObjectReceived(EventArgs<GameList> eventArgs) {
@@ -95,7 +92,19 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 ctrl.setEnemySelectionEnabled(true);
                 break;
             case MakeTurn:
-                ctrl.setEnemyBoardEnabled(true);
+                boolean reloading = ctrl.checkIfShipReloading();
+                if (!reloading) {
+                    ctrl.setEnemyBoardEnabled(true);
+                }
+                else {
+                    ctrl.setPlayerIsReloading(true);
+                    ctrl.setDoneButtonEnabled(true);
+                }
+
+                break;
+            case PlayerIsReloading:
+                gui.getPanelGame().getLabelInfo().setText(game.getCurrentPlayer().getName() + " is reloading...");
+                game.nextPlayer();
                 break;
         }
     }
