@@ -65,8 +65,6 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
             e.printStackTrace();
         }
         game.nextPlayer();
-        //ctrl.setEnemyBoardEnabled(false);
-        //gui.getPanelGame().getButtonDone().setEnabled(false);
 
     }
 

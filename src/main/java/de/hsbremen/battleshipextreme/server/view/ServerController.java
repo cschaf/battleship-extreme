@@ -72,7 +72,8 @@ public class ServerController {
                         break;
                     case Turn:
                         Turn turn = (Turn) receivedObject;
-                        gui.getTraMessages().append("New Turn was added, " + turn.getAttackedPlayerName() + " was attacked in game " + turn.getGameId() + "\r\n");
+                        String orientation = turn.isHorizontal() ? "Horizontal" : "Vertically";
+                        gui.getTraMessages().append("New Turn was added, " + turn.getAttackingPlayerName()+ " attacked " + turn.getAttackedPlayerName() + " with a " + turn.getCurrentShip().getType().toString() + " " + orientation + " in game " + turn.getGameId() + "\r\n");
                         break;
                     case Join:
                         Join join = (Join) receivedObject;
