@@ -7,6 +7,8 @@ import de.hsbremen.battleshipextreme.model.ship.Ship;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Game implements Serializable {
     private String connectedAsPlayer;
@@ -284,16 +286,16 @@ public class Game implements Serializable {
         return numberOfPlayersLeft <= 1;
     }
 
-    public void setCurrentPlayer(Player currentPlayer) {
-        this.currentPlayer = currentPlayer;
-    }
-
     public Player[] getPlayers() {
         return players;
     }
 
     public Player getCurrentPlayer() {
         return currentPlayer;
+    }
+
+    public void setCurrentPlayer(Player currentPlayer) {
+        this.currentPlayer = currentPlayer;
     }
 
     public Player getWinner() {
@@ -317,9 +319,43 @@ public class Game implements Serializable {
     }
 
     public void setPlayerBoards(ArrayList<Board> playerBoards) {
+
         for (int i = 0; i < players.length; i++) {
-			players[i].setBoard(playerBoards.get(i));
+            players[i].setBoard(playerBoards.get(i));
         }
+/*        for (int i = 0; i < players.length; i++) {
+            HashMap<Ship, ArrayList<Field>> shipMap = getShipMap(playerBoards.get(i));
+
+            Player player = new HumanPlayer(boardSize, shipMap);
+            player.setName(players[i].getName());
+            for (Ship ship: player.getShips()){
+                ship.setPlaced(true);
+            }
+            player.setCurrentShip(player.getShips()[0]);
+            players[i] = player;
+        }*/
+    }
+
+    private HashMap<Ship, ArrayList<Field>> getShipMap(Board board) {
+        HashMap<Ship, ArrayList<Field>> shipMap = new HashMap<Ship, ArrayList<Field>>();
+        Field[][] fields = board.getFields();
+        for (int row = 0; row < board.getSize(); row++) {
+            for (int column = 0; column < board.getSize(); column++) {
+                if (fields[row][column].getShip() != null) {
+                    if (!shipMap.containsKey(fields[row][column].getShip())) {
+                        ArrayList<Field> shipFields = new ArrayList<Field>();
+                        shipFields.add(fields[row][column]);
+                        shipMap.put(fields[row][column].getShip(), shipFields);
+                    } else {
+                        ArrayList<Field> shipFields = shipMap.get(fields[row][column].getShip());
+                        shipFields.add(fields[row][column]);
+                        shipMap.put(fields[row][column].getShip(), shipFields);
+                    }
+                }
+            }
+        }
+
+        return shipMap;
     }
 
     public String getConnectedAsPlayer() {

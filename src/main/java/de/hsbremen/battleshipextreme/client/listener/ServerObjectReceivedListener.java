@@ -92,7 +92,7 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 ctrl.setEnemySelectionEnabled(true);
                 break;
             case MakeTurn:
-                boolean reloading = ctrl.checkIfShipReloading();
+                boolean reloading = ctrl.handleAllShipsAreReloading();
                 if (!reloading) {
                     ctrl.setEnemyBoardEnabled(true);
                 }
@@ -103,8 +103,13 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
 
                 break;
             case PlayerIsReloading:
-                gui.getPanelGame().getLabelInfo().setText(game.getCurrentPlayer().getName() + " is reloading...");
+                ctrl.setInfoLabelMessage(game.getCurrentPlayer().getName() + " is reloading...");
                 game.nextPlayer();
+                break;
+            case PlayerWon:
+                ctrl.setInfoLabelMessage(game.getWinner() + " won ");
+                ctrl.setDoneButtonEnabled(false);
+                ctrl.setEnemyBoardEnabled(false);
                 break;
         }
     }

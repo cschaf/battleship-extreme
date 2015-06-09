@@ -425,7 +425,6 @@ public class Controller {
     public boolean makeOnlineTurn(String attackingPlayerName, String enemyName, int xPos, int yPos, boolean isHorizontal) throws FieldOutOfBoardException {
         Orientation orientation = isHorizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL;
         boolean possible = false;
-
         Player enemy = game.getPlayerByName(enemyName);
         possible = game.makeTurn(enemy, xPos, yPos, orientation);
         // Hier wird noch nicht alles richtig angezeigt!
@@ -467,7 +466,7 @@ public class Controller {
                 }
             }
         } else {
-            setInfoLabelMessage(game.getWinner() + " won ");
+            network.getSender().sendPlayerWon();
         }
     }
 
@@ -545,7 +544,7 @@ public class Controller {
         updateEnemyBoard();
     }
 
-    private void setInfoLabelMessage(String message) {
+    public void setInfoLabelMessage(String message) {
         gui.getPanelGame().getLabelInfo().setText(message);
     }
 
@@ -829,6 +828,7 @@ public class Controller {
     public void initializeClientAfterJoined(NetGame game) {
         try {
             initializeGame(game.getSettings());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -846,7 +846,7 @@ public class Controller {
         updateEnemyOnlineSelection(game.getConnectedAsPlayer());
     }
 
-    public boolean checkIfShipReloading() {
+    public boolean handleAllShipsAreReloading() {
         if (game.getCurrentPlayer().areAllShipsReloading()) {
             setInfoLabelMessage("All ships of " + game.getCurrentPlayer() + " are reloading");
             setEnemyBoardEnabled(false);

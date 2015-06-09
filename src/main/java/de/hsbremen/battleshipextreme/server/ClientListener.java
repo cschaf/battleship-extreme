@@ -50,6 +50,7 @@ public class ClientListener extends Thread implements IDisposable,Serializable {
                         break;
                     case ServerInfo:
                         ServerInfo serverInfo = (ServerInfo) receivedObject;
+                        NetGame game;
                         switch (serverInfo.getReason()){
                             case GameList:
                                 this.serverDispatcher.sendGameList(clientHandler);
@@ -59,12 +60,18 @@ public class ClientListener extends Thread implements IDisposable,Serializable {
                                 break;
 
                             case PlayerIsReloading:
-                                NetGame game = serverDispatcher.getGameByClient(clientHandler);
+                                game = serverDispatcher.getGameByClient(clientHandler);
                                 serverDispatcher.multicast(serverInfo, game.getJoinedPlayers());
                                 serverDispatcher.initializeNextTurn(game);
                                 break;
+
+                            case PlayerWon:
+                                game = serverDispatcher.getGameByClient(clientHandler);
+                                serverDispatcher.multicast(serverInfo, game.getJoinedPlayers());
+                                break;
                         }
                         break;
+
                     case Turn:
                         this.serverDispatcher.addTurn(this.clientHandler, receivedObject);
                         break;

@@ -12,6 +12,8 @@ import de.hsbremen.battleshipextreme.model.ship.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class Player implements Serializable {
     protected String name;
@@ -23,6 +25,55 @@ public abstract class Player implements Serializable {
     public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
         initShips(destroyers, frigates, corvettes, submarines);
         this.board = new Board(boardSize);
+        this.currentShip = this.ships[0];
+    }
+
+    public Player(int boardSize, HashMap<Ship, ArrayList<Field>> shipMap) {
+        this.board = new Board(boardSize);
+        ships = new Ship[shipMap.size()];
+        int counter = 0;
+        for (Map.Entry<Ship, ArrayList<Field>> entry : shipMap.entrySet()) {
+            Ship key = entry.getKey();
+            ArrayList<Field> value = entry.getValue();
+            switch (key.getType()) {
+                case DESTROYER:
+                    Ship destroyer = new Destroyer();
+                    ships[counter] = destroyer;
+                    for (int fieldIndex=0; fieldIndex < value.size(); fieldIndex++){
+                        Field field = value.get(fieldIndex);
+                        board.getFields()[field.getYPos()][field.getXPos()].setShip(destroyer);
+                    }
+                    break;
+
+                case FRIGATE:
+                    Frigate frigate = new Frigate();
+                    ships[counter] = frigate;
+                    for (int fieldIndex=0; fieldIndex < value.size(); fieldIndex++){
+                        Field field = value.get(fieldIndex);
+                        board.getFields()[field.getYPos()][field.getXPos()].setShip(frigate);
+                    }
+                    break;
+
+                case CORVETTE:
+                    Corvette corvette = new Corvette();
+                    ships[counter] = corvette;
+                    for (int fieldIndex=0; fieldIndex < value.size(); fieldIndex++){
+                        Field field = value.get(fieldIndex);
+                        board.getFields()[field.getYPos()][field.getXPos()].setShip(corvette);
+                    }
+                    break;
+
+                case SUBMARINE:
+                    Submarine submarine = new Submarine();
+                    ships[counter] = submarine;
+                    for (int fieldIndex=0; fieldIndex < value.size(); fieldIndex++){
+                        Field field = value.get(fieldIndex);
+                        board.getFields()[field.getYPos()][field.getXPos()].setShip(submarine);
+                    }
+                    break;
+            }
+            counter++;
+        }
         this.currentShip = this.ships[0];
     }
 
@@ -39,6 +90,10 @@ public abstract class Player implements Serializable {
                 ships[i] = new Submarine();
             }
         }
+    }
+
+    private void initShips(HashMap<Ship, ArrayList<Field>> shipMap) {
+        ships = new Ship[shipMap.size()];
     }
 
     public void resetBoard() {
@@ -245,6 +300,10 @@ public abstract class Player implements Serializable {
         return this.currentShip;
     }
 
+    public void setCurrentShip(Ship currentShip) {
+        this.currentShip = currentShip;
+    }
+
     public String getName() {
         return name;
     }
@@ -255,6 +314,10 @@ public abstract class Player implements Serializable {
 
     public Ship[] getShips() {
         return ships;
+    }
+
+    public void setShips(Ship[] ships) {
+        this.ships = ships;
     }
 
     public String toString() {
@@ -328,9 +391,5 @@ public abstract class Player implements Serializable {
             ship.setPlaced(true);
         }
         this.board = board;
-    }
-
-    public void setCurrentShip(Ship currentShip) {
-        this.currentShip = currentShip;
     }
 }

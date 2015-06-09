@@ -94,4 +94,9 @@ public class Sender extends Thread implements IDisposable {
         ITransferable object =  TransferableObjectFactory.CreateServerInfo(InfoSendingReason.PlayerIsReloading);
         send(object);
     }
+
+    public void sendPlayerWon() {
+        ITransferable object =  TransferableObjectFactory.CreateServerInfo(InfoSendingReason.PlayerWon);
+        send(object);
+    }
 }
