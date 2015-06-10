@@ -113,7 +113,7 @@ public class ClientListener extends Thread implements IDisposable,Serializable {
             this.disposed = true;
             this.in.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            serverDispatcher.getErrorHandler().errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Clientlistner of " + clientHandler.getUsername() + " couldnt be disposed")));
         }
     }
 }

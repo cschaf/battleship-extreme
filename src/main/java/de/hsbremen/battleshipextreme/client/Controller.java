@@ -429,11 +429,11 @@ public class Controller {
         possible = game.makeTurn(enemy, xPos, yPos, orientation);
         // Hier wird noch nicht alles richtig angezeigt!
         if (possible) {
-            if (enemy.getName().equals(game.getConnectedAsPlayer())){
+            if (enemy.getName().equals(game.getConnectedAsPlayer())) {
                 updatePlayerBoard(game.getConnectedAsPlayer());
             }
 
-            if(game.getConnectedAsPlayer().equals(attackingPlayerName)){
+            if (game.getConnectedAsPlayer().equals(attackingPlayerName)) {
                 updateEnemyBoard();
             }
 
@@ -455,12 +455,12 @@ public class Controller {
                 // alle Spieler habe ihre Schiffe gesetzt
                 setBoardsEnabled(false);
                 gui.getPanelGame().getButtonDone().setEnabled(false);
-                if (lastTurn != null){
+                if (lastTurn != null) {
                     network.getSender().sendTurn(lastTurn);
                     lastTurn = null;
                 }
 
-                if(playerIsReloading){
+                if (playerIsReloading) {
                     network.getSender().sendPlayerIsReloading();
                     playerIsReloading = false;
                 }
@@ -722,15 +722,17 @@ public class Controller {
 
         gui.getPanelServerConnection().getPnlServerConnectionBar().getBtnConnect().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                addServerObjectReceivedListeners();
-                // hole Verbindungsdaten
-                network.setIp(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxIp().getText());
-                network.setPort(Integer.parseInt(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxPort().getText()));
-                // Verbinde zum Server
-                network.connect();
-                // Sende login
-                network.getSender().sendLogin(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
-                game.setConnectedAsPlayer(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
+                if (!network.isConnected()) {
+                    addServerObjectReceivedListeners();
+                    // hole Verbindungsdaten
+                    network.setIp(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxIp().getText());
+                    network.setPort(Integer.parseInt(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxPort().getText()));
+                    // Verbinde zum Server
+                    network.connect();
+                    // Sende login
+                    network.getSender().sendLogin(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
+                    game.setConnectedAsPlayer(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
+                }
             }
         });
 
@@ -828,7 +830,6 @@ public class Controller {
     public void initializeClientAfterJoined(NetGame game) {
         try {
             initializeGame(game.getSettings());
-
         } catch (Exception e) {
             e.printStackTrace();
         }

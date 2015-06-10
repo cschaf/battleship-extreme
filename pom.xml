@@ -38,7 +38,8 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>de.hsbremen.battleshipextreme.Main</mainClass>
+                                                        <mainClass>de.hsbremen.battleshipextreme.Main</mainClass>
+							<mainClass>de.hsbremen.battleshipextreme.Client.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

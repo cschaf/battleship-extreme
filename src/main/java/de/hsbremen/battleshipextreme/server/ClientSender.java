@@ -51,7 +51,7 @@ public class ClientSender extends Thread implements IDisposable, Serializable {
             this.out.writeObject(transferableObject);
             this.out.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            dispose();
         }
     }
 
