@@ -404,7 +404,7 @@ public class Controller {
         }
 
         updatePlayerBoard();
-        updateShipSelection();
+        updateShipSelection(game.getCurrentPlayer());
     }
 
     public boolean makeTurn(String enemyName, int xPos, int yPos, boolean isHorizontal) throws FieldOutOfBoardException {
@@ -505,7 +505,7 @@ public class Controller {
                 }
             }
             updatePlayerBoard();
-            updateShipSelection();
+            updateShipSelection(game.getCurrentPlayer());
         } else {
             setInfoLabelMessage(game.getWinner() + " won ");
         }
@@ -568,45 +568,45 @@ public class Controller {
         selectShip(availableShipType);
     }
 
-    public void updateShipSelection() {
+    public void updateShipSelection(Player player) {
         GamePanel panelGame = gui.getPanelGame();
         Color green = new Color(0, 180, 0);
         Color red = new Color(180, 0, 0);
         JLabel[] shipFields= gui.getPanelGame().getLabelDestroyer();
-        if (game.getCurrentPlayer().getShipCount(ShipType.DESTROYER) == 0) {
+        if (player.getShipCount(ShipType.DESTROYER) == 0) {
             UpdateShipLabelColors(shipFields, red);
         }
         else {
             UpdateShipLabelColors(shipFields, green);
         }
-        panelGame.getLabelDestroyerShipCount().setText("" + game.getCurrentPlayer().getShipCount(ShipType.DESTROYER));
+        panelGame.getLabelDestroyerShipCount().setText("" + player.getShipCount(ShipType.DESTROYER));
 
         shipFields= gui.getPanelGame().getLabelFrigate();
-        if (game.getCurrentPlayer().getShipCount(ShipType.FRIGATE) == 0) {
+        if (player.getShipCount(ShipType.FRIGATE) == 0) {
             UpdateShipLabelColors(shipFields, red);
         }
         else {
             UpdateShipLabelColors(shipFields, green);
         }
-        panelGame.getLabelFrigateShipCount().setText("" + game.getCurrentPlayer().getShipCount(ShipType.FRIGATE));
+        panelGame.getLabelFrigateShipCount().setText("" + player.getShipCount(ShipType.FRIGATE));
 
         shipFields = gui.getPanelGame().getLabelCorvette();
-        if (game.getCurrentPlayer().getShipCount(ShipType.CORVETTE) == 0) {
+        if (player.getShipCount(ShipType.CORVETTE) == 0) {
             UpdateShipLabelColors(shipFields, red);
         }
         else {
             UpdateShipLabelColors(shipFields, green);
         }
-        panelGame.getLabelCorvetteShipCount().setText("" + game.getCurrentPlayer().getShipCount(ShipType.CORVETTE));
+        panelGame.getLabelCorvetteShipCount().setText("" + player.getShipCount(ShipType.CORVETTE));
 
         shipFields = gui.getPanelGame().getLabelSubmarine();
-        if (game.getCurrentPlayer().getShipCount(ShipType.SUBMARINE) == 0) {
+        if (player.getShipCount(ShipType.SUBMARINE) == 0) {
             UpdateShipLabelColors(shipFields, red);
         }
         else {
             UpdateShipLabelColors(shipFields, green);
         }
-        panelGame.getLabelSubmarineShipCount().setText("" + game.getCurrentPlayer().getShipCount(ShipType.SUBMARINE));
+        panelGame.getLabelSubmarineShipCount().setText("" + player.getShipCount(ShipType.SUBMARINE));
     }
 
     private void UpdateShipLabelColors(JLabel[] shipFields, Color color) {

@@ -63,9 +63,9 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        ctrl.updateShipSelection();
+        //ctrl.updateShipSelection(game.getPlayerByName(game.getConnectedAsPlayer()));
         game.nextPlayer();
-        ctrl.updateShipSelection();
+        ctrl.updateShipSelection(game.getPlayerByName(game.getConnectedAsPlayer()));
 
     }
 
