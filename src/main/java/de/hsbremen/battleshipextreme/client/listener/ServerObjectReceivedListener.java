@@ -111,6 +111,7 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 ctrl.setInfoLabelMessage(winnerName + " won ");
                 ctrl.setDoneButtonEnabled(false);
                 ctrl.setEnemyBoardEnabled(false);
+                ctrl.nextOnline();
                 break;
         }
     }

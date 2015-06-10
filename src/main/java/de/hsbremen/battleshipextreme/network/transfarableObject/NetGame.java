@@ -89,6 +89,7 @@ public class NetGame extends TransferableObject {
             players.put(index, null);
             clientIds.add(index);
         }
+
     }
 
     public int getIndexByClient(ClientHandler handler) {
@@ -188,6 +189,14 @@ public class NetGame extends TransferableObject {
     public String toString() {
 
         return getName() + " (" + this.getJoinedPlayers().size() + "/ " + getMaxPlayers() + ")";
+    }
+
+    public void resetGame(){
+        ready = false;
+        for (Map.Entry<Integer, ClientHandler> entry : players.entrySet()) {
+            ClientHandler value = entry.getValue();
+            value.setOwnBoard(null);
+        }
     }
 
     public boolean getReady() {

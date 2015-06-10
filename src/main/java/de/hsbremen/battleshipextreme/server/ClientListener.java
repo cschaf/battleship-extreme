@@ -68,6 +68,7 @@ public class ClientListener extends Thread implements IDisposable,Serializable {
                             case PlayerWon:
                                 game = serverDispatcher.getGameByClient(clientHandler);
                                 serverDispatcher.multicast(serverInfo, game.getJoinedPlayers());
+                                serverDispatcher.deleteGame(game);
                                 break;
                         }
                         break;
