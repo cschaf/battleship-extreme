@@ -8,7 +8,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
 public class Game implements Serializable {
     private String connectedAsPlayer;
@@ -321,19 +320,16 @@ public class Game implements Serializable {
     public void setPlayerBoards(ArrayList<Board> playerBoards) {
 
         for (int i = 0; i < players.length; i++) {
-            players[i].setBoard(playerBoards.get(i));
-        }
-/*        for (int i = 0; i < players.length; i++) {
             HashMap<Ship, ArrayList<Field>> shipMap = getShipMap(playerBoards.get(i));
 
             Player player = new HumanPlayer(boardSize, shipMap);
             player.setName(players[i].getName());
-            for (Ship ship: player.getShips()){
+            for (Ship ship : player.getShips()) {
                 ship.setPlaced(true);
             }
-            player.setCurrentShip(player.getShips()[0]);
             players[i] = player;
-        }*/
+        }
+        currentPlayer = players[0];
     }
 
     private HashMap<Ship, ArrayList<Field>> getShipMap(Board board) {

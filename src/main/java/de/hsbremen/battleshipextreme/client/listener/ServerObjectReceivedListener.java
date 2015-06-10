@@ -107,7 +107,8 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 game.nextPlayer();
                 break;
             case PlayerWon:
-                ctrl.setInfoLabelMessage(game.getWinner() + " won ");
+                String winnerName = game.getWinner() != null ? game.getWinner().getName() : "You";
+                ctrl.setInfoLabelMessage(winnerName + " won ");
                 ctrl.setDoneButtonEnabled(false);
                 ctrl.setEnemyBoardEnabled(false);
                 break;
