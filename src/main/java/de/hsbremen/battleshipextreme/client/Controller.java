@@ -568,12 +568,51 @@ public class Controller {
         selectShip(availableShipType);
     }
 
-    private void updateShipSelection() {
+    public void updateShipSelection() {
         GamePanel panelGame = gui.getPanelGame();
+        Color green = new Color(0, 180, 0);
+        Color red = new Color(180, 0, 0);
+        JLabel[] shipFields= gui.getPanelGame().getLabelDestroyer();
+        if (game.getCurrentPlayer().getShipCount(ShipType.DESTROYER) == 0) {
+            UpdateShipLabelColors(shipFields, red);
+        }
+        else {
+            UpdateShipLabelColors(shipFields, green);
+        }
         panelGame.getLabelDestroyerShipCount().setText("" + game.getCurrentPlayer().getShipCount(ShipType.DESTROYER));
+
+        shipFields= gui.getPanelGame().getLabelFrigate();
+        if (game.getCurrentPlayer().getShipCount(ShipType.FRIGATE) == 0) {
+            UpdateShipLabelColors(shipFields, red);
+        }
+        else {
+            UpdateShipLabelColors(shipFields, green);
+        }
         panelGame.getLabelFrigateShipCount().setText("" + game.getCurrentPlayer().getShipCount(ShipType.FRIGATE));
+
+        shipFields = gui.getPanelGame().getLabelCorvette();
+        if (game.getCurrentPlayer().getShipCount(ShipType.CORVETTE) == 0) {
+            UpdateShipLabelColors(shipFields, red);
+        }
+        else {
+            UpdateShipLabelColors(shipFields, green);
+        }
         panelGame.getLabelCorvetteShipCount().setText("" + game.getCurrentPlayer().getShipCount(ShipType.CORVETTE));
+
+        shipFields = gui.getPanelGame().getLabelSubmarine();
+        if (game.getCurrentPlayer().getShipCount(ShipType.SUBMARINE) == 0) {
+            UpdateShipLabelColors(shipFields, red);
+        }
+        else {
+            UpdateShipLabelColors(shipFields, green);
+        }
         panelGame.getLabelSubmarineShipCount().setText("" + game.getCurrentPlayer().getShipCount(ShipType.SUBMARINE));
+    }
+
+    private void UpdateShipLabelColors(JLabel[] shipFields, Color color) {
+        for (int i = 0; i < shipFields.length; i++) {
+            shipFields[i].setBackground(color);
+        }
     }
 
     public void updateEnemySelection() {

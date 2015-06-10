@@ -55,6 +55,7 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
 
     public void onTurnObjectReceived(EventArgs<Turn> eventArgs) {
         Turn turn = eventArgs.getItem();
+
         ctrl.selectShip(turn.getCurrentShip().getType());
         try {
             ctrl.makeOnlineTurn(turn.getAttackingPlayerName(), turn.getAttackedPlayerName(), turn.getFieldX(), turn.getFieldY(), turn.isHorizontal());
@@ -62,7 +63,10 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        ctrl.updateShipSelection();
         game.nextPlayer();
+        ctrl.updateShipSelection();
+
     }
 
     public void onGameListObjectReceived(EventArgs<GameList> eventArgs) {
@@ -99,6 +103,7 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 else {
                     ctrl.setPlayerIsReloading(true);
                     ctrl.setDoneButtonEnabled(true);
+
                 }
 
                 break;

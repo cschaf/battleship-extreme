@@ -192,7 +192,7 @@ public class Server implements IDisposable {
 
     public void createStandardGame() {
         if (isRunning()) {
-            Settings settings = new Settings(2, 0, 0, 15, 1, 0, 0, 0);
+            Settings settings = new Settings(2, 0, 0, 15, 1, 0, 0, 1);
             NetGame game = new NetGame("Server Game 2er", settings);
             //game.setPassword("123456");
             serverDispatcher.addGame(game);
