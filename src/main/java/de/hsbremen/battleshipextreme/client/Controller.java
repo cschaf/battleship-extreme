@@ -697,12 +697,11 @@ public class Controller {
     public void updateEnemyBoard() {
         GamePanel panelGame = gui.getPanelGame();
         JButton[][] board;
-        FieldState[][] fieldStates = null;
         board = panelGame.getPanelEnemyBoard().getButtonsField();
         Player enemy = game.getPlayerByName("" + panelGame.getComboBoxEnemySelection().getSelectedItem());
         try {
             if (enemy != null) {
-                fieldStates = enemy.getFieldStates(false);
+                FieldState[][] fieldStates = enemy.getFieldStates(false);
                 updateBoardColors(board, fieldStates);
             }
         } catch (FieldOutOfBoardException e) {
@@ -729,6 +728,7 @@ public class Controller {
 
     public void setEnemySelectionEnabled(boolean enabled) {
         gui.getPanelGame().getComboBoxEnemySelection().setEnabled(enabled);
+        gui.getPanelGame().getButtonApplyEnemy().setEnabled(enabled);
     }
 
     private void updateBoardColors(JButton[][] board, FieldState[][] fieldStates) {

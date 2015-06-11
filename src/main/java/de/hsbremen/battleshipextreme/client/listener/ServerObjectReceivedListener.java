@@ -63,7 +63,6 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        //ctrl.updateShipSelection(game.getPlayerByName(game.getConnectedAsPlayer()));
         game.nextPlayer();
         ctrl.updateShipSelection(game.getPlayerByName(game.getConnectedAsPlayer()));
 
@@ -93,11 +92,12 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 break;
             case GameReady:
                 game.setCurrentPlayer(game.getPlayers()[0]);
-                ctrl.setEnemySelectionEnabled(true);
                 gui.getPanelGame().getButtonShowYourShips().setEnabled(true);
+                ctrl.setEnemySelectionEnabled(true);
                 break;
             case MakeTurn:
                 boolean reloading = ctrl.handleAllShipsAreReloading();
+                gui.getPanelGame().getButtonShowYourShips().setEnabled(true);
                 if (!reloading) {
                     ctrl.setEnemyBoardEnabled(true);
                 }
@@ -117,7 +117,8 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 ctrl.setInfoLabelMessage(winnerName + " won ");
                 ctrl.setDoneButtonEnabled(false);
                 ctrl.setEnemyBoardEnabled(false);
-                ctrl.nextOnline();
+                ctrl.setEnemySelectionEnabled(false);
+                game.nextPlayer();
                 break;
         }
     }
