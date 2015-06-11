@@ -94,6 +94,7 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
             case GameReady:
                 game.setCurrentPlayer(game.getPlayers()[0]);
                 ctrl.setEnemySelectionEnabled(true);
+                gui.getPanelGame().getButtonShowYourShips().setEnabled(true);
                 break;
             case MakeTurn:
                 boolean reloading = ctrl.handleAllShipsAreReloading();

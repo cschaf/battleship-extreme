@@ -121,6 +121,17 @@ public abstract class Player implements Serializable {
         return fieldStates;
     }
 
+    public FieldState[][] getFieldWithStateEmpty(){
+        int size = board.getSize();
+        FieldState[][] fieldStates = new FieldState[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                    fieldStates[i][j] = FieldState.IS_EMPTY;
+            }
+        }
+        return fieldStates;
+    }
+
     /**
      * Check if its possible to place the ship. If not, throw exception. If yes,
      * place the ship and call the nextShip-method.

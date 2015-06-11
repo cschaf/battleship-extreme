@@ -8,26 +8,16 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 public class GamePanel extends JPanel {
 
+	private GameControlBarPanel panelGameControlBar;
 	private JLabel labelInfo;
 	private JPanel panelGameArea;
 	private JPanel panelBoards;
 	private BoardPanel panelEnemyBoard;
 	private BoardPanel panelPlayerBoard;
-	private JButton buttonDone;
 
 	private JRadioButton radioButtonHorizontalOrientation;
 	private JRadioButton radioButtonVerticalOrientation;
@@ -67,8 +57,9 @@ public class GamePanel extends JPanel {
 		labelInfo.setOpaque(true);
 		panelGameArea.add(labelInfo, BorderLayout.NORTH);
 
-		buttonDone = new JButton("Done");
-		panelGameArea.add(buttonDone, BorderLayout.SOUTH);
+		panelGameControlBar = new GameControlBarPanel();
+		panelGameArea.add(panelGameControlBar, BorderLayout.SOUTH);
+
 
 		// Spielbrett fuer den Gegner
 		panelEnemyBoard = new BoardPanel();
@@ -403,8 +394,13 @@ public class GamePanel extends JPanel {
 	}
 
 	public JButton getButtonDone() {
-		return buttonDone;
+		return panelGameControlBar.getButtonDone();
 	}
+	public JToggleButton getButtonShowYourShips() {
+		return panelGameControlBar.getButtonShowYourShips();
+	}
+
+
 
 	public JRadioButton getRadioButtonFrigate() {
 		return radioButtonShipSelection[1];
@@ -416,5 +412,9 @@ public class GamePanel extends JPanel {
 
 	public JRadioButton getRadioButtonSubmarine() {
 		return radioButtonShipSelection[3];
+	}
+
+	public GameControlBarPanel getPanelGameControlBar() {
+		return panelGameControlBar;
 	}
 }
