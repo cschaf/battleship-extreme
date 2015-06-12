@@ -277,7 +277,14 @@ public class Controller {
 				board[i][j].addMouseListener(new MouseListener() {
 
 					public void mouseReleased(MouseEvent e) {
-						// TODO Auto-generated method stub
+						if (SwingUtilities.isRightMouseButton(e)) {
+							GamePanel pg = gui.getPanelGame();
+							if (pg.getRadioButtonHorizontalOrientation().isSelected()) {
+								pg.getRadioButtonVerticalOrientation().setSelected(true);
+							} else {
+								pg.getRadioButtonHorizontalOrientation().setSelected(true);
+							}
+						}
 
 					}
 
