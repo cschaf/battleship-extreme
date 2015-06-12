@@ -817,11 +817,13 @@ public class Controller {
 	private void updatePreview(int startX, int startY, JButton[][] board) {
 		int boardSize = board.length;
 		boolean isHorizontal = gui.getPanelGame().getRadioButtonHorizontalOrientation().isSelected();
+		Orientation orientation = isHorizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL;
 		int xDirection = isHorizontal ? 1 : 0;
 		int yDirection = isHorizontal ? 0 : 1;
 		int x;
 		int y;
-		int range = game.isReady() ? game.getCurrentPlayer().getCurrentShip().getShootingRange() : game.getCurrentPlayer().getCurrentShip().getSize();
+		int range;
+		boolean possible = false;
 
 		// Farben zurücksetzen
 		for (int i = 0; i < boardSize; i++) {
@@ -830,15 +832,46 @@ public class Controller {
 			}
 		}
 
-		// Preview anzeigen
+		if (!game.isReady()) {
+			possible = isItPossibleToPlaceShip(startX, startY, orientation);
+			range = game.getCurrentPlayer().getCurrentShip().getSize();
+		} else {
+			possible = isItPossibleToShoot(startX, startY);
+			range = game.getCurrentPlayer().getCurrentShip().getShootingRange();
+		}
+
 		for (int i = 0; i < range; i++) {
 			x = startX + i * xDirection;
 			y = startY + i * yDirection;
-			if (x < boardSize && y < boardSize) {
-				board[y][x].setBackground(GUI.PREVIEW_COLOR);
-			}
+			Color c = possible ? GUI.PREVIEW_COLOR : GUI.NOT_POSSIBLE_COLOR;
+			if (x < boardSize && y < boardSize)
+				board[y][x].setBackground(c);
 		}
 
+	}
+
+	private boolean isItPossibleToPlaceShip(int startX, int startY, Orientation orientation) {
+		try {
+			if (game.getCurrentPlayer().isItPossibleToPlaceShip(startX, startY, orientation)) {
+				return true;
+			}
+		} catch (ShipOutOfBoardException e) {
+		} catch (ShipAlreadyPlacedException e) {
+		} catch (FieldOutOfBoardException e) {
+		}
+		return false;
+	}
+
+	private boolean isItPossibleToShoot(int startX, int startY) {
+		Player currentEnemy = game.getPlayerByName(gui.getPanelGame().getComboBoxEnemySelection().getSelectedItem() + "");
+		FieldState fs = null;
+		try {
+			fs = currentEnemy.getFieldStates(false)[startY][startX];
+		} catch (FieldOutOfBoardException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return fs == null;
 	}
 
 	private void setBoardEnabled(JButton[][] board, boolean enabled) {

@@ -21,12 +21,8 @@ public class GUI extends BasicTabbedPaneUI {
 	public final static String SERVER_CONNECTION_PANEL = "card with server connection panel";
 
 	public final static Color EMPTY_COLOR = new Color(135, 206, 250);
-	public final static Color HAS_SHIP_COLOR = Color.black;
-	public final static Color HIT_COLOR = Color.orange;
-	public final static Color DESTROYED_COLOR = Color.red;
-	public final static Color MISSED_COLOR = Color.blue;
-	public final static Color UNKNOWN_COLOR = Color.darkGray;
 	public final static Color PREVIEW_COLOR = Color.gray;
+	public final static Color NOT_POSSIBLE_COLOR = Color.red;
 
 	private ImageIcon hitIcon = new ImageIcon(getClass().getResource("/hit.png"));
 	private ImageIcon missedIcon = new ImageIcon(getClass().getResource("/missed.png"));
