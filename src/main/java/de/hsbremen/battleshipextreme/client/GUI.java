@@ -25,7 +25,8 @@ public class GUI extends BasicTabbedPaneUI {
 	public final static Color HIT_COLOR = Color.orange;
 	public final static Color DESTROYED_COLOR = Color.red;
 	public final static Color MISSED_COLOR = Color.blue;
-	public final static Color UNKNOWN_COLOR = Color.gray;
+	public final static Color UNKNOWN_COLOR = Color.darkGray;
+	public final static Color PREVIEW_COLOR = Color.gray;
 
 	private ImageIcon hitIcon = new ImageIcon(getClass().getResource("/hit.png"));
 	private ImageIcon missedIcon = new ImageIcon(getClass().getResource("/missed.png"));
