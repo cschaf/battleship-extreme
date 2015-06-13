@@ -48,30 +48,14 @@ public class ServerGameBrowserListener implements TableColumnModelListener, Mous
             GameListModel model = (GameListModel) target.getModel();
             NetGame game = model.getGame(rowIndex);
             if (game.isPrivate()) {
-                PasswordInputPanel panel = new PasswordInputPanel();
-                String[] options = new String[]{"OK", "Cancel"};
-                int option = JOptionPane.showOptionDialog(null, panel, "Password for " + game.getName(),
-                        JOptionPane.OK_OPTION, JOptionPane.PLAIN_MESSAGE,
-                        null, options, options[0]);
-                // pressing OK button
-                if (option == JOptionPane.OK_OPTION)
-                {
-                    char[] password = panel.getTbxPassword().getPassword();
-                    String strPassword = new String(password);
-
-                    if (strPassword.equals(game.getPassword())) {
-                        ctrl.join(game.getId());
-                    }
-                    else{
-                        JOptionPane.showMessageDialog(null, "Wrong password!", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-
-                }
+                ctrl.createPasswordPrompt(game);
             } else {
                 ctrl.join(game.getId());
             }
         }
     }
+
+
 
     public void mousePressed(MouseEvent e) {
 

@@ -10,14 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JTable;
-import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -963,7 +956,7 @@ public class Controller {
 				if (rowIndex > -1) {
 					GameListModel model = (GameListModel) gui.getPanelServerConnection().getPnlServerGameBrowser().getTblGames().getModel();
 					NetGame game = model.getGame(rowIndex);
-					join(game.getId());
+					createPasswordPrompt(game);
 				}
 			}
 		});
@@ -1051,5 +1044,25 @@ public class Controller {
 
 	public void setPlayerIsReloading(boolean playerIsReloading) {
 		this.playerIsReloading = playerIsReloading;
+	}
+
+	public void createPasswordPrompt(NetGame game) {
+		PasswordInputPanel panel = new PasswordInputPanel();
+		String[] options = new String[]{"OK", "Cancel"};
+		int option = JOptionPane.showOptionDialog(null, panel, "Password for " + game.getName(), JOptionPane.OK_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		// pressing OK button
+		if (option == JOptionPane.OK_OPTION)
+		{
+			char[] password = panel.getTbxPassword().getPassword();
+			String strPassword = new String(password);
+
+			if (strPassword.equals(game.getPassword())) {
+				join(game.getId());
+			}
+			else{
+				JOptionPane.showMessageDialog(null, "Wrong password!", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+
+		}
 	}
 }
