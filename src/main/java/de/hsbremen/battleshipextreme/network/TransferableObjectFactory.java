@@ -7,6 +7,7 @@ import de.hsbremen.battleshipextreme.model.Settings;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.network.transfarableObject.*;
+import de.hsbremen.battleshipextreme.network.transfarableObject.Error;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -31,8 +32,12 @@ public class TransferableObjectFactory {
         return new Message(message);
     }
 
-    public static ITransferable CreateGame(String name, Settings settings) {
-        return new NetGame(name, settings);
+    public static ITransferable CreateError(String message) {
+        return new Error(message);
+    }
+
+    public static ITransferable CreateGame(String name, String password, Settings settings) {
+        return new NetGame(name, password, settings);
     }
 
     public static ITransferable CreateJoin(String id) {

@@ -67,7 +67,7 @@ public class ClientSender extends Thread implements IDisposable, Serializable {
 
         // Communication is broken. Interrupt both listener and sender threads
         this.clientHandler.getClientListener().interrupt();
-        this.serverDispatcher.deleteClient(this.clientHandler);
+        this.serverDispatcher.removeClient(this.clientHandler);
     }
 
     public void dispose() {

@@ -24,18 +24,28 @@ public class NetworkClient implements IDisposable {
     private ErrorHandler errorHandler;
     private ArrayList<IServerObjectReceivedListener> tempServerObjectReceivedListeners;
     private boolean isConnected;
-
     public NetworkClient() {
         serverIp = "localhost";
         serverPort = 1337;
         this.errorHandler = new ErrorHandler();
         this.tempServerObjectReceivedListeners = new ArrayList<IServerObjectReceivedListener>();
+        addErrorListener(new IErrorListener() {
+            public void onError(EventArgs<ITransferable> eventArgs) {
+                if (eventArgs.getSource().getClass().equals(Sender.class) || eventArgs.getSource().getClass().equals(Listener.class)) {
+                    isConnected = false;
+                }
+            }
+        });
     }
 
     public NetworkClient(String serverIp, int serverPort) {
         this();
         this.serverIp = serverIp;
         this.serverPort = serverPort;
+    }
+
+    public ErrorHandler getErrorHandler() {
+        return errorHandler;
     }
 
     public void addErrorListener(IErrorListener listener) {
@@ -47,7 +57,7 @@ public class NetworkClient implements IDisposable {
     }
 
     public void addServerObjectReceivedListener(IServerObjectReceivedListener listener) {
-        if (this.listener == null ||  this.listener.isDisposed()) {
+        if (this.listener == null || this.listener.isDisposed()) {
             tempServerObjectReceivedListeners.add(listener);
         } else {
             this.listener.addServerObjectReceivedListener(listener);
@@ -56,6 +66,10 @@ public class NetworkClient implements IDisposable {
 
     public void removeServerObjectReceivedListener(IServerObjectReceivedListener listener) {
         this.listener.removeServerObjectReceivedListener(listener);
+    }
+
+    public void setIsConnected(boolean isConnected) {
+        this.isConnected = isConnected;
     }
 
     /**
@@ -105,7 +119,6 @@ public class NetworkClient implements IDisposable {
             }
 
             isConnected = false;
-
         } catch (IOException e) {
             errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Could not dispose clientobject")));
         }
@@ -118,7 +131,6 @@ public class NetworkClient implements IDisposable {
     public void setPort(int port) {
         this.serverPort = port;
     }
-
 
     public boolean isConnected() {
         return isConnected;

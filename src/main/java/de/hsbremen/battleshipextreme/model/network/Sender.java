@@ -1,11 +1,13 @@
 package de.hsbremen.battleshipextreme.model.network;
 
 import de.hsbremen.battleshipextreme.model.Board;
+import de.hsbremen.battleshipextreme.model.Settings;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.network.IDisposable;
 import de.hsbremen.battleshipextreme.network.ITransferable;
 import de.hsbremen.battleshipextreme.network.InfoSendingReason;
 import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
+import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -75,6 +77,9 @@ public class Sender extends Thread implements IDisposable {
         } catch (IOException e) {
             this.dispose();
         }
+        catch (Exception e) {
+            this.dispose();
+        }
     }
 
     public void dispose() {
@@ -97,6 +102,11 @@ public class Sender extends Thread implements IDisposable {
 
     public void sendPlayerWon() {
         ITransferable object =  TransferableObjectFactory.CreateServerInfo(InfoSendingReason.PlayerWon);
+        send(object);
+    }
+
+    public void sendGame(String name, String password, Settings settings) {
+        ITransferable object = TransferableObjectFactory.CreateGame(name, password, settings);
         send(object);
     }
 }

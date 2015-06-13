@@ -17,7 +17,7 @@ public class ClientAccepter extends Thread implements IDisposable {
     private ServerDispatcher serverDispatcher;
     private boolean disposed;
 
-    public ClientAccepter(ServerSocket serverSocket, ServerDispatcher serverDispatcher){
+    public ClientAccepter(ServerSocket serverSocket, ServerDispatcher serverDispatcher) {
         this.disposed = false;
         this.serverSocket = serverSocket;
         this.serverDispatcher = serverDispatcher;
@@ -29,23 +29,26 @@ public class ClientAccepter extends Thread implements IDisposable {
     public void run() {
         while (!this.disposed) {
             try {
-                if (serverDispatcher.getClients().size() < serverDispatcher.getMaxPlayers()) {
-                    Socket socket = serverSocket.accept();
-                    ClientHandler clientHandler = new ClientHandler(socket);
-                    ClientSender clientSender = new ClientSender(clientHandler, serverDispatcher);
-                    ClientListener clientListener = new ClientListener(clientHandler, serverDispatcher);
 
-                    clientHandler.setClientListener(clientListener);
-                    clientHandler.setClientSender(clientSender);
-                    clientListener.start();
-                    clientSender.start();
-                    boolean isBannded = serverDispatcher.isBanned(socket.getInetAddress().getHostAddress());
-                    if (isBannded){
-                        serverDispatcher.unicast(TransferableObjectFactory.CreateMessage("You are banned from this server!"), clientHandler);
-                        clientHandler.dispose();
-                        continue;
-                    }
-                    serverDispatcher.addClient(clientHandler);
+                Socket socket = serverSocket.accept();
+                if (serverDispatcher.getClients().size() >= serverDispatcher.getMaxPlayers()) {
+                    socket.close();
+                }
+                ClientHandler clientHandler = new ClientHandler(socket);
+                ClientSender clientSender = new ClientSender(clientHandler, serverDispatcher);
+                ClientListener clientListener = new ClientListener(clientHandler, serverDispatcher);
+
+                clientHandler.setClientListener(clientListener);
+                clientHandler.setClientSender(clientSender);
+                clientListener.start();
+                clientSender.start();
+
+                serverDispatcher.addClient(clientHandler);
+
+                boolean isBanned = serverDispatcher.isBanned(socket.getInetAddress().getHostAddress());
+                if (isBanned) {
+                    serverDispatcher.unicast(TransferableObjectFactory.CreateError("You are banned from this server!"), clientHandler);
+                    serverDispatcher.removeClient(clientHandler);
                 }
             } catch (IOException e) {
                 this.serverDispatcher.getErrorHandler().errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Stopped listening for clients")));

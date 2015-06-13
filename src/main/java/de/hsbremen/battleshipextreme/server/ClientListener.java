@@ -15,7 +15,7 @@ import java.net.Socket;
 /**
  * Created by cschaf on 25.04.2015.
  */
-public class ClientListener extends Thread implements IDisposable,Serializable {
+public class ClientListener extends Thread implements IDisposable, Serializable {
     private ServerDispatcher serverDispatcher;
     private ClientHandler clientHandler;
     private ObjectInputStream in;
@@ -46,12 +46,18 @@ public class ClientListener extends Thread implements IDisposable,Serializable {
                         this.serverDispatcher.assignClientToGame(this.clientHandler, receivedObject);
                         break;
                     case Game:
-                        this.serverDispatcher.addGame(receivedObject);
+                        if (serverDispatcher.getNetGames().size() < serverDispatcher.getMaxGames()) {
+                            this.serverDispatcher.addGame(receivedObject);
+                        }
+                        else {
+                            ITransferable obj = TransferableObjectFactory.CreateError("Maximum of games has reached, You could not create a new game!");
+                            serverDispatcher.unicast(obj, clientHandler);
+                        }
                         break;
                     case ServerInfo:
                         ServerInfo serverInfo = (ServerInfo) receivedObject;
                         NetGame game;
-                        switch (serverInfo.getReason()){
+                        switch (serverInfo.getReason()) {
                             case GameList:
                                 this.serverDispatcher.sendGameList(clientHandler);
                                 break;
@@ -88,7 +94,7 @@ public class ClientListener extends Thread implements IDisposable,Serializable {
                         switch (info.getReason()) {
                             case Connect:
                                 clientHandler.setUsername(info.getUsername());
-                                this.serverDispatcher.unicast(TransferableObjectFactory.CreateServerInfo(InfoSendingReason.Connect),clientHandler);
+                                this.serverDispatcher.unicast(TransferableObjectFactory.CreateServerInfo(InfoSendingReason.Connect), clientHandler);
                                 break;
                         }
                         this.serverDispatcher.printInfo(new EventArgs<ITransferable>(this, new Message(info.getIp() + ":" + info.getPort() + " has named to " + info.getUsername() + "(" + info.getPort() + ")")));
@@ -105,7 +111,7 @@ public class ClientListener extends Thread implements IDisposable,Serializable {
 
         // Communication is broken. Interrupt both listener and sender threads
         this.clientHandler.getClientSender().interrupt();
-        this.serverDispatcher.deleteClient(this.clientHandler);
+        this.serverDispatcher.removeClient(this.clientHandler);
     }
 
     public void dispose() {

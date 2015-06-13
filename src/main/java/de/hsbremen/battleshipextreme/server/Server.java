@@ -165,7 +165,7 @@ public class Server implements IDisposable {
 
     public void kickClient(String ip, int port) {
         ClientHandler client = serverDispatcher.getClient(ip, port);
-        this.serverDispatcher.deleteClient(client);
+        this.serverDispatcher.removeClient(client);
     }
 
     public void banClient(String ip, int port) {
@@ -193,8 +193,7 @@ public class Server implements IDisposable {
     public void createStandardGame() {
         if (isRunning()) {
             Settings settings = new Settings(2, 0, 0, 10, 1, 0, 0, 1);
-            NetGame game = new NetGame("Server Game 2er", settings);
-            game.setPassword("123456");
+            NetGame game = new NetGame("Server Game 2er", "", settings);
             serverDispatcher.addGame(game);
 
 /*            settings = new Settings(3, 0, 0, 12, 1, 1, 1, 2);

@@ -12,12 +12,19 @@ import javax.swing.JTextField;
 public class SettingsPanel extends JPanel {
 
 	private JLabel labelPlayers;
+
+	public JLabel getLabelAiPlayers() {
+		return labelAiPlayers;
+	}
+
 	private JLabel labelAiPlayers;
 	private JLabel labelDestroyers;
 	private JLabel labelFrigates;
 	private JLabel labelCorvettes;
 	private JLabel labelSubmarines;
 	private JLabel labelBoardSize;
+	private JLabel labelGameName;
+    private JLabel labelGamePassword;
 
 	private JTextField textFieldPlayers;
 	private JTextField textFieldAiPlayers;
@@ -26,10 +33,12 @@ public class SettingsPanel extends JPanel {
 	private JTextField textFieldCorvettes;
 	private JTextField textFieldSubmarines;
 	private JTextField textFieldBoardSize;
+	private JTextField textFieldGameName;
+    private JTextField textFieldGamePassword;
 
 	private JButton buttonApplySettings;
 
-	public SettingsPanel() {
+    public SettingsPanel() {
 		this.setLayout(new GridBagLayout());
 
 		GridBagConstraints c = new GridBagConstraints();
@@ -41,6 +50,15 @@ public class SettingsPanel extends JPanel {
 		c.gridx = 0;
 		c.gridy = 0;
 
+
+		labelGameName = new JLabel("Name: ");
+		this.add(labelGameName, c);
+
+        c.gridy++;
+        labelGamePassword = new JLabel("Password: ");
+        this.add(labelGamePassword, c);
+
+        c.gridy++;
 		labelPlayers = new JLabel("Players: ");
 		this.add(labelPlayers, c);
 
@@ -68,10 +86,18 @@ public class SettingsPanel extends JPanel {
 		labelBoardSize = new JLabel("Board size: ");
 		this.add(labelBoardSize, c);
 
-		c.insets = new Insets(0, 0, 10, 0);
+		c.insets = new Insets(0, 0, 14, 0);
 		c.gridx = 1;
 		c.gridy = 0;
 
+		textFieldGameName = new JTextField(10);
+		this.add(textFieldGameName, c);
+
+        c.gridy++;
+        textFieldGamePassword = new JTextField(10);
+        this.add(textFieldGamePassword, c);
+
+		c.gridy++;
 		textFieldPlayers = new JTextField(10);
 		this.add(textFieldPlayers, c);
 
@@ -164,4 +190,20 @@ public class SettingsPanel extends JPanel {
 	public JButton getButtonApplySettings() {
 		return buttonApplySettings;
 	}
+
+	public JLabel getLabelGameName() {
+		return labelGameName;
+	}
+
+    public JTextField getTextFieldGameName() {
+        return textFieldGameName;
+    }
+
+    public JTextField getTextFieldGamePassword() {
+        return textFieldGamePassword;
+    }
+
+    public JLabel getLabelGamePassword() {
+        return labelGamePassword;
+    }
 }

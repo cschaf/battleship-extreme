@@ -48,7 +48,7 @@ public class Sender extends Thread implements IDisposable {
 
             // Game
             Settings settings = new Settings(2,0,0,10,1,0,0,0);
-            ITransferable game = TransferableObjectFactory.CreateGame("Game 1", settings);
+            ITransferable game = TransferableObjectFactory.CreateGame("Game 1", "", settings);
             this.out.writeObject(game);
             this.out.flush();
 

@@ -7,6 +7,8 @@ import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener;
 import de.hsbremen.battleshipextreme.model.network.NetworkClient;
 import de.hsbremen.battleshipextreme.network.ITransferable;
+import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
+import de.hsbremen.battleshipextreme.network.TransferableType;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.transfarableObject.*;
 
@@ -31,7 +33,12 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
     }
 
     public void onMessageObjectReceived(EventArgs<Message> eventArgs) {
-        gui.getPanelGame().getTextAreaChatLog().append(eventArgs.getItem() + "\r\n");
+
+        if (eventArgs.getItem().getType() == TransferableType.Error) {
+            network.getErrorHandler().errorHasOccurred(new EventArgs<ITransferable>(this, eventArgs.getItem()));
+        } else {
+            gui.getPanelGame().getTextAreaChatLog().append(eventArgs.getItem() + "\r\n");
+        }
     }
 
     public void onClientInfoObjectReceived(EventArgs<ClientInfo> eventArgs) {
@@ -65,7 +72,6 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
         }
         game.nextPlayer();
         ctrl.updateShipSelection(game.getPlayerByName(game.getConnectedAsPlayer()));
-
     }
 
     public void onGameListObjectReceived(EventArgs<GameList> eventArgs) {
@@ -83,6 +89,8 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
             case Connect:
                 gui.getPanelServerConnection().getPnlServerConnectionBar().setEnabledAfterStartStop(false);
                 network.getSender().requestGameList();
+                gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnCreate().setEnabled(true);
+                gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnRefresh().setEnabled(true);
                 break;
             case ReadyForPlacement:
                 gui.getPanelGame().getLabelInfo().setText("Ships will be placed...");
@@ -99,11 +107,9 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 gui.getPanelGame().getButtonShowYourShips().setEnabled(true);
                 if (!reloading) {
                     ctrl.setEnemyBoardEnabled(true);
-                }
-                else {
+                } else {
                     ctrl.setPlayerIsReloading(true);
                     ctrl.setDoneButtonEnabled(true);
-
                 }
 
                 break;

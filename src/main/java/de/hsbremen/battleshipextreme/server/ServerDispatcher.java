@@ -57,30 +57,30 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         clientHasConnected(new EventArgs<ITransferable>(this, serverMessage));
     }
 
-    public synchronized void deleteClient(ClientHandler clientHandler) {
+    public synchronized void removeClient(ClientHandler clientHandler) {
         int clientIndex = this.clients.indexOf(clientHandler);
         if (clientIndex != -1) {
             this.clients.removeElementAt(clientIndex);
             ITransferable user = TransferableObjectFactory.CreateClientInfo(clientHandler.getUsername(), clientHandler.getSocket().getInetAddress().getHostAddress(), clientHandler.getSocket().getPort());
             clientHasDisconnected(new EventArgs<ITransferable>(this, user));
-        }
-        boolean found = false;
-        NetGame foundGame = null;
-        for (NetGame netGame : this.netGames) {
-            for (int i = 0; i < netGame.getJoinedPlayers().size(); i++) {
-                if (netGame.getJoinedPlayers().get(i) == clientHandler) {
-                    netGame.removePlayer(clientHandler);
-                    found = true;
-                    foundGame = netGame;
+            boolean found = false;
+            NetGame foundGame = null;
+            for (NetGame netGame : this.netGames) {
+                for (int i = 0; i < netGame.getJoinedPlayers().size(); i++) {
+                    if (netGame.getJoinedPlayers().get(i) == clientHandler) {
+                        netGame.removePlayer(clientHandler);
+                        found = true;
+                        foundGame = netGame;
+                        break;
+                    }
+                }
+                if (found) {
+                    ITransferable disconnect = TransferableObjectFactory.CreateClientInfo(clientHandler.getUsername(), clientHandler.getSocket().getInetAddress().getHostAddress(), clientHandler.getSocket().getPort(), InfoSendingReason.Disconnect);
+                    multicast(disconnect, foundGame.getJoinedPlayers());
                     break;
                 }
             }
-            if (found) {
-                ITransferable disconnect = TransferableObjectFactory.CreateClientInfo(clientHandler.getUsername(), clientHandler.getSocket().getInetAddress().getHostAddress(), clientHandler.getSocket().getPort(), InfoSendingReason.Disconnect);
-                clientHandler.dispose();
-                multicast(disconnect, foundGame.getJoinedPlayers());
-                break;
-            }
+            clientHandler.dispose();
         }
     }
 
@@ -189,7 +189,6 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     public synchronized void addGame(ITransferable receivedObject) {
         if (receivedObject.getType() != TransferableType.Game) {
-            this.errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Couldn't create new game!")));
             return;
         }
         NetGame netGame = (NetGame) receivedObject;
@@ -244,7 +243,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         }
         join.setClient(clientHandler.getUsername());
         objectReceived(new EventArgs<ITransferable>(this, join));
-        unicast(TransferableObjectFactory.CreateGame(jGame.getName(), jGame.getSettings()), clientHandler);
+        unicast(TransferableObjectFactory.CreateGame(jGame.getName(), "", jGame.getSettings()), clientHandler);
 
         if (jGame.getJoinedPlayers().size() == jGame.getMaxPlayers()) {
             this.sendReadyForPlacement(jGame);
@@ -326,7 +325,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         if (!ip.equals("127.0.0.1") || !ip.equals("localhost")) {
             this.banList.add(ip);
         }
-        this.deleteClient(client);
+        this.removeClient(client);
     }
 
     public void removeClientFromBanList(String ip) {

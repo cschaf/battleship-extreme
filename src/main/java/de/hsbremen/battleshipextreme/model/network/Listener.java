@@ -6,6 +6,7 @@ import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 import de.hsbremen.battleshipextreme.network.eventhandling.ErrorHandler;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.transfarableObject.*;
+import de.hsbremen.battleshipextreme.network.transfarableObject.Error;
 
 import javax.swing.event.EventListenerList;
 import java.io.IOException;
@@ -39,6 +40,12 @@ public class Listener extends Thread implements IDisposable {
                         Message message = (Message) receivedObj;
                         messageObjectReceived(new EventArgs<Message>(this, message));
                         break;
+
+                    case Error:
+                        Error error = (Error) receivedObj;
+                        messageObjectReceived(new EventArgs<Message>(this, error));
+                        break;
+
                     case ClientMessage:
                         ClientMessage clientMessage = (ClientMessage) receivedObj;
                         messageObjectReceived(new EventArgs<Message>(this, clientMessage));
@@ -71,6 +78,7 @@ public class Listener extends Thread implements IDisposable {
                         PlayerBoards boards = (PlayerBoards) receivedObj;
                         playerBoardsObjectReceived(new EventArgs<PlayerBoards>(this, boards));
                         break;
+
                     case ServerInfo:
                         ServerInfo serverInfo = (ServerInfo) receivedObj;
                         switch (serverInfo.getReason()) {
@@ -88,6 +96,8 @@ public class Listener extends Thread implements IDisposable {
             errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Connection to server has been broken.")));
         } catch (ClassNotFoundException e) {
             errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage(e.getMessage())));
+        }
+        catch (Exception e) {
         }
     }
 

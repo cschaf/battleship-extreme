@@ -26,7 +26,9 @@ public class ServerGameBrowserPanel extends JPanel {
     private void _initComponents() {
         btnJoin = new JButton("Join");
         btnCreate = new JButton("Create");
+        btnCreate.setEnabled(false);
         btnRefresh = new JButton("Refresh List");
+        btnRefresh.setEnabled(false);
         btnBack = new JButton("Back");
 
         tblModel = new GameListModel();

@@ -28,14 +28,14 @@ public class NetGame extends TransferableObject {
     private ArrayList<Turn> turns;
     private boolean ready;
 
-    public NetGame(String name, Settings settings) {
+    public NetGame(String name,String password, Settings settings) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.settings = settings;
         this.players = new HashMap<Integer, ClientHandler>();
         this.maxPlayers = settings.getPlayers();
-        this.password = "";
-        this.isPrivate = false;
+        this.password = password;
+        this.isPrivate = !password.equals("");
         this.turns = new ArrayList<Turn>();
         this.clientIds = new ArrayList<Integer>();
         this.clientTurnOrder = new ClientGameIndexQueue<Integer>();

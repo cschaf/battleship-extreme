@@ -1,6 +1,7 @@
 package de.hsbremen.battleshipextreme.client.listener;
 
 import de.hsbremen.battleshipextreme.client.GUI;
+import de.hsbremen.battleshipextreme.model.network.NetworkClient;
 import de.hsbremen.battleshipextreme.network.ITransferable;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListener;
@@ -12,9 +13,12 @@ import javax.swing.*;
  */
 public class ServerErrorListener implements IErrorListener {
     private GUI gui;
+    private NetworkClient network;
 
-    public ServerErrorListener(GUI gui) {
+    public ServerErrorListener(GUI gui, NetworkClient network) {
+
         this.gui = gui;
+        this.network = network;
     }
 
     public void onError(EventArgs<ITransferable> eventArgs) {
