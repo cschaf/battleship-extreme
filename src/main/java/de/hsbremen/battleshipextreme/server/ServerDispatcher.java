@@ -293,9 +293,13 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
     }
 
     private void sendGameReady(NetGame game) {
-        ITransferable rdy = TransferableObjectFactory.CreatePlayerBoards(game.getAllBoards());
+        ITransferable boards = TransferableObjectFactory.CreatePlayerBoards(game.getAllBoards());
         // send Boards to all players
+        multicast(boards, game.getJoinedPlayers());
+
+        ITransferable rdy = TransferableObjectFactory.CreateServerInfo(InfoSendingReason.GameReady);
         multicast(rdy, game.getJoinedPlayers());
+
         // sends all Player names to the clients for combobox
         game.setGameToReady();
     }
