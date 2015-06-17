@@ -13,6 +13,7 @@ import de.hsbremen.battleshipextreme.model.network.NetworkClient;
 import de.hsbremen.battleshipextreme.model.player.AIPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.player.PlayerType;
+import de.hsbremen.battleshipextreme.model.player.Target;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.model.ship.ShipType;
 import de.hsbremen.battleshipextreme.network.ITransferable;
@@ -228,6 +229,9 @@ public class Controller {
         });
     }
 
+    public void appendGameLogEntry(String message){
+        gui.getPanelGame().getTextAreaGameLog().append(message + "\r\n\r\n");
+    }
     private void addPlayerBoardListener() {
         final GamePanel panelGame = gui.getPanelGame();
         JButton[][] playerBoard = panelGame.getPanelPlayerBoard().getButtonsField();
@@ -302,19 +306,24 @@ public class Controller {
                 playerBoard[i][j].addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         FieldButton fieldButton = (FieldButton) e.getSource();
+                        String attackingPlayerName = game.getCurrentPlayer().getName();
+                        String attackedPlayerName = panelGame.getComboBoxEnemySelection().getSelectedItem().toString();
+                        int xPos = fieldButton.getxPos();
+                        int yPos = fieldButton.getyPos();
+                        boolean isHorizontal = panelGame.getRadioButtonHorizontalOrientation().isSelected();
+                        Ship currentShip = game.getCurrentPlayer().getCurrentShip();
+                        String orientation = isHorizontal ? "horizontal" : "vertical";
                         if (network.isConnected()) {
-                            String attackingPlayerName = game.getCurrentPlayer().getName();
-                            String attackedPlayerName = panelGame.getComboBoxEnemySelection().getSelectedItem().toString();
-                            int xPos = fieldButton.getxPos();
-                            int yPos = fieldButton.getyPos();
-                            boolean isHorizontal = panelGame.getRadioButtonHorizontalOrientation().isSelected();
-                            Ship currentShip = game.getCurrentPlayer().getCurrentShip();
                             lastTurn = TransferableObjectFactory.CreateTurn(attackingPlayerName, attackedPlayerName, xPos, yPos, isHorizontal, currentShip);
                             setEnemyBoardEnabled(false);
                             gui.getPanelGame().getButtonDone().setEnabled(true);
                         } else {
                             try {
-                                makeTurn(panelGame.getComboBoxEnemySelection().getSelectedItem() + "", fieldButton.getxPos(), fieldButton.getyPos(), panelGame.getRadioButtonHorizontalOrientation().isSelected());
+                                boolean turnMade = makeTurn(attackedPlayerName, xPos, yPos, isHorizontal);
+                                if (turnMade){
+                                    appendGameLogEntry("Player " + attackingPlayerName + " attacked " + attackedPlayerName
+                                            + " " + orientation + " with ship " + currentShip.getType().toString() + " at start Field X:" + xPos + "  Y: " + yPos);
+                                }
                             } catch (FieldOutOfBoardException e1) {
                                 // TODO Auto-generated catch block
                                 e1.printStackTrace();
@@ -617,7 +626,10 @@ public class Controller {
 
     private void makeAiTurn() {
         try {
-            game.makeAiTurn();
+            Target shot = game.makeAiTurn();
+            appendGameLogEntry("Player " + game.getCurrentPlayer().getName() + " attacked " + gui.getPanelGame().getComboBoxEnemySelection().getSelectedItem().toString()
+                    + " " + shot.getOrientation().toString() + " with ship " + game.getCurrentPlayer().getCurrentShip().getType()+ " at start Field X:" + shot.getX() + "  Y: " + shot.getY());
+
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -824,7 +836,7 @@ public class Controller {
         int range;
         boolean possible = false;
 
-        // Farben zurücksetzen
+        // Farben zurï¿½cksetzen
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
                 board[i][j].setBackground(GUI.EMPTY_COLOR);

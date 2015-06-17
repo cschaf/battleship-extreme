@@ -57,17 +57,20 @@ public class Game implements Serializable {
         }
     }
 
-    public void makeAiTurn() throws Exception {
+    public Target makeAiTurn() throws Exception {
         boolean wasShotPossible = false;
         // AI soll Zug automatisch machen
         AIPlayer ai = (AIPlayer) currentPlayer;
+        Target shot = null;
 
         do {
             Player currentEnemy = selectAiEnemy(ai);
             ai.selectShip(ai.getAvailableShips(true).get(0));
-            Target shot = ai.getTarget(currentEnemy.getFieldStates(false));
+            shot = ai.getTarget(currentEnemy.getFieldStates(false));
             wasShotPossible = makeTurn(currentEnemy, shot.getX(), shot.getY(), shot.getOrientation());
         } while (!wasShotPossible);
+
+        return shot;
     }
 
     private Player selectAiEnemy(AIPlayer ai) {
