@@ -12,10 +12,7 @@ import de.hsbremen.battleshipextreme.model.Settings;
 import de.hsbremen.battleshipextreme.model.exception.*;
 import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener;
 import de.hsbremen.battleshipextreme.model.network.NetworkClient;
-import de.hsbremen.battleshipextreme.model.player.AIPlayer;
-import de.hsbremen.battleshipextreme.model.player.Player;
-import de.hsbremen.battleshipextreme.model.player.PlayerType;
-import de.hsbremen.battleshipextreme.model.player.Target;
+import de.hsbremen.battleshipextreme.model.player.*;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.model.ship.ShipType;
 import de.hsbremen.battleshipextreme.network.ITransferable;
@@ -231,9 +228,10 @@ public class Controller {
         });
     }
 
-    public void appendGameLogEntry(String message){
+    public void appendGameLogEntry(String message) {
         gui.getPanelGame().getTextAreaGameLog().append(message + "\r\n\r\n");
     }
+
     private void addPlayerBoardListener() {
         final GamePanel panelGame = gui.getPanelGame();
         JButton[][] playerBoard = panelGame.getPanelPlayerBoard().getButtonsField();
@@ -322,7 +320,7 @@ public class Controller {
                         } else {
                             try {
                                 boolean turnMade = makeTurn(attackedPlayerName, xPos, yPos, isHorizontal);
-                                if (turnMade){
+                                if (turnMade) {
                                     appendGameLogEntry("Player " + attackingPlayerName + " attacked " + attackedPlayerName
                                             + " " + orientation + " with ship " + currentShip.getType().toString() + " at start Field X:" + xPos + "  Y: " + yPos);
                                 }
@@ -371,7 +369,7 @@ public class Controller {
                         if (gameName.length() > 3 && !gameName.startsWith(" ")) {
                             network.getSender().sendGame(gameName, gamePassword, settings);
                             gui.showPanel(GUI.SERVER_CONNECTION_PANEL);
-                        } else{
+                        } else {
                             network.getErrorHandler().errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Game name have to be more then 3 characters!")));
                         }
                     } else {
@@ -439,12 +437,16 @@ public class Controller {
             public void stateChanged(ChangeEvent e) {
                 JToggleButton btn = (JToggleButton) e.getSource();
                 if (btn.isSelected()) {
-                    showPlayerBoard();
+                    if (game.getCurrentPlayer().getType() == PlayerType.HUMAN) {
+                        showPlayerBoard();
+                    }
+
                 } else {
                     if (network.isConnected()) {
                         showEmptyPlayerBoard(game.getConnectedAsPlayer());
                     } else {
                         showEmptyPlayerBoard(game.getCurrentPlayer().getName());
+
                     }
                 }
             }
@@ -598,7 +600,7 @@ public class Controller {
                     }
                 }
             }
-            if (gui.getPanelGame().getButtonShowYourShips().isSelected()) {
+            if (gui.getPanelGame().getButtonShowYourShips().isSelected() && game.getCurrentPlayer().getType() == PlayerType.HUMAN) {
                 updatePlayerBoard();
             }
             updateShipSelection(game.getCurrentPlayer());
@@ -623,14 +625,14 @@ public class Controller {
         }
         setPlayerBoardEnabled(false);
         setDoneButtonEnabled(true);
-        updatePlayerBoard();
+        showEmptyPlayerBoard(ai.getName());
     }
 
     private void makeAiTurn() {
         try {
             Target shot = game.makeAiTurn();
             appendGameLogEntry("Player " + game.getCurrentPlayer().getName() + " attacked " + gui.getPanelGame().getComboBoxEnemySelection().getSelectedItem().toString()
-                    + " " + shot.getOrientation().toString() + " with ship " + game.getCurrentPlayer().getCurrentShip().getType()+ " at start Field X:" + shot.getX() + "  Y: " + shot.getY());
+                    + " " + shot.getOrientation().toString() + " with ship " + game.getCurrentPlayer().getCurrentShip().getType() + " at start Field X:" + shot.getX() + "  Y: " + shot.getY());
 
         } catch (Exception e) {
             // TODO Auto-generated catch block
