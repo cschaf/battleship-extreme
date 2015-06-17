@@ -2,6 +2,7 @@ package de.hsbremen.battleshipextreme.client.listener;
 
 import de.hsbremen.battleshipextreme.client.Controller;
 import de.hsbremen.battleshipextreme.client.GUI;
+import de.hsbremen.battleshipextreme.client.workers.LogUpdater;
 import de.hsbremen.battleshipextreme.model.Game;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener;
@@ -37,17 +38,17 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
         if (eventArgs.getItem().getType() == TransferableType.Error) {
             network.getErrorHandler().errorHasOccurred(new EventArgs<ITransferable>(this, eventArgs.getItem()));
         } else {
-            gui.getPanelGame().getTextAreaChatLog().append(eventArgs.getItem() + "\r\n");
+            new LogUpdater(gui.getPanelGame().getTextAreaChatLog(), eventArgs.getItem().toString()).execute();
         }
     }
 
     public void onClientInfoObjectReceived(EventArgs<ClientInfo> eventArgs) {
         switch (eventArgs.getItem().getReason()) {
             case Connect:
-                gui.getPanelGame().getTextAreaGameLog().append(eventArgs.getItem().getUsername() + " has connected\r\n");
+                new LogUpdater(gui.getPanelGame().getTextAreaGameLog(), eventArgs.getItem().getUsername() + " has connected").execute();
                 break;
             case Disconnect:
-                gui.getPanelGame().getTextAreaGameLog().append(eventArgs.getItem().getUsername() + " has disconnected\r\n");
+                new LogUpdater(gui.getPanelGame().getTextAreaGameLog(), eventArgs.getItem().getUsername() + " has disconnected").execute();
                 break;
         }
     }

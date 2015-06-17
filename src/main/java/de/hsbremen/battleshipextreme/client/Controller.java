@@ -3,6 +3,8 @@ package de.hsbremen.battleshipextreme.client;
 import de.hsbremen.battleshipextreme.client.listener.ServerErrorListener;
 import de.hsbremen.battleshipextreme.client.listener.ServerGameBrowserListener;
 import de.hsbremen.battleshipextreme.client.listener.ServerObjectReceivedListener;
+import de.hsbremen.battleshipextreme.client.workers.BoardUpdater;
+import de.hsbremen.battleshipextreme.client.workers.ShipStatusUpdater;
 import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Game;
 import de.hsbremen.battleshipextreme.model.Orientation;
@@ -667,42 +669,10 @@ public class Controller {
 
     public void updateShipSelection(Player player) {
         GamePanel panelGame = gui.getPanelGame();
-        Color green = new Color(0, 180, 0);
-        Color red = new Color(180, 0, 0);
-        JLabel[] shipFields = gui.getPanelGame().getLabelDestroyer();
-        if (player.getShipCount(ShipType.DESTROYER) == 0) {
-            UpdateShipLabelColors(shipFields, red);
-        } else {
-            UpdateShipLabelColors(shipFields, green);
-        }
-        panelGame.getLabelDestroyerShipCount().setText("" + player.getShipCount(ShipType.DESTROYER));
-
-        shipFields = gui.getPanelGame().getLabelFrigate();
-        if (player.getShipCount(ShipType.FRIGATE) == 0) {
-            UpdateShipLabelColors(shipFields, red);
-        } else {
-            UpdateShipLabelColors(shipFields, green);
-        }
-        panelGame.getLabelFrigateShipCount().setText("" + player.getShipCount(ShipType.FRIGATE));
-
-        shipFields = gui.getPanelGame().getLabelCorvette();
-        if (player.getShipCount(ShipType.CORVETTE) == 0) {
-            UpdateShipLabelColors(shipFields, red);
-        } else {
-            UpdateShipLabelColors(shipFields, green);
-        }
-        panelGame.getLabelCorvetteShipCount().setText("" + player.getShipCount(ShipType.CORVETTE));
-
-        shipFields = gui.getPanelGame().getLabelSubmarine();
-        if (player.getShipCount(ShipType.SUBMARINE) == 0) {
-            UpdateShipLabelColors(shipFields, red);
-        } else {
-            UpdateShipLabelColors(shipFields, green);
-        }
-        panelGame.getLabelSubmarineShipCount().setText("" + player.getShipCount(ShipType.SUBMARINE));
+        new ShipStatusUpdater(this, panelGame, player).execute();
     }
 
-    private void UpdateShipLabelColors(JLabel[] shipFields, Color color) {
+    public void UpdateShipLabelColors(JLabel[] shipFields, Color color) {
         for (int i = 0; i < shipFields.length; i++) {
             shipFields[i].setBackground(color);
         }
@@ -735,7 +705,7 @@ public class Controller {
         board = panelGame.getPanelPlayerBoard().getButtonsField();
         try {
             fieldStates = game.getCurrentPlayer().getFieldStates(true);
-            updateBoardColors(board, fieldStates);
+            new BoardUpdater(gui, board, fieldStates).execute();
         } catch (FieldOutOfBoardException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -764,7 +734,7 @@ public class Controller {
         try {
             if (enemy != null) {
                 FieldState[][] fieldStates = enemy.getFieldStates(false);
-                updateBoardColors(board, fieldStates);
+                new BoardUpdater(gui, board, fieldStates).execute();
             }
         } catch (FieldOutOfBoardException e) {
             // TODO Auto-generated catch block
