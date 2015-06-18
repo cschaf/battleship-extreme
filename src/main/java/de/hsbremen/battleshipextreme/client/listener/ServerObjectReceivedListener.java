@@ -55,24 +55,24 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
 
     public void onGameObjectReceived(EventArgs<NetGame> eventArgs) {
         NetGame game = eventArgs.getItem();
-        ctrl.initializeClientAfterJoined(game);
+        //ctrl.initializeClientAfterJoined(game);
         // disable all controls till game ready to start
         ctrl.setBoardsEnabled(false);
         gui.getPanelGame().getLabelInfo().setText("Waiting for other players...");
     }
 
     public void onTurnObjectReceived(EventArgs<Turn> eventArgs) {
-        Turn turn = eventArgs.getItem();
+/*        Turn turn = eventArgs.getItem();
 
-        ctrl.selectShip(turn.getCurrentShip().getType());
+        //ctrl.selectShip(turn.getCurrentShip().getType());
         try {
-            ctrl.makeOnlineTurn(turn.getAttackingPlayerName(), turn.getAttackedPlayerName(), turn.getFieldX(), turn.getFieldY(), turn.isHorizontal());
+            //ctrl.makeOnlineTurn(turn.getAttackingPlayerName(), turn.getAttackedPlayerName(), turn.getFieldX(), turn.getFieldY(), turn.isHorizontal());
         } catch (FieldOutOfBoardException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         game.nextPlayer();
-        ctrl.updateShipSelection(game.getPlayerByName(game.getConnectedAsPlayer()));
+        ctrl.updateShipSelection(game.getPlayerByName(game.getConnectedAsPlayer()));*/
     }
 
     public void onGameListObjectReceived(EventArgs<GameList> eventArgs) {
@@ -132,7 +132,7 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
     public void onPlayerBoardsObjectReceived(EventArgs<PlayerBoards> eventArgs) {
         PlayerBoards boards = eventArgs.getItem();
         game.setPlayerBoards(boards.getBoards());
-        ctrl.nextOnline();
+        //ctrl.nextOnline();
     }
 
     public void onPlayerNamesObjectReceived(EventArgs<PlayerNames> eventArgs) {

@@ -48,9 +48,9 @@ public class ServerGameBrowserListener implements TableColumnModelListener, Mous
             GameListModel model = (GameListModel) target.getModel();
             NetGame game = model.getGame(rowIndex);
             if (game.isPrivate()) {
-                ctrl.createPasswordPrompt(game);
+                //ctrl.createPasswordPrompt(game);
             } else {
-                ctrl.join(game.getId());
+                //ctrl.join(game.getId());
             }
         }
     }
