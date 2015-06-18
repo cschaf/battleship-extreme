@@ -397,7 +397,6 @@ public class Controller {
                             break;
                     }
                 } else {
-                    // board[i][j].setBackground(GUI.UNKNOWN_COLOR);
                     board[i][j].setIcon(null);
                 }
             }
