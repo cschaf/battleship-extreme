@@ -451,8 +451,8 @@ public class LocalClientController implements Serializable {
 
     public void addShowYourShipsButtonListener() {
         GamePanel panelGame = gui.getPanelGame();
-        panelGame.getButtonShowYourShips().addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
+        panelGame.getButtonShowYourShips().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 JToggleButton btn = (JToggleButton) e.getSource();
                 if (btn.isSelected()) {
                     if (game.getCurrentPlayer().getType() == PlayerType.HUMAN) {
