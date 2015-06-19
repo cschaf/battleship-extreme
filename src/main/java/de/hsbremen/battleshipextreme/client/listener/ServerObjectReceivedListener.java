@@ -3,17 +3,12 @@ package de.hsbremen.battleshipextreme.client.listener;
 import de.hsbremen.battleshipextreme.client.Controller;
 import de.hsbremen.battleshipextreme.client.GUI;
 import de.hsbremen.battleshipextreme.client.workers.LogUpdater;
-import de.hsbremen.battleshipextreme.model.Game;
-import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener;
 import de.hsbremen.battleshipextreme.model.network.NetworkClient;
 import de.hsbremen.battleshipextreme.network.ITransferable;
-import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 import de.hsbremen.battleshipextreme.network.TransferableType;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.transfarableObject.*;
-
-import javax.swing.*;
 
 /**
  * Created by cschaf on 03.06.2015.
@@ -30,16 +25,15 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
     }
 
     public void onObjectReceived(EventArgs<ITransferable> eventArgs) {
-        JOptionPane.showMessageDialog(gui.getFrame(), eventArgs.getItem().getType().toString() + ": " + eventArgs.getItem(), "Info", JOptionPane.INFORMATION_MESSAGE);
+        //JOptionPane.showMessageDialog(gui.getFrame(), eventArgs.getItem().getType().toString() + ": " + eventArgs.getItem(), "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void onMessageObjectReceived(EventArgs<Message> eventArgs) {
-
-/*        if (eventArgs.getItem().getType() == TransferableType.Error) {
+        if (eventArgs.getItem().getType() == TransferableType.Error) {
             network.getErrorHandler().errorHasOccurred(new EventArgs<ITransferable>(this, eventArgs.getItem()));
         } else {
             new LogUpdater(gui.getPanelGame().getTextAreaChatLog(), eventArgs.getItem().toString()).execute();
-        }*/
+        }
     }
 
     public void onClientInfoObjectReceived(EventArgs<ClientInfo> eventArgs) {
