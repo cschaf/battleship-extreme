@@ -10,8 +10,10 @@ import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListen
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class Controller {
 // ------------------------------ FIELDS ------------------------------
@@ -20,7 +22,7 @@ public class Controller {
     private GUI gui;
     private NetworkClient network;
     private LocalClientController localClientController;
-    private MultiplayerClientController multiplayerClientController;
+    private MultiPlayerClientController multiPlayerClientController;
 
     private IErrorListener serverErrorListener;
 
@@ -37,7 +39,7 @@ public class Controller {
         localClientController = new LocalClientController(game, gui, this);
 
         addServerErrorListeners();
-        this.multiplayerClientController = new MultiplayerClientController(network, gui, this);
+        this.multiPlayerClientController = new MultiPlayerClientController(network, gui, this);
         addMenuListeners();
         //addServerGameBrowserListeners();
     }
@@ -75,7 +77,7 @@ public class Controller {
 
         gui.getPanelMainMenu().getButtonMultiplayerGame().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                multiplayerClientController.addAllListeners();
+                multiPlayerClientController.addAllListeners();
                 gui.showPanel(GUI.SERVER_CONNECTION_PANEL);
             }
         });
@@ -163,10 +165,6 @@ public class Controller {
         }
     }
 
-    private void sendMessage() {
-    }
-
-
     public void appendGameLogEntry(String message) {
         gui.getPanelGame().getTextAreaGameLog().append(message + "\r\n\r\n");
     }
@@ -233,9 +231,6 @@ public class Controller {
         return false;
     }
 
-    private void initializeGameView() {
-    }
-
     private void removeServerErrorListeners() {
         network.removeErrorListener(serverErrorListener);
     }
@@ -276,7 +271,6 @@ public class Controller {
 
     public void setEnemySelectionEnabled(boolean enabled) {
         gui.getPanelGame().getComboBoxEnemySelection().setEnabled(enabled);
-        gui.getPanelGame().getButtonApplyEnemy().setEnabled(enabled);
     }
 
     public void setInfoLabelMessage(String message) {

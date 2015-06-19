@@ -3,13 +3,15 @@ package de.hsbremen.battleshipextreme.model;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.player.*;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
+import de.hsbremen.battleshipextreme.network.TransferableType;
+import de.hsbremen.battleshipextreme.network.transfarableObject.TransferableObject;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class Game implements Serializable {
+public class Game extends TransferableObject {
     private Player[] players;
     private Player currentPlayer;
     private Player winner;
@@ -17,12 +19,15 @@ public class Game implements Serializable {
     private int roundNumber;
     private int boardSize;
     private boolean hasCurrentPlayerMadeTurn;
+    private Settings settings;
 
     /**
      * Reads the settings and initializes the necessary game objects.
+     *
      * @param settings the game settings.
      */
     public void initialize(Settings settings) {
+        this.settings = settings;
         createPlayers(settings);
 
         // Spielernummern setzen
@@ -109,6 +114,7 @@ public class Game implements Serializable {
 
     /**
      * Saves the this Game to a File
+     *
      * @throws Exception if the file could not be saved
      */
     public void save(String destinationPath) throws Exception {
@@ -129,6 +135,7 @@ public class Game implements Serializable {
 
     /**
      * Load a saved Game object
+     *
      * @throws Exception if the game could not be loaded
      */
     public void load(String destinationPath) throws Exception {
@@ -212,6 +219,7 @@ public class Game implements Serializable {
     /**
      * Provides a list of enemies the current player may attack. Players that
      * are lost or equal to the current player are filtered.
+     *
      * @return an ArrayList of Players
      */
     public ArrayList<Player> getEnemiesOfCurrentPlayer() {
@@ -230,6 +238,7 @@ public class Game implements Serializable {
     /**
      * Provides a list of enemies the current player may attack. Players that
      * are lost or equal to the current player are filtered.
+     *
      * @return an ArrayList of Players
      */
     public ArrayList<Player> getEnemiesOfPlayer(String name) {
@@ -254,9 +263,18 @@ public class Game implements Serializable {
         return null;
     }
 
+    public Settings getSettings() {
+        return settings;
+    }
+
+    public void setSettings(Settings settings) {
+        this.settings = settings;
+    }
+
     /**
      * Returns true if the ships of all players have been placed. The method is
      * used to determine if a game is ready to start.
+     *
      * @return true if all ships by all players are placed, else false
      */
     public boolean isReady() {
@@ -270,6 +288,7 @@ public class Game implements Serializable {
 
     /**
      * Check if the game is over. Set the game winner if the game is over.
+     *
      * @return true if the game is over, false if not
      */
     public boolean isGameover() {
@@ -357,4 +376,7 @@ public class Game implements Serializable {
     }
 
 
+    public TransferableType getType() {
+        return TransferableType.Game;
+    }
 }

@@ -1,7 +1,7 @@
 package de.hsbremen.battleshipextreme.client.listener;
 
-import de.hsbremen.battleshipextreme.client.Controller;
 import de.hsbremen.battleshipextreme.client.GUI;
+import de.hsbremen.battleshipextreme.client.MultiPlayerClientController;
 import de.hsbremen.battleshipextreme.client.workers.LogUpdater;
 import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener;
 import de.hsbremen.battleshipextreme.model.network.NetworkClient;
@@ -16,9 +16,9 @@ import de.hsbremen.battleshipextreme.network.transfarableObject.*;
 public class ServerObjectReceivedListener implements IServerObjectReceivedListener {
     private GUI gui;
     private NetworkClient network;
-    private Controller ctrl;
+    private MultiPlayerClientController ctrl;
 
-    public ServerObjectReceivedListener(GUI gui, NetworkClient network, Controller ctrl) {
+    public ServerObjectReceivedListener(GUI gui, NetworkClient network, MultiPlayerClientController ctrl) {
         this.gui = gui;
         this.network = network;
         this.ctrl = ctrl;
@@ -48,11 +48,9 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
     }
 
     public void onGameObjectReceived(EventArgs<NetGame> eventArgs) {
-/*        NetGame game = eventArgs.getItem();
-        //ctrl.initializeClientAfterJoined(game);
-        // disable all controls till game ready to start
-        ctrl.setBoardsEnabled(false);
-        gui.getPanelGame().getLabelInfo().setText("Waiting for other players...");*/
+        NetGame game = eventArgs.getItem();
+        ctrl.initializeClientAfterJoined(game);
+        gui.getPanelGame().getLabelInfo().setText("Waiting for other players...");
     }
 
     public void onTurnObjectReceived(EventArgs<Turn> eventArgs) {
@@ -91,21 +89,21 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 gui.getPanelGame().getLabelInfo().setText("Ships will be placed...");
                 break;
             case PlaceYourShips:
-                ctrl.setPlayerBoardEnabled(true);
+                //ctrl.setPlayerBoardEnabled(true);
                 break;
             case GameReady:
                 gui.getPanelGame().getButtonShowYourShips().setEnabled(true);
-                ctrl.setEnemySelectionEnabled(true);
+                //ctrl.setEnemySelectionEnabled(true);
                 break;
             case MakeTurn:
-                boolean reloading = ctrl.handleAllShipsAreReloading();
+/*                boolean reloading = ctrl.handleAllShipsAreReloading();
                 gui.getPanelGame().getButtonShowYourShips().setEnabled(true);
                 if (!reloading) {
                     ctrl.setEnemyBoardEnabled(true);
                 } else {
                     ctrl.setPlayerIsReloading(true);
                     ctrl.setDoneButtonEnabled(true);
-                }
+                }*/
 
                 break;
             case PlayerIsReloading:
@@ -123,6 +121,9 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
 
     public void onPlayerBoardsObjectReceived(EventArgs<PlayerBoards> eventArgs) {
         PlayerBoards boards = eventArgs.getItem();
+/*        for (Player player : game.getPlayers()){
+            enemies.put(player.getName(), player.getBoard());
+        }*/
         //ctrl.nextOnline();
     }
 

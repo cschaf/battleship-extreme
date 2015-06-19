@@ -2,6 +2,8 @@ package de.hsbremen.battleshipextreme.client;
 
 import de.hsbremen.battleshipextreme.client.listener.ServerGameBrowserListener;
 import de.hsbremen.battleshipextreme.client.listener.ServerObjectReceivedListener;
+import de.hsbremen.battleshipextreme.model.Board;
+import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener;
 import de.hsbremen.battleshipextreme.model.network.NetworkClient;
@@ -15,11 +17,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Created by cschaf on 18.06.2015.
  */
-public class MultiplayerClientController implements Serializable {
+public class MultiPlayerClientController implements Serializable {
 // ------------------------------ FIELDS ------------------------------
 
     private GUI gui;
@@ -28,14 +32,17 @@ public class MultiplayerClientController implements Serializable {
     private ServerGameBrowserListener serverGameBrowserListener;
     private IServerObjectReceivedListener serverObjectReceivedListener;
     private String connectedAsPlayer;
+    private Player player;
+    private HashMap<String, Board> enemies;
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-    public MultiplayerClientController(NetworkClient network, GUI gui, Controller ctrl) {
+    public MultiPlayerClientController(NetworkClient network, GUI gui, Controller ctrl) {
         this.network = network;
         this.gui = gui;
         this.ctrl = ctrl;
-        this.serverObjectReceivedListener = new ServerObjectReceivedListener(this.gui, network, ctrl);
+        this.enemies = new HashMap<String, Board>();
+        this.serverObjectReceivedListener = new ServerObjectReceivedListener(this.gui, network, this);
         this.serverGameBrowserListener = new ServerGameBrowserListener(network, this);
 
     }
@@ -95,14 +102,15 @@ public class MultiplayerClientController implements Serializable {
             }
         });*/
     }
-    public void updateEnemyOnlineSelection(String playerName) {
-/*        GamePanel panelGame = gui.getPanelGame();
-        ArrayList<Player> enemies = game.getEnemiesOfPlayer(playerName);
+
+    public void updateEnemySelection() {
+        GamePanel panelGame = gui.getPanelGame();
+        Set<String> myEnemies = this.enemies.keySet();
         JComboBox<String> enemyComboBox = panelGame.getComboBoxEnemySelection();
         enemyComboBox.removeAllItems();
-        for (Player enemy : enemies) {
-            enemyComboBox.addItem(enemy.getName());
-        }*/
+        for (String enemy : myEnemies) {
+            enemyComboBox.addItem(enemy);
+        }
     }
 
     private void addDoneButtonListener() {
@@ -156,11 +164,12 @@ public class MultiplayerClientController implements Serializable {
     }
 
     public void setPlayerNames(ArrayList<String> names) {
-/*        for (int i = 0; i < game.getPlayers().length; i++) {
-            game.getPlayers()[i].setName(names.get(i));
+/*        for (int i = 0; i < game.getPlayersMap().length; i++) {
+            game.getPlayersMap()[i].setName(names.get(i));
         }
         updateEnemyOnlineSelection(game.getConnectedAsPlayer());*/
     }
+
     public String getConnectedAsPlayer() {
         return connectedAsPlayer;
     }
@@ -168,6 +177,7 @@ public class MultiplayerClientController implements Serializable {
     public void setConnectedAsPlayer(String connectedAsPlayer) {
         this.connectedAsPlayer = connectedAsPlayer;
     }
+
     private void addPlayerBoardListener() {
 /*        GamePanel panelGame = gui.getPanelGame();
         JButton[][] playerBoard = panelGame.getPanelPlayerBoard().getButtonsField();
@@ -428,22 +438,14 @@ public class MultiplayerClientController implements Serializable {
     }
 
     public void initializeClientAfterJoined(NetGame game) {
-        try {
-            //initializeGame(game.getSettings());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void initializeGameView(int boardSize) {
-        //createBoardPanels(game.getBoardSize());
-        gui.showPanel(GUI.GAME_PANEL);
-        updateEnemyBoard();
-        //updatePlayerBoard();
+        ctrl.createBoardPanels(game.getBoardSize());
+        // disable all controls till game ready to start
+        ctrl.setBoardsEnabled(false);
         ctrl.setEnemySelectionEnabled(false);
         ctrl.setEnemyBoardEnabled(false);
         ctrl.setShipSelectionEnabled(false);
         ctrl.setDoneButtonEnabled(false);
+        gui.showPanel(GUI.GAME_PANEL);
     }
 
     public void updateEnemyBoard() {
@@ -515,18 +517,18 @@ public class MultiplayerClientController implements Serializable {
         gui.getPanelServerConnection().getPnlServerGameBrowser().getTblGames().getColumnModel().removeColumnModelListener(serverGameBrowserListener);
     }
 
-    public void updatePlayerBoard(String playerName) {
-/*        GamePanel panelGame = gui.getPanelGame();
+    public void updatePlayerBoard() {
+        GamePanel panelGame = gui.getPanelGame();
         JButton[][] board;
         FieldState[][] fieldStates = null;
         board = panelGame.getPanelPlayerBoard().getButtonsField();
         try {
-            fieldStates = game.getPlayerByName(playerName).getFieldStates(true);
-            updateBoardColors(board, fieldStates);
+            fieldStates = player.getFieldStates(true);
+            ctrl.updateBoardColors(board, fieldStates);
         } catch (FieldOutOfBoardException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }*/
+        }
     }
 
     private void updatePreview(int startX, int startY, JButton[][] board) {
@@ -568,5 +570,9 @@ public class MultiplayerClientController implements Serializable {
 
     public void resizeServerGameListColumns() {
         ctrl.resizeServerGameListColumns();
+    }
+
+    public void setBoardsEnabled(boolean b) {
+        ctrl.setBoardsEnabled(b);
     }
 }

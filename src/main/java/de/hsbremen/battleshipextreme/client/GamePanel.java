@@ -1,14 +1,7 @@
 package de.hsbremen.battleshipextreme.client;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-
 import javax.swing.*;
+import java.awt.*;
 
 public class GamePanel extends JPanel {
 
@@ -204,7 +197,7 @@ public class GamePanel extends JPanel {
 
 	private JPanel createEnemySelectionPanel() {
 		JPanel panel = new JPanel(new GridBagLayout());
-		panel.setBorder(BorderFactory.createTitledBorder("Enemys"));
+		panel.setBorder(BorderFactory.createTitledBorder("Enemies"));
 
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.NORTHWEST;
@@ -217,10 +210,10 @@ public class GamePanel extends JPanel {
 		comboBoxEnemySelection = new JComboBox();
 		panel.add(comboBoxEnemySelection, c);
 
-		c.weightx = 0;
+/*		c.weightx = 0;
 		c.gridx++;
 		buttonApplyEnemy = new JButton("OK");
-		panel.add(buttonApplyEnemy, c);
+		panel.add(buttonApplyEnemy, c);*/
 
 		return panel;
 	}

@@ -254,7 +254,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
     private void initializeNextShipPlacement(NetGame game) {
         // get next client id for ship placement
         int nextPlayer = game.getClientTurnOrder().next();
-        ClientHandler client = game.getPlayers().get(nextPlayer);
+        ClientHandler client = game.getPlayersMap().get(nextPlayer);
 
         // Allow client to olace his ships
         this.sendPlaceYourShips(client);
@@ -266,7 +266,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
     public void initializeNextTurn(NetGame game) {
         // get next client id for ship placement
         int nextPlayer = game.getClientTurnOrder().next();
-        ClientHandler client = game.getPlayers().get(nextPlayer);
+        ClientHandler client = game.getPlayersMap().get(nextPlayer);
 
         // Allow client to make his turn
         this.sendMakeTurn(client);

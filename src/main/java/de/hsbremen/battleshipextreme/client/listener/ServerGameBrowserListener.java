@@ -1,8 +1,7 @@
 package de.hsbremen.battleshipextreme.client.listener;
 
-import de.hsbremen.battleshipextreme.client.Controller;
 import de.hsbremen.battleshipextreme.client.GameListModel;
-import de.hsbremen.battleshipextreme.client.MultiplayerClientController;
+import de.hsbremen.battleshipextreme.client.MultiPlayerClientController;
 import de.hsbremen.battleshipextreme.model.network.NetworkClient;
 import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 
@@ -19,9 +18,9 @@ import java.awt.event.MouseListener;
  */
 public class ServerGameBrowserListener implements TableColumnModelListener, MouseListener {
     private NetworkClient network;
-    private MultiplayerClientController ctrl;
+    private MultiPlayerClientController ctrl;
 
-    public ServerGameBrowserListener(NetworkClient network,MultiplayerClientController ctrl) {
+    public ServerGameBrowserListener(NetworkClient network, MultiPlayerClientController ctrl) {
         this.network = network;
         this.ctrl = ctrl;
     }

@@ -1,7 +1,7 @@
 package de.hsbremen.battleshipextreme.network.transfarableObject;
 
 import de.hsbremen.battleshipextreme.model.Board;
-import de.hsbremen.battleshipextreme.model.FieldState;
+import de.hsbremen.battleshipextreme.model.Game;
 import de.hsbremen.battleshipextreme.model.Settings;
 import de.hsbremen.battleshipextreme.network.ClientGameIndexQueue;
 import de.hsbremen.battleshipextreme.network.TransferableType;
@@ -15,11 +15,10 @@ import java.util.UUID;
 /**
  * Created by cschaf on 30.04.2015.
  */
-public class NetGame extends TransferableObject {
+public class NetGame extends Game {
     private String id;
     private String name;
-    private Settings settings;
-    private HashMap<Integer, ClientHandler> players;
+    private HashMap<Integer, ClientHandler> playersMap;
     private ArrayList<Integer> clientIds;
     private ClientGameIndexQueue<Integer> clientTurnOrder;
     private int maxPlayers;
@@ -29,10 +28,10 @@ public class NetGame extends TransferableObject {
     private boolean ready;
 
     public NetGame(String name,String password, Settings settings) {
+        super.initialize(settings);
         this.id = UUID.randomUUID().toString();
         this.name = name;
-        this.settings = settings;
-        this.players = new HashMap<Integer, ClientHandler>();
+        this.playersMap = new HashMap<Integer, ClientHandler>();
         this.maxPlayers = settings.getPlayers();
         this.password = password;
         this.isPrivate = !password.equals("");
@@ -44,7 +43,7 @@ public class NetGame extends TransferableObject {
         for (int i = 0; i < maxPlayers; i++) {
             clientTurnOrder.add(i);
             clientIds.add(i);
-            players.put(i, null);
+            playersMap.put(i, null);
         }
     }
 
@@ -58,9 +57,9 @@ public class NetGame extends TransferableObject {
 
     public ArrayList<ClientHandler> getJoinedPlayers() {
         ArrayList<ClientHandler> result = new ArrayList<ClientHandler>();
-        for (int clientIndex : players.keySet()) {
-            if (players.get(clientIndex) != null) {
-                result.add(players.get(clientIndex));
+        for (int clientIndex : playersMap.keySet()) {
+            if (playersMap.get(clientIndex) != null) {
+                result.add(playersMap.get(clientIndex));
             }
         }
         return result;
@@ -68,15 +67,15 @@ public class NetGame extends TransferableObject {
 
     public void addPlayer(ClientHandler player) {
         if (!this.isGameFull()) {
-            this.players.put(clientIds.get(0), player);
+            this.playersMap.put(clientIds.get(0), player);
             this.clientIds.remove(clientIds.get(0));
         }
     }
 
     private boolean isGameFull() {
         int number = 0;
-        for (int clientIndex : players.keySet()) {
-            if (players.get(clientIndex) != null) {
+        for (int clientIndex : playersMap.keySet()) {
+            if (playersMap.get(clientIndex) != null) {
                 number++;
             }
         }
@@ -86,7 +85,7 @@ public class NetGame extends TransferableObject {
     public void removePlayer(ClientHandler player) {
         int index = getIndexByClient(player);
         if (index > -1) {
-            players.put(index, null);
+            playersMap.put(index, null);
             clientIds.add(index);
         }
 
@@ -94,7 +93,7 @@ public class NetGame extends TransferableObject {
 
     public int getIndexByClient(ClientHandler handler) {
         int index = -1;
-        for (Map.Entry<Integer, ClientHandler> entry : players.entrySet()) {
+        for (Map.Entry<Integer, ClientHandler> entry : playersMap.entrySet()) {
             ClientHandler value = entry.getValue();
             if (value != null) {
                 if (value == handler) {
@@ -103,14 +102,6 @@ public class NetGame extends TransferableObject {
             }
         }
         return index;
-    }
-
-    public Settings getSettings() {
-        return settings;
-    }
-
-    public void setSettings(Settings settings) {
-        this.settings = settings;
     }
 
     public String getPassword() {
@@ -144,23 +135,23 @@ public class NetGame extends TransferableObject {
         return clientTurnOrder;
     }
 
-    public HashMap<Integer, ClientHandler> getPlayers() {
+    public HashMap<Integer, ClientHandler> getPlayersMap() {
 
-        return players;
+        return playersMap;
     }
 
     public void addBoard(ClientHandler clientHandler, ClientBoard board) {
         int index = getIndexByClient(clientHandler);
         if (index > -1) {
-            ClientHandler clientHandler1 =  players.get(index);
+            ClientHandler clientHandler1 = playersMap.get(index);
             clientHandler.setOwnBoard(board.getBoard());
-            players.put(index, clientHandler1);
+            playersMap.put(index, clientHandler1);
         }
     }
 
     public ArrayList<Board> getAllBoards(){
         ArrayList<Board> result = new ArrayList<Board>();
-        for (Map.Entry<Integer, ClientHandler> entry : players.entrySet()) {
+        for (Map.Entry<Integer, ClientHandler> entry : playersMap.entrySet()) {
             ClientHandler value = entry.getValue();
             if (value != null) {
                 result.add(value.getOwnBoard());
@@ -170,7 +161,7 @@ public class NetGame extends TransferableObject {
     }
 
     public boolean haveAllPlayersSetTheirShips() {
-        for (Map.Entry<Integer, ClientHandler> entry : players.entrySet()) {
+        for (Map.Entry<Integer, ClientHandler> entry : playersMap.entrySet()) {
             ClientHandler value = entry.getValue();
             if (value != null) {
                 if (value.getOwnBoard() == null) {
@@ -193,7 +184,7 @@ public class NetGame extends TransferableObject {
 
     public void resetGame(){
         ready = false;
-        for (Map.Entry<Integer, ClientHandler> entry : players.entrySet()) {
+        for (Map.Entry<Integer, ClientHandler> entry : playersMap.entrySet()) {
             ClientHandler value = entry.getValue();
             value.setOwnBoard(null);
         }
