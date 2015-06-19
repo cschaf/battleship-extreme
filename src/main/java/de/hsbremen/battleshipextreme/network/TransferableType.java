@@ -5,5 +5,5 @@ package de.hsbremen.battleshipextreme.network;
  */
 public enum TransferableType {
     TransferInfo, ClientInfo, Message, Settings, Game, Turn, ClientHandler, Join, ServerInfo, GameList,
-    ClientMessage, PlayerBoards, ClientBoard, PlayerNames, Error, Connected
+    ClientMessage, PlayerBoards, PlayerNames, Error, ShipPlacedInformation
 }

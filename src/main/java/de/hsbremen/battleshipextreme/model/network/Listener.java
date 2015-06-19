@@ -16,8 +16,8 @@ import java.io.ObjectInputStream;
  * Created by cschaf on 15.05.2015.
  */
 public class Listener extends Thread implements IDisposable {
-    private ErrorHandler errorHandler;
     protected EventListenerList listeners;
+    private ErrorHandler errorHandler;
     private ObjectInputStream in;
     private boolean disposed;
 
@@ -72,11 +72,6 @@ public class Listener extends Thread implements IDisposable {
                     case Turn:
                         Turn turn = (Turn) receivedObj;
                         turnObjectReceived(new EventArgs<Turn>(this, turn));
-                        break;
-
-                    case PlayerBoards:
-                        PlayerBoards boards = (PlayerBoards) receivedObj;
-                        playerBoardsObjectReceived(new EventArgs<PlayerBoards>(this, boards));
                         break;
 
                     case ServerInfo:

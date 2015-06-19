@@ -1,0 +1,42 @@
+package de.hsbremen.battleshipextreme.network.transfarableObject;
+
+import de.hsbremen.battleshipextreme.model.Orientation;
+import de.hsbremen.battleshipextreme.model.ship.ShipType;
+import de.hsbremen.battleshipextreme.network.TransferableType;
+
+/**
+ * Created by cschaf on 19.06.2015.
+ */
+public class ShipPlacedInformation extends TransferableObject {
+    private int xPos;
+    private int yPos;
+    private Orientation orientation;
+    private ShipType shipType;
+
+    public ShipPlacedInformation(int xPos, int yPos, Orientation orientation, ShipType type) {
+        this.xPos = xPos;
+        this.yPos = yPos;
+        this.orientation = orientation;
+        this.shipType = type;
+    }
+
+    public TransferableType getType() {
+        return TransferableType.ShipPlacedInformation;
+    }
+
+    public int getX() {
+        return xPos;
+    }
+
+    public int getY() {
+        return yPos;
+    }
+
+    public Orientation getOrientation() {
+        return orientation;
+    }
+
+    public ShipType getShipType() {
+        return shipType;
+    }
+}

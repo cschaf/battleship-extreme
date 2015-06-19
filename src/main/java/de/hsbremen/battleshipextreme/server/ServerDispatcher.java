@@ -1,11 +1,15 @@
 package de.hsbremen.battleshipextreme.server;
 
+import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
+import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.network.*;
 import de.hsbremen.battleshipextreme.network.eventhandling.ErrorHandler;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
-import de.hsbremen.battleshipextreme.network.transfarableObject.ClientBoard;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Join;
 import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
+import de.hsbremen.battleshipextreme.network.transfarableObject.ShipPlacedInformation;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Turn;
 import de.hsbremen.battleshipextreme.server.listener.IClientConnectionListener;
 import de.hsbremen.battleshipextreme.server.listener.IClientObjectReceivedListener;
@@ -246,6 +250,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         unicast(TransferableObjectFactory.CreateGame(jGame.getName(), "", jGame.getSettings()), clientHandler);
 
         if (jGame.getJoinedPlayers().size() == jGame.getMaxPlayers()) {
+            jGame.updatePlayerNames();
             this.sendReadyForPlacement(jGame);
             this.initializeNextShipPlacement(jGame);
         }
@@ -292,9 +297,9 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
     }
 
     private void sendGameReady(NetGame game) {
-        ITransferable boards = TransferableObjectFactory.CreatePlayerBoards(game.getAllBoards());
+/*        ITransferable boards = TransferableObjectFactory.CreatePlayerBoards(game.getAllBoards());
         // send Boards to all players
-        multicast(boards, game.getJoinedPlayers());
+        multicast(boards, game.getJoinedPlayers());*/
 
         ITransferable rdy = TransferableObjectFactory.CreateServerInfo(InfoSendingReason.GameReady);
         multicast(rdy, game.getJoinedPlayers());
@@ -385,26 +390,6 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         this.unicast(games, clientHandler);
     }
 
-    public void addClientBoardToGame(ClientHandler clientHandler, ClientBoard board) {
-        NetGame game = getGameByClient(clientHandler);
-        if (game != null && !game.getReady()) {
-            boolean allShipsSet = game.haveAllPlayersSetTheirShips();
-            if (!allShipsSet) {
-                game.addBoard(clientHandler, board);
-                // send place ships to next player
-                allShipsSet = game.haveAllPlayersSetTheirShips();
-                // send to all player all Boards
-                if (allShipsSet) {
-                    sendGameReady(game);
-                    initializeNextTurn(game);
-                } else {
-                    // send place your ships to next player
-                    initializeNextShipPlacement(game);
-                }
-            }
-        }
-    }
-
     public NetGame getGameByClient(ClientHandler client) {
         for (NetGame game : netGames) {
             for (ClientHandler clientHandler : game.getJoinedPlayers()) {
@@ -433,5 +418,42 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         }
         ITransferable object = TransferableObjectFactory.CreatePlayerNames(names);
         this.multicast(object, game.getJoinedPlayers());
+    }
+
+    public void addShipPlacedInformationToGame(ClientHandler clientHandler, ITransferable receivedObject) {
+        ShipPlacedInformation info = (ShipPlacedInformation) receivedObject;
+        NetGame game = getGameByClient(clientHandler);
+        if (game != null) {
+            Player player = game.getPlayerByName(clientHandler.getUsername());
+            player.setCurrentShipByType(info.getShipType());
+            if (!game.getReady()) {
+                boolean allShipsSet = game.haveAllPlayersSetTheirShips();
+                if (!allShipsSet) {
+                    if (!player.hasPlacedAllShips()) {
+                        try {
+                            player.placeShip(info.getX(), info.getY(), info.getOrientation());
+                        } catch (ShipAlreadyPlacedException e) {
+                            e.printStackTrace();
+                        } catch (FieldOutOfBoardException e) {
+                            e.printStackTrace();
+                        } catch (ShipOutOfBoardException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    allShipsSet = game.haveAllPlayersSetTheirShips();
+                    // send to all player all Boards
+                    if (allShipsSet) {
+                        initializeNextTurn(game);
+                    } else {
+                        if (player.hasPlacedAllShips()) {
+                            // send place your ships to next player
+                            initializeNextShipPlacement(game);
+                        }
+                    }
+                }
+            }
+
+
+        }
     }
 }

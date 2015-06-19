@@ -1,13 +1,13 @@
 package de.hsbremen.battleshipextreme.model.network;
 
-import de.hsbremen.battleshipextreme.model.Board;
+import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.Settings;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
+import de.hsbremen.battleshipextreme.model.ship.ShipType;
 import de.hsbremen.battleshipextreme.network.IDisposable;
 import de.hsbremen.battleshipextreme.network.ITransferable;
 import de.hsbremen.battleshipextreme.network.InfoSendingReason;
 import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
-import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -64,11 +64,6 @@ public class Sender extends Thread implements IDisposable {
         send(object);
     }
 
-    public void sendBoard(Board playerBoard) {
-        ITransferable object = TransferableObjectFactory.CreateClientBoard(playerBoard);
-        this.send(object);
-    }
-
     public void send(ITransferable object) {
         try {
             this.out.reset();
@@ -107,6 +102,11 @@ public class Sender extends Thread implements IDisposable {
 
     public void sendGame(String name, String password, Settings settings) {
         ITransferable object = TransferableObjectFactory.CreateGame(name, password, settings);
+        send(object);
+    }
+
+    public void sendShipPlacedInformation(int xPos, int yPos, Orientation orientation, ShipType type) {
+        ITransferable object = TransferableObjectFactory.CreateShipPlacedInformation(xPos, yPos, orientation, type);
         send(object);
     }
 }

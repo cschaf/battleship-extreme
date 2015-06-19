@@ -1,8 +1,8 @@
 package de.hsbremen.battleshipextreme.network.transfarableObject;
 
-import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Game;
 import de.hsbremen.battleshipextreme.model.Settings;
+import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.network.ClientGameIndexQueue;
 import de.hsbremen.battleshipextreme.network.TransferableType;
 import de.hsbremen.battleshipextreme.server.ClientHandler;
@@ -27,7 +27,7 @@ public class NetGame extends Game {
     private ArrayList<Turn> turns;
     private boolean ready;
 
-    public NetGame(String name,String password, Settings settings) {
+    public NetGame(String name, String password, Settings settings) {
         super.initialize(settings);
         this.id = UUID.randomUUID().toString();
         this.name = name;
@@ -136,37 +136,14 @@ public class NetGame extends Game {
     }
 
     public HashMap<Integer, ClientHandler> getPlayersMap() {
-
         return playersMap;
     }
 
-    public void addBoard(ClientHandler clientHandler, ClientBoard board) {
-        int index = getIndexByClient(clientHandler);
-        if (index > -1) {
-            ClientHandler clientHandler1 = playersMap.get(index);
-            clientHandler.setOwnBoard(board.getBoard());
-            playersMap.put(index, clientHandler1);
-        }
-    }
-
-    public ArrayList<Board> getAllBoards(){
-        ArrayList<Board> result = new ArrayList<Board>();
-        for (Map.Entry<Integer, ClientHandler> entry : playersMap.entrySet()) {
-            ClientHandler value = entry.getValue();
-            if (value != null) {
-                result.add(value.getOwnBoard());
-            }
-        }
-        return result;
-    }
 
     public boolean haveAllPlayersSetTheirShips() {
-        for (Map.Entry<Integer, ClientHandler> entry : playersMap.entrySet()) {
-            ClientHandler value = entry.getValue();
-            if (value != null) {
-                if (value.getOwnBoard() == null) {
-                    return false;
-                }
+        for (Player player : this.getPlayers()) {
+            if (!player.hasPlacedAllShips()) {
+                return false;
             }
         }
         return true;
@@ -182,15 +159,16 @@ public class NetGame extends Game {
         return getName() + " (" + this.getJoinedPlayers().size() + "/ " + getMaxPlayers() + ")";
     }
 
-    public void resetGame(){
-        ready = false;
-        for (Map.Entry<Integer, ClientHandler> entry : playersMap.entrySet()) {
-            ClientHandler value = entry.getValue();
-            value.setOwnBoard(null);
-        }
-    }
-
     public boolean getReady() {
         return ready;
+    }
+
+    public void updatePlayerNames() {
+        for (Map.Entry<Integer, ClientHandler> entry : getPlayersMap().entrySet()) {
+            ClientHandler value = entry.getValue();
+            Integer index = entry.getKey();
+            getPlayers()[index].setName(value.getUsername());
+
+        }
     }
 }

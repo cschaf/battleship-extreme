@@ -5,7 +5,10 @@ import de.hsbremen.battleshipextreme.network.ITransferable;
 import de.hsbremen.battleshipextreme.network.InfoSendingReason;
 import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
-import de.hsbremen.battleshipextreme.network.transfarableObject.*;
+import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
+import de.hsbremen.battleshipextreme.network.transfarableObject.Message;
+import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
+import de.hsbremen.battleshipextreme.network.transfarableObject.ServerInfo;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -45,6 +48,9 @@ public class ClientListener extends Thread implements IDisposable, Serializable 
                     case Join:
                         this.serverDispatcher.assignClientToGame(this.clientHandler, receivedObject);
                         break;
+                    case ShipPlacedInformation:
+                        this.serverDispatcher.addShipPlacedInformationToGame(clientHandler, receivedObject);
+                        break;
                     case Game:
                         if (serverDispatcher.getNetGames().size() < serverDispatcher.getMaxGames()) {
                             this.serverDispatcher.addGame(receivedObject);
@@ -81,12 +87,6 @@ public class ClientListener extends Thread implements IDisposable, Serializable 
 
                     case Turn:
                         this.serverDispatcher.addTurn(this.clientHandler, receivedObject);
-                        break;
-
-                    case ClientBoard:
-                        // shipboard from client received
-                        ClientBoard board = (ClientBoard) receivedObject;
-                        this.serverDispatcher.addClientBoardToGame(clientHandler, board);
                         break;
 
                     case ClientInfo:

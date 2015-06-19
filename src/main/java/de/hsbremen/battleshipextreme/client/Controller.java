@@ -2,8 +2,13 @@ package de.hsbremen.battleshipextreme.client;
 
 import de.hsbremen.battleshipextreme.client.listener.ServerErrorListener;
 import de.hsbremen.battleshipextreme.client.workers.ShipStatusUpdater;
+import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Game;
+import de.hsbremen.battleshipextreme.model.Orientation;
+import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
+import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.network.NetworkClient;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListener;
@@ -18,7 +23,6 @@ import java.awt.event.MouseListener;
 public class Controller {
 // ------------------------------ FIELDS ------------------------------
 
-    private Game game;
     private GUI gui;
     private NetworkClient network;
     private LocalClientController localClientController;
@@ -26,12 +30,9 @@ public class Controller {
 
     private IErrorListener serverErrorListener;
 
-    private boolean playerIsReloading;
-
 // --------------------------- CONSTRUCTORS ---------------------------
 
     public Controller(Game game, GUI gui) {
-        this.game = game;
         this.gui = gui;
         this.network = new NetworkClient();
 
@@ -153,9 +154,6 @@ public class Controller {
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
-    public void setPlayerIsReloading(boolean playerIsReloading) {
-        this.playerIsReloading = playerIsReloading;
-    }
 
 // -------------------------- OTHER METHODS --------------------------
 
@@ -178,8 +176,6 @@ public class Controller {
         panelGame.getPanelPlayerBoard().initializeBoardPanel("You", boardSize);
         panelGame.getPanelEnemyBoard().initializeBoardPanel("Enemy", boardSize);
         gui.getFrame().pack();
-        localClientController.addPlayerBoardListener();
-        localClientController.addEnemyBoardListener();
         addBoardMouseListener(panelGame.getPanelPlayerBoard().getButtonsField());
         addBoardMouseListener(panelGame.getPanelEnemyBoard().getButtonsField());
     }
@@ -222,6 +218,7 @@ public class Controller {
 
     private void updatePreview(int startX, int startY, JButton[][] board) {
         if (network.isConnected()) {
+            multiPlayerClientController.updatePreview(startX, startY, board);
         } else {
             localClientController.updatePreview(startX, startY, board);
         }
@@ -316,6 +313,22 @@ public class Controller {
         }
     }
 
+    public boolean isItPossibleToPlaceShip(Player player, int startX, int startY, Orientation orientation) {
+        try {
+            if (player.isItPossibleToPlaceShip(startX, startY, orientation)) {
+                return true;
+            }
+        } catch (ShipOutOfBoardException e) {
+        } catch (ShipAlreadyPlacedException e) {
+        } catch (FieldOutOfBoardException e) {
+        }
+        return false;
+    }
+
+    public boolean isItPossibleToShoot(Board board, int startX, int startY) {
+        FieldState fs = board.getFieldStates(false)[startY][startX];
+        return fs == null;
+    }
     public void updateShipSelection(Player player) {
         GamePanel panelGame = gui.getPanelGame();
         new ShipStatusUpdater(this, panelGame, player).execute();

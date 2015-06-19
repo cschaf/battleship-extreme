@@ -209,12 +209,6 @@ public class GamePanel extends JPanel {
 
 		comboBoxEnemySelection = new JComboBox();
 		panel.add(comboBoxEnemySelection, c);
-
-/*		c.weightx = 0;
-		c.gridx++;
-		buttonApplyEnemy = new JButton("OK");
-		panel.add(buttonApplyEnemy, c);*/
-
 		return panel;
 	}
 

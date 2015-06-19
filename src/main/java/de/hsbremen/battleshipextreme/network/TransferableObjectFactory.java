@@ -1,11 +1,10 @@
 package de.hsbremen.battleshipextreme.network;
 
 import de.hsbremen.battleshipextreme.model.Board;
-import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.Settings;
-import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
+import de.hsbremen.battleshipextreme.model.ship.ShipType;
 import de.hsbremen.battleshipextreme.network.transfarableObject.*;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Error;
 
@@ -56,15 +55,15 @@ public class TransferableObjectFactory {
         return new Turn(attackingPlayerName, attackedPlayerName, fieldX, fieldY, isHorizontal, currentShip);
     }
 
-    public static ITransferable CreateClientBoard(Board board) {
-        return new ClientBoard(board);
-    }
-
     public static ITransferable CreateServerInfo(InfoSendingReason reason) {
         return new ServerInfo(reason);
     }
 
     public static ITransferable CreatePlayerNames(ArrayList<String> names) {
         return new PlayerNames(names);
+    }
+
+    public static ITransferable CreateShipPlacedInformation(int xPos, int yPos, Orientation orientation, ShipType type) {
+        return new ShipPlacedInformation(xPos, yPos, orientation, type);
     }
 }

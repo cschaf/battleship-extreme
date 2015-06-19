@@ -14,8 +14,6 @@ import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.model.ship.ShipType;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -102,6 +100,8 @@ public class LocalClientController implements Serializable {
 
     private void initializeGameView() {
         ctrl.createBoardPanels(game.getBoardSize());
+        addPlayerBoardListener();
+        addEnemyBoardListener();
         gui.showPanel(GUI.GAME_PANEL);
         updateEnemyBoard();
         updatePlayerBoard();
@@ -536,10 +536,10 @@ public class LocalClientController implements Serializable {
         }
 
         if (!game.isReady()) {
-            possible = isItPossibleToPlaceShip(startX, startY, orientation);
+            possible = ctrl.isItPossibleToPlaceShip(game.getCurrentPlayer(), startX, startY, orientation);
             range = game.getCurrentPlayer().getCurrentShip().getSize();
         } else {
-            possible = isItPossibleToShoot(startX, startY);
+            possible = ctrl.isItPossibleToShoot(game.getCurrentPlayer().getBoard(), startX, startY);
             range = game.getCurrentPlayer().getCurrentShip().getShootingRange();
         }
 
@@ -553,27 +553,5 @@ public class LocalClientController implements Serializable {
         }
     }
 
-    private boolean isItPossibleToPlaceShip(int startX, int startY, Orientation orientation) {
-        try {
-            if (game.getCurrentPlayer().isItPossibleToPlaceShip(startX, startY, orientation)) {
-                return true;
-            }
-        } catch (ShipOutOfBoardException e) {
-        } catch (ShipAlreadyPlacedException e) {
-        } catch (FieldOutOfBoardException e) {
-        }
-        return false;
-    }
 
-    private boolean isItPossibleToShoot(int startX, int startY) {
-        Player currentEnemy = game.getPlayerByName(gui.getPanelGame().getComboBoxEnemySelection().getSelectedItem() + "");
-        FieldState fs = null;
-        try {
-            fs = currentEnemy.getFieldStates(false)[startY][startX];
-        } catch (FieldOutOfBoardException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return fs == null;
-    }
 }

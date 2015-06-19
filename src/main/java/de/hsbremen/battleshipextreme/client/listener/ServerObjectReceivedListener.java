@@ -89,23 +89,24 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 gui.getPanelGame().getLabelInfo().setText("Ships will be placed...");
                 break;
             case PlaceYourShips:
-                //ctrl.setPlayerBoardEnabled(true);
+                ctrl.setPlayerBoardEnabled(true);
                 break;
             case GameReady:
+                ctrl.setIsReady(true);
                 gui.getPanelGame().getButtonShowYourShips().setEnabled(true);
-                //ctrl.setEnemySelectionEnabled(true);
+                ctrl.setEnemySelectionEnabled(true);
                 break;
             case MakeTurn:
-/*                boolean reloading = ctrl.handleAllShipsAreReloading();
+                boolean reloading = ctrl.handleAllShipsAreReloading();
                 gui.getPanelGame().getButtonShowYourShips().setEnabled(true);
                 if (!reloading) {
                     ctrl.setEnemyBoardEnabled(true);
                 } else {
                     ctrl.setPlayerIsReloading(true);
                     ctrl.setDoneButtonEnabled(true);
-                }*/
-
+                }
                 break;
+
             case PlayerIsReloading:
                 //ctrl.setInfoLabelMessage(game.getCurrentPlayer().getName() + " is reloading...");
                 break;
@@ -124,7 +125,7 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
 /*        for (Player player : game.getPlayers()){
             enemies.put(player.getName(), player.getBoard());
         }*/
-        //ctrl.nextOnline();
+        //ctrl.next();
     }
 
     public void onPlayerNamesObjectReceived(EventArgs<PlayerNames> eventArgs) {

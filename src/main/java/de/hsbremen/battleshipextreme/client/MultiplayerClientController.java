@@ -4,13 +4,21 @@ import de.hsbremen.battleshipextreme.client.listener.ServerGameBrowserListener;
 import de.hsbremen.battleshipextreme.client.listener.ServerObjectReceivedListener;
 import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.FieldState;
+import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
+import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener;
 import de.hsbremen.battleshipextreme.model.network.NetworkClient;
+import de.hsbremen.battleshipextreme.model.player.HumanPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
+import de.hsbremen.battleshipextreme.model.ship.Ship;
+import de.hsbremen.battleshipextreme.model.ship.ShipType;
+import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -34,6 +42,8 @@ public class MultiPlayerClientController implements Serializable {
     private String connectedAsPlayer;
     private Player player;
     private HashMap<String, Board> enemies;
+    private boolean playerIsReloading;
+    private boolean isReady;
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
@@ -51,6 +61,9 @@ public class MultiPlayerClientController implements Serializable {
     public void addAllListeners() {
         addServerConnectionListener();
         addServerGameBrowserListeners();
+        addApplySettingsListener();
+        addDoneButtonListener();
+
     }
 
     private void addApplySettingsListener() {
@@ -114,53 +127,34 @@ public class MultiPlayerClientController implements Serializable {
     }
 
     private void addDoneButtonListener() {
-/*        GamePanel panelGame = gui.getPanelGame();
+        GamePanel panelGame = gui.getPanelGame();
         panelGame.getButtonDone().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (network.isConnected()) {
-                    nextOnline();
-                } else {
-                    next();
-                }
+                next();
             }
-        });*/
+        });
     }
 
     private void addEnemyBoardListener() {
-/*        GamePanel panelGame = gui.getPanelGame();
+        GamePanel panelGame = gui.getPanelGame();
         JButton[][] playerBoard = panelGame.getPanelEnemyBoard().getButtonsField();
         for (int i = 0; i < playerBoard.length; i++) {
             for (int j = 0; j < playerBoard.length; j++) {
                 playerBoard[i][j].addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         FieldButton fieldButton = (FieldButton) e.getSource();
-                        String attackingPlayerName = game.getCurrentPlayer().getName();
-                        String attackedPlayerName = panelGame.getComboBoxEnemySelection().getSelectedItem().toString();
+                        String attackingPlayerName = player.getName();
+                        String attackedPlayerName = gui.getPanelGame().getComboBoxEnemySelection().getSelectedItem().toString();
                         int xPos = fieldButton.getxPos();
                         int yPos = fieldButton.getyPos();
-                        boolean isHorizontal = panelGame.getRadioButtonHorizontalOrientation().isSelected();
-                        //Ship currentShip = game.getCurrentPlayer().getCurrentShip();
-                        String orientation = isHorizontal ? "horizontal" : "vertical";
-                        if (network.isConnected()) {
-                            lastTurn = TransferableObjectFactory.CreateTurn(attackingPlayerName, attackedPlayerName, xPos, yPos, isHorizontal, currentShip);
-                            setEnemyBoardEnabled(false);
-                            gui.getPanelGame().getButtonDone().setEnabled(true);
-                        } else {
-                            try {
-                                boolean turnMade = makeTurn(attackedPlayerName, xPos, yPos, isHorizontal);
-                                if (turnMade) {
-                                    appendGameLogEntry("Player " + attackingPlayerName + " attacked " + attackedPlayerName
-                                            + " " + orientation + " with ship " + currentShip.getType().toString() + " at start Field X:" + xPos + "  Y: " + yPos);
-                                }
-                            } catch (FieldOutOfBoardException e1) {
-                                // TODO Auto-generated catch block
-                                e1.printStackTrace();
-                            }
-                        }
+                        boolean isHorizontal = gui.getPanelGame().getRadioButtonHorizontalOrientation().isSelected();
+                        Ship currentShip = player.getCurrentShip();
+                        network.getSender().sendTurn(TransferableObjectFactory.CreateTurn(attackingPlayerName, attackedPlayerName, xPos, yPos, isHorizontal, currentShip));
+                        ctrl.setEnemyBoardEnabled(false);
                     }
                 });
             }
-        }*/
+        }
     }
 
     public void setPlayerNames(ArrayList<String> names) {
@@ -178,8 +172,27 @@ public class MultiPlayerClientController implements Serializable {
         this.connectedAsPlayer = connectedAsPlayer;
     }
 
+    private void placeShip(int xPos, int yPos, boolean isHorizontal) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException {
+        Orientation orientation = isHorizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+
+        boolean possible = player.placeShip(xPos, yPos, orientation);
+        if (possible) {
+            network.getSender().sendShipPlacedInformation(xPos, yPos, orientation, player.getCurrentShip().getType());
+            player.nextShip();
+        }
+
+        if (player.hasPlacedAllShips()) {
+            ctrl.setPlayerBoardEnabled(false);
+            ctrl.setDoneButtonEnabled(false);
+            ctrl.setInfoLabelMessage(player + " placed all ships");
+        }
+
+        updatePlayerBoard();
+        ctrl.updateShipSelection(player);
+    }
+
     private void addPlayerBoardListener() {
-/*        GamePanel panelGame = gui.getPanelGame();
+        GamePanel panelGame = gui.getPanelGame();
         JButton[][] playerBoard = panelGame.getPanelPlayerBoard().getButtonsField();
         for (int i = 0; i < playerBoard.length; i++) {
             for (int j = 0; j < playerBoard.length; j++) {
@@ -187,7 +200,7 @@ public class MultiPlayerClientController implements Serializable {
                     public void actionPerformed(ActionEvent e) {
                         FieldButton fieldButton = (FieldButton) e.getSource();
                         try {
-                            //placeShip(fieldButton.getxPos(), fieldButton.getyPos(), panelGame.getRadioButtonHorizontalOrientation().isSelected());
+                            placeShip(fieldButton.getxPos(), fieldButton.getyPos(), gui.getPanelGame().getRadioButtonHorizontalOrientation().isSelected());
                         } catch (ShipAlreadyPlacedException e1) {
                             // TODO Auto-generated catch block
                             e1.printStackTrace();
@@ -201,7 +214,7 @@ public class MultiPlayerClientController implements Serializable {
                     }
                 });
             }
-        }*/
+        }
     }
 
     private void addServerConnectionListener() {
@@ -215,7 +228,7 @@ public class MultiPlayerClientController implements Serializable {
                     // Verbinde zum Server
                     network.connect();
                     // Sende login
-                    if (network.isConnected()){
+                    if (network.isConnected()) {
                         network.getSender().sendLogin(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
                     }
                     //game.setConnectedAsPlayer(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
@@ -312,19 +325,19 @@ public class MultiPlayerClientController implements Serializable {
         network.addServerObjectReceivedListener(serverObjectReceivedListener);
     }
 
-    /*    public boolean handleAllShipsAreReloading() {
-        if (game.getCurrentPlayer().areAllShipsReloading()) {
-            setInfoLabelMessage("All ships of " + game.getCurrentPlayer() + " are reloading");
-            setEnemyBoardEnabled(false);
-            setShipSelectionEnabled(false);
+    public boolean handleAllShipsAreReloading() {
+        if (player.areAllShipsReloading()) {
+            ctrl.setInfoLabelMessage("All ships of " + player + " are reloading");
+            ctrl.setEnemyBoardEnabled(false);
+            ctrl.setShipSelectionEnabled(false);
             return true;
         } else {
-            setInfoLabelMessage(game.getCurrentPlayer() + " is shooting");
+            ctrl.setInfoLabelMessage(player + " is shooting");
             enableAvailableShips();
-            selectFirstAvailableShipType();
+            //ctrl.selectFirstAvailableShipType();
             return false;
         }
-    }*/
+    }
 
     private void setupSettingsPanelForMultiplayerGame() {
         // enable/disable controls for necessary game options
@@ -429,16 +442,19 @@ public class MultiPlayerClientController implements Serializable {
     }
 
     public void enableAvailableShips() {
-/*        GamePanel panelGame = gui.getPanelGame();
-        Player currentPlayer = game.getCurrentPlayer();
-        panelGame.getRadioButtonDestroyer().setEnabled(currentPlayer.isShipOfTypeAvailable(ShipType.DESTROYER));
-        panelGame.getRadioButtonFrigate().setEnabled(currentPlayer.isShipOfTypeAvailable(ShipType.FRIGATE));
-        panelGame.getRadioButtonCorvette().setEnabled(currentPlayer.isShipOfTypeAvailable(ShipType.CORVETTE));
-        panelGame.getRadioButtonSubmarine().setEnabled(currentPlayer.isShipOfTypeAvailable(ShipType.SUBMARINE));*/
+        GamePanel panelGame = gui.getPanelGame();
+        ;
+        panelGame.getRadioButtonDestroyer().setEnabled(player.isShipOfTypeAvailable(ShipType.DESTROYER));
+        panelGame.getRadioButtonFrigate().setEnabled(player.isShipOfTypeAvailable(ShipType.FRIGATE));
+        panelGame.getRadioButtonCorvette().setEnabled(player.isShipOfTypeAvailable(ShipType.CORVETTE));
+        panelGame.getRadioButtonSubmarine().setEnabled(player.isShipOfTypeAvailable(ShipType.SUBMARINE));
     }
 
     public void initializeClientAfterJoined(NetGame game) {
         ctrl.createBoardPanels(game.getBoardSize());
+        player = new HumanPlayer(game.getBoardSize(), game.getSettings().getDestroyers(), game.getSettings().getFrigates(), game.getSettings().getCorvettes(), game.getSettings().getSubmarines());
+        addPlayerBoardListener();
+        addEnemyBoardListener();
         // disable all controls till game ready to start
         ctrl.setBoardsEnabled(false);
         ctrl.setEnemySelectionEnabled(false);
@@ -485,32 +501,26 @@ public class MultiPlayerClientController implements Serializable {
         return false;
     }
 
-    public void nextOnline() {
-/*        if (!game.isGameover()) {
-            if (!game.isReady()) {
-                if (game.getCurrentPlayer().hasPlacedAllShips()) {
-                    // Schicke jetzt das Board an den Server
-                    network.getSender().sendBoard(game.getCurrentPlayer().getBoard());
-                    setBoardsEnabled(false);
-                    gui.getPanelGame().getButtonDone().setEnabled(false);
-                }
-            } else {
-                // alle Spieler habe ihre Schiffe gesetzt
-                setBoardsEnabled(false);
-                gui.getPanelGame().getButtonDone().setEnabled(false);
-                if (lastTurn != null) {
-                    network.getSender().sendTurn(lastTurn);
-                    lastTurn = null;
-                }
+    public void setPlayerIsReloading(boolean playerIsReloading) {
+        this.playerIsReloading = playerIsReloading;
+    }
 
-                if (playerIsReloading) {
-                    network.getSender().sendPlayerIsReloading();
-                    playerIsReloading = false;
-                }
+    public void next() {
+        if (!isReady()) {
+            if (player.hasPlacedAllShips()) {
+                ctrl.setBoardsEnabled(false);
+                gui.getPanelGame().getButtonDone().setEnabled(false);
             }
         } else {
-            network.getSender().sendPlayerWon();
-        }*/
+            // alle Spieler habe ihre Schiffe gesetzt
+            ctrl.setBoardsEnabled(false);
+            gui.getPanelGame().getButtonDone().setEnabled(false);
+
+            if (playerIsReloading) {
+                network.getSender().sendPlayerIsReloading();
+                playerIsReloading = false;
+            }
+        }
     }
 
     private void removeServerGameBrowserListeners() {
@@ -531,8 +541,8 @@ public class MultiPlayerClientController implements Serializable {
         }
     }
 
-    private void updatePreview(int startX, int startY, JButton[][] board) {
-/*        int boardSize = board.length;
+    public void updatePreview(int startX, int startY, JButton[][] board) {
+        int boardSize = board.length;
         boolean isHorizontal = gui.getPanelGame().getRadioButtonHorizontalOrientation().isSelected();
         Orientation orientation = isHorizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL;
         int xDirection = isHorizontal ? 1 : 0;
@@ -549,12 +559,12 @@ public class MultiPlayerClientController implements Serializable {
             }
         }
 
-        if (!game.isReady()) {
-            possible = isItPossibleToPlaceShip(startX, startY, orientation);
-            range = game.getCurrentPlayer().getCurrentShip().getSize();
+        if (!isReady()) {
+            possible = ctrl.isItPossibleToPlaceShip(player, startX, startY, orientation);
+            range = player.getCurrentShip().getSize();
         } else {
-            possible = isItPossibleToShoot(startX, startY);
-            range = game.getCurrentPlayer().getCurrentShip().getShootingRange();
+            possible = ctrl.isItPossibleToShoot(enemies.get(gui.getPanelGame().getComboBoxEnemySelection().getSelectedItem()), startX, startY);
+            range = player.getCurrentShip().getShootingRange();
         }
 
         for (int i = 0; i < range; i++) {
@@ -564,7 +574,7 @@ public class MultiPlayerClientController implements Serializable {
             if (x < boardSize && y < boardSize) {
                 board[y][x].setBackground(c);
             }
-        }*/
+        }
     }
 
 
@@ -572,7 +582,28 @@ public class MultiPlayerClientController implements Serializable {
         ctrl.resizeServerGameListColumns();
     }
 
-    public void setBoardsEnabled(boolean b) {
-        ctrl.setBoardsEnabled(b);
+    public void setPlayerBoardEnabled(boolean b) {
+        ctrl.setPlayerBoardEnabled(b);
+    }
+
+    public void setEnemySelectionEnabled(boolean b) {
+        ctrl.setEnemySelectionEnabled(b);
+    }
+
+    public boolean isReady() {
+        return isReady;
+    }
+
+    public void setIsReady(boolean isReady) {
+        this.isReady = isReady;
+    }
+
+
+    public void setEnemyBoardEnabled(boolean b) {
+        ctrl.setEnemyBoardEnabled(b);
+    }
+
+    public void setDoneButtonEnabled(boolean b) {
+        ctrl.setDoneButtonEnabled(b);
     }
 }

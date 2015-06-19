@@ -1,6 +1,5 @@
 package de.hsbremen.battleshipextreme.server;
 
-import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.network.IDisposable;
 import de.hsbremen.battleshipextreme.network.TransferableType;
 import de.hsbremen.battleshipextreme.network.transfarableObject.TransferableObject;
@@ -18,7 +17,6 @@ public class ClientHandler extends TransferableObject implements IDisposable, Se
     private transient ClientSender clientSender;
     private transient ClientListener clientListener;
     private String username;
-    private Board ownBoard;
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
@@ -89,13 +87,5 @@ public class ClientHandler extends TransferableObject implements IDisposable, Se
 
     public TransferableType getType() {
         return TransferableType.ClientHandler;
-    }
-
-    public Board getOwnBoard() {
-        return ownBoard;
-    }
-
-    public void setOwnBoard(Board ownBoard) {
-        this.ownBoard = ownBoard;
     }
 }
