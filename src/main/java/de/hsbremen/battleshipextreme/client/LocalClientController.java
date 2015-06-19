@@ -38,13 +38,16 @@ public class LocalClientController implements Serializable {
         this.game = game;
         this.gui = gui;
         this.ctrl = ctrl;
+    }
+
+    public void addAllListeners(){
         addMenuListeners();
         addDoneButtonListener();
         addApplySettingsListener();
         addShipSelectionListeners();
         addEnemySelectionListener();
+        addShowYourShipsButtonListener();
     }
-
     public void addApplySettingsListener() {
         gui.getPanelSettings().getButtonApplySettings().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -179,10 +182,12 @@ public class LocalClientController implements Serializable {
         panelGame.getButtonDone().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setShipSelectionEnabled(false);
+                showEmptyPlayerBoard(game.getCurrentPlayer().getName());
                 next();
             }
         });
     }
+
 
     public void next() {
         if (!game.isGameover()) {
@@ -210,8 +215,10 @@ public class LocalClientController implements Serializable {
                     ctrl.setShipSelectionEnabled(false);
                 } else {
                     if (game.getCurrentPlayer().getType() == PlayerType.SMART_AI) {
+                        gui.getPanelGame().getButtonShowYourShips().setEnabled(false);
                         makeAiTurn();
                     } else {
+                        gui.getPanelGame().getButtonShowYourShips().setEnabled(true);
                         ctrl.setInfoLabelMessage(game.getCurrentPlayer() + " is shooting");
                         if (game.getCurrentPlayer().getType() == PlayerType.HUMAN){
                             enableAvailableShips();

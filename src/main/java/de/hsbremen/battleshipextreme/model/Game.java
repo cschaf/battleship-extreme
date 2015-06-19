@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class Game implements Serializable {
-    private String connectedAsPlayer;
     private Player[] players;
     private Player currentPlayer;
     private Player winner;
@@ -357,11 +356,5 @@ public class Game implements Serializable {
         return shipMap;
     }
 
-    public String getConnectedAsPlayer() {
-        return connectedAsPlayer;
-    }
 
-    public void setConnectedAsPlayer(String connectedAsPlayer) {
-        this.connectedAsPlayer = connectedAsPlayer;
-    }
 }

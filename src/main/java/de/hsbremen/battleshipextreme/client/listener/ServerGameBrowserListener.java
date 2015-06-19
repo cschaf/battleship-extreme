@@ -2,7 +2,8 @@ package de.hsbremen.battleshipextreme.client.listener;
 
 import de.hsbremen.battleshipextreme.client.Controller;
 import de.hsbremen.battleshipextreme.client.GameListModel;
-import de.hsbremen.battleshipextreme.client.PasswordInputPanel;
+import de.hsbremen.battleshipextreme.client.MultiplayerClientController;
+import de.hsbremen.battleshipextreme.model.network.NetworkClient;
 import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 
 import javax.swing.*;
@@ -17,9 +18,11 @@ import java.awt.event.MouseListener;
  * Created by cschaf on 03.06.2015.
  */
 public class ServerGameBrowserListener implements TableColumnModelListener, MouseListener {
-    private Controller ctrl;
+    private NetworkClient network;
+    private MultiplayerClientController ctrl;
 
-    public ServerGameBrowserListener(Controller ctrl) {
+    public ServerGameBrowserListener(NetworkClient network,MultiplayerClientController ctrl) {
+        this.network = network;
         this.ctrl = ctrl;
     }
 
@@ -48,9 +51,9 @@ public class ServerGameBrowserListener implements TableColumnModelListener, Mous
             GameListModel model = (GameListModel) target.getModel();
             NetGame game = model.getGame(rowIndex);
             if (game.isPrivate()) {
-                //ctrl.createPasswordPrompt(game);
+                ctrl.createPasswordPrompt(game);
             } else {
-                //ctrl.join(game.getId());
+                network.join(game.getId());
             }
         }
     }

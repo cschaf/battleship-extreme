@@ -13,33 +13,33 @@ import de.hsbremen.battleshipextreme.network.TransferableType;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.transfarableObject.*;
 
+import javax.swing.*;
+
 /**
  * Created by cschaf on 03.06.2015.
  */
 public class ServerObjectReceivedListener implements IServerObjectReceivedListener {
     private GUI gui;
-    private Game game;
     private NetworkClient network;
     private Controller ctrl;
 
-    public ServerObjectReceivedListener(GUI gui, Game game, NetworkClient network, Controller ctrl) {
+    public ServerObjectReceivedListener(GUI gui, NetworkClient network, Controller ctrl) {
         this.gui = gui;
-        this.game = game;
         this.network = network;
         this.ctrl = ctrl;
     }
 
     public void onObjectReceived(EventArgs<ITransferable> eventArgs) {
-        //JOptionPane.showMessageDialog(gui.getFrame(), eventArgs.getItem().getType().toString() + ": " + eventArgs.getItem(), "Info", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(gui.getFrame(), eventArgs.getItem().getType().toString() + ": " + eventArgs.getItem(), "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void onMessageObjectReceived(EventArgs<Message> eventArgs) {
 
-        if (eventArgs.getItem().getType() == TransferableType.Error) {
+/*        if (eventArgs.getItem().getType() == TransferableType.Error) {
             network.getErrorHandler().errorHasOccurred(new EventArgs<ITransferable>(this, eventArgs.getItem()));
         } else {
             new LogUpdater(gui.getPanelGame().getTextAreaChatLog(), eventArgs.getItem().toString()).execute();
-        }
+        }*/
     }
 
     public void onClientInfoObjectReceived(EventArgs<ClientInfo> eventArgs) {
@@ -54,11 +54,11 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
     }
 
     public void onGameObjectReceived(EventArgs<NetGame> eventArgs) {
-        NetGame game = eventArgs.getItem();
+/*        NetGame game = eventArgs.getItem();
         //ctrl.initializeClientAfterJoined(game);
         // disable all controls till game ready to start
         ctrl.setBoardsEnabled(false);
-        gui.getPanelGame().getLabelInfo().setText("Waiting for other players...");
+        gui.getPanelGame().getLabelInfo().setText("Waiting for other players...");*/
     }
 
     public void onTurnObjectReceived(EventArgs<Turn> eventArgs) {
@@ -115,27 +115,24 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
 
                 break;
             case PlayerIsReloading:
-                ctrl.setInfoLabelMessage(game.getCurrentPlayer().getName() + " is reloading...");
-                game.nextPlayer();
+                //ctrl.setInfoLabelMessage(game.getCurrentPlayer().getName() + " is reloading...");
                 break;
             case PlayerWon:
-                String winnerName = game.getWinner() != null ? game.getWinner().getName() : "You";
+/*                String winnerName = game.getWinner() != null ? game.getWinner().getName() : "You";
                 ctrl.setInfoLabelMessage(winnerName + " won ");
                 ctrl.setDoneButtonEnabled(false);
                 ctrl.setEnemyBoardEnabled(false);
-                ctrl.setEnemySelectionEnabled(false);
-                game.nextPlayer();
+                ctrl.setEnemySelectionEnabled(false);*/
                 break;
         }
     }
 
     public void onPlayerBoardsObjectReceived(EventArgs<PlayerBoards> eventArgs) {
         PlayerBoards boards = eventArgs.getItem();
-        game.setPlayerBoards(boards.getBoards());
         //ctrl.nextOnline();
     }
 
     public void onPlayerNamesObjectReceived(EventArgs<PlayerNames> eventArgs) {
-        ctrl.setPlayerNames(eventArgs.getItem().getNames());
+        //ctrl.setPlayerNames(eventArgs.getItem().getNames());
     }
 }

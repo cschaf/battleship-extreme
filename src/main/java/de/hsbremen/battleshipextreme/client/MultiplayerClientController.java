@@ -1,9 +1,11 @@
 package de.hsbremen.battleshipextreme.client;
 
 import de.hsbremen.battleshipextreme.client.listener.ServerGameBrowserListener;
+import de.hsbremen.battleshipextreme.client.listener.ServerObjectReceivedListener;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener;
 import de.hsbremen.battleshipextreme.model.network.NetworkClient;
+import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 
 import javax.swing.*;
@@ -12,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by cschaf on 18.06.2015.
@@ -24,6 +27,7 @@ public class MultiplayerClientController implements Serializable {
     private NetworkClient network;
     private ServerGameBrowserListener serverGameBrowserListener;
     private IServerObjectReceivedListener serverObjectReceivedListener;
+    private String connectedAsPlayer;
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
@@ -31,10 +35,16 @@ public class MultiplayerClientController implements Serializable {
         this.network = network;
         this.gui = gui;
         this.ctrl = ctrl;
-        //this.serverObjectReceivedListener = new ServerObjectReceivedListener(this.gui, game, network, this);
+        this.serverObjectReceivedListener = new ServerObjectReceivedListener(this.gui, network, ctrl);
+        this.serverGameBrowserListener = new ServerGameBrowserListener(network, this);
+
     }
 
-// -------------------------- OTHER METHODS --------------------------
+    // -------------------------- OTHER METHODS --------------------------
+    public void addAllListeners() {
+        addServerConnectionListener();
+        addServerGameBrowserListeners();
+    }
 
     private void addApplySettingsListener() {
 /*        gui.getPanelSettings().getButtonApplySettings().addActionListener(new ActionListener() {
@@ -84,6 +94,15 @@ public class MultiplayerClientController implements Serializable {
                 }
             }
         });*/
+    }
+    public void updateEnemyOnlineSelection(String playerName) {
+/*        GamePanel panelGame = gui.getPanelGame();
+        ArrayList<Player> enemies = game.getEnemiesOfPlayer(playerName);
+        JComboBox<String> enemyComboBox = panelGame.getComboBoxEnemySelection();
+        enemyComboBox.removeAllItems();
+        for (Player enemy : enemies) {
+            enemyComboBox.addItem(enemy.getName());
+        }*/
     }
 
     private void addDoneButtonListener() {
@@ -136,6 +155,19 @@ public class MultiplayerClientController implements Serializable {
         }*/
     }
 
+    public void setPlayerNames(ArrayList<String> names) {
+/*        for (int i = 0; i < game.getPlayers().length; i++) {
+            game.getPlayers()[i].setName(names.get(i));
+        }
+        updateEnemyOnlineSelection(game.getConnectedAsPlayer());*/
+    }
+    public String getConnectedAsPlayer() {
+        return connectedAsPlayer;
+    }
+
+    public void setConnectedAsPlayer(String connectedAsPlayer) {
+        this.connectedAsPlayer = connectedAsPlayer;
+    }
     private void addPlayerBoardListener() {
 /*        GamePanel panelGame = gui.getPanelGame();
         JButton[][] playerBoard = panelGame.getPanelPlayerBoard().getButtonsField();
@@ -173,7 +205,9 @@ public class MultiplayerClientController implements Serializable {
                     // Verbinde zum Server
                     network.connect();
                     // Sende login
-                    network.getSender().sendLogin(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
+                    if (network.isConnected()){
+                        network.getSender().sendLogin(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
+                    }
                     //game.setConnectedAsPlayer(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
                 }
             }
@@ -196,11 +230,57 @@ public class MultiplayerClientController implements Serializable {
                 if (rowIndex > -1) {
                     GameListModel model = (GameListModel) gui.getPanelServerConnection().getPnlServerGameBrowser().getTblGames().getModel();
                     NetGame game = model.getGame(rowIndex);
-                    createPasswordPrompt(game);
+                    if (game.isPrivate()) {
+                        createPasswordPrompt(game);
+                    } else {
+                        network.join(game.getId());
+                    }
                 }
             }
         });
 // TODO: das gehört hier nicht hin
+        gui.getPanelGame().getTextFieldChatMessage().addKeyListener(new KeyListener() {
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    sendMessage();
+                }
+            }
+
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
+
+        gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnRefresh().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                network.getSender().requestGameList();
+            }
+        });
+
+        gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnBack().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                gui.showPanel(GUI.MAIN_MENU_PANEL);
+            }
+        });
+
+        gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnCreate().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setupSettingsPanelForMultiplayerGame();
+                gui.showPanel(GUI.SETTINGS_PANEL);
+            }
+        });
+
+        gui.getPanelGame().getButtonSendMessage().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                sendMessage();
+            }
+        });
+
+
         gui.getPanelGame().getTextFieldChatMessage().addKeyListener(new KeyListener() {
             public void keyTyped(KeyEvent e) {
 
@@ -236,6 +316,26 @@ public class MultiplayerClientController implements Serializable {
         }
     }*/
 
+    private void setupSettingsPanelForMultiplayerGame() {
+        // enable/disable controls for necessary game options
+        SettingsPanel settings = gui.getPanelSettings();
+        settings.getTextFieldAiPlayers().setEnabled(false);
+        settings.getTextFieldAiPlayers().setVisible(false);
+        settings.getLabelAiPlayers().setVisible(false);
+
+        settings.getLabelGameName().setEnabled(true);
+        settings.getLabelGameName().setVisible(true);
+
+        settings.getTextFieldGameName().setEnabled(true);
+        settings.getTextFieldGameName().setVisible(true);
+
+        settings.getLabelGamePassword().setEnabled(true);
+        settings.getLabelGamePassword().setVisible(true);
+
+        settings.getTextFieldGamePassword().setVisible(true);
+        settings.getTextFieldGamePassword().setEnabled(true);
+    }
+
     public void createPasswordPrompt(NetGame game) {
         PasswordInputPanel panel = new PasswordInputPanel();
         String[] options = new String[]{"OK", "Cancel"};
@@ -269,7 +369,6 @@ public class MultiplayerClientController implements Serializable {
     }
 
     private void addServerGameBrowserListeners() {
-        this.serverGameBrowserListener = new ServerGameBrowserListener(ctrl);
         gui.getPanelServerConnection().getPnlServerGameBrowser().getTblGames().getColumnModel().addColumnModelListener(serverGameBrowserListener);
         gui.getPanelServerConnection().getPnlServerGameBrowser().getTblGames().addMouseListener(serverGameBrowserListener);
     }
@@ -381,7 +480,7 @@ public class MultiplayerClientController implements Serializable {
             setInfoLabelMessage(game.getCurrentPlayer() + " attacked " + enemy);
         }
         return possible;*/
-        return  false;
+        return false;
     }
 
     public void nextOnline() {
@@ -464,5 +563,10 @@ public class MultiplayerClientController implements Serializable {
                 board[y][x].setBackground(c);
             }
         }*/
+    }
+
+
+    public void resizeServerGameListColumns() {
+        ctrl.resizeServerGameListColumns();
     }
 }

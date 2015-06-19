@@ -20,6 +20,7 @@ public class Controller {
     private GUI gui;
     private NetworkClient network;
     private LocalClientController localClientController;
+    private MultiplayerClientController multiplayerClientController;
 
     private IErrorListener serverErrorListener;
 
@@ -33,12 +34,11 @@ public class Controller {
         this.network = new NetworkClient();
 
         this.serverErrorListener = new ServerErrorListener(this.gui, this.network);
+        localClientController = new LocalClientController(game, gui, this);
 
-        this.localClientController = new LocalClientController(game, gui, this);
         addServerErrorListeners();
-
+        this.multiplayerClientController = new MultiplayerClientController(network, gui, this);
         addMenuListeners();
-        //addServerConnectionListener();
         //addServerGameBrowserListeners();
     }
 
@@ -52,6 +52,7 @@ public class Controller {
 
         gui.getMenuItemNewGame().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                localClientController.addAllListeners();
                 gui.showPanel(GUI.SETTINGS_PANEL);
                 setSaveButtonEnabled(false);
             }
@@ -65,6 +66,7 @@ public class Controller {
 
         gui.getPanelMainMenu().getButtonLocalGame().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                localClientController.addAllListeners();
                 setupSettingsPanelForLocalGame();
                 gui.showPanel(GUI.SETTINGS_PANEL);
             }
@@ -73,6 +75,7 @@ public class Controller {
 
         gui.getPanelMainMenu().getButtonMultiplayerGame().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                multiplayerClientController.addAllListeners();
                 gui.showPanel(GUI.SERVER_CONNECTION_PANEL);
             }
         });
@@ -84,9 +87,6 @@ public class Controller {
         });
 
         addNextLookAndFeelListener();
-        //addApplySettingsListener();
-        //addDoneButtonListener();
-        localClientController.addShowYourShipsButtonListener();
     }
 
     private void addNextLookAndFeelListener() {
@@ -163,72 +163,9 @@ public class Controller {
         }
     }
 
-    private void addServerConnectionListener() {
-        gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnRefresh().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                network.getSender().requestGameList();
-            }
-        });
-
-        gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnBack().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                gui.showPanel(GUI.MAIN_MENU_PANEL);
-            }
-        });
-
-        gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnCreate().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setupSettingsPanelForMultiplayerGame();
-                gui.showPanel(GUI.SETTINGS_PANEL);
-            }
-        });
-
-        gui.getPanelGame().getButtonSendMessage().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                sendMessage();
-            }
-        });
-
-
-        gui.getPanelGame().getTextFieldChatMessage().addKeyListener(new KeyListener() {
-            public void keyTyped(KeyEvent e) {
-
-            }
-
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    sendMessage();
-                }
-            }
-
-            public void keyReleased(KeyEvent e) {
-
-            }
-        });
-    }
-
     private void sendMessage() {
     }
 
-    private void setupSettingsPanelForMultiplayerGame() {
-        // enable/disable controls for necessary game options
-        SettingsPanel settings = gui.getPanelSettings();
-        settings.getTextFieldAiPlayers().setEnabled(false);
-        settings.getTextFieldAiPlayers().setVisible(false);
-        settings.getLabelAiPlayers().setVisible(false);
-
-        settings.getLabelGameName().setEnabled(true);
-        settings.getLabelGameName().setVisible(true);
-
-        settings.getTextFieldGameName().setEnabled(true);
-        settings.getTextFieldGameName().setVisible(true);
-
-        settings.getLabelGamePassword().setEnabled(true);
-        settings.getLabelGamePassword().setVisible(true);
-
-        settings.getTextFieldGamePassword().setVisible(true);
-        settings.getTextFieldGamePassword().setEnabled(true);
-    }
 
     public void appendGameLogEntry(String message) {
         gui.getPanelGame().getTextAreaGameLog().append(message + "\r\n\r\n");
@@ -286,10 +223,9 @@ public class Controller {
     }
 
     private void updatePreview(int startX, int startY, JButton[][] board) {
-        if (network.isConnected()){
-        }
-        else {
-            localClientController.updatePreview(startX,startY,board);
+        if (network.isConnected()) {
+        } else {
+            localClientController.updatePreview(startX, startY, board);
         }
     }
 
@@ -345,23 +281,6 @@ public class Controller {
 
     public void setInfoLabelMessage(String message) {
         gui.getPanelGame().getLabelInfo().setText(message);
-    }
-
-    public void setPlayerNames(ArrayList<String> names) {
-        for (int i = 0; i < game.getPlayers().length; i++) {
-            game.getPlayers()[i].setName(names.get(i));
-        }
-        updateEnemyOnlineSelection(game.getConnectedAsPlayer());
-    }
-
-    public void updateEnemyOnlineSelection(String playerName) {
-        GamePanel panelGame = gui.getPanelGame();
-        ArrayList<Player> enemies = game.getEnemiesOfPlayer(playerName);
-        JComboBox<String> enemyComboBox = panelGame.getComboBoxEnemySelection();
-        enemyComboBox.removeAllItems();
-        for (Player enemy : enemies) {
-            enemyComboBox.addItem(enemy.getName());
-        }
     }
 
     public void setShipSelectionEnabled(boolean enabled) {
