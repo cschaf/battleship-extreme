@@ -120,15 +120,7 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
         }
     }
 
-    public void onPlayerBoardsObjectReceived(EventArgs<PlayerBoards> eventArgs) {
-        PlayerBoards boards = eventArgs.getItem();
-/*        for (Player player : game.getPlayers()){
-            enemies.put(player.getName(), player.getBoard());
-        }*/
-        //ctrl.next();
-    }
-
     public void onPlayerNamesObjectReceived(EventArgs<PlayerNames> eventArgs) {
-        //ctrl.setPlayerNames(eventArgs.getItem().getNames());
+        ctrl.setPlayerNames(eventArgs.getItem().getNames());
     }
 }

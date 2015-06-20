@@ -93,6 +93,7 @@ public class Listener extends Thread implements IDisposable {
             errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage(e.getMessage())));
         }
         catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -163,15 +164,6 @@ public class Listener extends Thread implements IDisposable {
         for (int i = 0; i < listeners.length; i = i + 2) {
             if (listeners[i] == IServerObjectReceivedListener.class) {
                 ((IServerObjectReceivedListener) listeners[i + 1]).onClientInfoObjectReceived(eventArgs);
-            }
-        }
-    }
-
-    private void playerBoardsObjectReceived(EventArgs<PlayerBoards> eventArgs) {
-        Object[] listeners = this.listeners.getListenerList();
-        for (int i = 0; i < listeners.length; i = i + 2) {
-            if (listeners[i] == IServerObjectReceivedListener.class) {
-                ((IServerObjectReceivedListener) listeners[i + 1]).onPlayerBoardsObjectReceived(eventArgs);
             }
         }
     }

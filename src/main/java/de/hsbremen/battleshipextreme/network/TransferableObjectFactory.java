@@ -1,6 +1,5 @@
 package de.hsbremen.battleshipextreme.network;
 
-import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.Settings;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
@@ -45,10 +44,6 @@ public class TransferableObjectFactory {
 
     public static ITransferable CreateGameList(Vector<NetGame> gameList) {
         return new GameList(gameList);
-    }
-
-    public static ITransferable CreatePlayerBoards(ArrayList<Board> boards) {
-        return new PlayerBoards(boards);
     }
 
     public static ITransferable CreateTurn(String attackingPlayerName, String attackedPlayerName, int fieldX, int fieldY, boolean isHorizontal, Ship currentShip) {

@@ -24,9 +24,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by cschaf on 18.06.2015.
@@ -54,7 +52,6 @@ public class MultiPlayerClientController implements Serializable {
         this.enemies = new HashMap<String, Board>();
         this.serverObjectReceivedListener = new ServerObjectReceivedListener(this.gui, network, this);
         this.serverGameBrowserListener = new ServerGameBrowserListener(network, this);
-
     }
 
     // -------------------------- OTHER METHODS --------------------------
@@ -63,7 +60,6 @@ public class MultiPlayerClientController implements Serializable {
         addServerGameBrowserListeners();
         addApplySettingsListener();
         addDoneButtonListener();
-
     }
 
     private void addApplySettingsListener() {
@@ -158,10 +154,20 @@ public class MultiPlayerClientController implements Serializable {
     }
 
     public void setPlayerNames(ArrayList<String> names) {
-/*        for (int i = 0; i < game.getPlayersMap().length; i++) {
-            game.getPlayersMap()[i].setName(names.get(i));
+        ArrayList<String> keys = new ArrayList<String>(enemies.keySet());
+        LinkedHashMap<String, Board> result = new LinkedHashMap<String, Board>();
+        for (int i = 0; i < names.size(); i++) {
+            if (keys.size() <= 0) {
+                result.put(names.get(i), new Board(player.getBoard().getSize()));
+            } else {
+                result.put(names.get(i), enemies.get(keys.get(i)));
+            }
         }
-        updateEnemyOnlineSelection(game.getConnectedAsPlayer());*/
+        for (Map.Entry<String, Board> entry : result.entrySet()) {
+            System.out.println(entry.getKey() + " = " + entry.getValue());
+        }
+        enemies = result;
+        updateEnemySelection();
     }
 
     public String getConnectedAsPlayer() {
@@ -261,7 +267,7 @@ public class MultiPlayerClientController implements Serializable {
                 }
             }
         });
-// TODO: das gehört hier nicht hin
+// TODO: das gehï¿½rt hier nicht hin
         gui.getPanelGame().getTextFieldChatMessage().addKeyListener(new KeyListener() {
             public void keyTyped(KeyEvent e) {
 
@@ -577,7 +583,6 @@ public class MultiPlayerClientController implements Serializable {
         }
     }
 
-
     public void resizeServerGameListColumns() {
         ctrl.resizeServerGameListColumns();
     }
@@ -597,7 +602,6 @@ public class MultiPlayerClientController implements Serializable {
     public void setIsReady(boolean isReady) {
         this.isReady = isReady;
     }
-
 
     public void setEnemyBoardEnabled(boolean b) {
         ctrl.setEnemyBoardEnabled(b);

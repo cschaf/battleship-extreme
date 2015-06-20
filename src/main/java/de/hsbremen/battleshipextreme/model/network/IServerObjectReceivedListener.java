@@ -16,6 +16,5 @@ public interface IServerObjectReceivedListener extends EventListener{
     void onTurnObjectReceived(EventArgs<Turn> eventArgs);
     void onGameListObjectReceived(EventArgs<GameList> eventArgs);
     void onServerInfoObjectReceived(EventArgs<ServerInfo> eventArgs);
-    void onPlayerBoardsObjectReceived(EventArgs<PlayerBoards> eventArgs);
     void onPlayerNamesObjectReceived(EventArgs<PlayerNames> eventArgs);
 }
