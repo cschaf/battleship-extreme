@@ -20,6 +20,7 @@ public class Game extends TransferableObject {
     private int boardSize;
     private boolean hasCurrentPlayerMadeTurn;
     private Settings settings;
+    private Field[] markedFieldOfLastTurn;
 
     /**
      * Reads the settings and initializes the necessary game objects.
@@ -92,6 +93,7 @@ public class Game extends TransferableObject {
     }
 
     public boolean makeTurn(Player enemy, int xPos, int yPos, Orientation orientation) throws FieldOutOfBoardException {
+        Field[] markedFields = new Field[currentPlayer.getCurrentShip().getSize()];
         int xDirection = orientation == Orientation.HORIZONTAL ? 1 : 0;
         int yDirection = orientation == Orientation.VERTICAL ? 1 : 0;
         int x;
@@ -106,9 +108,12 @@ public class Game extends TransferableObject {
                     return false;
                 }
             }
+            markedFields[i] = enemy.getBoard().getField(x, y);
+
         }
         currentPlayer.getCurrentShip().shoot();
         hasCurrentPlayerMadeTurn = true;
+        this.markedFieldOfLastTurn = markedFields;
         return true;
     }
 
@@ -378,5 +383,9 @@ public class Game extends TransferableObject {
 
     public TransferableType getType() {
         return TransferableType.Game;
+    }
+
+    public Field[] getMarkedFieldOfLastTurn() {
+        return markedFieldOfLastTurn;
     }
 }

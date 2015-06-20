@@ -1,5 +1,6 @@
 package de.hsbremen.battleshipextreme.server;
 
+import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
 import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
@@ -218,10 +219,24 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
     public synchronized void addTurn(ClientHandler handler, ITransferable receivedObject) {
         Turn turn = (Turn) receivedObject;
         NetGame netGame = getGameByClient(handler);
+        ITransferable clientTurn = null;
         if (netGame != null) {
             netGame.addTurn(turn);
             turn.setGameId(netGame.getId());
-            this.multicast(turn, netGame.getJoinedPlayers());
+            Orientation orientation = turn.isHorizontal() ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+            try {
+                if (!turn.isReloading()) {
+                    netGame.getCurrentPlayer().setCurrentShipByType(turn.getShipType());
+                    netGame.makeTurn(netGame.getCurrentPlayer(), turn.getFieldX(), turn.getFieldY(), orientation);
+                    clientTurn = TransferableObjectFactory.CreateClientTurn(netGame.getMarkedFieldOfLastTurn(), false, turn.getAttackingPlayerName(), turn.getAttackedPlayerName());
+                } else {
+                    clientTurn = TransferableObjectFactory.CreateClientTurn(null, true, turn.getAttackingPlayerName(), null);
+                }
+                netGame.nextPlayer();
+            } catch (FieldOutOfBoardException e) {
+                e.printStackTrace();
+            }
+            this.multicast(clientTurn, netGame.getJoinedPlayers());
             initializeNextTurn(netGame);
         }
 
@@ -297,10 +312,6 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
     }
 
     private void sendGameReady(NetGame game) {
-/*        ITransferable boards = TransferableObjectFactory.CreatePlayerBoards(game.getAllBoards());
-        // send Boards to all players
-        multicast(boards, game.getJoinedPlayers());*/
-
         ITransferable rdy = TransferableObjectFactory.CreateServerInfo(InfoSendingReason.GameReady);
         multicast(rdy, game.getJoinedPlayers());
 
@@ -443,6 +454,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
                     allShipsSet = game.haveAllPlayersSetTheirShips();
                     // send to all player all Boards
                     if (allShipsSet) {
+                        sendGameReady(game);
                         initializeNextTurn(game);
                     } else {
                         if (player.hasPlacedAllShips()) {
@@ -452,8 +464,6 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
                     }
                 }
             }
-
-
         }
     }
 }

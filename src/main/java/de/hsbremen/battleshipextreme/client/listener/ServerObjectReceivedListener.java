@@ -39,6 +39,7 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
     public void onClientInfoObjectReceived(EventArgs<ClientInfo> eventArgs) {
         switch (eventArgs.getItem().getReason()) {
             case Connect:
+                ctrl.setConnectedAs(eventArgs.getItem().getUsername());
                 new LogUpdater(gui.getPanelGame().getTextAreaGameLog(), eventArgs.getItem().getUsername() + " has connected").execute();
                 break;
             case Disconnect:
@@ -50,21 +51,12 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
     public void onGameObjectReceived(EventArgs<NetGame> eventArgs) {
         NetGame game = eventArgs.getItem();
         ctrl.initializeClientAfterJoined(game);
+        ctrl.setPlayerName(ctrl.getConnectedAs());
         gui.getPanelGame().getLabelInfo().setText("Waiting for other players...");
     }
 
     public void onTurnObjectReceived(EventArgs<Turn> eventArgs) {
-/*        Turn turn = eventArgs.getItem();
 
-        //ctrl.selectShip(turn.getCurrentShip().getType());
-        try {
-            //ctrl.makeOnlineTurn(turn.getAttackingPlayerName(), turn.getAttackedPlayerName(), turn.getFieldX(), turn.getFieldY(), turn.isHorizontal());
-        } catch (FieldOutOfBoardException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        game.nextPlayer();
-        ctrl.updateShipSelection(game.getPlayerByName(game.getConnectedAsPlayer()));*/
     }
 
     public void onGameListObjectReceived(EventArgs<GameList> eventArgs) {
@@ -100,6 +92,7 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 boolean reloading = ctrl.handleAllShipsAreReloading();
                 gui.getPanelGame().getButtonShowYourShips().setEnabled(true);
                 if (!reloading) {
+                    ctrl.updateCurrentShip();
                     ctrl.setEnemyBoardEnabled(true);
                 } else {
                     ctrl.setPlayerIsReloading(true);
@@ -122,5 +115,9 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
 
     public void onPlayerNamesObjectReceived(EventArgs<PlayerNames> eventArgs) {
         ctrl.setPlayerNames(eventArgs.getItem().getNames());
+    }
+
+    public void onClientTurnObjectReceived(EventArgs<ClientTurn> eventArgs) {
+        ctrl.markFieldsFormClientTurn(eventArgs.getItem());
     }
 }

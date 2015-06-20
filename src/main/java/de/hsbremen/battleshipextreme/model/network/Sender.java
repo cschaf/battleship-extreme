@@ -2,7 +2,6 @@ package de.hsbremen.battleshipextreme.model.network;
 
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.Settings;
-import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.model.ship.ShipType;
 import de.hsbremen.battleshipextreme.network.IDisposable;
 import de.hsbremen.battleshipextreme.network.ITransferable;
@@ -81,8 +80,8 @@ public class Sender extends Thread implements IDisposable {
         this.disposed = true;
     }
 
-    public void sendTurn(String attackingPlayerName, String attackedPlayerName, int xPos, int yPos, boolean isHorizontal, Ship currentShip) {
-        ITransferable object = TransferableObjectFactory.CreateTurn(attackingPlayerName, attackedPlayerName, xPos, yPos, isHorizontal, currentShip);
+    public void sendTurn(String attackingPlayerName, String attackedPlayerName, int xPos, int yPos, boolean isHorizontal, ShipType shipType) {
+        ITransferable object = TransferableObjectFactory.CreateTurn(attackingPlayerName, attackedPlayerName, xPos, yPos, isHorizontal, shipType);
         send(object);
     }
 

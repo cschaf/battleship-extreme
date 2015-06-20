@@ -329,6 +329,16 @@ public class Controller {
         FieldState fs = board.getFieldStates(false)[startY][startX];
         return fs == null;
     }
+
+    public boolean isItPossibleToShoot(FieldState[][] board, int startX, int startY) {
+        boolean result = false;
+        FieldState state = board[startX][startY];
+        if (state == FieldState.HAS_SHIP || state == FieldState.IS_EMPTY) {
+            result = true;
+        }
+        return result;
+    }
+
     public void updateShipSelection(Player player) {
         GamePanel panelGame = gui.getPanelGame();
         new ShipStatusUpdater(this, panelGame, player).execute();

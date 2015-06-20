@@ -1,39 +1,53 @@
 package de.hsbremen.battleshipextreme.network.transfarableObject;
 
-import de.hsbremen.battleshipextreme.model.ship.Ship;
+import de.hsbremen.battleshipextreme.model.ship.ShipType;
 import de.hsbremen.battleshipextreme.network.TransferableType;
 
 /**
  * Created by cschaf on 30.04.2015.
  */
 public class Turn extends TransferableObject {
+// ------------------------------ FIELDS ------------------------------
+
     private String gameId;
     private String attackingPlayerName;
     private String attackedPlayerName;
     private int fieldX;
     private int fieldY;
     private boolean isHorizontal;
-    private Ship currentShip;
+    private ShipType shipType;
+    private boolean isReloading;
 
-    public Turn(String attackingPlayerName, String attackedPlayerName, int fieldX, int fieldY, boolean isHorizontal, Ship currentShip) {
+// --------------------------- CONSTRUCTORS ---------------------------
+
+    public Turn() {
+        this.attackingPlayerName = "";
+        this.attackedPlayerName = "";
+        this.fieldX = -1;
+        this.fieldY = -1;
+        this.isHorizontal = false;
+        this.shipType = null;
+        this.isReloading = true;
+    }
+
+    public Turn(String attackingPlayerName, String attackedPlayerName, int fieldX, int fieldY, boolean isHorizontal, ShipType shipType) {
         this.attackingPlayerName = attackingPlayerName;
         this.attackedPlayerName = attackedPlayerName;
         this.fieldX = fieldX;
         this.fieldY = fieldY;
         this.isHorizontal = isHorizontal;
-        this.currentShip = currentShip;
+        this.shipType = shipType;
+        this.isReloading = false;
     }
 
-    public TransferableType getType() {
-        return TransferableType.Turn;
+// --------------------- GETTER / SETTER METHODS ---------------------
+
+    public String getAttackedPlayerName() {
+        return attackedPlayerName;
     }
 
-    public String getGameId() {
-        return gameId;
-    }
-
-    public void setGameId(String gameId) {
-        this.gameId = gameId;
+    public String getAttackingPlayerName() {
+        return attackingPlayerName;
     }
 
     public int getFieldX() {
@@ -44,19 +58,34 @@ public class Turn extends TransferableObject {
         return fieldY;
     }
 
-    public String getAttackedPlayerName() {
-        return attackedPlayerName;
+    public String getGameId() {
+        return gameId;
     }
+
+    public void setGameId(String gameId) {
+        this.gameId = gameId;
+    }
+
+    public ShipType getShipType() {
+        return shipType;
+    }
+
+// ------------------------ INTERFACE METHODS ------------------------
+
+
+// --------------------- Interface ITransferable ---------------------
+
+    public TransferableType getType() {
+        return TransferableType.Turn;
+    }
+
+// -------------------------- OTHER METHODS --------------------------
 
     public boolean isHorizontal() {
         return isHorizontal;
     }
 
-    public Ship getCurrentShip() {
-        return currentShip;
-    }
-
-    public String getAttackingPlayerName() {
-        return attackingPlayerName;
+    public boolean isReloading() {
+        return isReloading;
     }
 }

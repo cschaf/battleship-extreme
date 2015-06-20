@@ -69,9 +69,9 @@ public class Listener extends Thread implements IDisposable {
                         playerNamesObjectReceived(new EventArgs<PlayerNames>(this, playerNames));
                         break;
 
-                    case Turn:
-                        Turn turn = (Turn) receivedObj;
-                        turnObjectReceived(new EventArgs<Turn>(this, turn));
+                    case ClientTurn:
+                        ClientTurn turn = (ClientTurn) receivedObj;
+                        clientTurnObjectReceived(new EventArgs<ClientTurn>(this, turn));
                         break;
 
                     case ServerInfo:
@@ -141,11 +141,11 @@ public class Listener extends Thread implements IDisposable {
         }
     }
 
-    private void turnObjectReceived(EventArgs<Turn> eventArgs) {
+    private void clientTurnObjectReceived(EventArgs<ClientTurn> eventArgs) {
         Object[] listeners = this.listeners.getListenerList();
         for (int i = 0; i < listeners.length; i = i + 2) {
             if (listeners[i] == IServerObjectReceivedListener.class) {
-                ((IServerObjectReceivedListener) listeners[i + 1]).onTurnObjectReceived(eventArgs);
+                ((IServerObjectReceivedListener) listeners[i + 1]).onClientTurnObjectReceived(eventArgs);
             }
         }
     }

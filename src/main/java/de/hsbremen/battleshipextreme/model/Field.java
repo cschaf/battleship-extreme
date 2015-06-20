@@ -1,8 +1,8 @@
 package de.hsbremen.battleshipextreme.model;
 
-import java.io.Serializable;
-
 import de.hsbremen.battleshipextreme.model.ship.Ship;
+
+import java.io.Serializable;
 
 public class Field implements Serializable {
 	private int xPos;
@@ -31,6 +31,12 @@ public class Field implements Serializable {
 		return ship;
 	}
 
+	public void setShip(Ship ship) {
+		if (!hasShip()) {
+			this.ship = ship;
+		}
+	}
+
 	public boolean isHit() {
 		return isHit;
 	}
@@ -42,7 +48,7 @@ public class Field implements Serializable {
 	/**
 	 * Provides a field state for the field to facilitate the displaying of a
 	 * field.
-	 * 
+	 *
 	 * @return the field state.
 	 */
 	public FieldState getState() {
@@ -63,10 +69,5 @@ public class Field implements Serializable {
 				return FieldState.IS_EMPTY;
 			}
 		}
-	}
-
-	public void setShip(Ship ship) {
-		if (!hasShip())
-			this.ship = ship;
 	}
 }

@@ -5,8 +5,8 @@ import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListener;
 import de.hsbremen.battleshipextreme.network.transfarableObject.ClientInfo;
-import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Join;
+import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Turn;
 import de.hsbremen.battleshipextreme.server.Server;
 import de.hsbremen.battleshipextreme.server.listener.IClientConnectionListener;
@@ -73,7 +73,7 @@ public class ServerController {
                     case Turn:
                         Turn turn = (Turn) receivedObject;
                         String orientation = turn.isHorizontal() ? "Horizontal" : "Vertically";
-                        gui.getTraMessages().append("New Turn was added, " + turn.getAttackingPlayerName()+ " attacked " + turn.getAttackedPlayerName() + " with a " + turn.getCurrentShip().getType().toString() + " " + orientation + " in game " + turn.getGameId() + "\r\n");
+                        gui.getTraMessages().append("New Turn was added, " + turn.getAttackingPlayerName() + " attacked " + turn.getAttackedPlayerName() + " with a " + turn.getShipType().toString() + " " + orientation + " in game " + turn.getGameId() + "\r\n");
                         break;
                     case Join:
                         Join join = (Join) receivedObject;

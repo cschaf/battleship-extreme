@@ -2,7 +2,8 @@ package de.hsbremen.battleshipextreme.client;
 
 import de.hsbremen.battleshipextreme.client.listener.ServerGameBrowserListener;
 import de.hsbremen.battleshipextreme.client.listener.ServerObjectReceivedListener;
-import de.hsbremen.battleshipextreme.model.Board;
+import de.hsbremen.battleshipextreme.client.workers.BoardUpdater;
+import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
@@ -12,9 +13,9 @@ import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener
 import de.hsbremen.battleshipextreme.model.network.NetworkClient;
 import de.hsbremen.battleshipextreme.model.player.HumanPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
-import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.model.ship.ShipType;
 import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
+import de.hsbremen.battleshipextreme.network.transfarableObject.ClientTurn;
 import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 
 import javax.swing.*;
@@ -24,7 +25,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Set;
 
 /**
  * Created by cschaf on 18.06.2015.
@@ -37,11 +41,11 @@ public class MultiPlayerClientController implements Serializable {
     private NetworkClient network;
     private ServerGameBrowserListener serverGameBrowserListener;
     private IServerObjectReceivedListener serverObjectReceivedListener;
-    private String connectedAsPlayer;
     private Player player;
-    private HashMap<String, Board> enemies;
+    private HashMap<String, FieldState[][]> enemies;
     private boolean playerIsReloading;
     private boolean isReady;
+    private String connectedAs;
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
@@ -49,7 +53,7 @@ public class MultiPlayerClientController implements Serializable {
         this.network = network;
         this.gui = gui;
         this.ctrl = ctrl;
-        this.enemies = new HashMap<String, Board>();
+        this.enemies = new HashMap<String, FieldState[][]>();
         this.serverObjectReceivedListener = new ServerObjectReceivedListener(this.gui, network, this);
         this.serverGameBrowserListener = new ServerGameBrowserListener(network, this);
     }
@@ -60,6 +64,8 @@ public class MultiPlayerClientController implements Serializable {
         addServerGameBrowserListeners();
         addApplySettingsListener();
         addDoneButtonListener();
+        addShipSelectionListeners();
+        addEnemySelectionListener();
     }
 
     private void addApplySettingsListener() {
@@ -131,6 +137,16 @@ public class MultiPlayerClientController implements Serializable {
         });
     }
 
+    private void addEnemySelectionListener() {
+        GamePanel panelGame = gui.getPanelGame();
+        final JComboBox<String> enemyComboBox = panelGame.getComboBoxEnemySelection();
+        enemyComboBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateEnemyBoard();
+            }
+        });
+    }
+
     private void addEnemyBoardListener() {
         GamePanel panelGame = gui.getPanelGame();
         JButton[][] playerBoard = panelGame.getPanelEnemyBoard().getButtonsField();
@@ -144,8 +160,8 @@ public class MultiPlayerClientController implements Serializable {
                         int xPos = fieldButton.getxPos();
                         int yPos = fieldButton.getyPos();
                         boolean isHorizontal = gui.getPanelGame().getRadioButtonHorizontalOrientation().isSelected();
-                        Ship currentShip = player.getCurrentShip();
-                        network.getSender().sendTurn(TransferableObjectFactory.CreateTurn(attackingPlayerName, attackedPlayerName, xPos, yPos, isHorizontal, currentShip));
+                        ShipType shipType = player.getCurrentShip().getType();
+                        network.getSender().sendTurn(TransferableObjectFactory.CreateTurn(attackingPlayerName, attackedPlayerName, xPos, yPos, isHorizontal, shipType));
                         ctrl.setEnemyBoardEnabled(false);
                     }
                 });
@@ -155,27 +171,19 @@ public class MultiPlayerClientController implements Serializable {
 
     public void setPlayerNames(ArrayList<String> names) {
         ArrayList<String> keys = new ArrayList<String>(enemies.keySet());
-        LinkedHashMap<String, Board> result = new LinkedHashMap<String, Board>();
+        LinkedHashMap<String, FieldState[][]> result = new LinkedHashMap<String, FieldState[][]>();
         for (int i = 0; i < names.size(); i++) {
-            if (keys.size() <= 0) {
-                result.put(names.get(i), new Board(player.getBoard().getSize()));
-            } else {
-                result.put(names.get(i), enemies.get(keys.get(i)));
+            if (!player.getName().equals(names.get(i))) {
+                if (keys.size() <= 0) {
+                    FieldState[][] fields = FieldState.array2dOfDefault(player.getBoard().getSize());
+                    result.put(names.get(i), fields);
+                } else {
+                    result.put(names.get(i), enemies.get(keys.get(i)));
+                }
             }
-        }
-        for (Map.Entry<String, Board> entry : result.entrySet()) {
-            System.out.println(entry.getKey() + " = " + entry.getValue());
         }
         enemies = result;
         updateEnemySelection();
-    }
-
-    public String getConnectedAsPlayer() {
-        return connectedAsPlayer;
-    }
-
-    public void setConnectedAsPlayer(String connectedAsPlayer) {
-        this.connectedAsPlayer = connectedAsPlayer;
     }
 
     private void placeShip(int xPos, int yPos, boolean isHorizontal) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException {
@@ -402,8 +410,12 @@ public class MultiPlayerClientController implements Serializable {
         gui.getPanelServerConnection().getPnlServerGameBrowser().getTblGames().addMouseListener(serverGameBrowserListener);
     }
 
+    public void selectShip(ShipType shipType) {
+        player.setCurrentShipByType(shipType);
+    }
+
     private void addShipSelectionListeners() {
-/*        gui.getPanelGame().getRadioButtonDestroyer().addActionListener(new ActionListener() {
+        gui.getPanelGame().getRadioButtonDestroyer().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 selectShip(ShipType.DESTROYER);
             }
@@ -422,7 +434,7 @@ public class MultiPlayerClientController implements Serializable {
             public void actionPerformed(ActionEvent e) {
                 selectShip(ShipType.SUBMARINE);
             }
-        });*/
+        });
     }
 
     private void addShowYourShipsButtonListener() {
@@ -471,19 +483,14 @@ public class MultiPlayerClientController implements Serializable {
     }
 
     public void updateEnemyBoard() {
-/*        GamePanel panelGame = gui.getPanelGame();
+        GamePanel panelGame = gui.getPanelGame();
         JButton[][] board;
         board = panelGame.getPanelEnemyBoard().getButtonsField();
-        Player enemy = game.getPlayerByName("" + panelGame.getComboBoxEnemySelection().getSelectedItem());
-        try {
-            if (enemy != null) {
-                FieldState[][] fieldStates = enemy.getFieldStates(false);
-                new BoardUpdater(gui, board, fieldStates).execute();
-            }
-        } catch (FieldOutOfBoardException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }*/
+        String enemyName = panelGame.getComboBoxEnemySelection().getSelectedItem().toString();
+        FieldState[][] enemyBoard = enemies.get(enemyName);
+        if (enemyBoard != null) {
+            new BoardUpdater(gui, board, enemyBoard).execute();
+        }
     }
 
     public boolean makeOnlineTurn(String attackingPlayerName, String enemyName, int xPos, int yPos, boolean isHorizontal) throws FieldOutOfBoardException {
@@ -558,7 +565,7 @@ public class MultiPlayerClientController implements Serializable {
         int range;
         boolean possible = false;
 
-        // Farben zur?cksetzen
+        // Farben zurücksetzen
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
                 board[i][j].setBackground(GUI.EMPTY_COLOR);
@@ -569,7 +576,8 @@ public class MultiPlayerClientController implements Serializable {
             possible = ctrl.isItPossibleToPlaceShip(player, startX, startY, orientation);
             range = player.getCurrentShip().getSize();
         } else {
-            possible = ctrl.isItPossibleToShoot(enemies.get(gui.getPanelGame().getComboBoxEnemySelection().getSelectedItem()), startX, startY);
+            FieldState[][] enemyBoard = enemies.get(gui.getPanelGame().getComboBoxEnemySelection().getSelectedItem());
+            possible = ctrl.isItPossibleToShoot(enemyBoard, startX, startY);
             range = player.getCurrentShip().getShootingRange();
         }
 
@@ -609,5 +617,58 @@ public class MultiPlayerClientController implements Serializable {
 
     public void setDoneButtonEnabled(boolean b) {
         ctrl.setDoneButtonEnabled(b);
+    }
+
+    public void updateCurrentShip() {
+        player.setCurrentShipByType(player.getTypeOFirstAvailableShip());
+    }
+
+    public void markFieldsFormClientTurn(ClientTurn clientTurn) {
+        if (clientTurn.isReloading()) {
+            ctrl.setInfoLabelMessage(clientTurn.getAttackingPlayerName() + " is reloading");
+        } else {
+            ctrl.setInfoLabelMessage(clientTurn.getAttackingPlayerName() + " is shooting");
+            if (clientTurn.getAttackedPlayerName().equals(player.getName())) {
+                for (Field field : clientTurn.getFields()) {
+                    try {
+                        if (field != null) {
+                            player.markBoard(field.getXPos(), field.getYPos());
+                        }
+                    } catch (FieldOutOfBoardException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                FieldState[][] board = enemies.get(clientTurn.getAttackedPlayerName());
+                for (Field field : clientTurn.getFields()) {
+                    if (field != null) {
+                        FieldState state = field.getState();
+                        int x = field.getXPos();
+                        int y = field.getYPos();
+                        board[y][x] = state;
+                    }
+                }
+                String name = clientTurn.getAttackedPlayerName();
+                enemies.put(name, board);
+            }
+            updateEnemyBoard();
+            updatePlayerBoard();
+        }
+    }
+
+    public String getPlayerName() {
+        return player.getName();
+    }
+
+    public void setPlayerName(String playerName) {
+        this.player.setName(playerName);
+    }
+
+    public String getConnectedAs() {
+        return connectedAs;
+    }
+
+    public void setConnectedAs(String connectedAs) {
+        this.connectedAs = connectedAs;
     }
 }

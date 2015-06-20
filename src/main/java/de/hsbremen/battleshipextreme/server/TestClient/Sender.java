@@ -1,13 +1,6 @@
 package de.hsbremen.battleshipextreme.server.TestClient;
 
-import de.hsbremen.battleshipextreme.model.Field;
-import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.Settings;
-import de.hsbremen.battleshipextreme.model.exception.BoardTooSmallException;
-import de.hsbremen.battleshipextreme.model.exception.InvalidNumberOfShipsException;
-import de.hsbremen.battleshipextreme.model.exception.InvalidPlayerNumberException;
-import de.hsbremen.battleshipextreme.model.player.HumanPlayer;
-import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.ship.Destroyer;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.network.IDisposable;
@@ -15,7 +8,10 @@ import de.hsbremen.battleshipextreme.network.ITransferable;
 import de.hsbremen.battleshipextreme.network.InfoSendingReason;
 import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
@@ -60,7 +56,7 @@ public class Sender extends Thread implements IDisposable {
 
             // Turn
             Ship ship = new Destroyer();
-            ITransferable trun = TransferableObjectFactory.CreateTurn("PlayerA", "PlayerB", 0,0, true, ship);
+            ITransferable trun = TransferableObjectFactory.CreateTurn("PlayerA", "PlayerB", 0, 0, true, ship.getType());
             this.out.writeObject(trun);
             this.out.flush();
 
