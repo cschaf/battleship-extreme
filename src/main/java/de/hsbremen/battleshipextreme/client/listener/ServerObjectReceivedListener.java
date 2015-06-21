@@ -91,6 +91,7 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
             case MakeTurn:
                 boolean reloading = ctrl.handleAllShipsAreReloading();
                 gui.getPanelGame().getButtonShowYourShips().setEnabled(true);
+                ctrl.updateShipSelection();
                 if (!reloading) {
                     ctrl.updateCurrentShip();
                     ctrl.setEnemyBoardEnabled(true);

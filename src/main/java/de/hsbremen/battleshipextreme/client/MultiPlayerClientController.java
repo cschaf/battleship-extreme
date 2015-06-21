@@ -741,4 +741,8 @@ public class MultiPlayerClientController implements Serializable {
     public void setConnectedAs(String connectedAs) {
         this.connectedAs = connectedAs;
     }
+
+    public void updateShipSelection() {
+        ctrl.updateShipSelection(player);
+    }
 }
