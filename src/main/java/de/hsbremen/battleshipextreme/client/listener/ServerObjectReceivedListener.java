@@ -97,18 +97,9 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 } else {
                     ctrl.setPlayerIsReloading(true);
                     ctrl.setDoneButtonEnabled(true);
-                }
-                break;
 
-            case PlayerIsReloading:
-                //ctrl.setInfoLabelMessage(game.getCurrentPlayer().getName() + " is reloading...");
-                break;
-            case PlayerWon:
-/*                String winnerName = game.getWinner() != null ? game.getWinner().getName() : "You";
-                ctrl.setInfoLabelMessage(winnerName + " won ");
-                ctrl.setDoneButtonEnabled(false);
-                ctrl.setEnemyBoardEnabled(false);
-                ctrl.setEnemySelectionEnabled(false);*/
+                }
+                ctrl.decreaseCurrentReloadTimeOfShips();
                 break;
         }
     }
@@ -118,6 +109,6 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
     }
 
     public void onClientTurnObjectReceived(EventArgs<ClientTurn> eventArgs) {
-        ctrl.markFieldsFormClientTurn(eventArgs.getItem());
+        ctrl.handleClientTurn(eventArgs.getItem());
     }
 }

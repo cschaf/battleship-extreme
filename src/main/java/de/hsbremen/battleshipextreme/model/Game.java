@@ -24,7 +24,6 @@ public class Game extends TransferableObject {
 
     /**
      * Reads the settings and initializes the necessary game objects.
-     *
      * @param settings the game settings.
      */
     public void initialize(Settings settings) {
@@ -82,7 +81,7 @@ public class Game extends TransferableObject {
         Player currentEnemy;
         do {
             currentEnemy = players[ai.getCurrentEnemyIndex()];
-            // zufälligen Gegner auswählen, wenn die KI keine Spur verfolgt,
+            // zufï¿½lligen Gegner auswï¿½hlen, wenn die KI keine Spur verfolgt,
             // ansonsten gemerkten Gegner beibehalten
             if (!ai.hasTargets() || currentEnemy.hasLost() || ai.getType() == PlayerType.DUMB_AI || ai.equals(currentEnemy)) {
                 ai.setRandomEnemyIndex(players.length - 1);
@@ -93,7 +92,7 @@ public class Game extends TransferableObject {
     }
 
     public boolean makeTurn(Player enemy, int xPos, int yPos, Orientation orientation) throws FieldOutOfBoardException {
-        Field[] markedFields = new Field[currentPlayer.getCurrentShip().getSize()];
+        Field[] markedFields = new Field[currentPlayer.getCurrentShip().getShootingRange()];
         int xDirection = orientation == Orientation.HORIZONTAL ? 1 : 0;
         int yDirection = orientation == Orientation.VERTICAL ? 1 : 0;
         int x;
@@ -104,12 +103,30 @@ public class Game extends TransferableObject {
             boolean isShotPossible = enemy.markBoard(x, y);
             if (i == 0) {
                 if (!isShotPossible) {
-                    // erstes Feld belegt, Schuss nicht möglich
+                    // erstes Feld belegt, Schuss nicht mï¿½glich
                     return false;
                 }
             }
             markedFields[i] = enemy.getBoard().getField(x, y);
-
+        }
+        boolean isDestroyed = false;
+        ArrayList<Field> missedFields = new ArrayList<Field>();
+        Field source = null;
+        for (int i = 0; i < markedFields.length; i++) {
+            if (markedFields[i].hasShip()) {
+                if (markedFields[i].getShip().isDestroyed()) {
+                    source = markedFields[i];
+                    isDestroyed = true;
+                    break;
+                }
+            } else {
+                missedFields.add(markedFields[i]);
+            }
+        }
+        if (isDestroyed) {
+            ArrayList<Field> shipFields = enemy.getBoard().getFieldsOfShip(source);
+            shipFields.addAll(missedFields);
+            markedFields = shipFields.toArray(markedFields);
         }
         currentPlayer.getCurrentShip().shoot();
         hasCurrentPlayerMadeTurn = true;
@@ -119,7 +136,6 @@ public class Game extends TransferableObject {
 
     /**
      * Saves the this Game to a File
-     *
      * @throws Exception if the file could not be saved
      */
     public void save(String destinationPath) throws Exception {
@@ -140,7 +156,6 @@ public class Game extends TransferableObject {
 
     /**
      * Load a saved Game object
-     *
      * @throws Exception if the game could not be loaded
      */
     public void load(String destinationPath) throws Exception {
@@ -201,7 +216,7 @@ public class Game extends TransferableObject {
         decreaseCurrentReloadTimeOfShips(currentPlayer);
         int currentPlayerIndex = Arrays.asList(players).indexOf(currentPlayer);
         // wenn letzter Spieler im Array, dann Index wieder auf 0 setzen,
-        // ansonsten hochzählen
+        // ansonsten hochzï¿½hlen
         currentPlayerIndex = (currentPlayerIndex >= players.length - 1) ? currentPlayerIndex = 0 : currentPlayerIndex + 1;
         if (currentPlayerIndex == 0) {
             roundNumber++;
@@ -224,11 +239,10 @@ public class Game extends TransferableObject {
     /**
      * Provides a list of enemies the current player may attack. Players that
      * are lost or equal to the current player are filtered.
-     *
      * @return an ArrayList of Players
      */
     public ArrayList<Player> getEnemiesOfCurrentPlayer() {
-        // angreifbare Gegner des currentPlayers zurückgeben
+        // angreifbare Gegner des currentPlayers zurï¿½ckgeben
         ArrayList<Player> enemies = new ArrayList<Player>();
         for (int i = 0; i < players.length; i++) {
             if (!players[i].hasLost()) {
@@ -243,11 +257,10 @@ public class Game extends TransferableObject {
     /**
      * Provides a list of enemies the current player may attack. Players that
      * are lost or equal to the current player are filtered.
-     *
      * @return an ArrayList of Players
      */
     public ArrayList<Player> getEnemiesOfPlayer(String name) {
-        // angreifbare Gegner des currentPlayers zurückgeben
+        // angreifbare Gegner des currentPlayers zurï¿½ckgeben
         ArrayList<Player> enemies = new ArrayList<Player>();
         for (int i = 0; i < players.length; i++) {
             if (!players[i].hasLost()) {
@@ -279,11 +292,10 @@ public class Game extends TransferableObject {
     /**
      * Returns true if the ships of all players have been placed. The method is
      * used to determine if a game is ready to start.
-     *
      * @return true if all ships by all players are placed, else false
      */
     public boolean isReady() {
-        // prüft ob alle Schiffe gesetzt sind
+        // prï¿½ft ob alle Schiffe gesetzt sind
         for (Player player : players)
             if (!player.hasPlacedAllShips()) {
                 return false;
@@ -293,7 +305,6 @@ public class Game extends TransferableObject {
 
     /**
      * Check if the game is over. Set the game winner if the game is over.
-     *
      * @return true if the game is over, false if not
      */
     public boolean isGameover() {
@@ -379,7 +390,6 @@ public class Game extends TransferableObject {
 
         return shipMap;
     }
-
 
     public TransferableType getType() {
         return TransferableType.Game;

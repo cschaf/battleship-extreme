@@ -219,28 +219,49 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
     public synchronized void addTurn(ClientHandler handler, ITransferable receivedObject) {
         Turn turn = (Turn) receivedObject;
         NetGame netGame = getGameByClient(handler);
-        ITransferable clientTurn = null;
+
         if (netGame != null) {
             netGame.addTurn(turn);
             turn.setGameId(netGame.getId());
-            Orientation orientation = turn.isHorizontal() ? Orientation.HORIZONTAL : Orientation.VERTICAL;
-            try {
-                if (!turn.isReloading()) {
-                    netGame.getCurrentPlayer().setCurrentShipByType(turn.getShipType());
-                    netGame.makeTurn(netGame.getCurrentPlayer(), turn.getFieldX(), turn.getFieldY(), orientation);
-                    clientTurn = TransferableObjectFactory.CreateClientTurn(netGame.getMarkedFieldOfLastTurn(), false, turn.getAttackingPlayerName(), turn.getAttackedPlayerName());
-                } else {
-                    clientTurn = TransferableObjectFactory.CreateClientTurn(null, true, turn.getAttackingPlayerName(), null);
+            ITransferable clientTurn = handleTurn(netGame, turn);
+            if (clientTurn != null) {
+                this.multicast(clientTurn, netGame.getJoinedPlayers());
+                if (!netGame.isGameover()) {
+                    initializeNextTurn(netGame);
                 }
-                netGame.nextPlayer();
-            } catch (FieldOutOfBoardException e) {
-                e.printStackTrace();
             }
-            this.multicast(clientTurn, netGame.getJoinedPlayers());
-            initializeNextTurn(netGame);
         }
 
         objectReceived(new EventArgs<ITransferable>(this, turn));
+    }
+
+    private ITransferable handleTurn(NetGame netGame, ITransferable t) {
+        Turn turn = (Turn) t;
+        Orientation orientation = turn.isHorizontal() ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+        ITransferable clientTurn = null;
+        try {
+            if (turn.isReloading()) {
+                clientTurn = TransferableObjectFactory.CreateClientTurn(null, true, turn.getAttackingPlayerName(), null);
+            } else {
+                netGame.getCurrentPlayer().setCurrentShipByType(turn.getShipType());
+                netGame.makeTurn(netGame.getPlayerByName(turn.getAttackedPlayerName()), turn.getFieldX(), turn.getFieldY(), orientation);
+                if (!netGame.isGameover()) {
+                    if (netGame.isReady()) {
+                        //  make client turn for other clients
+                        clientTurn = TransferableObjectFactory.CreateClientTurn(netGame.getMarkedFieldOfLastTurn(), false, turn.getAttackingPlayerName(), turn.getAttackedPlayerName());
+                    }
+                } else {
+                    // game is over one player has won the game
+                    clientTurn = TransferableObjectFactory.CreateClientTurn(netGame.getMarkedFieldOfLastTurn(), false, turn.getAttackingPlayerName(), turn.getAttackedPlayerName(), netGame.getWinner().getName());
+                }
+            }
+            if (!netGame.isGameover()) {
+                netGame.nextPlayer();
+            }
+        } catch (FieldOutOfBoardException e) {
+            e.printStackTrace();
+        }
+        return clientTurn;
     }
 
     public synchronized void assignClientToGame(ClientHandler clientHandler, ITransferable receivedObject) {

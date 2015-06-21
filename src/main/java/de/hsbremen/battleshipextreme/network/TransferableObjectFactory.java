@@ -85,6 +85,23 @@ public class TransferableObjectFactory {
     }
 
     /**
+     * Creates an Turn
+     **/
+    public static ITransferable CreateClientTurn(Field[] fields, boolean isReloading, String attackingPlayerName, String attackedPlayerName, String winnerName) {
+        ClientTurn turn = new ClientTurn(fields, isReloading, attackingPlayerName, attackedPlayerName);
+        turn.setWinnerName(winnerName);
+        turn.setIsWinner(true);
+        return turn;
+    }
+
+    /**
+     * Creates an Turn
+     **/
+    public static ITransferable CreateClientTurn(String winnerName) {
+        return new ClientTurn(winnerName);
+    }
+
+    /**
      * Creates a Turn with property isReloading = true
      **/
     public static ITransferable CreateTurn() {

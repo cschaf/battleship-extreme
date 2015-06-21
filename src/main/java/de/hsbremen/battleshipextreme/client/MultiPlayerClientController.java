@@ -13,6 +13,7 @@ import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener
 import de.hsbremen.battleshipextreme.model.network.NetworkClient;
 import de.hsbremen.battleshipextreme.model.player.HumanPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
+import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.model.ship.ShipType;
 import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 import de.hsbremen.battleshipextreme.network.transfarableObject.ClientTurn;
@@ -189,7 +190,7 @@ public class MultiPlayerClientController implements Serializable {
 
     private void addEnemyBoardListener() {
         GamePanel panelGame = gui.getPanelGame();
-        JButton[][] playerBoard = panelGame.getPanelEnemyBoard().getButtonsField();
+        final JButton[][] playerBoard = panelGame.getPanelEnemyBoard().getButtonsField();
         enemyBoardListeners = new ActionListener[playerBoard.length][playerBoard.length];
         for (int i = 0; i < playerBoard.length; i++) {
             for (int j = 0; j < playerBoard.length; j++) {
@@ -204,6 +205,8 @@ public class MultiPlayerClientController implements Serializable {
                         ShipType shipType = player.getCurrentShip().getType();
                         network.getSender().sendTurn(TransferableObjectFactory.CreateTurn(attackingPlayerName, attackedPlayerName, xPos, yPos, isHorizontal, shipType));
                         ctrl.setEnemyBoardEnabled(false);
+                        player.getCurrentShip().shoot();
+                        player.getCurrentShip().decreaseCurrentReloadTime();
                     }
                 };
                 enemyBoardListeners[i][j] = fieldListener;
@@ -563,31 +566,16 @@ public class MultiPlayerClientController implements Serializable {
         }
     }
 
-    public boolean makeOnlineTurn(String attackingPlayerName, String enemyName, int xPos, int yPos, boolean isHorizontal) throws FieldOutOfBoardException {
-/*        Orientation orientation = isHorizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL;
-        boolean possible = false;
-        Player enemy = game.getPlayerByName(enemyName);
-        possible = game.makeTurn(enemy, xPos, yPos, orientation);
-        // Hier wird noch nicht alles richtig angezeigt!
-        if (possible) {
-            if (enemy.getName().equals(game.getConnectedAsPlayer())) {
-                updatePlayerBoard(game.getConnectedAsPlayer());
-            }
-
-            if (game.getConnectedAsPlayer().equals(attackingPlayerName)) {
-                updateEnemyBoard();
-            }
-
-            setInfoLabelMessage(game.getCurrentPlayer() + " attacked " + enemy);
-        }
-        return possible;*/
-        return false;
-    }
-
     public void setPlayerIsReloading(boolean playerIsReloading) {
         this.playerIsReloading = playerIsReloading;
     }
 
+    public void decreaseCurrentReloadTimeOfShips() {
+        Ship[] ships = player.getShips();
+        for (Ship ship : ships) {
+            ship.decreaseCurrentReloadTime();
+        }
+    }
     public void next() {
         if (!isReady()) {
             if (player.hasPlacedAllShips()) {
@@ -695,36 +683,46 @@ public class MultiPlayerClientController implements Serializable {
         player.setCurrentShipByType(player.getTypeOFirstAvailableShip());
     }
 
-    public void markFieldsFormClientTurn(ClientTurn clientTurn) {
-        if (clientTurn.isReloading()) {
+    public void handleClientTurn(ClientTurn clientTurn) {
+        if (clientTurn.isWinner()) {
+            markClientTurnFields(clientTurn);
+            ctrl.setInfoLabelMessage(clientTurn.getWinnerName() + " has won");
+            ctrl.setDoneButtonEnabled(false);
+            ctrl.setShipSelectionEnabled(false);
+            ctrl.setBoardsEnabled(false);
+        } else if (clientTurn.isReloading()) {
             ctrl.setInfoLabelMessage(clientTurn.getAttackingPlayerName() + " is reloading");
         } else {
             ctrl.setInfoLabelMessage(clientTurn.getAttackingPlayerName() + " is shooting");
-            if (clientTurn.getAttackedPlayerName().equals(player.getName())) {
-                for (Field field : clientTurn.getFields()) {
-                    try {
-                        if (field != null) {
-                            player.markBoard(field.getXPos(), field.getYPos());
-                        }
-                    } catch (FieldOutOfBoardException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } else {
-                FieldState[][] board = enemies.get(clientTurn.getAttackedPlayerName());
-                for (Field field : clientTurn.getFields()) {
+            markClientTurnFields(clientTurn);
+        }
+        updateEnemyBoard();
+        updatePlayerBoard();
+    }
+
+    private void markClientTurnFields(ClientTurn clientTurn) {
+        if (clientTurn.getAttackedPlayerName().equals(player.getName())) {
+            for (Field field : clientTurn.getFields()) {
+                try {
                     if (field != null) {
-                        FieldState state = field.getState();
-                        int x = field.getXPos();
-                        int y = field.getYPos();
-                        board[y][x] = state;
+                        player.markBoard(field.getXPos(), field.getYPos());
                     }
+                } catch (FieldOutOfBoardException e) {
+                    e.printStackTrace();
                 }
-                String name = clientTurn.getAttackedPlayerName();
-                enemies.put(name, board);
             }
-            updateEnemyBoard();
-            updatePlayerBoard();
+        } else {
+            FieldState[][] board = enemies.get(clientTurn.getAttackedPlayerName());
+            for (Field field : clientTurn.getFields()) {
+                if (field != null) {
+                    FieldState state = field.getState();
+                    int x = field.getXPos();
+                    int y = field.getYPos();
+                    board[y][x] = state;
+                }
+            }
+            String name = clientTurn.getAttackedPlayerName();
+            enemies.put(name, board);
         }
     }
 

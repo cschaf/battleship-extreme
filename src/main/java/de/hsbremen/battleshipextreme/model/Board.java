@@ -3,6 +3,7 @@ package de.hsbremen.battleshipextreme.model;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Board implements Serializable {
     private Field[][] fields;
@@ -23,8 +24,9 @@ public class Board implements Serializable {
     }
 
     public Field getField(int x, int y) throws FieldOutOfBoardException {
-        if (!this.containsFieldAtPosition(x, y))
+        if (!this.containsFieldAtPosition(x, y)) {
             throw new FieldOutOfBoardException(new Field(x, y));
+        }
         return this.fields[y][x];
     }
 
@@ -35,7 +37,6 @@ public class Board implements Serializable {
     public int getSize() {
         return size;
     }
-
 
     public FieldState[][] getFieldStates(boolean isOwnBoard) {
         FieldState[][] fieldStates = new FieldState[size][size];
@@ -50,5 +51,20 @@ public class Board implements Serializable {
             }
         }
         return fieldStates;
+    }
+
+    public ArrayList<Field> getFieldsOfShip(Field sourceField) {
+
+        ArrayList<Field> result = new ArrayList<Field>();
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (fields[i][j].hasShip()) {
+                    if (fields[i][j].getShip() == sourceField.getShip()) {
+                        result.add(fields[i][j]);
+                    }
+                }
+            }
+        }
+        return result;
     }
 }

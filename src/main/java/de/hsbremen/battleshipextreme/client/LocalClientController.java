@@ -346,20 +346,6 @@ public class LocalClientController implements Serializable {
         }
     }
 
-/*    public boolean handleAllShipsAreReloading() {
-        if (game.getCurrentPlayer().areAllShipsReloading()) {
-            ctrl.setInfoLabelMessage("All ships of " + game.getCurrentPlayer() + " are reloading");
-            ctrl.setEnemyBoardEnabled(false);
-            ctrl.setShipSelectionEnabled(false);
-            return true;
-        } else {
-            ctrl.setInfoLabelMessage(game.getCurrentPlayer() + " is shooting");
-            enableAvailableShips();
-            selectFirstAvailableShipType();
-            return false;
-        }
-    }*/
-
     public void enableAvailableShips() {
         GamePanel panelGame = gui.getPanelGame();
         Player currentPlayer = game.getCurrentPlayer();
