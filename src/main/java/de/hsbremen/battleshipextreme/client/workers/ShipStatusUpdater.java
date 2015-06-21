@@ -26,9 +26,12 @@ public class ShipStatusUpdater extends SwingWorker<Integer, Object> {
     protected Integer doInBackground() throws Exception {
         Color green = new Color(0, 180, 0);
         Color red = new Color(180, 0, 0);
+        Color yellow = new Color(150, 160, 0);
         JLabel[] shipFields = panelGame.getLabelDestroyer();
         if (player.getShipCount(ShipType.DESTROYER) == 0) {
             ctrl.UpdateShipLabelColors(shipFields, red);
+        } else if (player.areAllShipsOfTypeReloading(ShipType.DESTROYER)) {
+            ctrl.UpdateShipLabelColors(shipFields, yellow);
         } else {
             ctrl.UpdateShipLabelColors(shipFields, green);
         }
@@ -37,6 +40,8 @@ public class ShipStatusUpdater extends SwingWorker<Integer, Object> {
         shipFields = panelGame.getLabelFrigate();
         if (player.getShipCount(ShipType.FRIGATE) == 0) {
             ctrl.UpdateShipLabelColors(shipFields, red);
+        } else if (player.areAllShipsOfTypeReloading(ShipType.FRIGATE)) {
+            ctrl.UpdateShipLabelColors(shipFields, yellow);
         } else {
             ctrl.UpdateShipLabelColors(shipFields, green);
         }
@@ -45,6 +50,8 @@ public class ShipStatusUpdater extends SwingWorker<Integer, Object> {
         shipFields = panelGame.getLabelCorvette();
         if (player.getShipCount(ShipType.CORVETTE) == 0) {
             ctrl.UpdateShipLabelColors(shipFields, red);
+        } else if (player.areAllShipsOfTypeReloading(ShipType.CORVETTE)) {
+            ctrl.UpdateShipLabelColors(shipFields, yellow);
         } else {
             ctrl.UpdateShipLabelColors(shipFields, green);
         }
@@ -53,6 +60,8 @@ public class ShipStatusUpdater extends SwingWorker<Integer, Object> {
         shipFields = panelGame.getLabelSubmarine();
         if (player.getShipCount(ShipType.SUBMARINE) == 0) {
             ctrl.UpdateShipLabelColors(shipFields, red);
+        } else if (player.areAllShipsOfTypeReloading(ShipType.SUBMARINE)) {
+            ctrl.UpdateShipLabelColors(shipFields, yellow);
         } else {
             ctrl.UpdateShipLabelColors(shipFields, green);
         }

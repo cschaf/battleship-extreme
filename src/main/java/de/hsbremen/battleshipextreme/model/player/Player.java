@@ -1,11 +1,5 @@
 package de.hsbremen.battleshipextreme.model.player;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.FieldState;
@@ -13,12 +7,13 @@ import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
 import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
-import de.hsbremen.battleshipextreme.model.ship.Corvette;
-import de.hsbremen.battleshipextreme.model.ship.Destroyer;
-import de.hsbremen.battleshipextreme.model.ship.Frigate;
-import de.hsbremen.battleshipextreme.model.ship.Ship;
-import de.hsbremen.battleshipextreme.model.ship.ShipType;
-import de.hsbremen.battleshipextreme.model.ship.Submarine;
+import de.hsbremen.battleshipextreme.model.ship.*;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class Player implements Serializable {
 	protected String name;
@@ -423,5 +418,15 @@ public abstract class Player implements Serializable {
 			ship.setPlaced(true);
 		}
 		this.board = board;
+	}
+
+	public boolean areAllShipsOfTypeReloading(ShipType type) {
+		ArrayList<Ship> availableshShips = getAvailableShips(true);
+		for (Ship ship : availableshShips) {
+			if (ship.getType() == type && !ship.isReloading() && !ship.isDestroyed()) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
