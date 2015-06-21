@@ -117,7 +117,6 @@ public class Game extends TransferableObject {
                 if (markedFields[i].getShip().isDestroyed()) {
                     source = markedFields[i];
                     isDestroyed = true;
-                    break;
                 }
             } else {
                 missedFields.add(markedFields[i]);
