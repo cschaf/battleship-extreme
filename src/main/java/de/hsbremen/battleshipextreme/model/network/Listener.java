@@ -93,7 +93,6 @@ public class Listener extends Thread implements IDisposable {
             errorHandler.errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage(e.getMessage())));
         }
         catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

@@ -46,6 +46,12 @@ public class MultiPlayerClientController implements Serializable {
     private boolean playerIsReloading;
     private boolean isReady;
     private String connectedAs;
+    private ActionListener doneButtonListener;
+    private ActionListener enemySelectionListener;
+    private ActionListener[][] enemyBoardListeners;
+    private ActionListener[][] playerBoardListeners;
+    private ActionListener applaySettingsListener;
+
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
@@ -68,8 +74,20 @@ public class MultiPlayerClientController implements Serializable {
         addEnemySelectionListener();
     }
 
+    public void removeAllListeners() {
+        removeDoneButtonListener();
+        removeEnemySelectionListener();
+        removeEnemyBoardListener();
+        removePlayerBoardListener();
+        removeApplySettingsListener();
+        if (network.isConnected()) {
+            removeServerGameBrowserListeners();
+            removeServerObjectReceivedListeners();
+        }
+    }
+
     private void addApplySettingsListener() {
-/*        gui.getPanelSettings().getButtonApplySettings().addActionListener(new ActionListener() {
+/*        this.applaySettingsListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 SettingsPanel panelSettings = gui.getPanelSettings();
                 int players = Integer.parseInt(panelSettings.getTextFieldPlayers().getText());
@@ -115,7 +133,14 @@ public class MultiPlayerClientController implements Serializable {
                     }
                 }
             }
-        });*/
+        };*/
+        gui.getPanelSettings().getButtonApplySettings().addActionListener(applaySettingsListener);
+    }
+
+    private void removeApplySettingsListener() {
+        if (applaySettingsListener != null) {
+            gui.getPanelSettings().getButtonApplySettings().removeActionListener(this.applaySettingsListener);
+        }
     }
 
     public void updateEnemySelection() {
@@ -130,29 +155,45 @@ public class MultiPlayerClientController implements Serializable {
 
     private void addDoneButtonListener() {
         GamePanel panelGame = gui.getPanelGame();
-        panelGame.getButtonDone().addActionListener(new ActionListener() {
+        this.doneButtonListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 next();
             }
-        });
+        };
+        panelGame.getButtonDone().addActionListener(doneButtonListener);
+    }
+
+    private void removeDoneButtonListener() {
+        if (doneButtonListener != null) {
+            gui.getPanelGame().getButtonDone().removeActionListener(doneButtonListener);
+        }
     }
 
     private void addEnemySelectionListener() {
         GamePanel panelGame = gui.getPanelGame();
         final JComboBox<String> enemyComboBox = panelGame.getComboBoxEnemySelection();
-        enemyComboBox.addActionListener(new ActionListener() {
+        this.enemySelectionListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updateEnemyBoard();
             }
-        });
+        };
+        enemyComboBox.addActionListener(enemySelectionListener);
+    }
+
+    private void removeEnemySelectionListener() {
+        if (enemySelectionListener != null) {
+            GamePanel panelGame = gui.getPanelGame();
+            panelGame.getComboBoxEnemySelection().removeActionListener(enemySelectionListener);
+        }
     }
 
     private void addEnemyBoardListener() {
         GamePanel panelGame = gui.getPanelGame();
         JButton[][] playerBoard = panelGame.getPanelEnemyBoard().getButtonsField();
+        enemyBoardListeners = new ActionListener[playerBoard.length][playerBoard.length];
         for (int i = 0; i < playerBoard.length; i++) {
             for (int j = 0; j < playerBoard.length; j++) {
-                playerBoard[i][j].addActionListener(new ActionListener() {
+                ActionListener fieldListener = new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         FieldButton fieldButton = (FieldButton) e.getSource();
                         String attackingPlayerName = player.getName();
@@ -164,7 +205,21 @@ public class MultiPlayerClientController implements Serializable {
                         network.getSender().sendTurn(TransferableObjectFactory.CreateTurn(attackingPlayerName, attackedPlayerName, xPos, yPos, isHorizontal, shipType));
                         ctrl.setEnemyBoardEnabled(false);
                     }
-                });
+                };
+                enemyBoardListeners[i][j] = fieldListener;
+                playerBoard[i][j].addActionListener(fieldListener);
+            }
+        }
+    }
+
+    private void removeEnemyBoardListener() {
+        if (enemyBoardListeners != null) {
+            GamePanel panelGame = gui.getPanelGame();
+            JButton[][] playerBoard = panelGame.getPanelEnemyBoard().getButtonsField();
+            for (int i = 0; i < playerBoard.length; i++) {
+                for (int j = 0; j < playerBoard.length; j++) {
+                    playerBoard[i][j].removeActionListener(enemyBoardListeners[i][j]);
+                }
             }
         }
     }
@@ -208,9 +263,10 @@ public class MultiPlayerClientController implements Serializable {
     private void addPlayerBoardListener() {
         GamePanel panelGame = gui.getPanelGame();
         JButton[][] playerBoard = panelGame.getPanelPlayerBoard().getButtonsField();
+        playerBoardListeners = new ActionListener[playerBoard.length][playerBoard.length];
         for (int i = 0; i < playerBoard.length; i++) {
             for (int j = 0; j < playerBoard.length; j++) {
-                playerBoard[i][j].addActionListener(new ActionListener() {
+                ActionListener fieldListener = new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         FieldButton fieldButton = (FieldButton) e.getSource();
                         try {
@@ -226,7 +282,22 @@ public class MultiPlayerClientController implements Serializable {
                             e1.printStackTrace();
                         }
                     }
-                });
+                };
+                playerBoardListeners[i][j] = fieldListener;
+                playerBoard[i][j].addActionListener(fieldListener);
+            }
+        }
+    }
+
+    private void removePlayerBoardListener() {
+        if (playerBoardListeners != null) {
+            GamePanel panelGame = gui.getPanelGame();
+            JButton[][] playerBoard = panelGame.getPanelPlayerBoard().getButtonsField();
+            playerBoardListeners = new ActionListener[playerBoard.length][playerBoard.length];
+            for (int i = 0; i < playerBoard.length; i++) {
+                for (int j = 0; j < playerBoard.length; j++) {
+                    playerBoard[i][j].removeActionListener(playerBoardListeners[i][j]);
+                }
             }
         }
     }
@@ -245,7 +316,6 @@ public class MultiPlayerClientController implements Serializable {
                     if (network.isConnected()) {
                         network.getSender().sendLogin(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
                     }
-                    //game.setConnectedAsPlayer(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
                 }
             }
         });
@@ -348,9 +418,29 @@ public class MultiPlayerClientController implements Serializable {
         } else {
             ctrl.setInfoLabelMessage(player + " is shooting");
             enableAvailableShips();
-            //ctrl.selectFirstAvailableShipType();
+            selectFirstAvailableShipType();
             return false;
         }
+    }
+
+    private void selectFirstAvailableShipType() {
+        ShipType availableShipType = player.getTypeOFirstAvailableShip();
+        switch (availableShipType) {
+            case DESTROYER:
+                gui.getPanelGame().getRadioButtonDestroyer().setSelected(true);
+                break;
+            case CORVETTE:
+                gui.getPanelGame().getRadioButtonCorvette().setSelected(true);
+                break;
+            case FRIGATE:
+                gui.getPanelGame().getRadioButtonFrigate().setSelected(true);
+                break;
+            case SUBMARINE:
+                gui.getPanelGame().getRadioButtonSubmarine().setSelected(true);
+            default:
+                break;
+        }
+        selectShip(availableShipType);
     }
 
     private void setupSettingsPanelForMultiplayerGame() {
@@ -395,7 +485,9 @@ public class MultiPlayerClientController implements Serializable {
     }
 
     private void removeServerObjectReceivedListeners() {
-        network.removeServerObjectReceivedListener(serverObjectReceivedListener);
+        if (serverObjectReceivedListener != null) {
+            network.removeServerObjectReceivedListener(serverObjectReceivedListener);
+        }
     }
 
     private void sendMessage() {
@@ -435,28 +527,6 @@ public class MultiPlayerClientController implements Serializable {
                 selectShip(ShipType.SUBMARINE);
             }
         });
-    }
-
-    private void addShowYourShipsButtonListener() {
-/*        GamePanel panelGame = gui.getPanelGame();
-        panelGame.getButtonShowYourShips().addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                JToggleButton btn = (JToggleButton) e.getSource();
-                if (btn.isSelected()) {
-                    if (game.getCurrentPlayer().getType() == PlayerType.HUMAN) {
-                        showPlayerBoard();
-                    }
-
-                } else {
-                    if (network.isConnected()) {
-                        showEmptyPlayerBoard(game.getConnectedAsPlayer());
-                    } else {
-                        showEmptyPlayerBoard(game.getCurrentPlayer().getName());
-
-                    }
-                }
-            }
-        });*/
     }
 
     public void enableAvailableShips() {
@@ -537,7 +607,9 @@ public class MultiPlayerClientController implements Serializable {
     }
 
     private void removeServerGameBrowserListeners() {
-        gui.getPanelServerConnection().getPnlServerGameBrowser().getTblGames().getColumnModel().removeColumnModelListener(serverGameBrowserListener);
+        if (serverGameBrowserListener != null) {
+            gui.getPanelServerConnection().getPnlServerGameBrowser().getTblGames().getColumnModel().removeColumnModelListener(serverGameBrowserListener);
+        }
     }
 
     public void updatePlayerBoard() {

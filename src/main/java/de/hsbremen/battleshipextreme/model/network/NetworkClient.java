@@ -24,6 +24,7 @@ public class NetworkClient implements IDisposable {
     private ErrorHandler errorHandler;
     private ArrayList<IServerObjectReceivedListener> tempServerObjectReceivedListeners;
     private boolean isConnected;
+
     public NetworkClient() {
         serverIp = "localhost";
         serverPort = 1337;

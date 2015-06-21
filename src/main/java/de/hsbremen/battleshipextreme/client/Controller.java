@@ -42,7 +42,6 @@ public class Controller {
         addServerErrorListeners();
         this.multiPlayerClientController = new MultiPlayerClientController(network, gui, this);
         addMenuListeners();
-        //addServerGameBrowserListeners();
     }
 
     private void addMenuListeners() {
@@ -55,6 +54,8 @@ public class Controller {
 
         gui.getMenuItemNewGame().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                multiPlayerClientController.removeAllListeners();
+                network.dispose();
                 localClientController.addAllListeners();
                 gui.showPanel(GUI.SETTINGS_PANEL);
                 setSaveButtonEnabled(false);
@@ -69,6 +70,8 @@ public class Controller {
 
         gui.getPanelMainMenu().getButtonLocalGame().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                multiPlayerClientController.removeAllListeners();
+                network.dispose();
                 localClientController.addAllListeners();
                 setupSettingsPanelForLocalGame();
                 gui.showPanel(GUI.SETTINGS_PANEL);
@@ -78,6 +81,9 @@ public class Controller {
 
         gui.getPanelMainMenu().getButtonMultiplayerGame().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                if (localClientController != null) {
+                    localClientController.removeAllListeners();
+                }
                 multiPlayerClientController.addAllListeners();
                 gui.showPanel(GUI.SERVER_CONNECTION_PANEL);
             }
