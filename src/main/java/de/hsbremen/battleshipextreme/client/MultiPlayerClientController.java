@@ -52,6 +52,8 @@ public class MultiPlayerClientController implements Serializable {
     private ActionListener[][] enemyBoardListeners;
     private ActionListener[][] playerBoardListeners;
     private ActionListener applaySettingsListener;
+    private KeyListener textFieldChatMessageListener;
+    private ActionListener buttonSendMessageListener;
 
 
 // --------------------------- CONSTRUCTORS ---------------------------
@@ -73,6 +75,7 @@ public class MultiPlayerClientController implements Serializable {
         addDoneButtonListener();
         addShipSelectionListeners();
         addEnemySelectionListener();
+        addChatListeners();
     }
 
     public void removeAllListeners() {
@@ -81,6 +84,7 @@ public class MultiPlayerClientController implements Serializable {
         removeEnemyBoardListener();
         removePlayerBoardListener();
         removeApplySettingsListener();
+        removeChatListeners();
         if (network.isConnected()) {
             removeServerGameBrowserListeners();
             removeServerObjectReceivedListeners();
@@ -88,7 +92,7 @@ public class MultiPlayerClientController implements Serializable {
     }
 
     private void addApplySettingsListener() {
-/*        this.applaySettingsListener = new ActionListener() {
+/*        this.applySettingsListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 SettingsPanel panelSettings = gui.getPanelSettings();
                 int players = Integer.parseInt(panelSettings.getTextFieldPlayers().getText());
@@ -348,22 +352,6 @@ public class MultiPlayerClientController implements Serializable {
                 }
             }
         });
-// TODO: das geh�rt hier nicht hin
-        gui.getPanelGame().getTextFieldChatMessage().addKeyListener(new KeyListener() {
-            public void keyTyped(KeyEvent e) {
-
-            }
-
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    sendMessage();
-                }
-            }
-
-            public void keyReleased(KeyEvent e) {
-
-            }
-        });
 
         gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnRefresh().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -383,15 +371,10 @@ public class MultiPlayerClientController implements Serializable {
                 gui.showPanel(GUI.SETTINGS_PANEL);
             }
         });
+    }
 
-        gui.getPanelGame().getButtonSendMessage().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                sendMessage();
-            }
-        });
-
-
-        gui.getPanelGame().getTextFieldChatMessage().addKeyListener(new KeyListener() {
+    private void addChatListeners() {
+        this.textFieldChatMessageListener = new KeyListener() {
             public void keyTyped(KeyEvent e) {
 
             }
@@ -405,7 +388,19 @@ public class MultiPlayerClientController implements Serializable {
             public void keyReleased(KeyEvent e) {
 
             }
-        });
+        };
+        gui.getPanelGame().getTextFieldChatMessage().addKeyListener(textFieldChatMessageListener);
+        this.buttonSendMessageListener = new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                sendMessage();
+            }
+        };
+        gui.getPanelGame().getButtonSendMessage().addActionListener(buttonSendMessageListener);
+    }
+
+    private void removeChatListeners() {
+        gui.getPanelGame().getTextFieldChatMessage().removeKeyListener(textFieldChatMessageListener);
+        gui.getPanelGame().getButtonSendMessage().removeActionListener(buttonSendMessageListener);
     }
 
     private void addServerObjectReceivedListeners() {
@@ -488,9 +483,7 @@ public class MultiPlayerClientController implements Serializable {
     }
 
     private void removeServerObjectReceivedListeners() {
-        if (serverObjectReceivedListener != null) {
-            network.removeServerObjectReceivedListener(serverObjectReceivedListener);
-        }
+        network.removeServerObjectReceivedListener(serverObjectReceivedListener);
     }
 
     private void sendMessage() {
@@ -576,6 +569,7 @@ public class MultiPlayerClientController implements Serializable {
             ship.decreaseCurrentReloadTime();
         }
     }
+
     public void next() {
         if (!isReady()) {
             if (player.hasPlacedAllShips()) {

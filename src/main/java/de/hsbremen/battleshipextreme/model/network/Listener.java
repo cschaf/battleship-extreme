@@ -97,6 +97,11 @@ public class Listener extends Thread implements IDisposable {
     }
 
     public void addServerObjectReceivedListener(IServerObjectReceivedListener listener) {
+        for (IServerObjectReceivedListener each : listeners.getListeners(IServerObjectReceivedListener.class)) {
+            if (listener.equals(each)) {
+                return;
+            }
+        }
         this.listeners.add(IServerObjectReceivedListener.class, listener);
     }
 
