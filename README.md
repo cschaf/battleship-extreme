@@ -1,4 +1,4 @@
-# Battleship-Extrem
+# Battleship-Extreme
 This is a project for the semester "Programming 2" at the ["Hochschule Bremen"](http://www.hs-bremen.de/).
 
 Contributors are:
