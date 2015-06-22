@@ -6,16 +6,17 @@ import de.hsbremen.battleshipextreme.client.workers.BoardUpdater;
 import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Orientation;
-import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
-import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
-import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.Settings;
+import de.hsbremen.battleshipextreme.model.exception.*;
 import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener;
 import de.hsbremen.battleshipextreme.model.network.NetworkClient;
 import de.hsbremen.battleshipextreme.model.player.HumanPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.model.ship.ShipType;
+import de.hsbremen.battleshipextreme.network.ITransferable;
 import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
+import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.transfarableObject.ClientTurn;
 import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 
@@ -51,7 +52,7 @@ public class MultiPlayerClientController implements Serializable {
     private ActionListener enemySelectionListener;
     private ActionListener[][] enemyBoardListeners;
     private ActionListener[][] playerBoardListeners;
-    private ActionListener applaySettingsListener;
+    private ActionListener applySettingsListener;
     private KeyListener textFieldChatMessageListener;
     private ActionListener buttonSendMessageListener;
 
@@ -92,11 +93,11 @@ public class MultiPlayerClientController implements Serializable {
     }
 
     private void addApplySettingsListener() {
-/*        this.applySettingsListener = new ActionListener() {
+        this.applySettingsListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 SettingsPanel panelSettings = gui.getPanelSettings();
                 int players = Integer.parseInt(panelSettings.getTextFieldPlayers().getText());
-                int aiPlayers = Integer.parseInt(panelSettings.getTextFieldAiPlayers().getText());
+                int aiPlayers = 0;//Integer.parseInt(panelSettings.getTextFieldAiPlayers().getText());
                 int dumbAiPlayers = 0;
                 int boardSize = Integer.parseInt(panelSettings.getTextFieldBoardSize().getText());
                 int destroyers = Integer.parseInt(panelSettings.getTextFieldDestroyers().getText());
@@ -121,30 +122,21 @@ public class MultiPlayerClientController implements Serializable {
                     e1.printStackTrace();
                 }
                 if (valid) {
-                    if (network.isConnected()) {
-                        if (gameName.length() > 3 && !gameName.startsWith(" ")) {
-                            network.getSender().sendGame(gameName, gamePassword, settings);
-                            gui.showPanel(GUI.SERVER_CONNECTION_PANEL);
-                        } else {
-                            network.getErrorHandler().errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Game name have to be more then 3 characters!")));
-                        }
+                    if (gameName.length() > 3 && !gameName.startsWith(" ")) {
+                        network.getSender().sendGame(gameName, gamePassword, settings);
+                        gui.showPanel(GUI.SERVER_CONNECTION_PANEL);
                     } else {
-                        try {
-                            initializeGame(settings);
-                        } catch (Exception e1) {
-                            // TODO Auto-generated catch block
-                            e1.printStackTrace();
-                        }
+                        network.getErrorHandler().errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Game name have to be more then 3 characters!")));
                     }
                 }
             }
-        };*/
-        gui.getPanelSettings().getButtonApplySettings().addActionListener(applaySettingsListener);
+        };
+        gui.getPanelSettings().getButtonApplySettings().addActionListener(applySettingsListener);
     }
 
     private void removeApplySettingsListener() {
-        if (applaySettingsListener != null) {
-            gui.getPanelSettings().getButtonApplySettings().removeActionListener(this.applaySettingsListener);
+        if (applySettingsListener != null) {
+            gui.getPanelSettings().getButtonApplySettings().removeActionListener(this.applySettingsListener);
         }
     }
 
