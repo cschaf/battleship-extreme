@@ -253,6 +253,7 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
                 } else {
                     // game is over one player has won the game
                     clientTurn = TransferableObjectFactory.CreateClientTurn(netGame.getMarkedFieldOfLastTurn(), false, turn.getAttackingPlayerName(), turn.getAttackedPlayerName(), netGame.getWinner().getName());
+                    netGames.remove(netGame);
                 }
             }
             if (!netGame.isGameover()) {
@@ -275,8 +276,9 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
                     ITransferable info = TransferableObjectFactory.CreateClientInfo(clientHandler.getUsername(), clientHandler.getSocket().getInetAddress().getHostAddress(), clientHandler.getSocket().getPort(), InfoSendingReason.Connect);
                     this.multicast(info, netGame.getJoinedPlayers());
                 } else {
-                    ITransferable msg = TransferableObjectFactory.CreateMessage("Game has no free slot available!");
+                    ITransferable msg = TransferableObjectFactory.CreateError("Game has no free slot available!");
                     this.unicast(msg, clientHandler);
+                    return;
                 }
                 break;
             }

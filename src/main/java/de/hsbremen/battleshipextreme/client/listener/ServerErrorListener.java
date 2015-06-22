@@ -23,7 +23,9 @@ public class ServerErrorListener implements IErrorListener {
 
     public void onError(EventArgs<ITransferable> eventArgs) {
         JOptionPane.showMessageDialog(gui.getFrame(), eventArgs.getItem(), "Error", JOptionPane.ERROR_MESSAGE);
-        gui.getPanelServerConnection().getPnlServerConnectionBar().setEnabledAfterStartStop(true);
-        gui.getPanelServerConnection().getPnlServerGameBrowser().getTblModel().removeAllGames();
+        if (!network.isConnected()) {
+            gui.getPanelServerConnection().getPnlServerConnectionBar().setEnabledAfterStartStop(true);
+            gui.getPanelServerConnection().getPnlServerGameBrowser().getTblModel().removeAllGames();
+        }
     }
 }

@@ -519,7 +519,6 @@ public class MultiPlayerClientController implements Serializable {
 
     public void enableAvailableShips() {
         GamePanel panelGame = gui.getPanelGame();
-        ;
         panelGame.getRadioButtonDestroyer().setEnabled(player.isShipOfTypeAvailable(ShipType.DESTROYER));
         panelGame.getRadioButtonFrigate().setEnabled(player.isShipOfTypeAvailable(ShipType.FRIGATE));
         panelGame.getRadioButtonCorvette().setEnabled(player.isShipOfTypeAvailable(ShipType.CORVETTE));

@@ -66,7 +66,9 @@ public class NetworkClient implements IDisposable {
     }
 
     public void removeServerObjectReceivedListener(IServerObjectReceivedListener listener) {
-        this.listener.removeServerObjectReceivedListener(listener);
+        if (listener != null) {
+            this.listener.removeServerObjectReceivedListener(listener);
+        }
     }
 
     public void setIsConnected(boolean isConnected) {

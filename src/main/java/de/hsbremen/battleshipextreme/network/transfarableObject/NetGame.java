@@ -87,6 +87,9 @@ public class NetGame extends Game {
         if (index > -1) {
             playersMap.put(index, null);
             clientIds.add(index);
+            getPlayers()[index].resetBoard();
+            getPlayers()[index].setName("Player " + (index + 1));
+
         }
 
     }
