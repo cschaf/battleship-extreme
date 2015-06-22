@@ -306,12 +306,12 @@ public class MultiPlayerClientController implements Serializable {
             public void actionPerformed(ActionEvent e) {
                 if (!network.isConnected()) {
                     addServerObjectReceivedListeners();
-                    // hole Verbindungsdaten
+                    // get connections informations
                     network.setIp(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxIp().getText());
                     network.setPort(Integer.parseInt(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxPort().getText()));
-                    // Verbinde zum Server
+                    // connect to server
                     network.connect();
-                    // Sende login
+                    // send login
                     if (network.isConnected()) {
                         network.getSender().sendLogin(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
                     }
@@ -569,7 +569,7 @@ public class MultiPlayerClientController implements Serializable {
                 gui.getPanelGame().getButtonDone().setEnabled(false);
             }
         } else {
-            // alle Spieler habe ihre Schiffe gesetzt
+            // all players has set their ships
             ctrl.setBoardsEnabled(false);
             gui.getPanelGame().getButtonDone().setEnabled(false);
 
@@ -611,7 +611,7 @@ public class MultiPlayerClientController implements Serializable {
         int range;
         boolean possible = false;
 
-        // Farben zurücksetzen
+        // reset colors
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
                 board[i][j].setBackground(GUI.EMPTY_COLOR);
@@ -710,10 +710,6 @@ public class MultiPlayerClientController implements Serializable {
             String name = clientTurn.getAttackedPlayerName();
             enemies.put(name, board);
         }
-    }
-
-    public String getPlayerName() {
-        return player.getName();
     }
 
     public void setPlayerName(String playerName) {

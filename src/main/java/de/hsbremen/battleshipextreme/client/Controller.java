@@ -338,7 +338,7 @@ public class Controller {
 
     public boolean isItPossibleToShoot(FieldState[][] board, int startX, int startY) {
         boolean result = false;
-        FieldState state = board[startX][startY];
+        FieldState state = board[startY][startX];
         if (state == FieldState.HAS_SHIP || state == FieldState.IS_EMPTY) {
             result = true;
         }
