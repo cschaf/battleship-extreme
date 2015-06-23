@@ -3,6 +3,7 @@ package de.hsbremen.battleshipextreme.model.ship;
 import java.io.Serializable;
 
 public abstract class Ship implements Serializable {
+	private static final long serialVersionUID = 4170976318179394728L;
 	protected int size;
 	protected int shootingRange;
 	protected int maxReloadTime;

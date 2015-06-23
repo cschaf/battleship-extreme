@@ -1,5 +1,11 @@
 package de.hsbremen.battleshipextreme.model.player;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.FieldState;
@@ -7,22 +13,23 @@ import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
 import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
-import de.hsbremen.battleshipextreme.model.ship.*;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import de.hsbremen.battleshipextreme.model.ship.Corvette;
+import de.hsbremen.battleshipextreme.model.ship.Destroyer;
+import de.hsbremen.battleshipextreme.model.ship.Frigate;
+import de.hsbremen.battleshipextreme.model.ship.Ship;
+import de.hsbremen.battleshipextreme.model.ship.ShipType;
+import de.hsbremen.battleshipextreme.model.ship.Submarine;
 
 public abstract class Player implements Serializable {
+	private static final long serialVersionUID = -8473281041556043384L;
 	protected String name;
 	protected Ship[] ships;
 	protected Ship currentShip;
 	protected PlayerType type;
 	protected Board board;
 
-	public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
+	public Player(int boardSize, int destroyers, int frigates, int corvettes,
+			int submarines) {
 		initShips(destroyers, frigates, corvettes, submarines);
 		this.board = new Board(boardSize);
 		this.currentShip = this.ships[0];
@@ -41,7 +48,8 @@ public abstract class Player implements Serializable {
 				ships[counter] = destroyer;
 				for (int fieldIndex = 0; fieldIndex < value.size(); fieldIndex++) {
 					Field field = value.get(fieldIndex);
-					board.getFields()[field.getYPos()][field.getXPos()].setShip(destroyer);
+					board.getFields()[field.getYPos()][field.getXPos()]
+							.setShip(destroyer);
 				}
 				break;
 
@@ -50,7 +58,8 @@ public abstract class Player implements Serializable {
 				ships[counter] = frigate;
 				for (int fieldIndex = 0; fieldIndex < value.size(); fieldIndex++) {
 					Field field = value.get(fieldIndex);
-					board.getFields()[field.getYPos()][field.getXPos()].setShip(frigate);
+					board.getFields()[field.getYPos()][field.getXPos()]
+							.setShip(frigate);
 				}
 				break;
 
@@ -59,7 +68,8 @@ public abstract class Player implements Serializable {
 				ships[counter] = corvette;
 				for (int fieldIndex = 0; fieldIndex < value.size(); fieldIndex++) {
 					Field field = value.get(fieldIndex);
-					board.getFields()[field.getYPos()][field.getXPos()].setShip(corvette);
+					board.getFields()[field.getYPos()][field.getXPos()]
+							.setShip(corvette);
 				}
 				break;
 
@@ -68,7 +78,8 @@ public abstract class Player implements Serializable {
 				ships[counter] = submarine;
 				for (int fieldIndex = 0; fieldIndex < value.size(); fieldIndex++) {
 					Field field = value.get(fieldIndex);
-					board.getFields()[field.getYPos()][field.getXPos()].setShip(submarine);
+					board.getFields()[field.getYPos()][field.getXPos()]
+							.setShip(submarine);
 				}
 				break;
 			}
@@ -77,7 +88,8 @@ public abstract class Player implements Serializable {
 		this.currentShip = this.ships[0];
 	}
 
-	private void initShips(int destroyers, int frigates, int corvettes, int submarines) {
+	private void initShips(int destroyers, int frigates, int corvettes,
+			int submarines) {
 		ships = new Ship[destroyers + frigates + corvettes + submarines];
 		for (int i = 0; i < ships.length; i++) {
 			if (i < destroyers) {
@@ -105,13 +117,15 @@ public abstract class Player implements Serializable {
 		currentShip = ships[0];
 	}
 
-	public FieldState[][] getFieldStates(boolean isOwnBoard) throws FieldOutOfBoardException {
+	public FieldState[][] getFieldStates(boolean isOwnBoard)
+			throws FieldOutOfBoardException {
 		int size = board.getSize();
 		FieldState[][] fieldStates = new FieldState[size][size];
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
 				FieldState state = board.getField(j, i).getState();
-				if ((state == FieldState.HAS_SHIP || state == FieldState.IS_EMPTY) && (!isOwnBoard)) {
+				if ((state == FieldState.HAS_SHIP || state == FieldState.IS_EMPTY)
+						&& (!isOwnBoard)) {
 					fieldStates[i][j] = null;
 				} else {
 					fieldStates[i][j] = state;
@@ -151,7 +165,9 @@ public abstract class Player implements Serializable {
 	 * @throws ShipOutOfBoardException
 	 *             if the ships boundaries exceed the board.
 	 */
-	public boolean placeShip(int xPos, int yPos, Orientation orientation) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException {
+	public boolean placeShip(int xPos, int yPos, Orientation orientation)
+			throws ShipAlreadyPlacedException, FieldOutOfBoardException,
+			ShipOutOfBoardException {
 		if (isItPossibleToPlaceShip(xPos, yPos, orientation)) {
 			placeShipOnBoard(this.currentShip, xPos, yPos, orientation);
 			return true;
@@ -159,7 +175,9 @@ public abstract class Player implements Serializable {
 		return false;
 	}
 
-	public boolean isItPossibleToPlaceShip(int xPos, int yPos, Orientation orientation) throws ShipOutOfBoardException, ShipAlreadyPlacedException, FieldOutOfBoardException {
+	public boolean isItPossibleToPlaceShip(int xPos, int yPos,
+			Orientation orientation) throws ShipOutOfBoardException,
+			ShipAlreadyPlacedException, FieldOutOfBoardException {
 		if (this.currentShip.isPlaced()) {
 			throw new ShipAlreadyPlacedException(this.currentShip);
 		}
@@ -172,14 +190,16 @@ public abstract class Player implements Serializable {
 			throw new ShipOutOfBoardException(this.currentShip);
 		}
 
-		Field occupiedField = findOccupiedField(this.currentShip, xPos, yPos, orientation);
+		Field occupiedField = findOccupiedField(this.currentShip, xPos, yPos,
+				orientation);
 		if (occupiedField != null) {
 			return false;
 		}
 		return true;
 	}
 
-	private Field findOccupiedField(Ship ship, int xPos, int yPos, Orientation orientation) {
+	private Field findOccupiedField(Ship ship, int xPos, int yPos,
+			Orientation orientation) {
 		Field[][] fields = this.board.getFields();
 		// Orientation Horizontal
 		if (orientation == Orientation.HORIZONTAL) {
@@ -188,7 +208,8 @@ public abstract class Player implements Serializable {
 			for (int y = yPos - 1; y <= yPos + 1; y++)
 				for (int x = xPos - 1; x <= xPos + ship.getSize(); x++)
 					// x und y innerhalb des Spielfeldes
-					if (x >= 0 && y >= 0 && x < fields.length && y < fields.length) {
+					if (x >= 0 && y >= 0 && x < fields.length
+							&& y < fields.length) {
 						if (fields[y][x].getShip() != null) {
 							return (fields[y][x]);
 						}
@@ -201,7 +222,8 @@ public abstract class Player implements Serializable {
 			for (int y = yPos - 1; y <= yPos + ship.getSize(); y++)
 				for (int x = xPos - 1; x <= xPos + 1; x++)
 					// x und y innerhalb des Spielfeldes
-					if (x >= 0 && y >= 0 && x < fields.length && y < fields.length) {
+					if (x >= 0 && y >= 0 && x < fields.length
+							&& y < fields.length) {
 						if (fields[y][x].getShip() != null) // Feld hat Schiff
 						{
 							return (fields[y][x]);
@@ -211,7 +233,8 @@ public abstract class Player implements Serializable {
 		return null;
 	}
 
-	private boolean isShipPartiallyOutOfBoard(Ship ship, int xPos, int yPos, Orientation orientation) {
+	private boolean isShipPartiallyOutOfBoard(Ship ship, int xPos, int yPos,
+			Orientation orientation) {
 		int xDirection = orientation == Orientation.HORIZONTAL ? 1 : 0;
 		int yDirection = orientation == Orientation.VERTICAL ? 1 : 0;
 		int x = xPos + ship.getSize() * xDirection - 1;
@@ -219,11 +242,13 @@ public abstract class Player implements Serializable {
 		return (x >= board.getSize()) || (y >= board.getSize());
 	}
 
-	private void placeShipOnBoard(Ship ship, int xPos, int yPos, Orientation orientation) {
+	private void placeShipOnBoard(Ship ship, int xPos, int yPos,
+			Orientation orientation) {
 		int xDirection = orientation == Orientation.HORIZONTAL ? 1 : 0;
 		int yDirection = orientation == Orientation.VERTICAL ? 1 : 0;
 		for (int i = 0; i < ship.getSize(); i++) {
-			board.getFields()[yPos + i * yDirection][xPos + i * xDirection].setShip(ship);
+			board.getFields()[yPos + i * yDirection][xPos + i * xDirection]
+					.setShip(ship);
 		}
 		ship.place();
 	}
@@ -250,7 +275,8 @@ public abstract class Player implements Serializable {
 	 * keep track of the ship to place.
 	 */
 	public void nextShip() {
-		int currentShipIndex = Arrays.asList(this.ships).indexOf(this.currentShip);
+		int currentShipIndex = Arrays.asList(this.ships).indexOf(
+				this.currentShip);
 		if (currentShipIndex < ships.length - 1) {
 			currentShipIndex++;
 			currentShip = ships[currentShipIndex];
@@ -423,7 +449,8 @@ public abstract class Player implements Serializable {
 	public boolean areAllShipsOfTypeReloading(ShipType type) {
 		ArrayList<Ship> availableshShips = getAvailableShips(true);
 		for (Ship ship : availableshShips) {
-			if (ship.getType() == type && !ship.isReloading() && !ship.isDestroyed()) {
+			if (ship.getType() == type && !ship.isReloading()
+					&& !ship.isDestroyed()) {
 				return false;
 			}
 		}

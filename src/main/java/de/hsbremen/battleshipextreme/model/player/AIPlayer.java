@@ -19,6 +19,7 @@ import de.hsbremen.battleshipextreme.model.ship.Submarine;
 
 public class AIPlayer extends Player {
 
+	private static final long serialVersionUID = 1438718533340746236L;
 	private int currentEnemyIndex;
 	private Board enemyBoardRepresentation;
 	private Field[] nextTargetsArray;
