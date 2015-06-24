@@ -95,17 +95,10 @@ public class TransferableObjectFactory {
     }
 
     /**
-     * Creates an Turn
-     **/
-    public static ITransferable CreateClientTurn(String winnerName) {
-        return new ClientTurn(winnerName);
-    }
-
-    /**
      * Creates a Turn with property isReloading = true
      **/
-    public static ITransferable CreateTurn() {
-        return new Turn();
+    public static ITransferable CreateTurn(String reloadingPlayer) {
+        return new Turn(reloadingPlayer);
     }
 
     /**

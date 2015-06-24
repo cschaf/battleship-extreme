@@ -72,8 +72,10 @@ public class ServerController {
                         break;
                     case Turn:
                         Turn turn = (Turn) receivedObject;
-                        String orientation = turn.isHorizontal() ? "Horizontal" : "Vertically";
-                        gui.getTraMessages().append("New Turn was added, " + turn.getAttackingPlayerName() + " attacked " + turn.getAttackedPlayerName() + " with a " + turn.getShipType().toString() + " " + orientation + " in game " + turn.getGameId() + "\r\n");
+                        if (!turn.isReloading()) {
+                            String orientation = turn.isHorizontal() ? "Horizontal" : "Vertically";
+                            gui.getTraMessages().append("New Turn was added, " + turn.getAttackingPlayerName() + " attacked " + turn.getAttackedPlayerName() + " with a " + turn.getShipType().toString() + " " + orientation + " in game " + turn.getGameId() + "\r\n");
+                        }
                         break;
                     case Join:
                         Join join = (Join) receivedObject;
@@ -190,8 +192,7 @@ public class ServerController {
                     String ip = "<p width=\"200\">" + "IP: " + item.getIp() + "</p>";
                     String port = "<p width=\"200\">" + "Port: " + item.getPort() + "</p>";
                     l.setToolTipText("<html>" + name + ip + port + "</html>");
-                }
-                else l.setToolTipText("");
+                } else l.setToolTipText("");
             }
         });
 
@@ -209,8 +210,7 @@ public class ServerController {
                     String players = "<p width=\"300\">" + "Players: " + item.getJoinedPlayers().size() + " / 6" + "</p>";
                     String createdAt = "<p width=\"300\">" + "Created at: " + item.getCreatedAt() + "</p>";
                     l.setToolTipText("<html>" + name + id + password + players + createdAt + "</html>");
-                }
-                else l.setToolTipText(null);
+                } else l.setToolTipText(null);
             }
         });
 

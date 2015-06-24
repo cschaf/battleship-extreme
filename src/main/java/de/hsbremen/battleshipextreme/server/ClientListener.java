@@ -71,12 +71,6 @@ public class ClientListener extends Thread implements IDisposable, Serializable 
                                 this.serverDispatcher.sendNameList(clientHandler);
                                 break;
 
-                            case PlayerIsReloading:
-                                game = serverDispatcher.getGameByClient(clientHandler);
-                                serverDispatcher.multicast(serverInfo, game.getJoinedPlayers());
-                                serverDispatcher.initializeNextTurn(game);
-                                break;
-
                             case PlayerWon:
                                 game = serverDispatcher.getGameByClient(clientHandler);
                                 serverDispatcher.multicast(serverInfo, game.getJoinedPlayers());

@@ -154,6 +154,7 @@ public class MultiPlayerClientController implements Serializable {
         GamePanel panelGame = gui.getPanelGame();
         this.doneButtonListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                decreaseCurrentReloadTimeOfShips();
                 next();
             }
         };
@@ -201,14 +202,14 @@ public class MultiPlayerClientController implements Serializable {
                         ShipType shipType = player.getCurrentShip().getType();
                         network.getSender().sendTurn(TransferableObjectFactory.CreateTurn(attackingPlayerName, attackedPlayerName, xPos, yPos, isHorizontal, shipType));
                         ctrl.setEnemyBoardEnabled(false);
-                        player.getCurrentShip().shoot();
-                        player.getCurrentShip().decreaseCurrentReloadTime();
+                        decreaseCurrentReloadTimeOfShips();
                     }
                 };
                 enemyBoardListeners[i][j] = fieldListener;
                 playerBoard[i][j].addActionListener(fieldListener);
             }
         }
+
     }
 
     private void removeEnemyBoardListener() {
@@ -573,7 +574,7 @@ public class MultiPlayerClientController implements Serializable {
             gui.getPanelGame().getButtonDone().setEnabled(false);
 
             if (playerIsReloading) {
-                network.getSender().sendPlayerIsReloading();
+                network.getSender().sendTurn(TransferableObjectFactory.CreateTurn(player.getName()));
                 playerIsReloading = false;
             }
         }
@@ -678,6 +679,9 @@ public class MultiPlayerClientController implements Serializable {
         } else if (clientTurn.isReloading()) {
             ctrl.setInfoLabelMessage(clientTurn.getAttackingPlayerName() + " is reloading");
         } else {
+            if (clientTurn.getAttackingPlayerName().equals(player.getName())) {
+                player.getCurrentShip().shoot();
+            }
             ctrl.setInfoLabelMessage(clientTurn.getAttackingPlayerName() + " is shooting");
             markClientTurnFields(clientTurn);
         }

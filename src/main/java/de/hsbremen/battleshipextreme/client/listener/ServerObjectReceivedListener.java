@@ -89,9 +89,9 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 ctrl.setEnemySelectionEnabled(true);
                 break;
             case MakeTurn:
-                boolean reloading = ctrl.handleAllShipsAreReloading();
-                gui.getPanelGame().getButtonShowYourShips().setEnabled(true);
                 ctrl.updateShipSelection();
+                boolean reloading = ctrl.handleAllShipsAreReloading();
+
                 if (!reloading) {
                     ctrl.updateCurrentShip();
                     ctrl.setEnemyBoardEnabled(true);
@@ -100,7 +100,7 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                     ctrl.setDoneButtonEnabled(true);
 
                 }
-                ctrl.decreaseCurrentReloadTimeOfShips();
+
                 break;
         }
     }

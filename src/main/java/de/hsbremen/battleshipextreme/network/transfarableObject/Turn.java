@@ -20,8 +20,8 @@ public class Turn extends TransferableObject {
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-    public Turn() {
-        this.attackingPlayerName = "";
+    public Turn(String reloadingPlayer) {
+        this.attackingPlayerName = reloadingPlayer;
         this.attackedPlayerName = "";
         this.fieldX = -1;
         this.fieldY = -1;
