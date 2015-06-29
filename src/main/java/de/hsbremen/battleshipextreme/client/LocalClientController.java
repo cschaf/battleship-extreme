@@ -124,6 +124,11 @@ public class LocalClientController implements Serializable {
         ctrl.setShipSelectionEnabled(false);
         ctrl.setDoneButtonEnabled(false);
         ctrl.setInfoLabelMessage(game.getCurrentPlayer() + " is placing ships ");
+        gui.getPanelGame().clearChatLog();
+        gui.getPanelGame().clearGameLog();
+        gui.getPanelGame().resetShips();
+        gui.getPanelGame().getRadioButtonHorizontalOrientation().setSelected(true);
+
     }
 
     public void addEnemyBoardListener() {

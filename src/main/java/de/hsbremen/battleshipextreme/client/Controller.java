@@ -56,6 +56,7 @@ public class Controller {
             public void actionPerformed(ActionEvent e) {
                 multiPlayerClientController.removeAllListeners();
                 network.dispose();
+                localClientController.removeAllListeners();
                 localClientController.addAllListeners();
                 gui.showPanel(GUI.SETTINGS_PANEL);
                 setSaveButtonEnabled(false);
