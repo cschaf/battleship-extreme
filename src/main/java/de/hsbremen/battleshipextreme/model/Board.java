@@ -74,7 +74,7 @@ public class Board implements Serializable {
 	}
 
 	/**
-	 * Liefert alle Feldzustände eines Boardes abhängig davon, ob es das eigene
+	 * Liefert alle Feldzustände eines Boards abhängig davon, ob es das eigene
 	 * Board oder das Board eines Gegners ist. Es werden nur Feldzustände
 	 * zurückgegeben, die der Spieler wissen darf.
 	 * 

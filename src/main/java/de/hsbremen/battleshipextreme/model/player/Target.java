@@ -2,6 +2,11 @@ package de.hsbremen.battleshipextreme.model.player;
 
 import de.hsbremen.battleshipextreme.model.Orientation;
 
+/**
+ * Die Klasse Target beinhaltet die Position und Ausrichtung eines Schusses.
+ * 
+ */
+
 public class Target {
 	private int x;
 	private int y;

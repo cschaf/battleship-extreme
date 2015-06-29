@@ -20,6 +20,12 @@ import de.hsbremen.battleshipextreme.model.ship.Ship;
 import de.hsbremen.battleshipextreme.model.ship.ShipType;
 import de.hsbremen.battleshipextreme.model.ship.Submarine;
 
+/**
+ * Die abstrakte Klasse Player dient als Grundlage für die HumanPlayer- und
+ * AIPlayer-Klasse.
+ *
+ */
+
 public abstract class Player implements Serializable {
 	private static final long serialVersionUID = -8473281041556043384L;
 	protected String name;
@@ -28,8 +34,22 @@ public abstract class Player implements Serializable {
 	protected PlayerType type;
 	protected Board board;
 
-	public Player(int boardSize, int destroyers, int frigates, int corvettes,
-			int submarines) {
+	/**
+	 * Dient zum Initialisieren der Schiffe und des Boards anhand der
+	 * übergebenen Parameter.
+	 * 
+	 * @param boardSize
+	 *            Größe des Boards
+	 * @param destroyers
+	 *            Anzahl der Zerstörer
+	 * @param frigates
+	 *            Anzahl der Frigatten
+	 * @param corvettes
+	 *            Anzahl der Korvetten
+	 * @param submarines
+	 *            Anzahl der U-Boote
+	 */
+	public Player(int boardSize, int destroyers, int frigates, int corvettes, int submarines) {
 		initShips(destroyers, frigates, corvettes, submarines);
 		this.board = new Board(boardSize);
 		this.currentShip = this.ships[0];
@@ -48,8 +68,7 @@ public abstract class Player implements Serializable {
 				ships[counter] = destroyer;
 				for (int fieldIndex = 0; fieldIndex < value.size(); fieldIndex++) {
 					Field field = value.get(fieldIndex);
-					board.getFields()[field.getYPos()][field.getXPos()]
-							.setShip(destroyer);
+					board.getFields()[field.getYPos()][field.getXPos()].setShip(destroyer);
 				}
 				break;
 
@@ -58,8 +77,7 @@ public abstract class Player implements Serializable {
 				ships[counter] = frigate;
 				for (int fieldIndex = 0; fieldIndex < value.size(); fieldIndex++) {
 					Field field = value.get(fieldIndex);
-					board.getFields()[field.getYPos()][field.getXPos()]
-							.setShip(frigate);
+					board.getFields()[field.getYPos()][field.getXPos()].setShip(frigate);
 				}
 				break;
 
@@ -68,8 +86,7 @@ public abstract class Player implements Serializable {
 				ships[counter] = corvette;
 				for (int fieldIndex = 0; fieldIndex < value.size(); fieldIndex++) {
 					Field field = value.get(fieldIndex);
-					board.getFields()[field.getYPos()][field.getXPos()]
-							.setShip(corvette);
+					board.getFields()[field.getYPos()][field.getXPos()].setShip(corvette);
 				}
 				break;
 
@@ -78,8 +95,7 @@ public abstract class Player implements Serializable {
 				ships[counter] = submarine;
 				for (int fieldIndex = 0; fieldIndex < value.size(); fieldIndex++) {
 					Field field = value.get(fieldIndex);
-					board.getFields()[field.getYPos()][field.getXPos()]
-							.setShip(submarine);
+					board.getFields()[field.getYPos()][field.getXPos()].setShip(submarine);
 				}
 				break;
 			}
@@ -88,8 +104,15 @@ public abstract class Player implements Serializable {
 		this.currentShip = this.ships[0];
 	}
 
-	private void initShips(int destroyers, int frigates, int corvettes,
-			int submarines) {
+	/**
+	 * Die Methode dient zum Initialisieren der Schiffe.
+	 * 
+	 * @param destroyers
+	 * @param frigates
+	 * @param corvettes
+	 * @param submarines
+	 */
+	private void initShips(int destroyers, int frigates, int corvettes, int submarines) {
 		ships = new Ship[destroyers + frigates + corvettes + submarines];
 		for (int i = 0; i < ships.length; i++) {
 			if (i < destroyers) {
@@ -108,6 +131,9 @@ public abstract class Player implements Serializable {
 		ships = new Ship[shipMap.size()];
 	}
 
+	/**
+	 * Dient zum Zurücksetzen eines Boards.
+	 */
 	public void resetBoard() {
 		int size = board.getSize();
 		board = new Board(size);
@@ -117,15 +143,22 @@ public abstract class Player implements Serializable {
 		currentShip = ships[0];
 	}
 
-	public FieldState[][] getFieldStates(boolean isOwnBoard)
-			throws FieldOutOfBoardException {
+	/**
+	 * Liefert alle Feldzustände des Playerboards abhängig davon, ob es das
+	 * eigene Board oder das Board eines Gegners ist. Es werden nur Feldzustände
+	 * zurückgegeben, die der Spieler wissen darf.
+	 * 
+	 * @param isOwnBoard
+	 *            gibt an, ob es sich um das eigene Board handelt
+	 * @return
+	 */
+	public FieldState[][] getFieldStates(boolean isOwnBoard) throws FieldOutOfBoardException {
 		int size = board.getSize();
 		FieldState[][] fieldStates = new FieldState[size][size];
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
 				FieldState state = board.getField(j, i).getState();
-				if ((state == FieldState.HAS_SHIP || state == FieldState.IS_EMPTY)
-						&& (!isOwnBoard)) {
+				if ((state == FieldState.HAS_SHIP || state == FieldState.IS_EMPTY) && (!isOwnBoard)) {
 					fieldStates[i][j] = null;
 				} else {
 					fieldStates[i][j] = state;
@@ -147,27 +180,26 @@ public abstract class Player implements Serializable {
 	}
 
 	/**
-	 * Check if its possible to place the ship. If not, throw exception. If yes,
-	 * place the ship and call the nextShip-method.
+	 * Prüft ob es möglich ist, ein Schiff an eine bestimmten Position zu
+	 * platzieren. Wenn ja, dann wird das Schiff platziert und true
+	 * zurückgegeben, ansonsten wird false zurückgegeben.
 	 * 
 	 * @param xPos
-	 *            the first x-coordinate of the field to place the ship on.
+	 *            X-Koordinate
 	 * @param yPos
-	 *            the first y-coordinate of the field to place the ship on.
+	 *            Y-Koordinate
 	 * @param orientation
-	 *            the orientation of the ship (horizontal/vertical).
-	 * @return false if the field is already occupied, true if the ship could be
-	 *         placed.
+	 *            Ausrichtung
+	 * @return true, wenn das Schiff an dieser Stelle platziert werden kann,
+	 *         false wenn nicht
 	 * @throws ShipAlreadyPlacedException
-	 *             if the ship has already been placed.
+	 *             wenn das Schiff bereits platziert wurde
 	 * @throws FieldOutOfBoardException
-	 *             if the players' board does not contain the field.
+	 *             wenn sich das Feld nicht im Board befindet
 	 * @throws ShipOutOfBoardException
-	 *             if the ships boundaries exceed the board.
+	 *             wenn sich das Schiff (teilweise) nicht im Board befindet
 	 */
-	public boolean placeShip(int xPos, int yPos, Orientation orientation)
-			throws ShipAlreadyPlacedException, FieldOutOfBoardException,
-			ShipOutOfBoardException {
+	public boolean placeShip(int xPos, int yPos, Orientation orientation) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException {
 		if (isItPossibleToPlaceShip(xPos, yPos, orientation)) {
 			placeShipOnBoard(this.currentShip, xPos, yPos, orientation);
 			return true;
@@ -175,9 +207,19 @@ public abstract class Player implements Serializable {
 		return false;
 	}
 
-	public boolean isItPossibleToPlaceShip(int xPos, int yPos,
-			Orientation orientation) throws ShipOutOfBoardException,
-			ShipAlreadyPlacedException, FieldOutOfBoardException {
+	/**
+	 * Prüft ob es möglich ist, das Schiff an der übergebenen Position zu
+	 * platzieren.
+	 * 
+	 * @param xPos
+	 * @param yPos
+	 * @param orientation
+	 * @return true, wenn es möglich ist, false wenn nicht
+	 * @throws ShipOutOfBoardException
+	 * @throws ShipAlreadyPlacedException
+	 * @throws FieldOutOfBoardException
+	 */
+	public boolean isItPossibleToPlaceShip(int xPos, int yPos, Orientation orientation) throws ShipOutOfBoardException, ShipAlreadyPlacedException, FieldOutOfBoardException {
 		if (this.currentShip.isPlaced()) {
 			throw new ShipAlreadyPlacedException(this.currentShip);
 		}
@@ -190,26 +232,34 @@ public abstract class Player implements Serializable {
 			throw new ShipOutOfBoardException(this.currentShip);
 		}
 
-		Field occupiedField = findOccupiedField(this.currentShip, xPos, yPos,
-				orientation);
+		Field occupiedField = findOccupiedField(this.currentShip, xPos, yPos, orientation);
 		if (occupiedField != null) {
 			return false;
 		}
 		return true;
 	}
 
-	private Field findOccupiedField(Ship ship, int xPos, int yPos,
-			Orientation orientation) {
+	/**
+	 * Prüft ob Felder an der gewünschten Position bereits belegt sind. Dabei
+	 * wird berücksichtigt, dass um das Schiff herum ein Feld frei bleiben muss.
+	 * 
+	 * @param ship
+	 * @param xPos
+	 * @param yPos
+	 * @param orientation
+	 * @return das erste belegte Feld, das gefunden wurde, null wenn es kein
+	 *         belegtes Feld gibt
+	 */
+	private Field findOccupiedField(Ship ship, int xPos, int yPos, Orientation orientation) {
 		Field[][] fields = this.board.getFields();
 		// Orientation Horizontal
 		if (orientation == Orientation.HORIZONTAL) {
 
-			// Felder pr�fen ob bereits belegt
+			// Felder prüfen ob bereits belegt
 			for (int y = yPos - 1; y <= yPos + 1; y++)
 				for (int x = xPos - 1; x <= xPos + ship.getSize(); x++)
 					// x und y innerhalb des Spielfeldes
-					if (x >= 0 && y >= 0 && x < fields.length
-							&& y < fields.length) {
+					if (x >= 0 && y >= 0 && x < fields.length && y < fields.length) {
 						if (fields[y][x].getShip() != null) {
 							return (fields[y][x]);
 						}
@@ -218,12 +268,11 @@ public abstract class Player implements Serializable {
 
 		// Orientation Vertical
 		if (orientation == Orientation.VERTICAL) {
-			// Felder pr�fen ob bereits belegt
+			// Felder prüfen ob bereits belegt
 			for (int y = yPos - 1; y <= yPos + ship.getSize(); y++)
 				for (int x = xPos - 1; x <= xPos + 1; x++)
 					// x und y innerhalb des Spielfeldes
-					if (x >= 0 && y >= 0 && x < fields.length
-							&& y < fields.length) {
+					if (x >= 0 && y >= 0 && x < fields.length && y < fields.length) {
 						if (fields[y][x].getShip() != null) // Feld hat Schiff
 						{
 							return (fields[y][x]);
@@ -233,8 +282,17 @@ public abstract class Player implements Serializable {
 		return null;
 	}
 
-	private boolean isShipPartiallyOutOfBoard(Ship ship, int xPos, int yPos,
-			Orientation orientation) {
+	/**
+	 * Prüft ob sich das Schiff (teilweise) außerhalb des Boards befindet.
+	 * 
+	 * @param ship
+	 * @param xPos
+	 * @param yPos
+	 * @param orientation
+	 * @return true, wenn sich das Schiff außerhalb des Boards befindet, false
+	 *         wenn nicht
+	 */
+	private boolean isShipPartiallyOutOfBoard(Ship ship, int xPos, int yPos, Orientation orientation) {
 		int xDirection = orientation == Orientation.HORIZONTAL ? 1 : 0;
 		int yDirection = orientation == Orientation.VERTICAL ? 1 : 0;
 		int x = xPos + ship.getSize() * xDirection - 1;
@@ -242,17 +300,28 @@ public abstract class Player implements Serializable {
 		return (x >= board.getSize()) || (y >= board.getSize());
 	}
 
-	private void placeShipOnBoard(Ship ship, int xPos, int yPos,
-			Orientation orientation) {
+	/**
+	 * Setzt das Schiff auf die Felder vom Board.
+	 * 
+	 * @param ship
+	 * @param xPos
+	 * @param yPos
+	 * @param orientation
+	 */
+	private void placeShipOnBoard(Ship ship, int xPos, int yPos, Orientation orientation) {
 		int xDirection = orientation == Orientation.HORIZONTAL ? 1 : 0;
 		int yDirection = orientation == Orientation.VERTICAL ? 1 : 0;
 		for (int i = 0; i < ship.getSize(); i++) {
-			board.getFields()[yPos + i * yDirection][xPos + i * xDirection]
-					.setShip(ship);
+			board.getFields()[yPos + i * yDirection][xPos + i * xDirection].setShip(ship);
 		}
 		ship.place();
 	}
 
+	/**
+	 * Prüft ob der Spieler alle seine Schiffe gesetzt hat.
+	 * 
+	 * @return true, wenn alle Schiffe gesetzt wurden, false wenn nicht.
+	 */
 	public boolean hasPlacedAllShips() {
 		boolean arePlaced = true;
 
@@ -266,17 +335,22 @@ public abstract class Player implements Serializable {
 		return arePlaced;
 	}
 
+	/**
+	 * prüft ob der Player das übergebene Schiff tatsächlich besitzt
+	 * 
+	 * @param ship
+	 * @return gibt true zurück, wenn ja, false wenn nicht.
+	 */
 	private boolean possessesShip(Ship ship) {
 		return Arrays.asList(this.getShips()).contains(ship);
 	}
 
 	/**
-	 * Set the currentShip to next ship in array of ships. Its purpose is to
-	 * keep track of the ship to place.
+	 * Setzt das currentShip auf den das nächste Schiff. Die Methode wird beim
+	 * Setzen der Schiffe verwendet.
 	 */
 	public void nextShip() {
-		int currentShipIndex = Arrays.asList(this.ships).indexOf(
-				this.currentShip);
+		int currentShipIndex = Arrays.asList(this.ships).indexOf(this.currentShip);
 		if (currentShipIndex < ships.length - 1) {
 			currentShipIndex++;
 			currentShip = ships[currentShipIndex];
@@ -284,9 +358,10 @@ public abstract class Player implements Serializable {
 	}
 
 	/**
-	 * Provides a way to retrieve all ships that are not destroyed.
+	 * Liefert alle Schiffe die nicht zerstört wurden. Zusätzlich können Schiffe
+	 * gefiltert werden, die nachladen.
 	 * 
-	 * @return a list of all ships that are not destroyed.
+	 * @return eine Liste von Schiffen die benutzbar sind
 	 */
 	public ArrayList<Ship> getAvailableShips(boolean excludeReloadingShips) {
 		ArrayList<Ship> availableShips = new ArrayList<Ship>();
@@ -305,11 +380,7 @@ public abstract class Player implements Serializable {
 	}
 
 	/**
-	 * Tries to set the current ship of the player.
-	 * 
-	 * @param ship
-	 *            the ship the player tries to select
-	 * @return true if the ship was selected, false if not
+	 * Dient zum Setzen des aktuellen Schiffs.
 	 */
 	public void selectShip(Ship ship) throws Exception {
 		if (!possessesShip(ship)) {
@@ -318,8 +389,18 @@ public abstract class Player implements Serializable {
 		this.currentShip = ship;
 	}
 
+	/**
+	 * Markiert das Spieler-Board an der übergebenen Position. Gibt false
+	 * zurück, wenn ein Schuss nicht ausgeführt werden kann.
+	 * 
+	 * @param x
+	 * @param y
+	 * @return true, wenn das Board an der übergebenen Position markiert werden
+	 *         konnte, false wenn nicht
+	 * @throws FieldOutOfBoardException
+	 */
 	public boolean markBoard(int x, int y) throws FieldOutOfBoardException {
-		// Sch�sse ignorieren, die au�erhalb des Feldes liegen
+		// Schüsse ignorieren, die außerhalb des Feldes liegen
 		if (board.containsFieldAtPosition(x, y)) {
 			Field fieldShotAt = board.getField(x, y);
 			// wenn Board schon beschossen wurde, dann Schuss ignorieren
@@ -340,9 +421,9 @@ public abstract class Player implements Serializable {
 	}
 
 	/**
-	 * Checks if all ships (that are not destroyed) are reloading.
+	 * Prüft ob alle Schiffe nachladen.
 	 * 
-	 * @return true if all available ships are reloading, else false.
+	 * @return true wenn alle Schiffe nachladen, false wenn nicht
 	 */
 	public boolean areAllShipsReloading() {
 		ArrayList<Ship> availableShips = this.getAvailableShips(true);
@@ -394,6 +475,12 @@ public abstract class Player implements Serializable {
 		this.type = type;
 	}
 
+	/**
+	 * Liefert die Anzahl der Schiffe von einem bestimmten Typ.
+	 * 
+	 * @param shipType
+	 * @return die Anzahl der Schiffe des übergebenen Typs
+	 */
 	public int getShipCount(ShipType shipType) {
 		int numberOfOccurences = 0;
 		for (Ship ship : ships) {
@@ -406,6 +493,13 @@ public abstract class Player implements Serializable {
 		return numberOfOccurences;
 	}
 
+	/**
+	 * Setzt das currentShip auf das erste verfügbare Schiff, dessen Schifftyp
+	 * dem übergebenem Schifftyp gleicht.
+	 * 
+	 * @param shipType
+	 * @return das erste gefundene Schiff, das dem übergebenem Schifftyp gleicht
+	 */
 	public boolean setCurrentShipByType(ShipType shipType) {
 		ArrayList<Ship> availableShips = getAvailableShips(true);
 		for (Ship ship : availableShips) {
@@ -417,6 +511,13 @@ public abstract class Player implements Serializable {
 		return false;
 	}
 
+	/**
+	 * Gibt an, ob Schiffe vorhanden sind, die dem übergebenen ShipType
+	 * gleichen.
+	 * 
+	 * @param shipType
+	 * @return true, wenn Schiffe vom Schifftyp vorhanden sind, false wenn nicht
+	 */
 	public boolean isShipOfTypeAvailable(ShipType shipType) {
 		ArrayList<Ship> availableshShips = getAvailableShips(true);
 		for (Ship ship : availableshShips) {
@@ -449,8 +550,7 @@ public abstract class Player implements Serializable {
 	public boolean areAllShipsOfTypeReloading(ShipType type) {
 		ArrayList<Ship> availableshShips = getAvailableShips(true);
 		for (Ship ship : availableshShips) {
-			if (ship.getType() == type && !ship.isReloading()
-					&& !ship.isDestroyed()) {
+			if (ship.getType() == type && !ship.isReloading() && !ship.isDestroyed()) {
 				return false;
 			}
 		}
