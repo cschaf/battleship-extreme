@@ -396,7 +396,6 @@ public abstract class Player implements Serializable {
 	 */
 	public boolean markBoard(int x, int y) throws FieldOutOfBoardException {
 		// Schüsse ignorieren, die außerhalb des Feldes liegen
-		boolean isField = board.containsFieldAtPosition(x, y);
 		if (board.containsFieldAtPosition(x, y)) {
 			Field fieldShotAt = board.getField(x, y);
 			// wenn Board schon beschossen wurde, dann Schuss ignorieren
