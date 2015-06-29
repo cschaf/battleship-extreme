@@ -1,11 +1,5 @@
 package de.hsbremen.battleshipextreme.model.player;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import de.hsbremen.battleshipextreme.model.Board;
 import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.FieldState;
@@ -13,12 +7,13 @@ import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
 import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
-import de.hsbremen.battleshipextreme.model.ship.Corvette;
-import de.hsbremen.battleshipextreme.model.ship.Destroyer;
-import de.hsbremen.battleshipextreme.model.ship.Frigate;
-import de.hsbremen.battleshipextreme.model.ship.Ship;
-import de.hsbremen.battleshipextreme.model.ship.ShipType;
-import de.hsbremen.battleshipextreme.model.ship.Submarine;
+import de.hsbremen.battleshipextreme.model.ship.*;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Die abstrakte Klasse Player dient als Grundlage für die HumanPlayer- und
@@ -401,6 +396,7 @@ public abstract class Player implements Serializable {
 	 */
 	public boolean markBoard(int x, int y) throws FieldOutOfBoardException {
 		// Schüsse ignorieren, die außerhalb des Feldes liegen
+		boolean isField = board.containsFieldAtPosition(x, y);
 		if (board.containsFieldAtPosition(x, y)) {
 			Field fieldShotAt = board.getField(x, y);
 			// wenn Board schon beschossen wurde, dann Schuss ignorieren
@@ -416,8 +412,9 @@ public abstract class Player implements Serializable {
 				// Feld bereits beschossen
 				return false;
 			}
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	/**
