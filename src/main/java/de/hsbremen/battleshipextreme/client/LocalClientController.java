@@ -55,6 +55,7 @@ public class LocalClientController implements Serializable {
         addShipSelectionListeners();
         addEnemySelectionListener();
         addShowYourShipsButtonListener();
+        gui.getPanelGame().getButtonShowYourShips().setVisible(true);
     }
 
     public void addApplySettingsListener() {

@@ -42,8 +42,6 @@ public class Controller {
         addServerErrorListeners();
         this.multiPlayerClientController = new MultiPlayerClientController(network, gui, this);
         addMenuListeners();
-
-        gui.getPanelGame().getButtonShowYourShips().setVisible(false);
     }
 
     private void addMenuListeners() {

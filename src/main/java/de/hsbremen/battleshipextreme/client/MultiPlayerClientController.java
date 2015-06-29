@@ -66,6 +66,7 @@ public class MultiPlayerClientController implements Serializable {
         this.enemies = new HashMap<String, FieldState[][]>();
         this.serverObjectReceivedListener = new ServerObjectReceivedListener(this.gui, network, this);
         this.serverGameBrowserListener = new ServerGameBrowserListener(network, this);
+
     }
 
     // -------------------------- OTHER METHODS --------------------------
@@ -77,6 +78,7 @@ public class MultiPlayerClientController implements Serializable {
         addShipSelectionListeners();
         addEnemySelectionListener();
         addChatListeners();
+        gui.getPanelGame().getButtonShowYourShips().setVisible(false);
     }
 
     public void removeAllListeners() {
