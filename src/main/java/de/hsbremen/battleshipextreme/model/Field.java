@@ -4,6 +4,11 @@ import java.io.Serializable;
 
 import de.hsbremen.battleshipextreme.model.ship.Ship;
 
+/**
+ * Die Klasse stellt ein einzelnes Feld in einem Board dar.
+ *
+ */
+
 public class Field implements Serializable {
 	private static final long serialVersionUID = -2978683421156263930L;
 	private int xPos;
@@ -47,10 +52,9 @@ public class Field implements Serializable {
 	}
 
 	/**
-	 * Provides a field state for the field to facilitate the displaying of a
-	 * field.
+	 * Liefert den Zustand eines Feldes.
 	 *
-	 * @return the field state.
+	 * @return FieldState
 	 */
 	public FieldState getState() {
 		if (this.isHit()) {

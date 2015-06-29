@@ -5,6 +5,11 @@ import java.util.ArrayList;
 
 import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
 
+/**
+ * Die Klasse dient zum Erzeugen eines Boards.
+ *
+ */
+
 public class Board implements Serializable {
 	private static final long serialVersionUID = 482478412129512090L;
 	private Field[][] fields;
