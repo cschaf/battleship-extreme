@@ -34,10 +34,11 @@ public class Game extends TransferableObject {
 	private Field[] markedFieldOfLastTurn;
 
 	/**
-	 * Reads the settings and initializes the necessary game objects.
+	 * Initialisiert die benötigten Objekte für das Spiel anhand der übergebenen
+	 * Settings.
 	 * 
 	 * @param settings
-	 *            the game settings.
+	 * 
 	 */
 	public void initialize(Settings settings) {
 		this.settings = settings;
@@ -54,72 +55,49 @@ public class Game extends TransferableObject {
 		currentPlayer = players[0];
 	}
 
+	/**
+	 * Erzeugt die Spieler anhand der übergebenen Settings.
+	 * 
+	 * @param settings
+	 */
 	private void createPlayers(Settings settings) {
-		// Spieler erzeugen
 		int numberOfHumanPlayers = settings.getPlayers();
 		int numberOfAIPlayers = settings.getSmartAiPlayers();
 		int numberOfDumbAiPlayers = settings.getDumbAiPlayers();
-		int numberOfPlayers = numberOfAIPlayers + numberOfHumanPlayers
-				+ numberOfDumbAiPlayers;
+		int numberOfPlayers = numberOfAIPlayers + numberOfHumanPlayers + numberOfDumbAiPlayers;
 		players = new Player[numberOfPlayers];
 		for (int i = 0; i < numberOfPlayers; i++) {
 			if (i < numberOfHumanPlayers) {
-				players[i] = new HumanPlayer(settings.getBoardSize(),
-						settings.getDestroyers(), settings.getFrigates(),
-						settings.getCorvettes(), settings.getSubmarines());
+				players[i] = new HumanPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines());
 			} else {
 				if (i < numberOfAIPlayers + numberOfHumanPlayers) {
-					players[i] = new AIPlayer(settings.getBoardSize(),
-							settings.getDestroyers(), settings.getFrigates(),
-							settings.getCorvettes(), settings.getSubmarines(),
-							PlayerType.SMART_AI);
+					players[i] = new AIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines(), PlayerType.SMART_AI);
 				} else {
-					players[i] = new AIPlayer(settings.getBoardSize(),
-							settings.getDestroyers(), settings.getFrigates(),
-							settings.getCorvettes(), settings.getSubmarines(),
-							PlayerType.DUMB_AI);
+					players[i] = new AIPlayer(settings.getBoardSize(), settings.getDestroyers(), settings.getFrigates(), settings.getCorvettes(), settings.getSubmarines(), PlayerType.DUMB_AI);
 				}
 			}
 		}
 	}
 
-	public Target makeAiTurn() throws Exception {
-		boolean wasShotPossible = false;
-		// AI soll Zug automatisch machen
-		AIPlayer ai = (AIPlayer) currentPlayer;
-		Target shot = null;
-
-		do {
-			Player currentEnemy = selectAiEnemy(ai);
-			ai.selectShip(ai.getAvailableShips(true).get(0));
-			shot = ai.getTarget(currentEnemy.getFieldStates(false));
-			wasShotPossible = makeTurn(currentEnemy, shot.getX(), shot.getY(),
-					shot.getOrientation());
-		} while (!wasShotPossible);
-
-		return shot;
-	}
-
-	private Player selectAiEnemy(AIPlayer ai) {
-		Player currentEnemy;
-		do {
-			currentEnemy = players[ai.getCurrentEnemyIndex()];
-			// zuf�lligen Gegner ausw�hlen, wenn die KI keine Spur verfolgt,
-			// ansonsten gemerkten Gegner beibehalten
-			if (!ai.hasTargets() || currentEnemy.hasLost()
-					|| ai.getType() == PlayerType.DUMB_AI
-					|| ai.equals(currentEnemy)) {
-				ai.setRandomEnemyIndex(players.length - 1);
-				currentEnemy = players[ai.getCurrentEnemyIndex()];
-			}
-		} while (currentEnemy.hasLost() || ai.equals(currentEnemy));
-		return currentEnemy;
-	}
-
-	public boolean makeTurn(Player enemy, int xPos, int yPos,
-			Orientation orientation) throws FieldOutOfBoardException {
-		Field[] markedFields = new Field[currentPlayer.getCurrentShip()
-				.getShootingRange()];
+	/**
+	 * Die Methode dient zum Ausführen eines Zugs. Sie bekommt den
+	 * anzugreifenden Gegner sowie die Position und Ausrichtung des Schusses.
+	 * Sie liefert false zurück, wenn ein Schuss nicht möglich ist. Dies ist der
+	 * Fall, wenn das Ausgangsfeld bereits beschossen wurde.
+	 * 
+	 * @param enemy
+	 *            der anzugreifende Gegner
+	 * @param xPos
+	 *            Start-X-Position des Schusses
+	 * @param yPos
+	 *            Start-Y-Position des Schusses
+	 * @param orientation
+	 *            Ausrichtung des Schusses
+	 * @return true, wenn der Schuss möglich war, false wenn nicht
+	 * @throws FieldOutOfBoardException
+	 */
+	public boolean makeTurn(Player enemy, int xPos, int yPos, Orientation orientation) throws FieldOutOfBoardException {
+		Field[] markedFields = new Field[currentPlayer.getCurrentShip().getShootingRange()];
 		int xDirection = orientation == Orientation.HORIZONTAL ? 1 : 0;
 		int yDirection = orientation == Orientation.VERTICAL ? 1 : 0;
 		int x;
@@ -130,7 +108,7 @@ public class Game extends TransferableObject {
 			boolean isShotPossible = enemy.markBoard(x, y);
 			if (i == 0) {
 				if (!isShotPossible) {
-					// erstes Feld belegt, Schuss nicht m�glich
+					// erstes Feld belegt, Schuss nicht möglich
 					return false;
 				}
 			}
@@ -150,8 +128,7 @@ public class Game extends TransferableObject {
 			}
 		}
 		if (isDestroyed) {
-			ArrayList<Field> shipFields = enemy.getBoard().getFieldsOfShip(
-					source);
+			ArrayList<Field> shipFields = enemy.getBoard().getFieldsOfShip(source);
 			shipFields.addAll(missedFields);
 			markedFields = shipFields.toArray(markedFields);
 		}
@@ -162,10 +139,56 @@ public class Game extends TransferableObject {
 	}
 
 	/**
-	 * Saves the this Game to a File
+	 * Die Methode dient zum Ausführen eines KI-Zugs. Sie liefert das
+	 * Angriffziel (bestehend aus Position und Ausrichtung des Schusses).
+	 * 
+	 * @return das Angriffsziel
+	 * @throws Exception
+	 */
+	public Target makeAiTurn() throws Exception {
+		boolean wasShotPossible = false;
+		// AI soll Zug automatisch machen
+		AIPlayer ai = (AIPlayer) currentPlayer;
+		Target shot = null;
+
+		do {
+			Player currentEnemy = selectAiEnemy();
+			ai.selectShip(ai.getAvailableShips(true).get(0));
+			shot = ai.getTarget(currentEnemy.getFieldStates(false));
+			wasShotPossible = makeTurn(currentEnemy, shot.getX(), shot.getY(), shot.getOrientation());
+		} while (!wasShotPossible);
+
+		return shot;
+	}
+
+	/**
+	 * Die Methode dient zum Auswählen eines Gegners für die KI. Dabei wird
+	 * geprüft, ob die AI sich einen Gegner vorgemerkt hat. Wenn ja, wird er
+	 * beibehalten, wenn nicht, wird ein zufälliger neuer Gegner ausgesucht.
+	 * 
+	 * @param ai
+	 * @return
+	 */
+	private Player selectAiEnemy() {
+		AIPlayer ai = (AIPlayer) currentPlayer;
+		Player currentEnemy;
+		do {
+			currentEnemy = players[ai.getCurrentEnemyIndex()];
+			// zufälligen Gegner auswählen, wenn die KI keine Spur verfolgt,
+			// ansonsten gemerkten Gegner beibehalten
+			if (!ai.hasTargets() || currentEnemy.hasLost() || ai.getType() == PlayerType.DUMB_AI || ai.equals(currentEnemy)) {
+				ai.setRandomEnemyIndex(players.length - 1);
+				currentEnemy = players[ai.getCurrentEnemyIndex()];
+			}
+		} while (currentEnemy.hasLost() || ai.equals(currentEnemy));
+		return currentEnemy;
+	}
+
+	/**
+	 * Die Methode dient zum Speichern eines Spiels.
 	 * 
 	 * @throws Exception
-	 *             if the file could not be saved
+	 *             wenn das Spiel nicht gespeichert werden konnte
 	 */
 	public void save(String destinationPath) throws Exception {
 		FileOutputStream saveFile = null;
@@ -184,10 +207,10 @@ public class Game extends TransferableObject {
 	}
 
 	/**
-	 * Load a saved Game object
+	 * Die Methode dient zum Laden eines Spiels.
 	 * 
 	 * @throws Exception
-	 *             if the game could not be loaded
+	 *             wenn das Spiel nicht geladen werden konnte.
 	 */
 	public void load(String destinationPath) throws Exception {
 		FileInputStream saveFile = null;
@@ -212,7 +235,7 @@ public class Game extends TransferableObject {
 	}
 
 	/**
-	 * Close a Stream quietly
+	 * InputStream schließen
 	 */
 	private void closeQuietly(InputStream stream) {
 		if (stream != null) {
@@ -225,7 +248,7 @@ public class Game extends TransferableObject {
 	}
 
 	/**
-	 * Close a Stream quietly
+	 * OutputStream schließen
 	 */
 	private void closeQuietly(OutputStream stream) {
 		if (stream != null) {
@@ -238,17 +261,17 @@ public class Game extends TransferableObject {
 	}
 
 	/**
-	 * Increase turnNumber. Decrease the reload time of the current players'
-	 * ships. Set the currentPlayer to the next player.
+	 * Die Methode dient zum Setzen des aktuellen Spielers auf den nächsten
+	 * Spieler. Zusätzlich werden die Eigenschaften turnNumber und roundNumber
+	 * erhöht, sowie die reloadTime der Schiffe heruntergezählt.
 	 */
 	public void nextPlayer() {
 		turnNumber++;
 		decreaseCurrentReloadTimeOfShips(currentPlayer);
 		int currentPlayerIndex = Arrays.asList(players).indexOf(currentPlayer);
 		// wenn letzter Spieler im Array, dann Index wieder auf 0 setzen,
-		// ansonsten hochz�hlen
-		currentPlayerIndex = (currentPlayerIndex >= players.length - 1) ? currentPlayerIndex = 0
-				: currentPlayerIndex + 1;
+		// ansonsten hochzählen
+		currentPlayerIndex = (currentPlayerIndex >= players.length - 1) ? currentPlayerIndex = 0 : currentPlayerIndex + 1;
 		if (currentPlayerIndex == 0) {
 			roundNumber++;
 		}
@@ -257,8 +280,7 @@ public class Game extends TransferableObject {
 	}
 
 	/**
-	 * Decreases the reload time of the ships, except for the ship that just
-	 * shot.
+	 * Verringert die reloadTime aller Schiffe des übergebenen Spielers.
 	 */
 	private void decreaseCurrentReloadTimeOfShips(Player player) {
 		Ship[] ships = player.getShips();
@@ -268,10 +290,11 @@ public class Game extends TransferableObject {
 	}
 
 	/**
-	 * Provides a list of enemies the current player may attack. Players that
-	 * are lost or equal to the current player are filtered.
+	 * Liefert eine Liste von Spielern die der aktuelle Spieler angreifen kann.
+	 * Spieler die verloren haben oder der aktuelle Spieler selbst sind, werden
+	 * gefiltert.
 	 * 
-	 * @return an ArrayList of Players
+	 * @return eine Liste von angreifbaren Spielern
 	 */
 	public ArrayList<Player> getEnemiesOfCurrentPlayer() {
 		// angreifbare Gegner des currentPlayers zur�ckgeben
@@ -287,24 +310,12 @@ public class Game extends TransferableObject {
 	}
 
 	/**
-	 * Provides a list of enemies the current player may attack. Players that
-	 * are lost or equal to the current player are filtered.
+	 * Liefert einen Spieler mit bestimmten Namen.
 	 * 
-	 * @return an ArrayList of Players
+	 * @param name
+	 *            Spielername
+	 * @return der Spieler mit dem übergebenen Namen
 	 */
-	public ArrayList<Player> getEnemiesOfPlayer(String name) {
-		// angreifbare Gegner des currentPlayers zur�ckgeben
-		ArrayList<Player> enemies = new ArrayList<Player>();
-		for (int i = 0; i < players.length; i++) {
-			if (!players[i].hasLost()) {
-				if (!players[i].getName().equals(name)) {
-					enemies.add(players[i]);
-				}
-			}
-		}
-		return enemies;
-	}
-
 	public Player getPlayerByName(String name) {
 		for (Player player : players) {
 			if (player.getName().equals(name)) {
@@ -323,13 +334,14 @@ public class Game extends TransferableObject {
 	}
 
 	/**
-	 * Returns true if the ships of all players have been placed. The method is
-	 * used to determine if a game is ready to start.
+	 * Liefert true, wenn alle Spieler ihre Schiffe gesetzt haben. Die Methode
+	 * wird benutzt um zu prüfen, ob das Spiel bereit zum Starten ist.
 	 * 
-	 * @return true if all ships by all players are placed, else false
+	 * @return true, wenn alle Spieler ihre Schiffe gesetzt haben, false wenn
+	 *         nicht
 	 */
 	public boolean isReady() {
-		// pr�ft ob alle Schiffe gesetzt sind
+		// prüft ob alle Schiffe gesetzt sind
 		for (Player player : players)
 			if (!player.hasPlacedAllShips()) {
 				return false;
@@ -338,9 +350,11 @@ public class Game extends TransferableObject {
 	}
 
 	/**
-	 * Check if the game is over. Set the game winner if the game is over.
+	 * Prüft ob nur noch ein Spieler übrig ist. Zusätzlich setzt sie die
+	 * Eigenschaft winner auf den Spieler der gewonnen hat, wenn das Spiel
+	 * vorbei ist.
 	 * 
-	 * @return true if the game is over, false if not
+	 * @return true wenn das Spiel vorbei ist, false wenn nicht
 	 */
 	public boolean isGameover() {
 		int numberOfPlayersLeft = 0;
@@ -392,8 +406,7 @@ public class Game extends TransferableObject {
 	public void setPlayerBoards(ArrayList<Board> playerBoards) {
 
 		for (int i = 0; i < players.length; i++) {
-			HashMap<Ship, ArrayList<Field>> shipMap = getShipMap(playerBoards
-					.get(i));
+			HashMap<Ship, ArrayList<Field>> shipMap = getShipMap(playerBoards.get(i));
 
 			Player player = new HumanPlayer(boardSize, shipMap);
 			player.setName(players[i].getName());
@@ -416,8 +429,7 @@ public class Game extends TransferableObject {
 						shipFields.add(fields[row][column]);
 						shipMap.put(fields[row][column].getShip(), shipFields);
 					} else {
-						ArrayList<Field> shipFields = shipMap
-								.get(fields[row][column].getShip());
+						ArrayList<Field> shipFields = shipMap.get(fields[row][column].getShip());
 						shipFields.add(fields[row][column]);
 						shipMap.put(fields[row][column].getShip(), shipFields);
 					}
