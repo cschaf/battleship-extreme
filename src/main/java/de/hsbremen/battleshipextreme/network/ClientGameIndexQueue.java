@@ -1,10 +1,12 @@
 package de.hsbremen.battleshipextreme.network;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * Created by cschaf on 05.06.2015.
+ * Queue, welche für das Verwalten der nächsten Spielzügen zuständig ist
  */
 public class ClientGameIndexQueue<T> implements Iterator<T>, Serializable {
     private LinkedList<T> elements;
@@ -14,14 +16,56 @@ public class ClientGameIndexQueue<T> implements Iterator<T>, Serializable {
     }
 
     /**
-     * Inserts the specified element into this queue if it is possible to do so immediately without violating capacity restrictions, returning true upon success and throwing an IllegalStateException if no space is currently available.
+     * Fügt das angegebene Element in die Warteschlange
      */
     public void add(T element) {
         elements.add(element);
     }
 
     /**
-     * Retrieves the next element of the queue
+     * Gibt des nächste Element der Warteschlange zurück aber entfernt es nicht
+     */
+    public T peek() {
+        return elements.getFirst();
+    }
+
+    /**
+     * Entfernt alle Elemente aus der Warteschlange
+     */
+    public void clear() {
+        elements.clear();
+    }
+
+    /**
+     * Gibt die Anzahl der Elemente in der Warteschlange zurück
+     */
+    public int size() {
+        return elements.size();
+    }
+
+    /**
+     * Gibt true zurück wenn die Warteschlange leer ist
+     */
+    public boolean isEmpty() {
+        return elements.isEmpty();
+    }
+
+    /**
+     * Gibt einen Iterator für die Warteschlange zurück
+     */
+    public Iterator<T> iterator() {
+        return elements.iterator();
+    }
+
+    /**
+     * Gibt true zurück wenn es ein  nächstes Element gibt
+     */
+    public boolean hasNext() {
+        return elements.iterator().hasNext();
+    }
+
+    /**
+     * Entfernt das nächste Element aus der Warteschlange
      */
 
     public T next() {
@@ -29,49 +73,7 @@ public class ClientGameIndexQueue<T> implements Iterator<T>, Serializable {
     }
 
     /**
-     * Retrieves, but does not remove, the head of this queue, or returns null if this queue is empty.
-     */
-    public T peek() {
-        return elements.getFirst();
-    }
-
-    /**
-     * Removes all elemets from queue.
-     */
-    public void clear() {
-        elements.clear();
-    }
-
-    /**
-     * Retrieves the size of the queue
-     */
-    public int size() {
-        return elements.size();
-    }
-
-    /**
-     * Retrieves true if queue is empty.
-     */
-    public boolean isEmpty() {
-        return elements.isEmpty();
-    }
-
-    /**
-     * Retrieves an iterator for the queue
-     */
-    public Iterator<T> iterator() {
-        return elements.iterator();
-    }
-
-    /**
-     * Retrieves true if queue has a next element
-     */
-    public boolean hasNext() {
-        return elements.iterator().hasNext();
-    }
-
-    /**
-     * Retrieves and removes the head of this queue. This method differs from poll only in that it throws an exception if this queue is empty.
+     * Entfernt das erste Element der Warteschlange
      */
     public void remove() {
         elements.remove();

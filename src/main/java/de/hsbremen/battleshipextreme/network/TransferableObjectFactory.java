@@ -12,80 +12,81 @@ import java.util.Vector;
 
 /**
  * Created by cschaf on 26.04.2015.
+ * Ist zentral für die Erstellung aller Objekte, die über das Netzwerk übertragen werden sollen, zuständig
  */
 public class TransferableObjectFactory {
     /**
-     * Creates a ClientInfo
+     * Erzeugt ein ClientInfo
      **/
     public static ITransferable CreateClientMessage(String message, ITransferable sender) {
         return new ClientMessage(message, sender);
     }
 
     /**
-     * Creates a ClientInfo
+     * Erzeugt ein ClientInfo
      **/
     public static ITransferable CreateClientInfo(String username, String ip, int port) {
         return new ClientInfo(username, ip, port);
     }
 
     /**
-     * Creates a ClientInfo with InfoSendingReason
+     * Erzeugt ein ClientInfo with InfoSendingReason
      **/
     public static ITransferable CreateClientInfo(String username, String ip, int port, InfoSendingReason reason) {
         return new ClientInfo(username, ip, port, reason);
     }
 
     /**
-     * Creates a Message
+     * Erzeugt eine Message
      **/
     public static ITransferable CreateMessage(String message) {
         return new Message(message);
     }
 
     /**
-     * Creates a Error
+     * Erzeugt ein Error
      **/
     public static ITransferable CreateError(String message) {
         return new Error(message);
     }
 
     /**
-     * Creates a NetGame
+     * Erzeugt ein NetGame
      **/
     public static ITransferable CreateGame(String name, String password, Settings settings) {
         return new NetGame(name, password, settings);
     }
 
     /**
-     * Creates a Join
+     * Erzeugt ein Join
      **/
     public static ITransferable CreateJoin(String id) {
         return new Join(id);
     }
 
     /**
-     * Creates a GameList
+     * Erzeugt eine GameList
      **/
     public static ITransferable CreateGameList(Vector<NetGame> gameList) {
         return new GameList(gameList);
     }
 
     /**
-     * Creates an Turn
+     * Erzeugt einen Turn
      **/
     public static ITransferable CreateTurn(String attackingPlayerName, String attackedPlayerName, int fieldX, int fieldY, boolean isHorizontal, ShipType shipType) {
         return new Turn(attackingPlayerName, attackedPlayerName, fieldX, fieldY, isHorizontal, shipType);
     }
 
     /**
-     * Creates an Turn
+     * Erzeugt einen Turn
      **/
     public static ITransferable CreateClientTurn(Field[] fields, boolean isReloading, String attackingPlayerName, String attackedPlayerName) {
         return new ClientTurn(fields, isReloading, attackingPlayerName, attackedPlayerName);
     }
 
     /**
-     * Creates an Turn
+     * Erzeugt einen Turn
      **/
     public static ITransferable CreateClientTurn(Field[] fields, boolean isReloading, String attackingPlayerName, String attackedPlayerName, String winnerName) {
         ClientTurn turn = new ClientTurn(fields, isReloading, attackingPlayerName, attackedPlayerName);
@@ -95,28 +96,28 @@ public class TransferableObjectFactory {
     }
 
     /**
-     * Creates a Turn with property isReloading = true
+     * Erzeugt einen Turn mit der Property isReloading = true
      **/
     public static ITransferable CreateTurn(String reloadingPlayer) {
         return new Turn(reloadingPlayer);
     }
 
     /**
-     * Creates a ServerInfo
+     * Erzeugt eine ServerInfo
      **/
     public static ITransferable CreateServerInfo(InfoSendingReason reason) {
         return new ServerInfo(reason);
     }
 
     /**
-     * Creates a PlayerNames
+     * Erzeugt PlayerNames
      **/
     public static ITransferable CreatePlayerNames(ArrayList<String> names) {
         return new PlayerNames(names);
     }
 
     /**
-     * Creates a ShipPlacedInformation
+     * Erzeugt ShipPlacedInformation
      **/
     public static ITransferable CreateShipPlacedInformation(int xPos, int yPos, Orientation orientation, ShipType type) {
         return new ShipPlacedInformation(xPos, yPos, orientation, type);
