@@ -5,7 +5,6 @@ import de.hsbremen.battleshipextreme.network.TransferableType;
 
 /**
  * Created by cschaf on 25.04.2015.
- *
  * Beinhaltet Informationen über einen Client
  */
 public class ClientInfo extends TransferInfo {
@@ -29,7 +28,6 @@ public class ClientInfo extends TransferInfo {
 
     /**
      * Gibt den Benutzernamen des Clients zurück
-     * @return
      */
     public String getUsername() {
         return this.username;
@@ -37,7 +35,6 @@ public class ClientInfo extends TransferInfo {
 
     /**
      * Gibt die IP-Adresse des Clients zurück
-     * @return
      */
     public String getIp() {
         return ip;
@@ -45,7 +42,6 @@ public class ClientInfo extends TransferInfo {
 
     /**
      * Setzt die IP-Adresse des Clients
-     * @param ip
      */
     public void setIp(String ip) {
         this.ip = ip;
@@ -53,7 +49,6 @@ public class ClientInfo extends TransferInfo {
 
     /**
      * Gibt den Port des Clients zurück
-     * @return
      */
     public int getPort() {
         return port;
@@ -61,7 +56,6 @@ public class ClientInfo extends TransferInfo {
 
     /**
      * Setzt den Port des Clients
-     * @param port
      */
     public void setPort(int port) {
         this.port = port;

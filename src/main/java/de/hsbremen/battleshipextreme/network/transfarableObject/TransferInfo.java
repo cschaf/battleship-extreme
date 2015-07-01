@@ -5,6 +5,7 @@ import de.hsbremen.battleshipextreme.network.TransferableType;
 
 /**
  * Created by cschaf on 25.04.2015.
+ * Information für die Übertragung
  */
 public abstract class TransferInfo extends TransferableObject {
 
@@ -17,7 +18,6 @@ public abstract class TransferInfo extends TransferableObject {
     public TransferInfo(InfoSendingReason reason) {
         this.reason = reason;
     }
-
 
     public InfoSendingReason getReason() {
         return reason;

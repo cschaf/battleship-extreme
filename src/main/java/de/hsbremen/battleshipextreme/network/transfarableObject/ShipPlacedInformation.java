@@ -6,6 +6,7 @@ import de.hsbremen.battleshipextreme.network.TransferableType;
 
 /**
  * Created by cschaf on 19.06.2015.
+ * Beinhaltet alle Informationen, die für das Setzten eines Client Schiffes nötig sind
  */
 public class ShipPlacedInformation extends TransferableObject {
     private int xPos;

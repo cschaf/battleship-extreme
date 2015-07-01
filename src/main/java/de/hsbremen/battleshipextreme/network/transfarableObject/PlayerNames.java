@@ -6,8 +6,9 @@ import java.util.ArrayList;
 
 /**
  * Created by cschaf on 06.06.2015.
+ * beinhaltet eine Liste mit Spielernamen, die für den Client benötigt wird
  */
-public class PlayerNames  extends TransferableObject{
+public class PlayerNames extends TransferableObject {
 
     ArrayList<String> names;
 
@@ -15,11 +16,9 @@ public class PlayerNames  extends TransferableObject{
         this.names = names;
     }
 
-
     public ArrayList<String> getNames() {
         return names;
     }
-
 
     public TransferableType getType() {
         return TransferableType.PlayerNames;

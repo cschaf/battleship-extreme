@@ -5,13 +5,14 @@ import de.hsbremen.battleshipextreme.network.TransferableType;
 
 /**
  * Created by cschaf on 30.04.2015.
+ * Beinhaltet alle Spielzuginformationen, die vom Client an den Server gesendet werden
  */
 public class Turn extends TransferableObject {
 // ------------------------------ FIELDS ------------------------------
 
-    private String gameId;
-    private String attackingPlayerName;
-    private String attackedPlayerName;
+    private String gameId; // Spiel ID
+    private String attackingPlayerName; // angreifender Spielername
+    private String attackedPlayerName; // angegriffender Spielername
     private int fieldX;
     private int fieldY;
     private boolean isHorizontal;
@@ -69,8 +70,6 @@ public class Turn extends TransferableObject {
     public ShipType getShipType() {
         return shipType;
     }
-
-// ------------------------ INTERFACE METHODS ------------------------
 
 
 // --------------------- Interface ITransferable ---------------------

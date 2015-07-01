@@ -66,7 +66,6 @@ public class MultiPlayerClientController implements Serializable {
         this.enemies = new HashMap<String, FieldState[][]>();
         this.serverObjectReceivedListener = new ServerObjectReceivedListener(this.gui, network, this);
         this.serverGameBrowserListener = new ServerGameBrowserListener(network, this);
-
     }
 
     // -------------------------- OTHER METHODS --------------------------
@@ -211,7 +210,6 @@ public class MultiPlayerClientController implements Serializable {
                 playerBoard[i][j].addActionListener(fieldListener);
             }
         }
-
     }
 
     private void removeEnemyBoardListener() {
@@ -307,7 +305,9 @@ public class MultiPlayerClientController implements Serializable {
     private void addServerConnectionListener() {
         gui.getPanelServerConnection().getPnlServerConnectionBar().getBtnConnect().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (!network.isConnected()) {
+                if (network.isConnected() && (connectedAs == null || connectedAs.isEmpty())) {
+                    network.getSender().sendLogin(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
+                } else if (!network.isConnected()) {
                     addServerObjectReceivedListeners();
                     // get connections informations
                     network.setIp(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxIp().getText());

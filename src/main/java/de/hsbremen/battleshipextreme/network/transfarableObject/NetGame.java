@@ -14,22 +14,23 @@ import java.util.UUID;
 
 /**
  * Created by cschaf on 30.04.2015.
+ * Die Spiellogik innerhalb des Netzwerkspiels
  */
 public class NetGame extends Game {
-    private String id;
-    private String name;
-    private HashMap<Integer, ClientHandler> playersMap;
-    private ArrayList<Integer> clientIds;
-    private ClientGameIndexQueue<Integer> clientTurnOrder;
-    private int maxPlayers;
-    private String password;
+    private String id; // Spiel ID
+    private String name; // Name des Spiels
+    private HashMap<Integer, ClientHandler> playersMap; // Spieler und ihre Reihenfolge(Setzten, Spielzug) im Spiel
+    private ArrayList<Integer> clientIds; // verfügbare Reihenfolge-IDs
+    private ClientGameIndexQueue<Integer> clientTurnOrder; // Queue, die verwendet wird um den nächsten Spieler zu finden, der am Zug ist
+    private int maxPlayers; // maximale Anzahl der möglichen Spieler im Spiel
+    private String password; // Password für das Spiel
     private boolean isPrivate;
-    private ArrayList<Turn> turns;
+    private ArrayList<Turn> turns; // alle Spielzüge, die gemacht wurden
     private boolean ready;
 
     public NetGame(String name, String password, Settings settings) {
         super.initialize(settings);
-        this.id = UUID.randomUUID().toString();
+        this.id = UUID.randomUUID().toString(); //  erzeuge einzigartige ID
         this.name = name;
         this.playersMap = new HashMap<Integer, ClientHandler>();
         this.maxPlayers = settings.getPlayers();
@@ -51,10 +52,16 @@ public class NetGame extends Game {
         return TransferableType.Game;
     }
 
+    /**
+     * Fügt einen Spielzug hinzu
+     */
     public void addTurn(Turn turn) {
         this.turns.add(turn);
     }
 
+    /**
+     * Gibt eine Liste aller gejointen Spieler zurück
+     */
     public ArrayList<ClientHandler> getJoinedPlayers() {
         ArrayList<ClientHandler> result = new ArrayList<ClientHandler>();
         for (int clientIndex : playersMap.keySet()) {
@@ -65,6 +72,9 @@ public class NetGame extends Game {
         return result;
     }
 
+    /**
+     * Fügt einen Spieler dem Spiel hinzu
+     */
     public void addPlayer(ClientHandler player) {
         if (!this.isGameFull()) {
             this.playersMap.put(clientIds.get(0), player);
@@ -72,6 +82,9 @@ public class NetGame extends Game {
         }
     }
 
+    /**
+     * Gibt an on das Spiel voll ist
+     */
     private boolean isGameFull() {
         int number = 0;
         for (int clientIndex : playersMap.keySet()) {
@@ -82,6 +95,9 @@ public class NetGame extends Game {
         return number >= maxPlayers;
     }
 
+    /**
+     * Entfernt einen Spieler aus dem Spiel
+     */
     public void removePlayer(ClientHandler player) {
         int index = getIndexByClient(player);
         if (index > -1) {
@@ -89,11 +105,13 @@ public class NetGame extends Game {
             clientIds.add(index);
             getPlayers()[index].resetBoard();
             getPlayers()[index].setName("Player " + (index + 1));
-
+            getPlayers()[index].resetShips();
         }
-
     }
 
+    /**
+     * Gibt den Index des Clients zurück
+     */
     public int getIndexByClient(ClientHandler handler) {
         int index = -1;
         for (Map.Entry<Integer, ClientHandler> entry : playersMap.entrySet()) {
@@ -107,10 +125,16 @@ public class NetGame extends Game {
         return index;
     }
 
+    /**
+     * Gibt das Passowrd des Spiels zurück
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Setzt das Password des Spiels
+     */
     public void setPassword(String password) {
         if (!password.equals("")) {
             this.password = password;
@@ -134,15 +158,23 @@ public class NetGame extends Game {
         return id;
     }
 
+    /**
+     * Gibt die Queue der Client Spielzureihenfolge zurück
+     */
     public ClientGameIndexQueue<Integer> getClientTurnOrder() {
         return clientTurnOrder;
     }
 
+    /**
+     * Gibt die Spieler und ihrem Index im Spiel zurück
+     */
     public HashMap<Integer, ClientHandler> getPlayersMap() {
         return playersMap;
     }
 
-
+    /**
+     * Prüft ob alle Spieler ihre Schiffe gesetzt haben
+     */
     public boolean haveAllPlayersSetTheirShips() {
         for (Player player : this.getPlayers()) {
             if (!player.hasPlacedAllShips()) {
@@ -166,12 +198,14 @@ public class NetGame extends Game {
         return ready;
     }
 
+    /**
+     * Synchronisiert die Soielernamen der gejointen und den spielenden Spielern
+     */
     public void updatePlayerNames() {
         for (Map.Entry<Integer, ClientHandler> entry : getPlayersMap().entrySet()) {
             ClientHandler value = entry.getValue();
             Integer index = entry.getKey();
             getPlayers()[index].setName(value.getUsername());
-
         }
     }
 }

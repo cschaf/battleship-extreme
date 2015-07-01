@@ -8,28 +8,27 @@ import java.util.Date;
 
 /**
  * Created by cschaf on 25.04.2015.
+ * Vaterklasse für jedes Objekt was über das Netzwerk übertragen wird
  */
 public abstract class TransferableObject implements Serializable, ITransferable {
     private Timestamp createdAt;
 
     /**
-     * Constructor
+     * Konstuktor
      */
     protected TransferableObject() {
         this.setCreatedAt(new Timestamp(new Date().getTime()));
     }
 
     /**
-     * Returns the timestamp for the creation date of the object
-     * @return
+     * Gibt den Zeitstempel der Erzeugung des Objectes zurück
      */
     public Timestamp getCreatedAt() {
         return createdAt;
     }
 
     /**
-     * Set the timestamp for the creation date of the object
-     * @param createdAt
+     * Setzt den Zeitstempel des Objektes
      */
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;

@@ -493,4 +493,10 @@ public abstract class Player implements Serializable {
         }
         return true;
     }
+
+    public void resetShips() {
+        for (Ship ship : ships) {
+            ship.reset();
+        }
+    }
 }

@@ -88,4 +88,8 @@ public class ClientHandler extends TransferableObject implements IDisposable, Se
     public TransferableType getType() {
         return TransferableType.ClientHandler;
     }
+
+    public boolean hasUsername() {
+        return username != null && !username.isEmpty();
+    }
 }

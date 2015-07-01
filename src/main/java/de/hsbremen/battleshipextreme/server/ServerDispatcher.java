@@ -294,6 +294,17 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
         }
     }
 
+    public boolean isClientNameAvailable(String clientName) {
+        for (ClientHandler client : clients) {
+            if (client.hasUsername()) {
+                if (client.getUsername().equals(clientName)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private void initializeNextShipPlacement(NetGame game) {
         // get next client id for ship placement
         int nextPlayer = game.getClientTurnOrder().next();

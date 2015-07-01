@@ -54,8 +54,7 @@ public class ClientListener extends Thread implements IDisposable, Serializable 
                     case Game:
                         if (serverDispatcher.getNetGames().size() < serverDispatcher.getMaxGames()) {
                             this.serverDispatcher.addGame(receivedObject);
-                        }
-                        else {
+                        } else {
                             ITransferable obj = TransferableObjectFactory.CreateError("Maximum of games has reached, You could not create a new game!");
                             serverDispatcher.unicast(obj, clientHandler);
                         }
@@ -87,12 +86,19 @@ public class ClientListener extends Thread implements IDisposable, Serializable 
                         ClientInfo info = (ClientInfo) receivedObject;
                         switch (info.getReason()) {
                             case Connect:
-                                clientHandler.setUsername(info.getUsername());
-                                this.serverDispatcher.unicast(TransferableObjectFactory.CreateServerInfo(InfoSendingReason.Connect), clientHandler);
+                                boolean isNameAvailable = this.serverDispatcher.isClientNameAvailable(info.getUsername());
+                                if (!isNameAvailable) {
+                                    ITransferable error = TransferableObjectFactory.CreateError("Username is already taken! Please take an other one.");
+                                    this.serverDispatcher.unicast(error, clientHandler);
+                                } else {
+                                    clientHandler.setUsername(info.getUsername());
+                                    this.serverDispatcher.unicast(TransferableObjectFactory.CreateServerInfo(InfoSendingReason.Connect), clientHandler);
+                                    this.serverDispatcher.printInfo(new EventArgs<ITransferable>(this, new Message(info.getIp() + ":" + info.getPort() + " has named to " + info.getUsername() + "(" + info.getPort() + ")")));
+                                    this.serverDispatcher.objectReceived(new EventArgs<ITransferable>(this, info));
+                                }
                                 break;
                         }
-                        this.serverDispatcher.printInfo(new EventArgs<ITransferable>(this, new Message(info.getIp() + ":" + info.getPort() + " has named to " + info.getUsername() + "(" + info.getPort() + ")")));
-                        this.serverDispatcher.objectReceived(new EventArgs<ITransferable>(this, info));
+
                         break;
                     default:
                         this.serverDispatcher.dispatchObject(receivedObject);

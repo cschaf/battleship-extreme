@@ -1,14 +1,14 @@
 package de.hsbremen.battleshipextreme.network.transfarableObject;
 
 import de.hsbremen.battleshipextreme.network.TransferableType;
-import de.hsbremen.battleshipextreme.server.ClientHandler;
 
 /**
  * Created by cschaf on 07.05.2015.
+ * Beinhaltet alle Informationen die für das Joinen eines Clients in ein Spiel notwendig sind
  */
 public class Join extends TransferableObject {
-    private String client;
-    private String gameId;
+    private String client; // Name des Clients
+    private String gameId; // ID des Spiels, in welches gejoint werden soll
 
     public Join(String gameId) {
         this.gameId = gameId;
