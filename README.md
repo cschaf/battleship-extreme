@@ -53,6 +53,10 @@ the destroyer must always download 3 laps and is not available in time. a frigat
 ![UML Class Diagram 5](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/uml_diagram_network.png)
 
 ## Activity-Diagrams
-### Sequenzdiagram of sending an object to the server
+### Sending an object to the server
 ![Sequenz-Diagram 1](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/sequencediagram_send_object_over_network.png)
+
+### A Multiplayer Game
+![Activity-Diagram 1](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/activity_diagram_game.png)
+
 
