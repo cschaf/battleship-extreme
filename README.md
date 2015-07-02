@@ -6,13 +6,6 @@ Contributors are:
 * [lschoenawa](https://github.com/lschoenawa/)
 * [cschaf](https://github.com/cschaf/)
 
-## Setup
-* Install [Maven](http://maven.apache.org/guides/getting-started/maven-in-five-minutes.html), JDK and JRE
-* Clone repo via IDE or manually (git clone https://username:password@github.com/cschaf/battleship-extreme.git)
-* For Intellij: Go to Project structure and set JDK
-* For Intellij: Add Run/Debug Configuration (Type Application) with main.class (de.hsbremen.battleshipextreme.App)
-
-
 ## What is Battleship?
 Battleship (or Battleships) is a game for two players where you try to guess the location of five ships your opponent has hidden on a grid. Players take turns calling out a row and column, attempting to name a square containing enemy ships. Originally published as Broadsides by Milton Bradley in 1931, the game was eventually reprinted as Battleship.
 ## Goal
@@ -45,3 +38,21 @@ be an empty field between two ships.
 the destroyer must always download 3 laps and is not available in time. a frigate
 2 hits fields side by side. She has a recharge time of 2 rounds. A Corvette hits 1 field. She has a recharge time of 1 round. A submarine hits 1 field and also has a recharge time of 1 round. It can of course only non-sunken ships shoot.
 * When all the ships of a player were sunk, he is out. The game ends when only one player remains.
+
+
+## Project-Structure
+### Packages
+![UML Class Diagram 1](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/uml_diagram_packages.png)
+### Models
+![UML Class Diagram 2](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/uml_diagram_model.png)
+### Client
+![UML Class Diagram 3](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/uml_diagram_client.png)
+### Server
+![UML Class Diagram 4](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/uml_diagram_server.png)
+### Network
+![UML Class Diagram 5](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/uml_diagram_network.png)
+
+## Activity-Diagrams
+### Sequenzdiagram of sending an object to the server
+![Sequenz-Diagram 1](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/sequencediagram_send_object_over_network.png)
+
