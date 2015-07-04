@@ -86,7 +86,7 @@ public class Board implements Serializable {
 		FieldState[][] fieldStates = new FieldState[size][size];
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				FieldState state = fields[j][i].getState();
+				FieldState state = fields[i][j].getState();
 				if ((state == FieldState.HAS_SHIP || state == FieldState.IS_EMPTY) && (!isOwnBoard)) {
 					fieldStates[i][j] = null;
 				} else {
