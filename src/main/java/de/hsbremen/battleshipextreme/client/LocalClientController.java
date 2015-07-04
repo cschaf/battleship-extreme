@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
 
 import de.hsbremen.battleshipextreme.client.workers.BoardUpdater;
@@ -84,14 +85,11 @@ public class LocalClientController implements Serializable {
 					settings.validate();
 					valid = true;
 				} catch (InvalidPlayerNumberException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(gui.getFrame(), "Ungültige Spieler-Anzahl!");
 				} catch (InvalidNumberOfShipsException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(gui.getFrame(), "Ungültige Schiff-Anzahl!");
 				} catch (BoardTooSmallException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(gui.getFrame(), "Ungültige Board-Größe!");
 				}
 				if (valid) {
 					try {
