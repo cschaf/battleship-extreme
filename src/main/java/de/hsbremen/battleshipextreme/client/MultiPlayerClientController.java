@@ -120,11 +120,11 @@ public class MultiPlayerClientController implements Serializable {
 					settings.validate();
 					valid = true;
 				} catch (InvalidPlayerNumberException e1) {
-					JOptionPane.showMessageDialog(gui.getFrame(), "Ungültige Spieler-Anzahl!");
+					JOptionPane.showMessageDialog(gui.getFrame(), "Invalid player number!");
 				} catch (InvalidNumberOfShipsException e1) {
-					JOptionPane.showMessageDialog(gui.getFrame(), "Ungültige Schiff-Anzahl!");
+					JOptionPane.showMessageDialog(gui.getFrame(), "Invalid ship number");
 				} catch (BoardTooSmallException e1) {
-					JOptionPane.showMessageDialog(gui.getFrame(), "Ungültige Board-Größe!");
+					JOptionPane.showMessageDialog(gui.getFrame(), "Invalid board size!");
 				}
 				if (valid) {
 					if (gameName.length() > 3 && !gameName.startsWith(" ")) {
