@@ -204,8 +204,7 @@ public class LocalClientController implements Serializable {
 							ctrl.setInfoLabelMessage("Ship can not be placed here");
 							e1.printStackTrace();
 						} catch (ShipOutOfBoardException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+							ctrl.setInfoLabelMessage("Ship can not be placed here");
 						}
 					}
 				};
