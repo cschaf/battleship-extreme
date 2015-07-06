@@ -9,7 +9,8 @@ import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListen
 import javax.swing.*;
 
 /**
- * Created by cschaf on 03.06.2015.
+ * Created on 03.06.2015.
+ * Listener, der eine Messagebox aufruft, welche eine Fehlernachricht enthält
  */
 public class ServerErrorListener implements IErrorListener {
     private GUI gui;

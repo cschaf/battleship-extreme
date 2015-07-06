@@ -11,7 +11,8 @@ import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.transfarableObject.*;
 
 /**
- * Created by cschaf on 03.06.2015.
+ * Created on 03.06.2015.
+ * Listener, der auf die durchs Netzwerk empfangenen Objekte reagiert.
  */
 public class ServerObjectReceivedListener implements IServerObjectReceivedListener {
     private GUI gui;
@@ -25,7 +26,6 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
     }
 
     public void onObjectReceived(EventArgs<ITransferable> eventArgs) {
-        //JOptionPane.showMessageDialog(gui.getFrame(), eventArgs.getItem().getType().toString() + ": " + eventArgs.getItem(), "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void onMessageObjectReceived(EventArgs<Message> eventArgs) {
@@ -97,7 +97,6 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 } else {
                     ctrl.setPlayerIsReloading(true);
                     ctrl.setDoneButtonEnabled(true);
-
                 }
 
                 break;

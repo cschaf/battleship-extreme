@@ -14,7 +14,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 /**
- * Created by cschaf on 03.06.2015.
+ * Created on 03.06.2015.
+ * Listener, der für die Events der Controls des GameBrowsers verwendet wird
  */
 public class ServerGameBrowserListener implements TableColumnModelListener, MouseListener {
     private NetworkClient network;
@@ -56,8 +57,6 @@ public class ServerGameBrowserListener implements TableColumnModelListener, Mous
             }
         }
     }
-
-
 
     public void mousePressed(MouseEvent e) {
 
