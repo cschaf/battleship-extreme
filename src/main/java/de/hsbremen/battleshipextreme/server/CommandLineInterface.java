@@ -9,8 +9,11 @@ import de.hsbremen.battleshipextreme.server.listener.IServerListener;
 
 /**
  * Created on 26.04.2015.
+ * Console interface
  */
 public class CommandLineInterface {
+// --------------------------- main() method ---------------------------
+
     public static void main(String[] args) {
         Server server = new Server(1337);
         server.addErrorListener(new IErrorListener() {

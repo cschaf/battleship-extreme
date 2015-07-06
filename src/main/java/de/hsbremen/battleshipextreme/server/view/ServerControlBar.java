@@ -7,6 +7,7 @@ import java.awt.*;
 
 /**
  * Created on 14.05.2015.
+ * beinhaltet alle Komponennten zum Verdinden zum Server
  */
 public class ServerControlBar extends JPanel {
     private JLabel lblPort;

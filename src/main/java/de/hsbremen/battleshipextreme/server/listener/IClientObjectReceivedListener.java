@@ -8,6 +8,7 @@ import java.util.EventListener;
 
 /**
  * Created on 25.04.2015.
+ * Interface für das reagieren auf das Empfangen von Objekten über das Netzwerk
  */
 public interface IClientObjectReceivedListener extends EventListener{
     void onObjectReceived(EventArgs<ITransferable> eventArgs);

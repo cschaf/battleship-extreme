@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * Created on 28.05.2015.
+ * Dient als User Item für die JList
  */
 public class ClientJListItem implements Serializable{
   private String ip;

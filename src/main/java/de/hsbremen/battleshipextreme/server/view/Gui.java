@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 
 /**
  * Created on 14.05.2015.
+ * Hauptfenster des Servers
  */
 public class Gui extends JFrame {
     private JPanel pnlMain;

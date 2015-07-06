@@ -7,8 +7,11 @@ import de.hsbremen.battleshipextreme.network.transfarableObject.Turn;
 
 /**
  * Created on 15.05.2015.
+ * Listener für das Verarbeiten von Empfangenen Objekten über das Netzwerk
  */
 public class ClientObjectReceivedListener implements IClientObjectReceivedListener {
+// --------------------- Interface IClientObjectReceivedListener ---------------------
+
     public void onObjectReceived(EventArgs<ITransferable> eventArgs) {
         ITransferable receivedObject = eventArgs.getItem();
         switch (receivedObject.getType()) {

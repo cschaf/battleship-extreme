@@ -13,13 +13,19 @@ import java.util.Vector;
 
 /**
  * Created on 26.04.2015.
+ * Wird zum Senden vom Objekten an den Client verwendet, dabei werden alle Objekte in eine Warteschlange
+ * eingereiht und und run nach und nach abgearbeitet
  */
 public class ClientSender extends Thread implements IDisposable, Serializable {
+// ------------------------------ FIELDS ------------------------------
+
     private Vector<ITransferable> objectQueue;
     private ServerDispatcher serverDispatcher;
     private ClientHandler clientHandler;
     private ObjectOutputStream out;
     private boolean disposed;
+
+// --------------------------- CONSTRUCTORS ---------------------------
 
     public ClientSender(ClientHandler clientHandler, ServerDispatcher serverDispatcher) throws IOException {
         this.disposed = false;
@@ -30,31 +36,12 @@ public class ClientSender extends Thread implements IDisposable, Serializable {
         this.out = new ObjectOutputStream(socket.getOutputStream());
     }
 
-    public synchronized void addObjectToQueue(ITransferable transferableObject) {
-        this.objectQueue.add(transferableObject);
-        notify();
-    }
 
+// --------------------- Interface Runnable ---------------------
 
-    private synchronized ITransferable getNextObjectFromQueue() throws InterruptedException {
-        while (this.objectQueue.size() == 0) {
-            wait();
-        }
-        ITransferable transferableObject = this.objectQueue.get(0);
-        this.objectQueue.removeElementAt(0);
-        return transferableObject;
-    }
-
-    private void send(ITransferable transferableObject) {
-        try {
-            this.out.reset();
-            this.out.writeObject(transferableObject);
-            this.out.flush();
-        } catch (IOException e) {
-            dispose();
-        }
-    }
-
+    /**
+     * Hole dir nach und nach die Items aus der Warteschlange
+     */
     public void run() {
         try {
             while (!isInterrupted() && !this.disposed) {
@@ -70,6 +57,44 @@ public class ClientSender extends Thread implements IDisposable, Serializable {
         this.serverDispatcher.removeClient(this.clientHandler);
     }
 
+// -------------------------- OTHER METHODS --------------------------
+
+    /**
+     * Für ein Objekt in die Warteschlange hinzu
+     */
+    public synchronized void addObjectToQueue(ITransferable transferableObject) {
+        this.objectQueue.add(transferableObject);
+        notify();
+    }
+
+    /**
+     * Liefert das nächste Objekt von der Warteschlange, welches versendet werden soll
+     */
+    private synchronized ITransferable getNextObjectFromQueue() throws InterruptedException {
+        while (this.objectQueue.size() == 0) {
+            wait();
+        }
+        ITransferable transferableObject = this.objectQueue.get(0);
+        this.objectQueue.removeElementAt(0);
+        return transferableObject;
+    }
+
+    /**
+     * Sendet on Objekt vom type ITransferable zum CLient
+     */
+    private void send(ITransferable transferableObject) {
+        try {
+            this.out.reset(); // wird benötig damit alte Objekte vom Stream gelöscht werden
+            this.out.writeObject(transferableObject);
+            this.out.flush();
+        } catch (IOException e) {
+            dispose();
+        }
+    }
+
+    /**
+     * Beendet den Thread
+     */
     public void dispose() {
         this.disposed = true;
         try {

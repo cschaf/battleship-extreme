@@ -10,31 +10,38 @@ import java.net.Socket;
 
 /**
  * Created on 25.04.2015.
- * ClientHandler class contains information about a client, connected to the server.
+ * ClientHandler enthält alle Informationen über den Client der mit dem Server verbunden ist
+ * Enthalten sind auch der Thread für das Senden und Empfangen von Daten
  */
 public class ClientHandler extends TransferableObject implements IDisposable, Serializable {
+// ------------------------------ FIELDS ------------------------------
+
     private transient Socket socket;
     private transient ClientSender clientSender;
     private transient ClientListener clientListener;
     private String username;
 
+// --------------------------- CONSTRUCTORS ---------------------------
+
     public ClientHandler(Socket socket) {
         this.socket = socket;
     }
 
+// --------------------- GETTER / SETTER METHODS ---------------------
+
     /**
-     * Gets the socket object of the client
-     * @return socket object
+     * Gets the ClientListener
+     * @return ClientListener object
      */
-    public Socket getSocket() {
-        return socket;
+    public ClientListener getClientListener() {
+        return clientListener;
     }
 
     /**
-     * Sets the socket object of the client
+     * Sets the ClientListener for receive data from the client
      */
-    public void setSocket(Socket socket) {
-        this.socket = socket;
+    public void setClientListener(ClientListener listener) {
+        this.clientListener = listener;
     }
 
     /**
@@ -53,19 +60,30 @@ public class ClientHandler extends TransferableObject implements IDisposable, Se
     }
 
     /**
-     * Gets the ClientListener
-     * @return ClientListener object
+     * Gets the socket object of the client
+     * @return socket object
      */
-    public ClientListener getClientListener() {
-        return clientListener;
+    public Socket getSocket() {
+        return socket;
     }
 
     /**
-     * Sets the ClientListener for receive data from the client
+     * Sets the socket object of the client
      */
-    public void setClientListener(ClientListener listener) {
-        this.clientListener = listener;
+    public void setSocket(Socket socket) {
+        this.socket = socket;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+
+// --------------------- Interface IDisposable ---------------------
 
     public void dispose() {
         try {
@@ -77,17 +95,14 @@ public class ClientHandler extends TransferableObject implements IDisposable, Se
         }
     }
 
-    public String getUsername() {
-        return username;
-    }
+// --------------------- Interface ITransferable ---------------------
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public TransferableType getType() {
         return TransferableType.ClientHandler;
     }
+
+// -------------------------- OTHER METHODS --------------------------
 
     public boolean hasUsername() {
         return username != null && !username.isEmpty();

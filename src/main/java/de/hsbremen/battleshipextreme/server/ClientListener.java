@@ -17,12 +17,17 @@ import java.net.Socket;
 
 /**
  * Created on 25.04.2015.
+ * Thread für das Empfangen von Objekten, die über das Netzwerk vom Client kommen
  */
 public class ClientListener extends Thread implements IDisposable, Serializable {
+// ------------------------------ FIELDS ------------------------------
+
     private ServerDispatcher serverDispatcher;
     private ClientHandler clientHandler;
     private ObjectInputStream in;
     private boolean disposed;
+
+// --------------------------- CONSTRUCTORS ---------------------------
 
     public ClientListener(ClientHandler clientHandler, ServerDispatcher serverDispatcher) throws IOException {
         this.disposed = false;
@@ -32,18 +37,41 @@ public class ClientListener extends Thread implements IDisposable, Serializable 
         this.in = new ObjectInputStream(socket.getInputStream());
     }
 
+
+// --------------------- Interface IDisposable ---------------------
+
+    /**
+     * Beendet den Thread
+     */
+    public void dispose() {
+        try {
+            this.disposed = true;
+            this.in.close();
+        } catch (IOException e) {
+            serverDispatcher.getErrorHandler().errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Clientlistner of " + clientHandler.getUsername() + " couldnt be disposed")));
+        }
+    }
+
+// --------------------- Interface Runnable ---------------------
+
+    /**
+     * Horcht auf ankommende Objekte vom Client und prüft sie und leitet per Event weiter
+     */
     public void run() {
         try {
             while (!isInterrupted() && !this.disposed) {
                 ITransferable receivedObject = null;
                 try {
+                    // ließe Objekt und veruche es zu casten
                     receivedObject = (ITransferable) this.in.readObject();
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 }
+                // Wenn es null ist mache nichts
                 if (receivedObject == null) {
                     break;
                 }
+                // prüfe Objekttypen
                 switch (receivedObject.getType()) {
                     case Join:
                         this.serverDispatcher.assignClientToGame(this.clientHandler, receivedObject);
@@ -112,14 +140,5 @@ public class ClientListener extends Thread implements IDisposable, Serializable 
         // Communication is broken. Interrupt both listener and sender threads
         this.clientHandler.getClientSender().interrupt();
         this.serverDispatcher.removeClient(this.clientHandler);
-    }
-
-    public void dispose() {
-        try {
-            this.disposed = true;
-            this.in.close();
-        } catch (IOException e) {
-            serverDispatcher.getErrorHandler().errorHasOccurred(new EventArgs<ITransferable>(this, TransferableObjectFactory.CreateMessage("Clientlistner of " + clientHandler.getUsername() + " couldnt be disposed")));
-        }
     }
 }

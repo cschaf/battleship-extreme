@@ -18,6 +18,7 @@ import java.awt.event.*;
 
 /**
  * Created on 28.05.2015.
+ * Controller der Models mit Views verbindet
  */
 public class ServerController {
     private Gui gui;
