@@ -50,10 +50,10 @@ the destroyer must always download 3 laps and is not available in time. a frigat
 ###Multiplayer
 ![Server GUI](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/how%20to%20play/server.PNG)
   1. In the server gui you have to start the server.
-  1.1. On the top menu you can create a standard game by click on "Games" -> "Create standard game".
-  2. In the client gui you have to click on "Multiplayer Game".
-  3. Enter the ip-address and port of the server, choose a username and connect to the server by click on "Connect".
-  4. Now you can join existing games or create a custom game. To join a game, select a game from the list and click "Join". To create your own game, click on "Create" and enter the game settings. After the game was created you can join it.
+  2. On the top menu you can create a standard game by click on "Games" -> "Create standard game".
+  3. In the client gui you have to click on "Multiplayer Game".
+  4. Enter the ip-address and port of the server, choose a username and connect to the server by click on "Connect".
+  5. Now you can join existing games or create a custom game. To join a game, select a game from the list and click "Join". To create your own game, click on "Create" and enter the game settings. After the game was created you can join it.
   5. The game will start when all players are connected.
 
 ###Gameplay
