@@ -6,7 +6,7 @@ package de.hsbremen.battleshipextreme.network;
 public interface ITransferable {
 
     /**
-     * Type eines Obkektes, was über das netzwerk übertragen wird
+     * Type eines Obkektes, was Ã¼ber das netzwerk Ã¼bertragen wird
      */
     TransferableType getType();
 }

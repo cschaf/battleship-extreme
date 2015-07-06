@@ -9,7 +9,7 @@ import java.util.Vector;
 
 /**
  * Created on 02.06.2015.
- * Model für ein JTabel um die Serverspiele anzuzeigen
+ * Model fÃ¼r ein JTabel um die Serverspiele anzuzeigen
  */
 public class GameListModel extends AbstractTableModel {
 // ------------------------------ FIELDS ------------------------------

@@ -9,7 +9,7 @@ import de.hsbremen.battleshipextreme.network.TransferableType;
  * Beinhaltet Informationen einen Client und seiner Nachricht
  */
 public class ClientMessage extends Message {
-    private ClientInfo info; // Informationen über den CLient, welcher die Nachricht sendet
+    private ClientInfo info; // Informationen Ã¼ber den CLient, welcher die Nachricht sendet
 
     public ClientMessage(String message, ITransferable sender) {
         super(message);

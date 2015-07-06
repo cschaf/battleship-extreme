@@ -5,7 +5,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import java.awt.*;
 /**
- * Eigenliches Fnster mit Menüs etc. Im Hauptbereich werden mithilfe des CardLayouts
+ * Eigenliches Fnster mit MenÃ¼s etc. Im Hauptbereich werden mithilfe des CardLayouts
  * unterschiedliche Panels geladen.
  */
 public class GUI extends BasicTabbedPaneUI {

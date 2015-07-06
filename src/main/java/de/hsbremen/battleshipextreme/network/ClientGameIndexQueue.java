@@ -6,7 +6,7 @@ import java.util.LinkedList;
 
 /**
  * Created by cschaf on 05.06.2015.
- * Queue, welche für das Verwalten der nächsten Spielzügen zuständig ist
+ * Queue, welche fÃ¼r das Verwalten der nÃ¤chsten SpielzÃ¼gen zustÃ¤ndig ist
  */
 public class ClientGameIndexQueue<T> implements Iterator<T>, Serializable {
     private LinkedList<T> elements;
@@ -16,14 +16,14 @@ public class ClientGameIndexQueue<T> implements Iterator<T>, Serializable {
     }
 
     /**
-     * Fügt das angegebene Element in die Warteschlange
+     * FÃ¼gt das angegebene Element in die Warteschlange
      */
     public void add(T element) {
         elements.add(element);
     }
 
     /**
-     * Gibt des nächste Element der Warteschlange zurück aber entfernt es nicht
+     * Gibt des nÃ¤chste Element der Warteschlange zurÃ¼ck aber entfernt es nicht
      */
     public T peek() {
         return elements.getFirst();
@@ -37,35 +37,35 @@ public class ClientGameIndexQueue<T> implements Iterator<T>, Serializable {
     }
 
     /**
-     * Gibt die Anzahl der Elemente in der Warteschlange zurück
+     * Gibt die Anzahl der Elemente in der Warteschlange zurÃ¼ck
      */
     public int size() {
         return elements.size();
     }
 
     /**
-     * Gibt true zurück wenn die Warteschlange leer ist
+     * Gibt true zurÃ¼ck wenn die Warteschlange leer ist
      */
     public boolean isEmpty() {
         return elements.isEmpty();
     }
 
     /**
-     * Gibt einen Iterator für die Warteschlange zurück
+     * Gibt einen Iterator fÃ¼r die Warteschlange zurÃ¼ck
      */
     public Iterator<T> iterator() {
         return elements.iterator();
     }
 
     /**
-     * Gibt true zurück wenn es ein  nächstes Element gibt
+     * Gibt true zurÃ¼ck wenn es ein  nÃ¤chstes Element gibt
      */
     public boolean hasNext() {
         return elements.iterator().hasNext();
     }
 
     /**
-     * Entfernt das nächste Element aus der Warteschlange
+     * Entfernt das nÃ¤chste Element aus der Warteschlange
      */
 
     public T next() {

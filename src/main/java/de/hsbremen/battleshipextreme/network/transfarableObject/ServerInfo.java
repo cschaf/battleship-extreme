@@ -5,8 +5,8 @@ import de.hsbremen.battleshipextreme.network.TransferableType;
 
 /**
  * Created by cschaf on 31.05.2015.
- * Info vom Server für die Clients, verwendet für
- * einfache Ereignisse, die keine weiteren daten benötigen
+ * Info vom Server fÃ¼r die Clients, verwendet fÃ¼r
+ * einfache Ereignisse, die keine weiteren daten benï¿½tigen
  */
 public class ServerInfo extends TransferInfo {
 

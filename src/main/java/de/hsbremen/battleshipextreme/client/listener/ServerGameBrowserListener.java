@@ -15,7 +15,7 @@ import java.awt.event.MouseListener;
 
 /**
  * Created on 03.06.2015.
- * Listener, der für die Events der Controls des GameBrowsers verwendet wird
+ * Listener, der fÃ¼r die Events der Controls des GameBrowsers verwendet wird
  */
 public class ServerGameBrowserListener implements TableColumnModelListener, MouseListener {
 // ------------------------------ FIELDS ------------------------------

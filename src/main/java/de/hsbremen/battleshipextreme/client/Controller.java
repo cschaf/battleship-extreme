@@ -24,7 +24,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
- * Verbindet die Models mit den Views. F�gt den Views Listeners hinzu, bzw verwaltet Usereingaben.
+ * Verbindet die Models mit den Views. Fügt den Views Listeners hinzu, bzw verwaltet Usereingaben.
  */
 public class Controller {
 // ------------------------------ FIELDS ------------------------------
@@ -54,7 +54,7 @@ public class Controller {
 // -------------------------- OTHER METHODS --------------------------
 
     /**
-     * F�gt der Gui die Men�-Listerns hinzu
+     * Fügt der Gui die Menü-Listerns hinzu
      */
     private void addMenuListeners() {
         gui.getMenuItemMainMenu().addActionListener(new ActionListener() {
@@ -145,7 +145,7 @@ public class Controller {
     }
 
     /**
-     * F�gt der Gui die Style-Change-Listerns hinzu
+     * Fügt der Gui die Style-Change-Listerns hinzu
      */
     private void addNextLookAndFeelListener() {
         gui.getMenuItemNextLookAndFeel().addActionListener(new ActionListener() {
@@ -186,7 +186,7 @@ public class Controller {
     }
 
     /**
-     * Erstellt den Startzustand f�r das Settingspanel des Lokalen Spiels
+     * Erstellt den Startzustand für das Settingspanel des Lokalen Spiels
      */
     private void setupSettingsPanelForLocalGame() {
         SettingsPanel settings = gui.getPanelSettings();
@@ -208,7 +208,7 @@ public class Controller {
     }
 
     /**
-     * F�rgt den Listener f�r die Fehlerbehandlung hinzu
+     * fürgt den Listener für die Fehlerbehandlung hinzu
      */
     private void addServerErrorListeners() {
         network.addErrorListener(serverErrorListener);
@@ -224,14 +224,14 @@ public class Controller {
     }
 
     /**
-     * F�gt dem Gamelog einen neuen Eintrag hinzu
+     * Fügt dem Gamelog einen neuen Eintrag hinzu
      */
     public void appendGameLogEntry(String message) {
         gui.getPanelGame().getTextAreaGameLog().append(message + "\r\n\r\n");
     }
 
     /**
-     * Erzeugt das Spielfeld f�r einen Spieler (Gegener- und Eigenes -Board)
+     * Erzeugt das Spielfeld für einen Spieler (Gegener- und Eigenes -Board)
      */
     public void createBoardPanels(int boardSize) {
         GamePanel panelGame = gui.getPanelGame();
@@ -247,7 +247,7 @@ public class Controller {
     }
 
     /**
-     * F�gt einem Board einen MouseListener hinzu, f�r das wechseln der Orientation per Mausklick
+     * Fügt einem Board einen MouseListener hinzu, für das wechseln der Orientation per Mausklick
      */
     private void addBoardMouseListener(final JButton[][] board) {
         for (int i = 0; i < board.length; i++) {
@@ -299,7 +299,7 @@ public class Controller {
     }
 
     /**
-     * Pr�ft ob ein Schiff an der gew�nschten Position platziert werden kann
+     * Prüft ob ein Schiff an der gewünschten Position platziert werden kann
      */
     public boolean isItPossibleToPlaceShip(Player player, int startX, int startY, Orientation orientation) {
         try {
@@ -314,7 +314,7 @@ public class Controller {
     }
 
     /**
-     * Pr�ft ob auf die gew�nschte Position geschossen werden kann
+     * Prüft ob auf die gewünschte Position geschossen werden kann
      */
     public boolean isItPossibleToShoot(Board board, int startX, int startY) {
         FieldState fs = board.getFieldStates(false)[startY][startX];
@@ -322,7 +322,7 @@ public class Controller {
     }
 
     /**
-     * Pr�ft ob auf die gew�nschte Position geschossen werden kann
+     * Prüft ob auf die gewünschte Position geschossen werden kann
      */
     public boolean isItPossibleToShoot(FieldState[][] board, int startX, int startY) {
         boolean result = false;
@@ -338,7 +338,7 @@ public class Controller {
     }
 
     /**
-     * Updated die Spaltenl�nge des GameBrowserTable mithilfe von Prozentverteilung
+     * Updated die Spaltenlänge des GameBrowserTable mithilfe von Prozentverteilung
      */
 
     public void resizeServerGameListColumns() {
@@ -398,7 +398,7 @@ public class Controller {
     }
 
     /**
-     * Setzt eine Nachricht f�r das Message Label
+     * Setzt eine Nachricht für das Message Label
      */
     public void setInfoLabelMessage(String message) {
         gui.getPanelGame().getLabelInfo().setText(message);
@@ -416,7 +416,7 @@ public class Controller {
     }
 
     /**
-     * Updated die Felder eines Boardes, �ndert die Icons/Images
+     * Updated die Felder eines Boardes, ändert die Icons/Images
      */
     public void updateBoardColors(JButton[][] board, FieldState[][] fieldStates) {
         int boardSize = fieldStates.length;
@@ -450,7 +450,7 @@ public class Controller {
     }
 
     /**
-     * Updated die Schiffsauswahl, bei �nderung eines Schiffstatusses
+     * Updated die Schiffsauswahl, bei Änderung eines Schiffstatusses
      */
     public void updateShipSelection(Player player) {
         GamePanel panelGame = gui.getPanelGame();

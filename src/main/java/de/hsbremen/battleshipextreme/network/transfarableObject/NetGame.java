@@ -20,12 +20,12 @@ public class NetGame extends Game {
     private String id; // Spiel ID
     private String name; // Name des Spiels
     private HashMap<Integer, ClientHandler> playersMap; // Spieler und ihre Reihenfolge(Setzten, Spielzug) im Spiel
-    private ArrayList<Integer> clientIds; // verfügbare Reihenfolge-IDs
-    private ClientGameIndexQueue<Integer> clientTurnOrder; // Queue, die verwendet wird um den nächsten Spieler zu finden, der am Zug ist
-    private int maxPlayers; // maximale Anzahl der möglichen Spieler im Spiel
-    private String password; // Password für das Spiel
+    private ArrayList<Integer> clientIds; // verfï¿½gbare Reihenfolge-IDs
+    private ClientGameIndexQueue<Integer> clientTurnOrder; // Queue, die verwendet wird um den nÃ¤chsten Spieler zu finden, der am Zug ist
+    private int maxPlayers; // maximale Anzahl der mÃ¶glichen Spieler im Spiel
+    private String password; // Password fÃ¼r das Spiel
     private boolean isPrivate;
-    private ArrayList<Turn> turns; // alle Spielzüge, die gemacht wurden
+    private ArrayList<Turn> turns; // alle SpielzÃ¼ge, die gemacht wurden
     private boolean ready;
 
     public NetGame(String name, String password, Settings settings) {
@@ -53,14 +53,14 @@ public class NetGame extends Game {
     }
 
     /**
-     * Fügt einen Spielzug hinzu
+     * FÃ¼gt einen Spielzug hinzu
      */
     public void addTurn(Turn turn) {
         this.turns.add(turn);
     }
 
     /**
-     * Gibt eine Liste aller gejointen Spieler zurück
+     * Gibt eine Liste aller gejointen Spieler zurÃ¼ck
      */
     public ArrayList<ClientHandler> getJoinedPlayers() {
         ArrayList<ClientHandler> result = new ArrayList<ClientHandler>();
@@ -73,7 +73,7 @@ public class NetGame extends Game {
     }
 
     /**
-     * Fügt einen Spieler dem Spiel hinzu
+     * FÃ¼gt einen Spieler dem Spiel hinzu
      */
     public void addPlayer(ClientHandler player) {
         if (!this.isGameFull()) {
@@ -110,7 +110,7 @@ public class NetGame extends Game {
     }
 
     /**
-     * Gibt den Index des Clients zurück
+     * Gibt den Index des Clients zurÃ¼ck
      */
     public int getIndexByClient(ClientHandler handler) {
         int index = -1;
@@ -126,7 +126,7 @@ public class NetGame extends Game {
     }
 
     /**
-     * Gibt das Passowrd des Spiels zurück
+     * Gibt das Passowrd des Spiels zurÃ¼ck
      */
     public String getPassword() {
         return password;
@@ -159,21 +159,21 @@ public class NetGame extends Game {
     }
 
     /**
-     * Gibt die Queue der Client Spielzureihenfolge zurück
+     * Gibt die Queue der Client Spielzureihenfolge zurÃ¼ck
      */
     public ClientGameIndexQueue<Integer> getClientTurnOrder() {
         return clientTurnOrder;
     }
 
     /**
-     * Gibt die Spieler und ihrem Index im Spiel zurück
+     * Gibt die Spieler und ihrem Index im Spiel zurÃ¼ck
      */
     public HashMap<Integer, ClientHandler> getPlayersMap() {
         return playersMap;
     }
 
     /**
-     * Prüft ob alle Spieler ihre Schiffe gesetzt haben
+     * PrÃ¼ft ob alle Spieler ihre Schiffe gesetzt haben
      */
     public boolean haveAllPlayersSetTheirShips() {
         for (Player player : this.getPlayers()) {

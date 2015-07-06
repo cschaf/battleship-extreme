@@ -2,7 +2,7 @@ package de.hsbremen.battleshipextreme.client;
 
 import javax.swing.*;
 /**
- * Grafisches Spielfeld f¸r das beschieﬂen oder setzen von Schiffen
+ * Grafisches Spielfeld f√ºr das beschie√üen oder setzen von Schiffen
  */
 public class BoardPanel extends JPanel {
 // ------------------------------ FIELDS ------------------------------

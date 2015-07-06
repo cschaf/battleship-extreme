@@ -5,7 +5,7 @@ import de.hsbremen.battleshipextreme.network.TransferableType;
 
 /**
  * Created by cschaf on 25.04.2015.
- * Information für die Übertragung
+ * Information fÃ¼r die Ã¼bertragung
  */
 public abstract class TransferInfo extends TransferableObject {
 

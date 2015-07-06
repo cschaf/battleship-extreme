@@ -62,7 +62,7 @@ public class GamePanel extends JPanel {
         panelPlayerBoard = new BoardPanel();
         panelBoards.add(panelPlayerBoard);
 
-        // Panel fuer mit den Boards hinzufügen
+        // Panel fuer mit den Boards hinzufÃ¼gen
         panelGameArea.add(panelBoards);
     }
 
@@ -194,7 +194,7 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Erzeugt das Panel für das wechseln der Ausrichtung
+     * Erzeugt das Panel fÃ¼r das wechseln der Ausrichtung
      */
     private JPanel createOrientationPanel() {
         JPanel panel = new JPanel(new GridLayout(1, 2));
@@ -216,20 +216,20 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Erzeugt das Panel für die Schiffselektion
+     * Erzeugt das Panel fÃ¼r die Schiffselektion
      */
     private JPanel createShipSelectionPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createTitledBorder("Your Ships"));
 
-        // GridBagLayout Einschränkungen
+        // GridBagLayout EinschrÃ¤nkungen
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.weightx = 0;
         c.weighty = 0;
 
-        // Labels für die Anzahl der Schiffe
+        // Labels fÃ¼r die Anzahl der Schiffe
         labelShipCount = new JLabel[4];
 
         for (int i = 0; i < labelShipCount.length; i++) {
@@ -241,7 +241,7 @@ public class GamePanel extends JPanel {
             panel.add(labelShipCount[i], c);
         }
 
-        // Labels für die Schiffe
+        // Labels fÃ¼r die Schiffe
         labelShip = new JLabel[4][];
         labelShip[0] = new JLabel[5];
         labelShip[1] = new JLabel[4];
@@ -430,14 +430,14 @@ public class GamePanel extends JPanel {
 // -------------------------- OTHER METHODS --------------------------
 
     /**
-     * Löscht den Chatverlauf
+     * LÃ¶scht den Chatverlauf
      */
     public void clearChatLog() {
         getTextAreaChatLog().setText("");
     }
 
     /**
-     * Löscht den Gamelogverlauf
+     * LÃ¶scht den Gamelogverlauf
      */
     public void clearGameLog() {
         getTextAreaGameLog().setText("");

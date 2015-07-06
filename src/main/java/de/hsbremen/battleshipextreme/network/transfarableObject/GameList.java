@@ -6,7 +6,7 @@ import java.util.Vector;
 
 /**
  * Created by cschaf on 02.06.2015.
- * Beinhaltet eine Liste aller Spielobjekte für den Client
+ * Beinhaltet eine Liste aller Spielobjekte fÃ¼r den Client
  */
 public class GameList extends TransferableObject {
     private Vector<NetGame> netGameList; // Liste mit Spielen
@@ -20,7 +20,7 @@ public class GameList extends TransferableObject {
     }
 
     /**
-     * Gibt die Liste der Spiele zurück
+     * Gibt die Liste der Spiele zurÃ¼ck
      */
     public Vector<NetGame> getNetGameList() {
         return netGameList;

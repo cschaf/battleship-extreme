@@ -5,7 +5,7 @@ import java.awt.*;
 
 /**
  * Created on 11.06.2015.
- * Kontrollbar für den Spielfluss / Runde überspringen und Schiffe anzeigen
+ * Kontrollbar fÃ¼r den Spielfluss / Runde Ã¼berspringen und Schiffe anzeigen
  */
 public class GameControlBarPanel extends JPanel {
 // ------------------------------ FIELDS ------------------------------

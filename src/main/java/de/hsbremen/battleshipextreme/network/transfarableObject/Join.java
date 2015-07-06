@@ -4,7 +4,7 @@ import de.hsbremen.battleshipextreme.network.TransferableType;
 
 /**
  * Created by cschaf on 07.05.2015.
- * Beinhaltet alle Informationen die für das Joinen eines Clients in ein Spiel notwendig sind
+ * Beinhaltet alle Informationen die fÃ¼r das Joinen eines Clients in ein Spiel notwendig sind
  */
 public class Join extends TransferableObject {
     private String client; // Name des Clients

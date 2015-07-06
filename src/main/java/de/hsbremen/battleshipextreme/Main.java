@@ -1,21 +1,16 @@
 package de.hsbremen.battleshipextreme;
 
-import java.util.ArrayList;
-import java.util.Scanner;
-
 import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Game;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.Settings;
-import de.hsbremen.battleshipextreme.model.exception.BoardTooSmallException;
-import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
-import de.hsbremen.battleshipextreme.model.exception.InvalidNumberOfShipsException;
-import de.hsbremen.battleshipextreme.model.exception.InvalidPlayerNumberException;
-import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
-import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.exception.*;
 import de.hsbremen.battleshipextreme.model.player.AIPlayer;
 import de.hsbremen.battleshipextreme.model.player.Player;
 import de.hsbremen.battleshipextreme.model.ship.Ship;
+
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main {
 	public static void main(String[] args) {
@@ -24,8 +19,8 @@ public class Main {
 }
 
 class ConsoleGame {
-	private Scanner input;
 	private static final String SAVEGAME_FILENAME = "savegame.sav";
+	private Scanner input;
 	private Game game;
 
 	public ConsoleGame() {
@@ -99,12 +94,12 @@ class ConsoleGame {
 	}
 
 	private void createKIBenchmark() {
-		// Methode dient zum Auswerten der Effektivit‰t einer KI
+		// Methode dient zum Auswerten der Effektivit√§t einer KI
 		//
 		// erzeugt mehrere Spiele und gibt am Ende den
-		// Durchschnitt der benˆtigten Rundenanzahl aus
+		// Durchschnitt der ben√∂tigten Rundenanzahl aus
 		//
-		// eine AI die zuf‰llig schieﬂt, braucht im Schnitt ca. 77 Runden
+		// eine AI die zuf√§llig schie√üt, braucht im Schnitt ca. 77 Runden
 
 		int numberOfGames = 1000;
 		int[] roundNumbersOfEachGame = new int[numberOfGames];
@@ -156,7 +151,7 @@ class ConsoleGame {
 				aiPlayers = readIntegerWithMinMax(0, playersLeft);
 			} else {
 				aiPlayers = 0;
-				System.out.println("Kein Platz mehr f¸r KI-Spieler.");
+				System.out.println("Kein Platz mehr f√ºr KI-Spieler.");
 			}
 			if (players + aiPlayers < minPlayers)
 				System.out.println("Zu wenig Spieler!");
@@ -172,16 +167,16 @@ class ConsoleGame {
 		System.out.print("U-Boote: ");
 		int submarines = readIntegerWithMinMax(0, 100);
 
-		// Mindestgrˆﬂe des Feldes berechnen
+		// Mindest Gr√∂√üe des Feldes berechnen
 		int requiredFields = Settings.getRequiredFields(destroyers, corvettes, frigates, submarines);
 		int requiredBoardSize = Settings.getRequiredBoardSize(requiredFields);
-		System.out.println("Ermittle Mindestgrˆﬂe des Boards...");
+		System.out.println("Ermittle MindestGr√∂√üe des Boards...");
 		int boardSize = 0;
 		if (requiredBoardSize <= Settings.MAX_BOARD_SIZE) {
 			System.out.print("Groesse des Spielfeldes (" + requiredBoardSize + "-" + Settings.MAX_BOARD_SIZE + "): ");
 			boardSize = readIntegerWithMinMax(requiredBoardSize, Settings.MAX_BOARD_SIZE);
 		} else {
-			System.out.println("Die ermittelte Mindestrˆﬂe des Boards ¸bersteigt die maximale Grˆﬂe von " + Settings.MAX_BOARD_SIZE + "!");
+			System.out.println("Die ermittelte Mindestgr√∂√üe des Boards √ºbersteigt die maximale Gr√∂√üe von " + Settings.MAX_BOARD_SIZE + "!");
 		}
 
 		Settings settings = new Settings(players, aiPlayers, 0, boardSize, destroyers, frigates, corvettes, submarines);
@@ -202,7 +197,7 @@ class ConsoleGame {
 	private void setPlayerNames(Player[] players) {
 		System.out.println("\nSpielernamen:");
 		for (Player player : players) {
-			System.out.print("Name f¸r " + player + " : ");
+			System.out.print("Name f√ºr " + player + " : ");
 			player.setName(input.nextLine());
 		}
 	}
@@ -259,11 +254,11 @@ class ConsoleGame {
 				isItPossibleToPlaceShip = game.getCurrentPlayer().placeShip(coordinates[1], coordinates[0], orientation);
 				if (!isItPossibleToPlaceShip) {
 					System.out.println("Feld bereits belegt oder darf nicht belegt werden");
-					System.out.println("Board zur¸cksetzen? (J/N)");
+					System.out.println("Board zur√ºcksetzen? (J/N)");
 					boolean reset = input.next().toUpperCase().charAt(0) == 'J' ? true : false;
 					if (reset) {
 						currentPlayer.resetBoard();
-						System.out.println("Board zur¸ckgesetzt.");
+						System.out.println("Board zur√ºckgesetzt.");
 					}
 
 				}
@@ -302,11 +297,11 @@ class ConsoleGame {
 				System.out.println("------------------------------------------------------------------------");
 				System.out.println();
 			}
-			// Spieler ¸berspringen wenn er tot ist
+			// Spieler √ºberspringen wenn er tot ist
 			if (currentPlayer.hasLost()) {
-				System.out.println(currentPlayer + " ist besiegt und kann nicht schieﬂen.");
+				System.out.println(currentPlayer + " ist besiegt und kann nicht schie√üen.");
 			} else if (currentPlayer.areAllShipsReloading()) {
-				System.out.println(currentPlayer + " kann nicht schieﬂen, da alle Schiffe nachladen.");
+				System.out.println(currentPlayer + " kann nicht schie√üen, da alle Schiffe nachladen.");
 			} else {
 				// ist der aktuelle Spieler eine KI
 				if (currentPlayer instanceof AIPlayer) {
@@ -344,11 +339,11 @@ class ConsoleGame {
 
 	private void makePlayerTurn() {
 		Player currentPlayer = game.getCurrentPlayer();
-		// mˆgliche Spieleraktionen auflisten
+		// m√∂gliche Spieleraktionen auflisten
 		System.out.println();
 		System.out.println(currentPlayer + " ist an der Reihe.");
 		System.out.println();
-		System.out.println("Was mˆchtest du tun?");
+		System.out.println("Was m√∂chtest du tun?");
 		System.out.println("(1) Gegner angreifen");
 		System.out.println("(2) Spiel speichern");
 		System.out.println("(3) Spiel beenden");
@@ -373,8 +368,8 @@ class ConsoleGame {
 	private void attackManually() {
 		Player enemy;
 
-		// Auswahl des zu schieﬂenden Schiffs
-		System.out.println("Welches Schiff soll schieﬂen?");
+		// Auswahl des zu schie√üenden Schiffs
+		System.out.println("Welches Schiff soll schie√üen?");
 		selectShip();
 
 		// Auswahl des Gegners, auf den geschossen werden soll
@@ -388,7 +383,7 @@ class ConsoleGame {
 		}
 		boolean isShotPossible = false;
 		do {
-			// Koordinaten einlesen, bis Schuss erfolgreich ausgef¸hrt wurde
+			// Koordinaten einlesen, bis Schuss erfolgreich ausgef√ºhrt wurde
 			int[] coordinates = readCoordinates(game.getBoardSize());
 			try {
 				isShotPossible = game.makeTurn(enemy, coordinates[1], coordinates[0], readOrientation());
@@ -408,7 +403,7 @@ class ConsoleGame {
 		ArrayList<Ship> availableShips = currentPlayer.getAvailableShips(false);
 		Ship selectedShip;
 		do {
-			// Eingabe wiederholen bis Schiff gew‰hlt wurde, das schieﬂen kann
+			// Eingabe wiederholen bis Schiff gew√§hlt wurde, das schie√üen kann
 			for (Ship s : availableShips) {
 				System.out.println("(" + availableShips.indexOf(s) + ") " + s.getType() + "(reload:" + s.getCurrentReloadTime() + "," + " health:" + s.getSize() + ")");
 			}
@@ -418,8 +413,9 @@ class ConsoleGame {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			if (currentPlayer.getCurrentShip().isReloading())
-				System.out.println("Schiff l‰dt nach");
+			if (currentPlayer.getCurrentShip().isReloading()) {
+				System.out.println("Schiff l√§dt nach");
+			}
 		} while (currentPlayer.getCurrentShip().isReloading());
 	}
 
@@ -452,7 +448,7 @@ class ConsoleGame {
 		System.out.println("Board des Gegners");
 		System.out.println();
 		printBoard(enemyBoard);
-		System.out.println("O = getroffenes Schiff\nX = daneben\n+ = eigenes Schiff\n- = leer \nU = unbekannt\n! = zerstˆrtes Schiff\n");
+		System.out.println("O = getroffenes Schiff\nX = daneben\n+ = eigenes Schiff\n- = leer \nU = unbekannt\n! = zerst√∂rtes Schiff\n");
 	}
 
 	private void printBoard(FieldState[][] fieldStates) {

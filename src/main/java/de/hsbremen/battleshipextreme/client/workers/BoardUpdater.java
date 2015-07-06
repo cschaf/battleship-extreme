@@ -6,7 +6,7 @@ import de.hsbremen.battleshipextreme.model.FieldState;
 import javax.swing.*;
 
 /**
- * Created by cschaf on 17.06.2015.
+ * Created on 17.06.2015.
  */
 public class BoardUpdater extends SwingWorker<Integer, Object> {
     private final JButton[][] board;

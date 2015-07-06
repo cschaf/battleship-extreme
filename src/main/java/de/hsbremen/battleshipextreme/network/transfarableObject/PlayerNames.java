@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 /**
  * Created by cschaf on 06.06.2015.
- * beinhaltet eine Liste mit Spielernamen, die für den Client benötigt wird
+ * beinhaltet eine Liste mit Spielernamen, die fÃ¼r den Client benï¿½tigt wird
  */
 public class PlayerNames extends TransferableObject {
 

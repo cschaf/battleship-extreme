@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Klasse für ein Feld in einem Board
+ * Klasse fÃ¼r ein Feld in einem Board
  */
 
 public class FieldButton extends JButton {

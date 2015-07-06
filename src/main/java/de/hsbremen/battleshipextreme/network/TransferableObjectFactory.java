@@ -12,7 +12,7 @@ import java.util.Vector;
 
 /**
  * Created by cschaf on 26.04.2015.
- * Ist zentral für die Erstellung aller Objekte, die über das Netzwerk übertragen werden sollen, zuständig
+ * Ist zentral fÃ¼r die Erstellung aller Objekte, die Ã¼ber das Netzwerk Ã¼bertragen werden sollen, zustÃ¤ndig
  */
 public class TransferableObjectFactory {
     /**
