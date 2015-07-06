@@ -42,11 +42,13 @@ the destroyer must always download 3 laps and is not available in time. a frigat
 
 ##How to play
 ###Local
+![Client GUI](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/how%20to%20play/local.png)
   1. In the menu screen you have to click on "Local Game".
   2. In the settings screen you have to set the game settings and start the game by click on "OK".
   3. Now you can play.
 
 ###Multiplayer
+![Server GUI](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/how%20to%20play/server.PNG)
   1. In the server gui you have to start the server.
   1.1. On the top menu you can create a standard game by click on "Games" -> "Create standard game".
   2. In the client gui you have to click on "Multiplayer Game".
@@ -55,6 +57,8 @@ the destroyer must always download 3 laps and is not available in time. a frigat
   5. The game will start when all players are connected.
 
 ###Gameplay
+![test](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/how%20to%20play/game.PNG)
+
 1. At the beginning of the game each player has to place his ships on the right board and confirm by click on "Done".
 2. When all ships are placed the players can shoot on each other.
 3. To take a shot you have to
