@@ -5,7 +5,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
 /**
- * Created by cschaf on 02.06.2015.
+ * Created on 02.06.2015.
+ * Wird benötigt im die Schlossicons in dem JTable Einträgen anzuzeigen
  */
 class IconTableCellRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -13,8 +14,7 @@ class IconTableCellRenderer extends DefaultTableCellRenderer {
         if (value instanceof ImageIcon) {
             label.setText(null);
             label.setIcon((ImageIcon) value);
-        }
-        else{
+        } else {
             label.setIcon(null);
         }
         return label;

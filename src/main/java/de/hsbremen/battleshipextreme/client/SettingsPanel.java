@@ -1,22 +1,13 @@
 package de.hsbremen.battleshipextreme.client;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class SettingsPanel extends JPanel {
 
 	private JLabel labelPlayers;
-
-	public JLabel getLabelAiPlayers() {
-		return labelAiPlayers;
-	}
-
 	private JLabel labelAiPlayers;
 	private JLabel labelDestroyers;
 	private JLabel labelFrigates;
@@ -25,7 +16,6 @@ public class SettingsPanel extends JPanel {
 	private JLabel labelBoardSize;
 	private JLabel labelGameName;
     private JLabel labelGamePassword;
-
 	private JTextField textFieldPlayers;
 	private JTextField textFieldAiPlayers;
 	private JTextField textFieldDestroyers;
@@ -35,11 +25,22 @@ public class SettingsPanel extends JPanel {
 	private JTextField textFieldBoardSize;
 	private JTextField textFieldGameName;
     private JTextField textFieldGamePassword;
-
 	private JButton buttonApplySettings;
 
     public SettingsPanel() {
-		this.setLayout(new GridBagLayout());
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                super.componentShown(e);
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                super.componentHidden(e);
+                resetFields();
+            }
+        });
+        this.setLayout(new GridBagLayout());
 
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.NORTHEAST;
@@ -128,8 +129,23 @@ public class SettingsPanel extends JPanel {
 		c.gridy++;
 		buttonApplySettings = new JButton("OK");
 		this.add(buttonApplySettings, c);
+    }
 
-	}
+    public JLabel getLabelAiPlayers() {
+        return labelAiPlayers;
+    }
+
+    public void resetFields() {
+        textFieldGameName.setText("");
+        textFieldGamePassword.setText("");
+        textFieldPlayers.setText("2");
+        textFieldAiPlayers.setText("2");
+        textFieldDestroyers.setText("1");
+        textFieldFrigates.setText("1");
+        textFieldCorvettes.setText("1");
+        textFieldSubmarines.setText("1");
+        textFieldBoardSize.setText("10");
+    }
 
 	// ////////////////////////////////////////////////////////////////
 	// get Components

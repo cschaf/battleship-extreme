@@ -98,6 +98,28 @@ public class Controller {
             }
         });
 
+        gui.getPanelMainMenu().getButtonLoadGame().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    localClientController.loadGame();
+                } catch (Exception e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+            }
+        });
+
+        gui.getMenuItemLoadGame().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    localClientController.loadGame();
+                } catch (Exception e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+            }
+        });
+
         gui.getPanelMainMenu().getButtonQuitGame().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 System.exit(0);
@@ -137,7 +159,6 @@ public class Controller {
                     e1.printStackTrace();
                 }
                 SwingUtilities.updateComponentTreeUI(gui.getFrame());
-                // gui.getFrame().pack();
             }
         });
     }
@@ -153,7 +174,6 @@ public class Controller {
      * Erstellt den Startzustand für das Settingspanel des Lokalen Spiels
      */
     private void setupSettingsPanelForLocalGame() {
-        // enable/disable controls for necessary game options
         SettingsPanel settings = gui.getPanelSettings();
         settings.getTextFieldAiPlayers().setEnabled(true);
         settings.getTextFieldAiPlayers().setVisible(true);
