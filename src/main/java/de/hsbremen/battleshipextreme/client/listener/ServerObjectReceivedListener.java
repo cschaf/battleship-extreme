@@ -15,15 +15,22 @@ import de.hsbremen.battleshipextreme.network.transfarableObject.*;
  * Listener, der auf die durchs Netzwerk empfangenen Objekte reagiert.
  */
 public class ServerObjectReceivedListener implements IServerObjectReceivedListener {
+// ------------------------------ FIELDS ------------------------------
+
     private GUI gui;
     private NetworkClient network;
     private MultiPlayerClientController ctrl;
+
+// --------------------------- CONSTRUCTORS ---------------------------
 
     public ServerObjectReceivedListener(GUI gui, NetworkClient network, MultiPlayerClientController ctrl) {
         this.gui = gui;
         this.network = network;
         this.ctrl = ctrl;
     }
+
+
+// --------------------- Interface IServerObjectReceivedListener ---------------------
 
     public void onObjectReceived(EventArgs<ITransferable> eventArgs) {
     }

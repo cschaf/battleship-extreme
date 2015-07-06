@@ -18,31 +18,21 @@ import java.awt.event.MouseListener;
  * Listener, der für die Events der Controls des GameBrowsers verwendet wird
  */
 public class ServerGameBrowserListener implements TableColumnModelListener, MouseListener {
+// ------------------------------ FIELDS ------------------------------
+
     private NetworkClient network;
     private MultiPlayerClientController ctrl;
+
+// --------------------------- CONSTRUCTORS ---------------------------
 
     public ServerGameBrowserListener(NetworkClient network, MultiPlayerClientController ctrl) {
         this.network = network;
         this.ctrl = ctrl;
     }
 
-    public void columnAdded(TableColumnModelEvent e) {
-    }
 
-    public void columnRemoved(TableColumnModelEvent e) {
-    }
+// --------------------- Interface MouseListener ---------------------
 
-    public void columnMoved(TableColumnModelEvent e) {
-
-    }
-
-    public void columnMarginChanged(ChangeEvent e) {
-        ctrl.resizeServerGameListColumns();
-    }
-
-    public void columnSelectionChanged(ListSelectionEvent e) {
-
-    }
 
     public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
@@ -71,6 +61,26 @@ public class ServerGameBrowserListener implements TableColumnModelListener, Mous
     }
 
     public void mouseExited(MouseEvent e) {
+
+    }
+
+// --------------------- Interface TableColumnModelListener ---------------------
+
+    public void columnAdded(TableColumnModelEvent e) {
+    }
+
+    public void columnRemoved(TableColumnModelEvent e) {
+    }
+
+    public void columnMoved(TableColumnModelEvent e) {
+
+    }
+
+    public void columnMarginChanged(ChangeEvent e) {
+        ctrl.resizeServerGameListColumns();
+    }
+
+    public void columnSelectionChanged(ListSelectionEvent e) {
 
     }
 }
