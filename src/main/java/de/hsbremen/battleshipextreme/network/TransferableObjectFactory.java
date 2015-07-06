@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 /**
- * Created by cschaf on 26.04.2015.
+ * Created on 26.04.2015.
  * Ist zentral für die Erstellung aller Objekte, die über das Netzwerk übertragen werden sollen, zuständig
  */
 public class TransferableObjectFactory {

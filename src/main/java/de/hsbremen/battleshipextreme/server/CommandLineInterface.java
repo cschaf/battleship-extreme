@@ -5,11 +5,10 @@ import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListener;
 import de.hsbremen.battleshipextreme.server.listener.ClientConnectionConsoleListener;
 import de.hsbremen.battleshipextreme.server.listener.ClientObjectReceivedListener;
-import de.hsbremen.battleshipextreme.server.listener.IClientObjectReceivedListener;
 import de.hsbremen.battleshipextreme.server.listener.IServerListener;
 
 /**
- * Created by cschaf on 26.04.2015.
+ * Created on 26.04.2015.
  */
 public class CommandLineInterface {
     public static void main(String[] args) {

@@ -3,7 +3,7 @@ package de.hsbremen.battleshipextreme.network.transfarableObject;
 import de.hsbremen.battleshipextreme.network.TransferableType;
 
 /**
- * Created by cschaf on 25.04.2015.
+ * Created on 25.04.2015.
  * Eine Nachricht
  */
 public class Message extends TransferableObject {

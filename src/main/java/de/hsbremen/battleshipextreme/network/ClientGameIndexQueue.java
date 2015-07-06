@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
- * Created by cschaf on 05.06.2015.
+ * Created on 05.06.2015.
  * Queue, welche für das Verwalten der nächsten Spielzügen zuständig ist
  */
 public class ClientGameIndexQueue<T> implements Iterator<T>, Serializable {

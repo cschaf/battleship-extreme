@@ -5,7 +5,7 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 
 /**
- * Created by cschaf on 01.06.2015.
+ * Created on 01.06.2015.
  */
 public class ServerConnectionPanel extends JPanel {
     private ServerConnectionBarPanel pnlServerConnectionBar;

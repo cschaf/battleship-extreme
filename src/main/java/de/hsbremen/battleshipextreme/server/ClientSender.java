@@ -12,7 +12,7 @@ import java.net.Socket;
 import java.util.Vector;
 
 /**
- * Created by cschaf on 26.04.2015.
+ * Created on 26.04.2015.
  */
 public class ClientSender extends Thread implements IDisposable, Serializable {
     private Vector<ITransferable> objectQueue;

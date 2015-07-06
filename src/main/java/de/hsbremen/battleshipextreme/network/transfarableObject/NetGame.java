@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Created by cschaf on 30.04.2015.
+ * Created on 30.04.2015.
  * Die Spiellogik innerhalb des Netzwerkspiels
  */
 public class NetGame extends Game {

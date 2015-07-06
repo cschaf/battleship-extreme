@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * Created by cschaf on 26.04.2015.
+ * Created on 26.04.2015.
  */
 public class Server implements IDisposable {
 

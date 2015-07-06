@@ -6,7 +6,7 @@ import de.hsbremen.battleshipextreme.network.eventhandling.listener.IErrorListen
 import javax.swing.event.EventListenerList;
 
 /**
- * Created by cschaf on 25.04.2015.
+ * Created on 25.04.2015.
  * Verwaltet und benachrichtigt IErrorListener
  */
 public class ErrorHandler {

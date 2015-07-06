@@ -1,7 +1,7 @@
 package de.hsbremen.battleshipextreme.network;
 
 /**
- * Created by cschaf on 25.04.2015.
+ * Created on 25.04.2015.
  * Informationen für Clients
  */
 public enum TransferableType {

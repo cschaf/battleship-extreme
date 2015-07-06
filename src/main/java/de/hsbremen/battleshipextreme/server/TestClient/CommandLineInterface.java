@@ -1,7 +1,7 @@
 package de.hsbremen.battleshipextreme.server.TestClient;
 
 /**
- * Created by cschaf on 15.05.2015.
+ * Created on 15.05.2015.
  */
 
 public class CommandLineInterface {

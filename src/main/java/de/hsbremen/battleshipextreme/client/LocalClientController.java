@@ -21,7 +21,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * Created by cschaf on 17.06.2015.
+ * Created on 17.06.2015.
  */
 public class LocalClientController implements Serializable {
 // ------------------------------ FIELDS ------------------------------

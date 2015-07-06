@@ -15,7 +15,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 /**
- * Created by cschaf on 15.05.2015.
+ * Created on 15.05.2015.
  * ClientNetworker connects to Server and prints all the messages
  * received from the server. It also allows the user to send messages to the
  * server. ClientNetworker thread reads messages and print them to the standard
@@ -23,6 +23,7 @@ import java.util.ArrayList;
  * to the server.
  */
 public class ClientNetworker implements IDisposable {
+    protected EventListenerList listeners = new EventListenerList();
     private String serverIp = "localhost";
     private int serverPort = 1337;
     private ObjectInputStream in = null;
@@ -32,7 +33,6 @@ public class ClientNetworker implements IDisposable {
     private Listener listener = null;
     private String username = "Guest";
     private ErrorHandler errorHandler = null;
-    protected EventListenerList listeners = new EventListenerList();
     private ArrayList<IServerObjectReceivedListener> tempServerObjectReceivedListeners;
 
     public ClientNetworker(String serverIp, int serverPort, String username) {

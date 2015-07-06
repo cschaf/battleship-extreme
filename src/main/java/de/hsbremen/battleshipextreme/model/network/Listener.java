@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 /**
- * Created by cschaf on 15.05.2015.
+ * Created on 15.05.2015.
  */
 public class Listener extends Thread implements IDisposable {
     protected EventListenerList listeners;

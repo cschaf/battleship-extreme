@@ -3,7 +3,7 @@ package de.hsbremen.battleshipextreme.network.eventhandling;
 import java.util.EventObject;
 
 /**
- * Created by cschaf on 25.04.2015.
+ * Created on 25.04.2015.
  * Dient als Container für Objekte, die über Events verteilt werden
  */
 public class EventArgs<T> extends EventObject{

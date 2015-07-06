@@ -5,7 +5,7 @@ import de.hsbremen.battleshipextreme.network.TransferableType;
 import java.util.Vector;
 
 /**
- * Created by cschaf on 02.06.2015.
+ * Created on 02.06.2015.
  * Beinhaltet eine Liste aller Spielobjekte für den Client
  */
 public class GameList extends TransferableObject {

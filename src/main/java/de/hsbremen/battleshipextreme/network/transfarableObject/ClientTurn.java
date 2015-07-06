@@ -2,7 +2,7 @@ package de.hsbremen.battleshipextreme.network.transfarableObject;
 import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.network.TransferableType;
 /**
- * Created by cschaf on 20.06.2015.
+ * Created on 20.06.2015.
  * Beinhaltet die Spielzuginformationen, welche vom Server an den Client gesendet wird
  */
 public class ClientTurn extends TransferableObject {

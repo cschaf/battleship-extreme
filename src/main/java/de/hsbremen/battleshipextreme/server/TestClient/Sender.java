@@ -15,7 +15,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
- * Created by cschaf on 15.05.2015.
+ * Created on 15.05.2015.
  * Handles user inputs for stdin
  */
 public class Sender extends Thread implements IDisposable {

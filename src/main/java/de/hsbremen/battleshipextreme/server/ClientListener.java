@@ -16,7 +16,7 @@ import java.io.Serializable;
 import java.net.Socket;
 
 /**
- * Created by cschaf on 25.04.2015.
+ * Created on 25.04.2015.
  */
 public class ClientListener extends Thread implements IDisposable, Serializable {
     private ServerDispatcher serverDispatcher;

@@ -4,7 +4,7 @@ import de.hsbremen.battleshipextreme.model.ship.ShipType;
 import de.hsbremen.battleshipextreme.network.TransferableType;
 
 /**
- * Created by cschaf on 30.04.2015.
+ * Created on 30.04.2015.
  * Beinhaltet alle Spielzuginformationen, die vom Client an den Server gesendet werden
  */
 public class Turn extends TransferableObject {

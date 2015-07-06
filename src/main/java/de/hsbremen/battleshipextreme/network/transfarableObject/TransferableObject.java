@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 /**
- * Created by cschaf on 25.04.2015.
+ * Created on 25.04.2015.
  * Vaterklasse für jedes Objekt was über das Netzwerk übertragen wird
  */
 public abstract class TransferableObject implements Serializable, ITransferable {
