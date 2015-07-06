@@ -1,5 +1,20 @@
 package de.hsbremen.battleshipextreme.client;
 
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Set;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+
 import de.hsbremen.battleshipextreme.client.listener.ServerGameBrowserListener;
 import de.hsbremen.battleshipextreme.client.listener.ServerObjectReceivedListener;
 import de.hsbremen.battleshipextreme.client.workers.BoardUpdater;
@@ -7,7 +22,12 @@ import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.model.FieldState;
 import de.hsbremen.battleshipextreme.model.Orientation;
 import de.hsbremen.battleshipextreme.model.Settings;
-import de.hsbremen.battleshipextreme.model.exception.*;
+import de.hsbremen.battleshipextreme.model.exception.BoardTooSmallException;
+import de.hsbremen.battleshipextreme.model.exception.FieldOutOfBoardException;
+import de.hsbremen.battleshipextreme.model.exception.InvalidNumberOfShipsException;
+import de.hsbremen.battleshipextreme.model.exception.InvalidPlayerNumberException;
+import de.hsbremen.battleshipextreme.model.exception.ShipAlreadyPlacedException;
+import de.hsbremen.battleshipextreme.model.exception.ShipOutOfBoardException;
 import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener;
 import de.hsbremen.battleshipextreme.model.network.NetworkClient;
 import de.hsbremen.battleshipextreme.model.player.HumanPlayer;
@@ -20,21 +40,6 @@ import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.transfarableObject.ClientTurn;
 import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Set;
-
-/**
- * Created on 18.06.2015.
- */
 public class MultiPlayerClientController implements Serializable {
 	// ------------------------------ FIELDS ------------------------------
 
@@ -68,6 +73,10 @@ public class MultiPlayerClientController implements Serializable {
 	}
 
 	// -------------------------- OTHER METHODS --------------------------
+
+	/**
+	 * Fügt alle Listeners hinzu.
+	 */
 	public void addAllListeners() {
 		addServerConnectionListener();
 		addServerGameBrowserListeners();
@@ -92,6 +101,9 @@ public class MultiPlayerClientController implements Serializable {
 		}
 	}
 
+	/**
+	 * Fügt den Listener für den OK Buttons des SettingsPanels hinzu.
+	 */
 	private void addApplySettingsListener() {
 		this.applySettingsListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -131,12 +143,18 @@ public class MultiPlayerClientController implements Serializable {
 		gui.getPanelSettings().getButtonApplySettings().addActionListener(applySettingsListener);
 	}
 
+	/**
+	 * Enfernt den Listener für ApplySettings.
+	 */
 	private void removeApplySettingsListener() {
 		if (applySettingsListener != null) {
 			gui.getPanelSettings().getButtonApplySettings().removeActionListener(this.applySettingsListener);
 		}
 	}
 
+	/**
+	 * Updated die Liste der möglichen Gegner.
+	 */
 	public void updateEnemySelection() {
 		GamePanel panelGame = gui.getPanelGame();
 		Set<String> myEnemies = this.enemies.keySet();
@@ -147,6 +165,9 @@ public class MultiPlayerClientController implements Serializable {
 		}
 	}
 
+	/**
+	 * Fügt den DoneButtom Listener hinzu.
+	 */
 	private void addDoneButtonListener() {
 		GamePanel panelGame = gui.getPanelGame();
 		this.doneButtonListener = new ActionListener() {
@@ -158,12 +179,18 @@ public class MultiPlayerClientController implements Serializable {
 		panelGame.getButtonDone().addActionListener(doneButtonListener);
 	}
 
+	/**
+	 * Enfernt den Listener für den DoneButton.
+	 */
 	private void removeDoneButtonListener() {
 		if (doneButtonListener != null) {
 			gui.getPanelGame().getButtonDone().removeActionListener(doneButtonListener);
 		}
 	}
 
+	/**
+	 * Fügt den Listener der Gegnersauswahl hinzu.
+	 */
 	private void addEnemySelectionListener() {
 		GamePanel panelGame = gui.getPanelGame();
 		final JComboBox<String> enemyComboBox = panelGame.getComboBoxEnemySelection();
@@ -175,6 +202,9 @@ public class MultiPlayerClientController implements Serializable {
 		enemyComboBox.addActionListener(enemySelectionListener);
 	}
 
+	/**
+	 * Entfernt den Listener für die Gegnerauswahl.
+	 */
 	private void removeEnemySelectionListener() {
 		if (enemySelectionListener != null) {
 			GamePanel panelGame = gui.getPanelGame();
@@ -182,6 +212,10 @@ public class MultiPlayerClientController implements Serializable {
 		}
 	}
 
+	/**
+	 * Fügt den Listener für das gegnerische Board bzw die einzelnen Felder
+	 * davon hinzu
+	 */
 	private void addEnemyBoardListener() {
 		GamePanel panelGame = gui.getPanelGame();
 		final JButton[][] playerBoard = panelGame.getPanelEnemyBoard().getButtonsField();
@@ -208,6 +242,9 @@ public class MultiPlayerClientController implements Serializable {
 		}
 	}
 
+	/**
+	 * Enfernt den Listeners für das gegnerische Board
+	 */
 	private void removeEnemyBoardListener() {
 		if (enemyBoardListeners != null) {
 			GamePanel panelGame = gui.getPanelGame();
@@ -219,6 +256,12 @@ public class MultiPlayerClientController implements Serializable {
 			}
 		}
 	}
+
+	/**
+	 * Dient zum aktualisieren der Gegnerliste.
+	 * 
+	 * @param names
+	 */
 
 	public void setPlayerNames(ArrayList<String> names) {
 		ArrayList<String> keys = new ArrayList<String>(enemies.keySet());
@@ -237,6 +280,10 @@ public class MultiPlayerClientController implements Serializable {
 		updateEnemySelection();
 	}
 
+	/**
+	 * Platziert das aktuell selektierte Schiff des aktuellen Spielers auf
+	 * seinem Board.
+	 */
 	private void placeShip(int xPos, int yPos, boolean isHorizontal) throws ShipAlreadyPlacedException, FieldOutOfBoardException, ShipOutOfBoardException {
 		Orientation orientation = isHorizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL;
 
@@ -256,6 +303,9 @@ public class MultiPlayerClientController implements Serializable {
 		ctrl.updateShipSelection(player);
 	}
 
+	/**
+	 * Fügt den Listener für die Felder des eigenen Boards hinzu.
+	 */
 	private void addPlayerBoardListener() {
 		GamePanel panelGame = gui.getPanelGame();
 		JButton[][] playerBoard = panelGame.getPanelPlayerBoard().getButtonsField();
@@ -284,6 +334,9 @@ public class MultiPlayerClientController implements Serializable {
 		}
 	}
 
+	/**
+	 * Enfernt den Listener für PlayerBoard.
+	 */
 	private void removePlayerBoardListener() {
 		if (playerBoardListeners != null) {
 			GamePanel panelGame = gui.getPanelGame();
@@ -297,19 +350,24 @@ public class MultiPlayerClientController implements Serializable {
 		}
 	}
 
+	/**
+	 * Fügt Listener für die Schaltflächen im Multiplayer-Menü hinzu.
+	 */
 	private void addServerConnectionListener() {
+		// Listener für den Connect-Button
+		// dient zur Herstellung der Verbindung zwischen Client und Server
 		gui.getPanelServerConnection().getPnlServerConnectionBar().getBtnConnect().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (network.isConnected() && (connectedAs == null || connectedAs.isEmpty())) {
 					network.getSender().sendLogin(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
 				} else if (!network.isConnected()) {
 					addServerObjectReceivedListeners();
-					// get connections informations
+					// Verbindungsinformationen
 					network.setIp(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxIp().getText());
 					network.setPort(Integer.parseInt(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxPort().getText()));
-					// connect to server
+					// zum Server verbinden
 					network.connect();
-					// send login
+					// Login senden
 					if (network.isConnected()) {
 						network.getSender().sendLogin(gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText());
 					}
@@ -317,6 +375,7 @@ public class MultiPlayerClientController implements Serializable {
 			}
 		});
 
+		// Listener für den Disconnect-Button
 		gui.getPanelServerConnection().getPnlServerConnectionBar().getBtnDisconnect().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				removeServerObjectReceivedListeners();
@@ -328,6 +387,8 @@ public class MultiPlayerClientController implements Serializable {
 			}
 		});
 
+		// Listener für den Join-Button
+		// dient zum Verbinden zu einem bestimmten Spiel
 		gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnJoin().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int rowIndex = gui.getPanelServerConnection().getPnlServerGameBrowser().getTblGames().getSelectedRow();
@@ -343,18 +404,24 @@ public class MultiPlayerClientController implements Serializable {
 			}
 		});
 
+		// Listener für den Refresh-Button
+		// dient zum aktualisieren der Spielliste
 		gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnRefresh().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				network.getSender().requestGameList();
 			}
 		});
 
+		// Listener für den Back-Button
+		// dient zum Zurückkehren ins Hauptmenü
 		gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnBack().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				gui.showPanel(GUI.MAIN_MENU_PANEL);
 			}
 		});
 
+		// Listener für den Create-Button
+		// dient zum Aufrufen des Settings-Panel für ein Multiplayer-Spiel
 		gui.getPanelServerConnection().getPnlServerGameBrowser().getBtnCreate().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setupSettingsPanelForMultiplayerGame();
@@ -363,6 +430,9 @@ public class MultiPlayerClientController implements Serializable {
 		});
 	}
 
+	/**
+	 * Fügt Listener für den Chat hinzu.
+	 */
 	private void addChatListeners() {
 		this.textFieldChatMessageListener = new KeyListener() {
 			public void keyTyped(KeyEvent e) {
@@ -388,15 +458,26 @@ public class MultiPlayerClientController implements Serializable {
 		gui.getPanelGame().getButtonSendMessage().addActionListener(buttonSendMessageListener);
 	}
 
+	/**
+	 * Entfernt Listener für den Chat.
+	 */
 	private void removeChatListeners() {
 		gui.getPanelGame().getTextFieldChatMessage().removeKeyListener(textFieldChatMessageListener);
 		gui.getPanelGame().getButtonSendMessage().removeActionListener(buttonSendMessageListener);
 	}
 
+	/**
+	 * Fügt dem NetworkClient einen ServerObjectReceivedListener hinzu.
+	 */
 	private void addServerObjectReceivedListeners() {
 		network.addServerObjectReceivedListener(serverObjectReceivedListener);
 	}
 
+	/**
+	 * Prüft ob alle Schiffe eines Spielers nachladen.
+	 * 
+	 * @return true, wenn alle Schiffe nachladen, false wenn nicht
+	 */
 	public boolean handleAllShipsAreReloading() {
 		if (player.areAllShipsReloading()) {
 			ctrl.setInfoLabelMessage("All ships of " + player + " are reloading");
@@ -411,6 +492,10 @@ public class MultiPlayerClientController implements Serializable {
 		}
 	}
 
+	/**
+	 * Sorgt dafür, dass der RadioButton eines verfügbaren Schiffes auf selected
+	 * gesetzt wird.
+	 */
 	private void selectFirstAvailableShipType() {
 		ShipType availableShipType = player.getTypeOFirstAvailableShip();
 		switch (availableShipType) {
@@ -431,6 +516,10 @@ public class MultiPlayerClientController implements Serializable {
 		selectShip(availableShipType);
 	}
 
+	/**
+	 * Fügt Schalteflächen im Settings-Menu zu, die für ein Multiplayer-Spiel
+	 * benötigt werden.
+	 */
 	private void setupSettingsPanelForMultiplayerGame() {
 		// enable/disable controls for necessary game options
 		SettingsPanel settings = gui.getPanelSettings();
@@ -451,6 +540,12 @@ public class MultiPlayerClientController implements Serializable {
 		settings.getTextFieldGamePassword().setEnabled(true);
 	}
 
+	/**
+	 * Dient zur Passwort-Abfrage in einem passwortgeschützten
+	 * Multiplayer-Spiel.
+	 * 
+	 * @param game
+	 */
 	public void createPasswordPrompt(NetGame game) {
 		PasswordInputPanel panel = new PasswordInputPanel();
 		String[] options = new String[] { "OK", "Cancel" };
@@ -472,10 +567,16 @@ public class MultiPlayerClientController implements Serializable {
 		network.join(id);
 	}
 
+	/**
+	 * Entfernt einen serverObjectReceivedListener vom NetworkClient.
+	 */
 	private void removeServerObjectReceivedListeners() {
 		network.removeServerObjectReceivedListener(serverObjectReceivedListener);
 	}
 
+	/**
+	 * Dient zum Senden einer Chat-Nachricht.
+	 */
 	private void sendMessage() {
 		String username = gui.getPanelServerConnection().getPnlServerConnectionBar().getTbxUsername().getText();
 		String msg = gui.getPanelGame().getTextFieldChatMessage().getText();
@@ -483,15 +584,26 @@ public class MultiPlayerClientController implements Serializable {
 		gui.getPanelGame().getTextFieldChatMessage().setText("");
 	}
 
+	/**
+	 * Dient zum Hinzufügen der Listener im ServerGameBrowserPanel.
+	 */
 	private void addServerGameBrowserListeners() {
 		gui.getPanelServerConnection().getPnlServerGameBrowser().getTblGames().getColumnModel().addColumnModelListener(serverGameBrowserListener);
 		gui.getPanelServerConnection().getPnlServerGameBrowser().getTblGames().addMouseListener(serverGameBrowserListener);
 	}
 
+	/**
+	 * Dient zum Setzen der currentShip-Eigenschaft vom Player.
+	 * 
+	 * @param shipType
+	 */
 	public void selectShip(ShipType shipType) {
 		player.setCurrentShipByType(shipType);
 	}
 
+	/**
+	 * Fügt Listener für die Schiffauswahl hinzu.
+	 */
 	private void addShipSelectionListeners() {
 		gui.getPanelGame().getRadioButtonDestroyer().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -515,6 +627,10 @@ public class MultiPlayerClientController implements Serializable {
 		});
 	}
 
+	/**
+	 * Aktiviert die Radiobuttons für verfügbare Schiffe, deaktiviert sie für
+	 * nicht verfügbare.
+	 */
 	public void enableAvailableShips() {
 		GamePanel panelGame = gui.getPanelGame();
 		panelGame.getRadioButtonDestroyer().setEnabled(player.isShipOfTypeAvailable(ShipType.DESTROYER));
@@ -523,6 +639,11 @@ public class MultiPlayerClientController implements Serializable {
 		panelGame.getRadioButtonSubmarine().setEnabled(player.isShipOfTypeAvailable(ShipType.SUBMARINE));
 	}
 
+	/**
+	 * Initialisiert den Spieler nachdem er beigetreten ist.
+	 * 
+	 * @param game
+	 */
 	public void initializeClientAfterJoined(NetGame game) {
 		ctrl.createBoardPanels(game.getBoardSize());
 		player = new HumanPlayer(game.getBoardSize(), game.getSettings().getDestroyers(), game.getSettings().getFrigates(), game.getSettings().getCorvettes(), game.getSettings().getSubmarines());
@@ -537,6 +658,9 @@ public class MultiPlayerClientController implements Serializable {
 		gui.showPanel(GUI.GAME_PANEL);
 	}
 
+	/**
+	 * Aktualisiert die Felder des gegnerischen Boards.
+	 */
 	public void updateEnemyBoard() {
 		GamePanel panelGame = gui.getPanelGame();
 		JButton[][] board;
@@ -552,6 +676,9 @@ public class MultiPlayerClientController implements Serializable {
 		this.playerIsReloading = playerIsReloading;
 	}
 
+	/**
+	 * Verringert die Nachladezeit der Schiffe des aktuellen Spielers.
+	 */
 	public void decreaseCurrentReloadTimeOfShips() {
 		Ship[] ships = player.getShips();
 		for (Ship ship : ships) {
@@ -559,6 +686,9 @@ public class MultiPlayerClientController implements Serializable {
 		}
 	}
 
+	/**
+	 * Dient zum Setzen des nächsten Spielers.
+	 */
 	public void next() {
 		if (!isReady()) {
 			if (player.hasPlacedAllShips()) {
@@ -577,12 +707,18 @@ public class MultiPlayerClientController implements Serializable {
 		}
 	}
 
+	/**
+	 * Entfernt die Listener vom ServerGameBrowser.
+	 */
 	private void removeServerGameBrowserListeners() {
 		if (serverGameBrowserListener != null) {
 			gui.getPanelServerConnection().getPnlServerGameBrowser().getTblGames().getColumnModel().removeColumnModelListener(serverGameBrowserListener);
 		}
 	}
 
+	/**
+	 * Aktualisiert die Felder des eigenen Boards.
+	 */
 	public void updatePlayerBoard() {
 		GamePanel panelGame = gui.getPanelGame();
 		JButton[][] board;
@@ -597,6 +733,13 @@ public class MultiPlayerClientController implements Serializable {
 		}
 	}
 
+	/**
+	 * Updated die Live Schuss- und Setz-Vorschau
+	 * 
+	 * @param startX
+	 * @param startY
+	 * @param board
+	 */
 	public void updatePreview(int startX, int startY, JButton[][] board) {
 		int boardSize = board.length;
 		boolean isHorizontal = gui.getPanelGame().getRadioButtonHorizontalOrientation().isSelected();
@@ -666,6 +809,11 @@ public class MultiPlayerClientController implements Serializable {
 		player.setCurrentShipByType(player.getTypeOFirstAvailableShip());
 	}
 
+	/**
+	 * Dient zum Ausführen eines Spielerzugs.
+	 * 
+	 * @param clientTurn
+	 */
 	public void handleClientTurn(ClientTurn clientTurn) {
 		if (clientTurn.isWinner()) {
 			markClientTurnFields(clientTurn);
@@ -686,6 +834,11 @@ public class MultiPlayerClientController implements Serializable {
 		updatePlayerBoard();
 	}
 
+	/**
+	 * Dient zum markieren der Felder die sich in einem Zug verändert haben.
+	 * 
+	 * @param clientTurn
+	 */
 	private void markClientTurnFields(ClientTurn clientTurn) {
 		if (clientTurn.getAttackedPlayerName().equals(player.getName())) {
 			for (Field field : clientTurn.getFields()) {
