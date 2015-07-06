@@ -19,9 +19,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 /**
- * Verbindet die Models mit den Views. Fügt den Views Listeners hinzu, bzw verwaltet Usereingaben.
+ * Verbindet die Models mit den Views. Fï¿½gt den Views Listeners hinzu, bzw verwaltet Usereingaben.
  */
 public class Controller {
 // ------------------------------ FIELDS ------------------------------
@@ -51,7 +54,7 @@ public class Controller {
 // -------------------------- OTHER METHODS --------------------------
 
     /**
-     * Fügt der Gui die Menü-Listerns hinzu
+     * Fï¿½gt der Gui die Menï¿½-Listerns hinzu
      */
     private void addMenuListeners() {
         gui.getMenuItemMainMenu().addActionListener(new ActionListener() {
@@ -126,11 +129,23 @@ public class Controller {
             }
         });
 
+        gui.getMenuItemManual().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Desktop.getDesktop().browse(new URL("https://github.com/cschaf/battleship-extreme/").toURI());
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                } catch (URISyntaxException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
         addNextLookAndFeelListener();
     }
 
     /**
-     * Fügt der Gui die Style-Change-Listerns hinzu
+     * Fï¿½gt der Gui die Style-Change-Listerns hinzu
      */
     private void addNextLookAndFeelListener() {
         gui.getMenuItemNextLookAndFeel().addActionListener(new ActionListener() {
@@ -171,7 +186,7 @@ public class Controller {
     }
 
     /**
-     * Erstellt den Startzustand für das Settingspanel des Lokalen Spiels
+     * Erstellt den Startzustand fï¿½r das Settingspanel des Lokalen Spiels
      */
     private void setupSettingsPanelForLocalGame() {
         SettingsPanel settings = gui.getPanelSettings();
@@ -193,7 +208,7 @@ public class Controller {
     }
 
     /**
-     * Fürgt den Listener für die Fehlerbehandlung hinzu
+     * Fï¿½rgt den Listener fï¿½r die Fehlerbehandlung hinzu
      */
     private void addServerErrorListeners() {
         network.addErrorListener(serverErrorListener);
@@ -209,14 +224,14 @@ public class Controller {
     }
 
     /**
-     * Fügt dem Gamelog einen neuen Eintrag hinzu
+     * Fï¿½gt dem Gamelog einen neuen Eintrag hinzu
      */
     public void appendGameLogEntry(String message) {
         gui.getPanelGame().getTextAreaGameLog().append(message + "\r\n\r\n");
     }
 
     /**
-     * Erzeugt das Spielfeld für einen Spieler (Gegener- und Eigenes -Board)
+     * Erzeugt das Spielfeld fï¿½r einen Spieler (Gegener- und Eigenes -Board)
      */
     public void createBoardPanels(int boardSize) {
         GamePanel panelGame = gui.getPanelGame();
@@ -232,7 +247,7 @@ public class Controller {
     }
 
     /**
-     * Fügt einem Board einen MouseListener hinzu, für das wechseln der Orientation per Mausklick
+     * Fï¿½gt einem Board einen MouseListener hinzu, fï¿½r das wechseln der Orientation per Mausklick
      */
     private void addBoardMouseListener(final JButton[][] board) {
         for (int i = 0; i < board.length; i++) {
@@ -284,7 +299,7 @@ public class Controller {
     }
 
     /**
-     * Prüft ob ein Schiff an der gewünschten Position platziert werden kann
+     * Prï¿½ft ob ein Schiff an der gewï¿½nschten Position platziert werden kann
      */
     public boolean isItPossibleToPlaceShip(Player player, int startX, int startY, Orientation orientation) {
         try {
@@ -299,7 +314,7 @@ public class Controller {
     }
 
     /**
-     * Prüft ob auf die gewünschte Position geschossen werden kann
+     * Prï¿½ft ob auf die gewï¿½nschte Position geschossen werden kann
      */
     public boolean isItPossibleToShoot(Board board, int startX, int startY) {
         FieldState fs = board.getFieldStates(false)[startY][startX];
@@ -307,7 +322,7 @@ public class Controller {
     }
 
     /**
-     * Prüft ob auf die gewünschte Position geschossen werden kann
+     * Prï¿½ft ob auf die gewï¿½nschte Position geschossen werden kann
      */
     public boolean isItPossibleToShoot(FieldState[][] board, int startX, int startY) {
         boolean result = false;
@@ -323,7 +338,7 @@ public class Controller {
     }
 
     /**
-     * Updated die Spaltenlänge des GameBrowserTable mithilfe von Prozentverteilung
+     * Updated die Spaltenlï¿½nge des GameBrowserTable mithilfe von Prozentverteilung
      */
 
     public void resizeServerGameListColumns() {
@@ -383,7 +398,7 @@ public class Controller {
     }
 
     /**
-     * Setzt eine Nachricht für das Message Label
+     * Setzt eine Nachricht fï¿½r das Message Label
      */
     public void setInfoLabelMessage(String message) {
         gui.getPanelGame().getLabelInfo().setText(message);
@@ -401,7 +416,7 @@ public class Controller {
     }
 
     /**
-     * Updated die Felder eines Boardes, ändert die Icons/Images
+     * Updated die Felder eines Boardes, ï¿½ndert die Icons/Images
      */
     public void updateBoardColors(JButton[][] board, FieldState[][] fieldStates) {
         int boardSize = fieldStates.length;
@@ -435,7 +450,7 @@ public class Controller {
     }
 
     /**
-     * Updated die Schiffsauswahl, bei Änderung eines Schiffstatusses
+     * Updated die Schiffsauswahl, bei ï¿½nderung eines Schiffstatusses
      */
     public void updateShipSelection(Player player) {
         GamePanel panelGame = gui.getPanelGame();
