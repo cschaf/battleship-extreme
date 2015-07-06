@@ -3,7 +3,7 @@ package de.hsbremen.battleshipextreme.server.view;
 import javax.swing.*;
 
 /**
- * Created by cschaf on 14.05.2015.
+ * Created on 14.05.2015.
  */
 public class GroupBox extends JPanel {
     public GroupBox(String title){

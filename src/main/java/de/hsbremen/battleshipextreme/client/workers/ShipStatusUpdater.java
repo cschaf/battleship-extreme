@@ -9,7 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Created by cschaf on 17.06.2015.
+ * Created on 17.06.2015.
+ * Updated den Status der Schiffkacheln in der Navigation
  */
 public class ShipStatusUpdater extends SwingWorker<Integer, Object> {
     Controller ctrl;

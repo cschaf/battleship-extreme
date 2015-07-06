@@ -6,8 +6,8 @@ import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import java.util.EventListener;
 
 /**
- * Created by cschaf on 25.04.2015.
- * Dient zur Weitergabe von Fehlern über ein Events
+ * Created on 25.04.2015.
+ * Dient zur Weitergabe von Fehlern Ã¼ber ein Events
  */
 public interface IErrorListener extends EventListener {
     /**

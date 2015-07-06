@@ -17,7 +17,7 @@ import javax.swing.*;
 import java.awt.event.*;
 
 /**
- * Created by cschaf on 28.05.2015.
+ * Created on 28.05.2015.
  */
 public class ServerController {
     private Gui gui;

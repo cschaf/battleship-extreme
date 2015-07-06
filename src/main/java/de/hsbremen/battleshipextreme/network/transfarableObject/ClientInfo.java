@@ -4,7 +4,7 @@ import de.hsbremen.battleshipextreme.network.InfoSendingReason;
 import de.hsbremen.battleshipextreme.network.TransferableType;
 
 /**
- * Created by cschaf on 25.04.2015.
+ * Created on 25.04.2015.
  * Beinhaltet Informationen über einen Client
  */
 public class ClientInfo extends TransferInfo {

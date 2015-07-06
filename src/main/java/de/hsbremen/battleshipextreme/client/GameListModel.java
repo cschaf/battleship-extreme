@@ -8,19 +8,27 @@ import java.text.SimpleDateFormat;
 import java.util.Vector;
 
 /**
- * Created by cschaf on 02.06.2015.
+ * Created on 02.06.2015.
+ * Model für ein JTabel um die Serverspiele anzuzeigen
  */
 public class GameListModel extends AbstractTableModel {
+// ------------------------------ FIELDS ------------------------------
+
     private Vector<NetGame> netGames;
     private String[] columns;
     private SimpleDateFormat timeFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
     private ImageIcon iconIsPrivate = new ImageIcon(getClass().getResource("/privateGame.gif"));
     private ImageIcon iconIsPublic = new ImageIcon(getClass().getResource("/publicGame.gif"));
 
+// --------------------------- CONSTRUCTORS ---------------------------
+
     public GameListModel() {
         this.netGames = new Vector<NetGame>();
         this.columns = new String[]{"Name", "Player", "Created at", "PW"};
     }
+
+
+// --------------------- Interface TableModel ---------------------
 
     public int getRowCount() {
         return netGames.size();
@@ -50,13 +58,14 @@ public class GameListModel extends AbstractTableModel {
         }
     }
 
-    public void addGame(NetGame netGame) {
-        this.netGames.add(netGame);
-        fireTableDataChanged();
+    public String getColumnName(int columnIndex) {
+        return columns[columnIndex];
     }
 
-    public void removeGame(NetGame netGame) {
-        this.netGames.remove(netGame);
+// -------------------------- OTHER METHODS --------------------------
+
+    public void addGame(NetGame netGame) {
+        this.netGames.add(netGame);
         fireTableDataChanged();
     }
 
@@ -64,12 +73,13 @@ public class GameListModel extends AbstractTableModel {
         return this.netGames.get(rowIndex);
     }
 
-    public String getColumnName(int columnIndex) {
-        return columns[columnIndex];
-    }
-
     public void removeAllGames() {
         this.netGames.removeAllElements();
+        fireTableDataChanged();
+    }
+
+    public void removeGame(NetGame netGame) {
+        this.netGames.remove(netGame);
         fireTableDataChanged();
     }
 }

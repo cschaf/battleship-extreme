@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Created by cschaf on 14.05.2015.
+ * Created on 14.05.2015.
  */
 public class ServerControlBar extends JPanel {
     private JLabel lblPort;

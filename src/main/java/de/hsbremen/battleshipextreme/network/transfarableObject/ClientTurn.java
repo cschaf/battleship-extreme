@@ -2,12 +2,12 @@ package de.hsbremen.battleshipextreme.network.transfarableObject;
 import de.hsbremen.battleshipextreme.model.Field;
 import de.hsbremen.battleshipextreme.network.TransferableType;
 /**
- * Created by cschaf on 20.06.2015.
+ * Created on 20.06.2015.
  * Beinhaltet die Spielzuginformationen, welche vom Server an den Client gesendet wird
  */
 public class ClientTurn extends TransferableObject {
     private Field[] fields; // Alle Felder die beschossen werden
-    private boolean isReloading; // gibt an ob der Client in diesem Zug nachlädt
+    private boolean isReloading; // gibt an ob der Client in diesem Zug nachlÃ¤dt
     private boolean isWinner; // gibt an ob der client gewonnen hat
     private String winnerName; // Name des Gewinners
     private String attackingPlayerName; // Name des angreifenden Spielers
@@ -34,42 +34,42 @@ public class ClientTurn extends TransferableObject {
     }
 
     /**
-     * Gibt den  Type des Netzwerk-Objektes zurück
+     * Gibt den  Type des Netzwerk-Objektes zurÃ¼ck
      */
     public TransferableType getType() {
         return TransferableType.ClientTurn;
     }
 
     /**
-     * Gibt zurück ob der Spieler am Nachladen ist
+     * Gibt zurÃ¼ck ob der Spieler am Nachladen ist
      */
     public boolean isReloading() {
         return isReloading;
     }
 
     /**
-     * Gibt die beschossenden Felder zurück
+     * Gibt die beschossenden Felder zurÃ¼ck
      */
     public Field[] getFields() {
         return fields;
     }
 
     /**
-     * Gibt den angreifenden Spielernamen zurück
+     * Gibt den angreifenden Spielernamen zurÃ¼ck
      */
     public String getAttackingPlayerName() {
         return attackingPlayerName;
     }
 
     /**
-     * Gibt den angegriffenden Spielernamen zurück
+     * Gibt den angegriffenden Spielernamen zurÃ¼ck
      */
     public String getAttackedPlayerName() {
         return attackedPlayerName;
     }
 
     /**
-     * Gibt zurück ob es einen Gewinner gibt
+     * Gibt zurÃ¼ck ob es einen Gewinner gibt
      */
     public boolean isWinner() {
         return isWinner;
@@ -83,7 +83,7 @@ public class ClientTurn extends TransferableObject {
     }
 
     /**
-     * Gibt den Names des Gewinner zurück
+     * Gibt den Names des Gewinner zurÃ¼ck
      */
     public String getWinnerName() {
         return winnerName;

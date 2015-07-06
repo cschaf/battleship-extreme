@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.net.Socket;
 
 /**
- * Created by cschaf on 25.04.2015.
+ * Created on 25.04.2015.
  * ClientHandler class contains information about a client, connected to the server.
  */
 public class ClientHandler extends TransferableObject implements IDisposable, Serializable {

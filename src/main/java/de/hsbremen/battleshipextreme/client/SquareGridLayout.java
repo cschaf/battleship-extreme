@@ -4,6 +4,15 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.Insets;
 
+/**
+ * Das SquareGridLayout sorgt dafür, dass die einzelnen Felder in einem
+ * Gridlayout immer quadratisch bleiben, egal wie das Fenster skaliert wird. Die
+ * Lösung wurde aus einem Beitrag auf Stackoverflow übernommen:
+ * http://stackoverflow.com
+ * /questions/14379781/is-it-possible-to-force-jbutton-to-always-be-square
+ *
+ */
+
 public class SquareGridLayout extends GridLayout {
 	public SquareGridLayout(int rows, int cols) {
 		super(rows, cols);
@@ -53,7 +62,7 @@ public class SquareGridLayout extends GridLayout {
 					}
 				}
 			} else {
-				for (int c = 0, x = (parent.getWidth() - insets.right - widthOnComponent) - extraWidthAvailable; c < ncols; c++, x -= widthOnComponent ) {
+				for (int c = 0, x = (parent.getWidth() - insets.right - widthOnComponent) - extraWidthAvailable; c < ncols; c++, x -= widthOnComponent) {
 					for (int r = 0, y = insets.top + extraHeightAvailable; r < nrows; r++, y += heightOnComponent + getVgap()) {
 						int i = r * ncols + c;
 						if (i < ncomponents) {

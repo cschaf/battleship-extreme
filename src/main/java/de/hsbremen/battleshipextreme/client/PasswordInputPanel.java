@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Created by cschaf on 05.06.2015.
+ * Created on 05.06.2015.
  */
 public class PasswordInputPanel extends JPanel {
     private JPasswordField tbxPassword;

@@ -13,7 +13,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
- * Created by cschaf on 15.05.2015.
+ * Created on 15.05.2015.
  */
 public class Sender extends Thread implements IDisposable {
     private ObjectOutputStream out;

@@ -7,8 +7,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 /**
- * Created by cschaf on 25.04.2015.
- * Vaterklasse für jedes Objekt was über das Netzwerk übertragen wird
+ * Created on 25.04.2015.
+ * Vaterklasse fÃ¼r jedes Objekt was Ã¼ber das Netzwerk Ã¼bertragen wird
  */
 public abstract class TransferableObject implements Serializable, ITransferable {
     private Timestamp createdAt;
@@ -21,7 +21,7 @@ public abstract class TransferableObject implements Serializable, ITransferable 
     }
 
     /**
-     * Gibt den Zeitstempel der Erzeugung des Objectes zurück
+     * Gibt den Zeitstempel der Erzeugung des Objectes zurÃ¼ck
      */
     public Timestamp getCreatedAt() {
         return createdAt;

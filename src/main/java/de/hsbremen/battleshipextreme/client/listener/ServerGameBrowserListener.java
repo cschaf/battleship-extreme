@@ -14,16 +14,57 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 /**
- * Created by cschaf on 03.06.2015.
+ * Created on 03.06.2015.
+ * Listener, der für die Events der Controls des GameBrowsers verwendet wird
  */
 public class ServerGameBrowserListener implements TableColumnModelListener, MouseListener {
+// ------------------------------ FIELDS ------------------------------
+
     private NetworkClient network;
     private MultiPlayerClientController ctrl;
+
+// --------------------------- CONSTRUCTORS ---------------------------
 
     public ServerGameBrowserListener(NetworkClient network, MultiPlayerClientController ctrl) {
         this.network = network;
         this.ctrl = ctrl;
     }
+
+
+// --------------------- Interface MouseListener ---------------------
+
+
+    public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2) {
+            JTable target = (JTable) e.getSource();
+            int rowIndex = target.getSelectedRow();
+            GameListModel model = (GameListModel) target.getModel();
+            NetGame game = model.getGame(rowIndex);
+            if (game.isPrivate()) {
+                ctrl.createPasswordPrompt(game);
+            } else {
+                network.join(game.getId());
+            }
+        }
+    }
+
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+// --------------------- Interface TableColumnModelListener ---------------------
 
     public void columnAdded(TableColumnModelEvent e) {
     }
@@ -40,38 +81,6 @@ public class ServerGameBrowserListener implements TableColumnModelListener, Mous
     }
 
     public void columnSelectionChanged(ListSelectionEvent e) {
-
-    }
-
-    public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-            JTable target = (JTable) e.getSource();
-            int rowIndex = target.getSelectedRow();
-            GameListModel model = (GameListModel) target.getModel();
-            NetGame game = model.getGame(rowIndex);
-            if (game.isPrivate()) {
-                ctrl.createPasswordPrompt(game);
-            } else {
-                network.join(game.getId());
-            }
-        }
-    }
-
-
-
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    public void mouseExited(MouseEvent e) {
 
     }
 }

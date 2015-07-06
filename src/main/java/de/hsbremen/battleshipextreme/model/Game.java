@@ -271,7 +271,7 @@ public class Game extends TransferableObject {
      * @return eine Liste von angreifbaren Spielern
      */
     public ArrayList<Player> getEnemiesOfCurrentPlayer() {
-        // angreifbare Gegner des currentPlayers zur�ckgeben
+        // angreifbare Gegner des currentPlayers zurückgeben
         ArrayList<Player> enemies = new ArrayList<Player>();
         for (int i = 0; i < players.length; i++) {
             if (!players[i].hasLost()) {

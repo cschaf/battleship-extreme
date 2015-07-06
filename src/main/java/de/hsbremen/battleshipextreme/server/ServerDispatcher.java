@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * Created by cschaf on 25.04.2015.
+ * Created on 25.04.2015.
  */
 public class ServerDispatcher extends Thread implements IDisposable, Serializable {
     protected EventListenerList listeners;

@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Created by cschaf on 01.06.2015.
+ * Created on 01.06.2015.
  */
 public class ServerConnectionBarPanel extends JPanel{
     private JLabel lblPort;

@@ -4,12 +4,16 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Created by cschaf on 11.06.2015.
+ * Created on 11.06.2015.
+ * Kontrollbar für den Spielfluss / Runde überspringen und Schiffe anzeigen
  */
 public class GameControlBarPanel extends JPanel {
+// ------------------------------ FIELDS ------------------------------
 
     private final JToggleButton buttonShowYourShips;
     private JButton buttonDone;
+
+// --------------------------- CONSTRUCTORS ---------------------------
 
     public GameControlBarPanel() {
         setLayout(new FlowLayout());
@@ -22,13 +26,13 @@ public class GameControlBarPanel extends JPanel {
         add(buttonShowYourShips);
     }
 
-    public JToggleButton getButtonShowYourShips() {
-        return buttonShowYourShips;
-    }
+// --------------------- GETTER / SETTER METHODS ---------------------
 
     public JButton getButtonDone() {
         return buttonDone;
     }
 
-
+    public JToggleButton getButtonShowYourShips() {
+        return buttonShowYourShips;
+    }
 }

@@ -9,7 +9,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 /**
- * Created by cschaf on 14.05.2015.
+ * Created on 14.05.2015.
  */
 public class Gui extends JFrame {
     private JPanel pnlMain;

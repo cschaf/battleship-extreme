@@ -1,10 +1,10 @@
 package de.hsbremen.battleshipextreme.model;
 
-import java.io.Serializable;
-
 import de.hsbremen.battleshipextreme.model.exception.BoardTooSmallException;
 import de.hsbremen.battleshipextreme.model.exception.InvalidNumberOfShipsException;
 import de.hsbremen.battleshipextreme.model.exception.InvalidPlayerNumberException;
+
+import java.io.Serializable;
 
 /**
  * Die Klasse beinhaltet die Einstellungen für ein Spiel. Zusätzlich bietet sie
@@ -12,7 +12,17 @@ import de.hsbremen.battleshipextreme.model.exception.InvalidPlayerNumberExceptio
  */
 
 public class Settings implements Serializable {
+	public static final int DESTROYER_SIZE = 5;
+	public static final int FRIGATE_SIZE = 4;
+	public static final int CORVETTE_SIZE = 3;
+	public static final int SUBMARINE_SIZE = 2;
+	public static final int MIN_BOARD_SIZE = 5;
+	public static final int MAX_BOARD_SIZE = 40;
+	public static final int MIN_PLAYERS = 2;
+	public static final int MAX_PLAYERS = 6;
+	public static final String SAVEGAME_FILENAME = "savegame.sav";
 	private static final long serialVersionUID = 7869883437538019851L;
+	private static final float MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY = 0.0f;
 	private int players;
 	private int smartAiPlayers;
 	private int dumbAiPlayers;
@@ -21,21 +31,6 @@ public class Settings implements Serializable {
 	private int frigates;
 	private int corvettes;
 	private int submarines;
-
-	public static final int DESTROYER_SIZE = 5;
-	public static final int FRIGATE_SIZE = 4;
-	public static final int CORVETTE_SIZE = 3;
-	public static final int SUBMARINE_SIZE = 2;
-
-	private static final float MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY = 0.0f;
-
-	public static final int MIN_BOARD_SIZE = 5;
-	public static final int MAX_BOARD_SIZE = 40;
-
-	public static final int MIN_PLAYERS = 2;
-	public static final int MAX_PLAYERS = 6;
-
-	public static final String SAVEGAME_FILENAME = "savegame.sav";
 
 	/**
 	 * Konstruktor mit Default-Einstellungen
@@ -83,8 +78,38 @@ public class Settings implements Serializable {
 	}
 
 	/**
+	 * Liefert die Anzahl der benötigten Felder. Diese wird anhand der
+	 * Schiffzahlen und einem prozentualen Anteil an Feldern die leer sein
+	 * sollen berechnet.
+	 *
+	 * @param destroyers
+	 * @param corvettes
+	 * @param frigates
+	 * @param submarines
+	 * @return Anzahl der benötigten Felder
+	 */
+	public static int getRequiredFields(int destroyers, int corvettes, int frigates, int submarines) {
+		// benötigte Felder unter Einbeziehung der Schiffradien
+		int requiredFields = destroyers * ((Settings.DESTROYER_SIZE + 1) * 2) + corvettes * ((Settings.DESTROYER_SIZE + 1) * 2) + frigates * ((Settings.FRIGATE_SIZE + 1) * 2) + submarines * ((Settings.SUBMARINE_SIZE + 1) * 2);
+		// Felder die leer sein sollen addieren
+		if (MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY > 0) {
+			requiredFields += (int) Math.floor((requiredFields / MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY));
+		}
+		return requiredFields;
+	}
+
+	public static int getRequiredBoardSize(int requiredFields) {
+		int size = (int) Math.ceil(Math.sqrt(requiredFields));
+		if (size < MIN_BOARD_SIZE) {
+			return MIN_BOARD_SIZE;
+		} else {
+			return size;
+		}
+	}
+
+	/**
 	 * Die Methode dient zum Validieren der Spieleinstellungen.
-	 * 
+	 *
 	 * @throws InvalidPlayerNumberException
 	 *             bei ungültiger Spieleranzahl
 	 * @throws InvalidNumberOfShipsException
@@ -154,33 +179,13 @@ public class Settings implements Serializable {
 		this.submarines = submarines;
 	}
 
-	/**
-	 * Liefert die Anzahl der benötigten Felder. Diese wird anhand der
-	 * Schiffzahlen und einem prozentualen Anteil an Feldern die leer sein
-	 * sollen berechnet.
-	 * 
-	 * @param destroyers
-	 * @param corvettes
-	 * @param frigates
-	 * @param submarines
-	 * @return Anzahl der benötigten Felder
-	 */
-	public static int getRequiredFields(int destroyers, int corvettes, int frigates, int submarines) {
-		// benötigte Felder unter Einbeziehung der Schiffradien
-		int requiredFields = destroyers * ((Settings.DESTROYER_SIZE + 1) * 2) + corvettes * ((Settings.DESTROYER_SIZE + 1) * 2) + frigates * ((Settings.FRIGATE_SIZE + 1) * 2) + submarines
-				* ((Settings.SUBMARINE_SIZE + 1) * 2);
-		// Felder die leer sein sollen addieren
-		if (MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY > 0)
-			requiredFields += (int) Math.floor((requiredFields / MIN_PERCENTAGE_OF_FIELDS_THAT_SHOULD_BE_EMPTY));
-		return requiredFields;
-	}
-
-	public static int getRequiredBoardSize(int requiredFields) {
-		int size = (int) Math.ceil(Math.sqrt(requiredFields));
-		if (size < MIN_BOARD_SIZE)
-			return MIN_BOARD_SIZE;
-		else
-			return size;
+	public boolean isNumeric(String str) {
+		for (char c : str.toCharArray()) {
+			if (!Character.isDigit(c)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**

@@ -1,10 +1,9 @@
 package de.hsbremen.battleshipextreme.server.view;
 
-import java.awt.*;
 import java.io.Serializable;
 
 /**
- * Created by cschaf on 28.05.2015.
+ * Created on 28.05.2015.
  */
 public class ClientJListItem implements Serializable{
   private String ip;

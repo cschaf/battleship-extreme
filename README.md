@@ -40,6 +40,30 @@ the destroyer must always download 3 laps and is not available in time. a frigat
 * When all the ships of a player were sunk, he is out. The game ends when only one player remains.
 
 
+##How to play
+###Local
+  1. In the menu screen you have to click on "Local Game".
+  2. In the settings screen you have to set the game settings and start the game by click on "OK".
+  3. Now you can play.
+
+###Multiplayer
+  1. In the server gui you have to start the server.
+  1.1. On the top menu you can create a standard game by click on "Games" -> "Create standard game".
+  2. In the client gui you have to click on "Multiplayer Game".
+  3. Enter the ip-address and port of the server, choose a username and connect to the server by click on "Connect".
+  4. Now you can join existing games or create a custom game. To join a game, select a game from the list and click "Join". To create your own game, click on "Create" and enter the game settings. After the game was created you can join it.
+  5. The game will start when all players are connected.
+
+###Gameplay
+1. At the beginning of the game each player has to place his ships on the right board and confirm by click on "Done".
+2. When all ships are placed the players can shoot on each other.
+3. To take a shot you have to
+	1. Select an enemy from the box called "Enemys".
+	2. From the box called "Your Ships" select a ship which should take the shot.
+	3. Change the orientation of your shot by click on the right mouse button or selecting it manually in the box called "Orientation".
+	4. Choose a valid field on the left board and click on it.
+4. To save a local game click on "Game" in the top menu and then click "Save...".
+
 ## Project-Structure
 ### Packages
 ![UML Class Diagram 1](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/uml_diagram_packages.png)

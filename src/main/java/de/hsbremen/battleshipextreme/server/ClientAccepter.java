@@ -10,7 +10,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * Created by cschaf on 25.04.2015.
+ * Created on 25.04.2015.
  */
 public class ClientAccepter extends Thread implements IDisposable {
     private ServerSocket serverSocket;

@@ -6,7 +6,7 @@ import de.hsbremen.battleshipextreme.network.transfarableObject.NetGame;
 import de.hsbremen.battleshipextreme.network.transfarableObject.Turn;
 
 /**
- * Created by cschaf on 15.05.2015.
+ * Created on 15.05.2015.
  */
 public class ClientObjectReceivedListener implements IClientObjectReceivedListener {
     public void onObjectReceived(EventArgs<ITransferable> eventArgs) {
