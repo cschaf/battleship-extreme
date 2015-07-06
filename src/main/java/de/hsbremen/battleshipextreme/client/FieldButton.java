@@ -1,35 +1,43 @@
 package de.hsbremen.battleshipextreme.client;
 
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 
-import javax.swing.JButton;
+/**
+ * Klasse für ein Feld in einem Board
+ */
 
 public class FieldButton extends JButton {
-	private int xPos;
-	private int yPos;
+// ------------------------------ FIELDS ------------------------------
 
-	public FieldButton(int xPos, int yPos) {
-		this.xPos = xPos;
-		this.yPos = yPos;
+    private int xPos;
+    private int yPos;
 
-		// setBorderPainted(false);
-		// setBorder(null);
-		// button.setFocusable(false);
-		// setMargin(new Insets(0, 0, 0, 0));
-		// setContentAreaFilled(false);
+// --------------------------- CONSTRUCTORS ---------------------------
 
-	}
+    public FieldButton(int xPos, int yPos) {
+        this.xPos = xPos;
+        this.yPos = yPos;
 
-	public int getxPos() {
-		return xPos;
-	}
+        // setBorderPainted(false);
+        // setBorder(null);
+        // button.setFocusable(false);
+        // setMargin(new Insets(0, 0, 0, 0));
+        // setContentAreaFilled(false);
+    }
 
-	public int getyPos() {
-		return yPos;
-	}
+// -------------------------- OTHER METHODS --------------------------
 
-	@Override
-	public Dimension getPreferredSize() {
-		return new Dimension(40, 40);
-	}
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(40, 40);
+    }
+
+    public int getxPos() {
+        return xPos;
+    }
+
+    public int getyPos() {
+        return yPos;
+    }
 }
