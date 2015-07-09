@@ -291,10 +291,12 @@ public class Controller {
      * Updated die Live Schuss- und Setz-Vorschau
      */
     private void updatePreview(int startX, int startY, JButton[][] board) {
-        if (network.isConnected()) {
-            multiPlayerClientController.updatePreview(startX, startY, board);
-        } else {
-            localClientController.updatePreview(startX, startY, board);
+        if (board[startY][startX].isEnabled()) {
+            if (network.isConnected()) {
+                multiPlayerClientController.updatePreview(startX, startY, board);
+            } else {
+                localClientController.updatePreview(startX, startY, board);
+            }
         }
     }
 

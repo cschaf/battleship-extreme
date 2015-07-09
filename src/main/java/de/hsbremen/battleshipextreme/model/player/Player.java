@@ -110,10 +110,6 @@ public abstract class Player implements Serializable {
         }
     }
 
-    private void initShips(HashMap<Ship, ArrayList<Field>> shipMap) {
-        ships = new Ship[shipMap.size()];
-    }
-
     /**
      * Dient zum Zurücksetzen eines Boards.
      */

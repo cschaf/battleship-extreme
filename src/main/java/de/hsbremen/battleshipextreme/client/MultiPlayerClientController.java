@@ -147,13 +147,15 @@ public class MultiPlayerClientController implements Serializable {
     /**
      * Updated die Liste der möglichen Gegner.
      */
-    public void updateEnemySelection() {
+    public void updateEnemySelection(String except) {
         GamePanel panelGame = gui.getPanelGame();
         Set<String> myEnemies = this.enemies.keySet();
         JComboBox<String> enemyComboBox = panelGame.getComboBoxEnemySelection();
         enemyComboBox.removeAllItems();
         for (String enemy : myEnemies) {
-            enemyComboBox.addItem(enemy);
+            if (!enemy.equals(except)) {
+                enemyComboBox.addItem(enemy);
+            }
         }
     }
 
@@ -268,10 +270,10 @@ public class MultiPlayerClientController implements Serializable {
                 } else {
                     result.put(names.get(i), enemies.get(keys.get(i)));
                 }
+                }
             }
-        }
         enemies = result;
-        updateEnemySelection();
+        updateEnemySelection(null);
     }
 
     /**
@@ -858,5 +860,9 @@ public class MultiPlayerClientController implements Serializable {
 
     public void updateShipSelection() {
         ctrl.updateShipSelection(player);
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }

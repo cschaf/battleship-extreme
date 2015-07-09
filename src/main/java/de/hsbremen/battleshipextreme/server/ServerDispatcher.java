@@ -140,7 +140,6 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     /**
      * Füge ein neues Game hinzu
-     * @param receivedObject
      */
     public synchronized void addGame(ITransferable receivedObject) {
         if (receivedObject.getType() != TransferableType.Game) {
@@ -155,8 +154,6 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     /**
      * Sende ein Objekt vom Typ ITransferable an alle verdundenen Clients
-     * @param transferableObject
-     * @param excludedClient
      */
     public synchronized void broadcast(ITransferable transferableObject, ClientHandler excludedClient) {
         for (int i = 0; i < this.clients.size(); i++) {
@@ -212,7 +209,6 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     /**
      * Sende alles Client in dem Spiel ein GameIsReady danit dieses beginnen kann
-     * @param game
      */
     private void sendGameReady(NetGame game) {
         ITransferable rdy = TransferableObjectFactory.CreateServerInfo(InfoSendingReason.GameReady);
@@ -247,8 +243,6 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     /**
      * Liefert das Spiel anhand eines Clients
-     * @param client
-     * @return
      */
     public NetGame getGameByClient(ClientHandler client) {
         for (NetGame game : netGames) {
@@ -286,6 +280,12 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
                 }
             }
             if (!netGame.isGameover()) {
+                if (turn.getAttackedPlayerName() != null && !turn.getAttackedPlayerName().isEmpty()) {
+                    if (netGame.getPlayerByName(turn.getAttackedPlayerName()).hasLost()) {
+                        ITransferable info = TransferableObjectFactory.CreateClientInfo(turn.getAttackedPlayerName(), null, -1, InfoSendingReason.GameOver);
+                        multicast(info, netGame.getJoinedPlayers());
+                    }
+                }
                 netGame.nextPlayer();
             }
         } catch (FieldOutOfBoardException e) {
@@ -296,7 +296,6 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     /**
      * Stößt den nächsten Spielzug an
-     * @param game
      */
     public void initializeNextTurn(NetGame game) {
         // get next client id for ship placement
@@ -352,7 +351,6 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     /**
      * Initialisiert das Schiffesetzten des nächst möglichgen Spielers in dem Spiel
-     * @param game
      */
     private void initializeNextShipPlacement(NetGame game) {
         // get next client id for ship placement
@@ -368,7 +366,6 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     /**
      * Sendet die bemächtigung zum Setzten seiner Schiffe
-     * @param client
      */
     private void sendPlaceYourShips(ClientHandler client) {
         ITransferable info = TransferableObjectFactory.CreateServerInfo(InfoSendingReason.PlaceYourShips);
@@ -378,7 +375,6 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
     /**
      * Sendet alles Client in einem Spiel das es losgehen kann mit Schiffe platzieren, da alle benötigten
      * Spieler im Spiel sind
-     * @param game
      */
     private void sendReadyForPlacement(NetGame game) {
         ITransferable games = TransferableObjectFactory.CreateServerInfo(InfoSendingReason.ReadyForPlacement);
@@ -388,12 +384,12 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     /**
      * Sendet allen Clients in einem Spiel die Namen alles Spieler im Spiel zu
-     * @param game
      */
     public void sendNameList(NetGame game) {
         ArrayList<String> names = new ArrayList<String>();
         for (ClientHandler handler : game.getJoinedPlayers()) {
             names.add(handler.getUsername());
+
         }
         ITransferable object = TransferableObjectFactory.CreatePlayerNames(names);
         this.multicast(object, game.getJoinedPlayers());
@@ -425,7 +421,6 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     /**
      * Entfernt einen Client vom Server und benachrichtigt alle beteiligen Clients
-     * @param clientHandler
      */
     public synchronized void removeClient(ClientHandler clientHandler) {
         int clientIndex = this.clients.indexOf(clientHandler);
@@ -509,9 +504,6 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     /**
      * Gibt einen Client anhand seiner IP und Port zurück
-     * @param ip
-     * @param port
-     * @return
      */
     public synchronized ClientHandler getClient(String ip, int port) {
         for (ClientHandler client : getClients()) {
@@ -524,8 +516,6 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     /**
      * Gibt ein Spiel anhand seiner ID zurück
-     * @param id
-     * @return
      */
     public synchronized NetGame getGameById(String id) {
         for (int i = 0; i < getNetGames().size(); i++) {
@@ -538,8 +528,6 @@ public class ServerDispatcher extends Thread implements IDisposable, Serializabl
 
     /**
      * Gibt das nächst mögliche Objekt von der Warteschlange zurück
-     * @return
-     * @throws InterruptedException
      */
     private synchronized ITransferable getNextObjectFromQueue() throws InterruptedException {
         while (this.objectQueue.size() == 0) {

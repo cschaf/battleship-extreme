@@ -6,9 +6,12 @@ import de.hsbremen.battleshipextreme.client.workers.LogUpdater;
 import de.hsbremen.battleshipextreme.model.network.IServerObjectReceivedListener;
 import de.hsbremen.battleshipextreme.model.network.NetworkClient;
 import de.hsbremen.battleshipextreme.network.ITransferable;
+import de.hsbremen.battleshipextreme.network.TransferableObjectFactory;
 import de.hsbremen.battleshipextreme.network.TransferableType;
 import de.hsbremen.battleshipextreme.network.eventhandling.EventArgs;
 import de.hsbremen.battleshipextreme.network.transfarableObject.*;
+
+import javax.swing.*;
 
 /**
  * Created on 03.06.2015.
@@ -51,6 +54,17 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 break;
             case Disconnect:
                 new LogUpdater(gui.getPanelGame().getTextAreaGameLog(), eventArgs.getItem().getUsername() + " has disconnected").execute();
+                break;
+            case GameOver:
+                if (!ctrl.getConnectedAs().equals(eventArgs.getItem().getUsername()) && !ctrl.getPlayer().hasLost()) {
+                    ComboBoxModel model = gui.getPanelGame().getComboBoxEnemySelection().getModel();
+                    for (int i = 0; i < model.getSize(); i++) {
+                        if (model.getElementAt(i).equals(eventArgs.getItem().getUsername())) {
+                            gui.getPanelGame().getComboBoxEnemySelection().removeItemAt(i);
+                            return;
+                        }
+                    }
+                }
                 break;
         }
     }
@@ -95,15 +109,19 @@ public class ServerObjectReceivedListener implements IServerObjectReceivedListen
                 ctrl.setEnemySelectionEnabled(true);
                 break;
             case MakeTurn:
-                ctrl.updateShipSelection();
-                boolean reloading = ctrl.handleAllShipsAreReloading();
-
-                if (!reloading) {
-                    ctrl.updateCurrentShip();
-                    ctrl.setEnemyBoardEnabled(true);
+                if (ctrl.getPlayer().hasLost()) {
+                    network.getSender().sendTurn(TransferableObjectFactory.CreateTurn(ctrl.getPlayer().getName()));
                 } else {
-                    ctrl.setPlayerIsReloading(true);
-                    ctrl.setDoneButtonEnabled(true);
+                    ctrl.updateShipSelection();
+                    boolean reloading = ctrl.handleAllShipsAreReloading();
+
+                    if (!reloading) {
+                        ctrl.updateCurrentShip();
+                        ctrl.setEnemyBoardEnabled(true);
+                    } else {
+                        ctrl.setPlayerIsReloading(true);
+                        ctrl.setDoneButtonEnabled(true);
+                    }
                 }
 
                 break;
