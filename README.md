@@ -21,33 +21,49 @@ We added a few rules which will make the game more interesting and more difficul
 * As soon as all of one player's ships have been sunk, the game ends.
 
 ## Our added or updated Rules
-* Determining how many players play. 2-6
-* Definition of the square field.
-* Determining how many destroyers, frigates, corvettes and submarines be used (no cruiser allowed)
-* Players place their ships in succession. Destroyers take 5, frigates 4, corvettes 3 and submarines 2 Fields. The Ships may only be placed horizontally or vertically in the field, overlaps
-are not allowed, also the ships must not abut each other there must always be at least
-be an empty field between two ships.
-* Players can shoot one after the other. There are the following sequence
+### Number of Players
+The game can be played by 2 to 6 players.
 
-  1.  Choose one of the available ship.
-  2.  Selection of an opponent.
-  3.  Select the coordinate on the pitch.
-  4.  The opponent says that the shot went into the water hits a ship, or if a ship was sunk.
+### Game Board Definition
+The game is played on a defined square field.
 
-* A destroyer shoot with big guns. It will be taken 3 boxes next to each other. though
-the destroyer must always download 3 laps and is not available in time. a frigate
-2 hits fields side by side. She has a recharge time of 2 rounds. A Corvette hits 1 field. She has a recharge time of 1 round. A submarine hits 1 field and also has a recharge time of 1 round. It can of course only non-sunken ships shoot.
-* When all the ships of a player were sunk, he is out. The game ends when only one player remains.
+### Ship Composition
+Players determine the number of destroyers (5 fields), frigates (4 fields), corvettes (3 fields), and submarines (2 fields) to be used. Cruisers are not allowed in this version.
+
+### Ship Placement Rules
+Players place their ships in succession.
+* Ships can only be placed vertically or horizontally.
+* No part of a ship may hang off the edge of the board.
+* Ships may not overlap each other.
+* Ships must not abut each other; there must always be at least one empty field between two ships.
+
+### Shooting Sequence
+Players take turns shooting. The sequence for a shot is as follows:
+  1.  Choose one of your available (non-sunken) ships to fire.
+  2.  Select an opponent to target.
+  3.  Select the coordinate(s) on the opponent's pitch.
+  4.  The opponent announces whether the shot was a "miss" (into the water), a "hit" (on a ship), or if a ship was "sunk".
+
+### Special Ship Abilities and Rules
+*   **Destroyer**: Shoots with big guns, affecting 3 boxes next to each other. Requires a 3-lap recharge time (unavailable during recharge).
+*   **Frigate**: Hits 2 fields side by side. Requires a 2-round recharge time.
+*   **Corvette**: Hits 1 field. Requires a 1-round recharge time.
+*   **Submarine**: Hits 1 field. Requires a 1-round recharge time.
+*   Only non-sunken ships can shoot.
+
+### Player Elimination and Game End
+* When all the ships of a player are sunk, that player is eliminated from the game.
+* The game ends when only one player remains.
 
 
-##How to play
-###Local
+## How to play
+### Local
 ![Client GUI](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/how%20to%20play/local.png)
   1. In the menu screen you have to click on "Local Game".
   2. In the settings screen you have to set the game settings and start the game by click on "OK".
   3. Now you can play.
 
-###Multiplayer
+### Multiplayer
 ![Server GUI](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/how%20to%20play/server.PNG)
   1. In the server gui you have to start the server.
   2. On the top menu you can create a standard game by click on "Games" -> "Create standard game".
@@ -56,7 +72,7 @@ the destroyer must always download 3 laps and is not available in time. a frigat
   5. Now you can join existing games or create a custom game. To join a game, select a game from the list and click "Join". To create your own game, click on "Create" and enter the game settings. After the game was created you can join it.
   5. The game will start when all players are connected.
 
-###Gameplay
+### Gameplay
 ![test](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/how%20to%20play/game.PNG)
 
 1. At the beginning of the game each player has to place his ships on the right board and confirm by click on "Done".
