@@ -56,14 +56,14 @@ Players take turns shooting. The sequence for a shot is as follows:
 * The game ends when only one player remains.
 
 
-##How to play
-###Local
+## How to play
+### Local
 ![Client GUI](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/how%20to%20play/local.png)
   1. In the menu screen you have to click on "Local Game".
   2. In the settings screen you have to set the game settings and start the game by click on "OK".
   3. Now you can play.
 
-###Multiplayer
+### Multiplayer
 ![Server GUI](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/how%20to%20play/server.PNG)
   1. In the server gui you have to start the server.
   2. On the top menu you can create a standard game by click on "Games" -> "Create standard game".
@@ -72,7 +72,7 @@ Players take turns shooting. The sequence for a shot is as follows:
   5. Now you can join existing games or create a custom game. To join a game, select a game from the list and click "Join". To create your own game, click on "Create" and enter the game settings. After the game was created you can join it.
   5. The game will start when all players are connected.
 
-###Gameplay
+### Gameplay
 ![test](https://raw.githubusercontent.com/cschaf/battleship-extreme/develop/documentation/how%20to%20play/game.PNG)
 
 1. At the beginning of the game each player has to place his ships on the right board and confirm by click on "Done".
